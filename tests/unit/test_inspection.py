@@ -60,7 +60,7 @@ def test_inspect_pipeline_end_to_end(connector, mock_api) -> None:
 
     joined = " ".join(report.warnings)
     assert "'trivy-image' was retried" in joined
-    assert "'dependency-check' ended 'failed' but has allow_failure" in joined
+    assert "'dependency-check' ended 'failed', but allow_failure" in joined
     # manual jobs are allow_failure by default in GitLab: not a masked failure
     assert "deploy-prod" not in joined
     assert report.schema_version.startswith("scanproof.dev/inspection/")

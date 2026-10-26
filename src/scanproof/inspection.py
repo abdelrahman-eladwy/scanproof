@@ -126,10 +126,14 @@ def inspect_pipeline(
             warnings.append(f"Job '{job.name}' was retried ({job.attempts} attempts).")
         # Manual jobs are allow_failure by default in GitLab; only real failures are masked.
         if job.latest.allow_failure and job.latest.status in _MASKABLE:
-            warnings.append(
-                f"Job '{job.name}' ended '{job.latest.status.value}' but has allow_failure: true "
-                "(or continue-on-error), so the pipeline did not stop on it."
-            )
+            raw = job.latest.raw_status
+            if raw and raw != job.latest.status.value:  # the platform says more (GitHub)
+                warnings.append(f"Job '{job.name}' {raw}.")
+            else:
+                warnings.append(
+                    f"Job '{job.name}' ended '{job.latest.status.value}', but allow_failure / "
+                    "continue-on-error kept the pipeline going."
+                )
     unchecked = [j.name for j in inspected if j.latest.masking_checked is False]
     if unchecked:
         warnings.append(
