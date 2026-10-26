@@ -88,6 +88,11 @@ class Job(_Frozen):
     artifacts_expire_at: datetime | None = None
     web_url: str | None = None
     attempt: int | None = None
+    project: str | None = Field(
+        default=None,
+        description="Project of a downstream (child / multi-project) pipeline's job; artifacts "
+        "are fetched from here. None = the inspected project.",
+    )
     masking_checked: bool | None = Field(
         default=None,
         description="GitHub: whether a silent step failure (continue-on-error) could be ruled "
@@ -98,6 +103,17 @@ class Job(_Frozen):
     def has_archive(self) -> bool:
         """True when the job uploaded an `artifacts:paths` archive we can read files from."""
         return any(a.file_type == "archive" for a in self.artifacts)
+
+
+class Downstream(_Frozen):
+    """A trigger (bridge) job and the pipeline it started, if any."""
+
+    trigger_name: str
+    trigger_status: JobStatus
+    pipeline_id: int | None = None
+    project: str | None = None
+    sha: str | None = None
+    status: str | None = None
 
 
 class InspectedJob(BaseModel):
@@ -128,4 +144,10 @@ class InspectionReport(BaseModel):
     project: str
     pipeline: Pipeline
     jobs: list[InspectedJob]
+    downstream: list[Downstream] = Field(default_factory=list)
+    unreadable_downstream: list[str] = Field(
+        default_factory=list,
+        description="Downstream pipelines that exist but could not be read; a job that seems "
+        "absent may be in one of them, so absence is unknown rather than a failure",
+    )
     warnings: list[str] = Field(default_factory=list)

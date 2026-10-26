@@ -116,6 +116,30 @@ audit:
 Trigger it from the app pipeline with a `trigger:` job (passing the three `UPSTREAM_*` variables)
 and `strategy: depend` if deploys should wait for it.
 
+## Parallel, matrix and child-pipeline jobs
+
+`job_name` matches the job you wrote in `.gitlab-ci.yml`, wherever GitLab put its instances:
+
+| Pipeline shape | Job names GitLab reports | `job_name: semgrep` matches |
+|---|---|---|
+| `parallel: 3` | `semgrep 1/3`, `semgrep 2/3`, `semgrep 3/3` | all three; a missing index (e.g. no `2/3`) is a FAIL |
+| `parallel: matrix:` | `semgrep: [python]`, `semgrep: [go]` | every matrix instance |
+| child pipeline (`trigger: include:`) | `semgrep` in the child | `<trigger job> > semgrep` |
+| multi-project (`trigger: project:`) | `semgrep` in the other project | same, artifacts read from that project |
+
+When several instances match, **every one must pass**; each check is reported per instance
+(`job_success [semgrep 2/3]`). A job with exactly the name in the policy always wins over
+instances. To pin one child job, name it fully: `job_name: "security-child > semgrep"`.
+
+ScanProof follows downstream pipelines up to 3 levels and 50 pipelines. If a downstream pipeline
+can't be read (the token has no access to that project) and the required job isn't found
+elsewhere, the result is INDETERMINATE (`JOB_MAYBE_IN_UNREADABLE_PIPELINE`), not "job absent".
+Multi-project pipelines usually run on **another repository's commit**, so `same_commit` fails
+there unless you set `same_commit: false` for that requirement on purpose.
+
+If the gate runs while a scan job is still running, a missing report is UNKNOWN
+(`REPORT_NOT_YET_AVAILABLE`), not FAIL: run the gate after the scans with `needs:`.
+
 ## Reading the report
 
 `report.json` contains the decision, every check with its code and message, and the normalized

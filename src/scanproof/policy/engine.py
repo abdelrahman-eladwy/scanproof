@@ -44,12 +44,20 @@ class CheckResult(BaseModel):
 
 
 class RequirementInput(BaseModel):
-    """What the orchestrator gathered for one requirement."""
+    """What the orchestrator gathered for one requirement (or one instance of it)."""
 
     job: InspectedJob | None = None
     evidence: ScanEvidence | None = None
     evidence_error: str | None = Field(
         default=None, description="Why evidence could not be fetched (auth, network...)"
+    )
+    absence_unknown: str | None = Field(
+        default=None,
+        description="Job not found, but it may live in a pipeline that couldn't be read",
+    )
+    instances: list[tuple[str, RequirementInput]] | None = Field(
+        default=None,
+        description="Parallel / matrix / downstream instances; every one must pass",
     )
 
 
@@ -63,6 +71,9 @@ class RequirementResult(BaseModel):
     checks: list[CheckResult]
     findings: dict[str, int] | None = Field(
         default=None, description="Reported for context only; findings are never judged"
+    )
+    instances: list[str] | None = Field(
+        default=None, description="Job instances evaluated when job_name matched several"
     )
 
 
@@ -95,6 +106,23 @@ def evaluate(policy: Policy, pipeline: Pipeline, inputs: dict[str, RequirementIn
     outcomes = [r.outcome for r in results]
     warnings: list[str] = []
 
+    if all(o is Outcome.NOT_APPLICABLE for o in outcomes):
+        message = f"No requirement applies to ref '{pipeline.ref}'; nothing was verified."
+        if policy.enforcement.on_nothing_applicable == "allow":
+            return Evaluation(
+                decision=Decision.VERIFIED,
+                requirements=results,
+                warnings=[f"{message} on_nothing_applicable=allow treats this as verified."],
+            )
+        return Evaluation(
+            decision=Decision.INDETERMINATE,
+            requirements=results,
+            warnings=[
+                f"{message} Blocking (set enforcement.on_nothing_applicable: allow, or limit "
+                "when the gate runs, if this ref legitimately needs no checks)."
+            ],
+        )
+
     if Outcome.FAIL in outcomes:
         decision = Decision.BLOCKED
     elif Outcome.UNKNOWN in outcomes:
@@ -108,8 +136,6 @@ def evaluate(policy: Policy, pipeline: Pipeline, inputs: dict[str, RequirementIn
     else:
         decision = Decision.VERIFIED
 
-    if all(o is Outcome.NOT_APPLICABLE for o in outcomes):
-        warnings.append(f"No requirement applies to ref '{pipeline.ref}'; nothing was verified.")
     return Evaluation(decision=decision, requirements=results, warnings=warnings)
 
 
@@ -148,6 +174,21 @@ def evaluate_requirement(
                 ]
             )
 
+    if data.instances:
+        return _evaluate_instances(req, pipeline, data.instances)
+
+    if data.job is None and data.absence_unknown:
+        return result(
+            [
+                CheckResult(
+                    check="job_present",
+                    outcome=Outcome.UNKNOWN,
+                    code="JOB_MAYBE_IN_UNREADABLE_PIPELINE",
+                    message=f"No job named '{req.job_name}' was found, but {data.absence_unknown}",
+                )
+            ]
+        )
+
     if data.job is None:
         return result(
             [
@@ -165,6 +206,36 @@ def evaluate_requirement(
 
     checks = [*_job_checks(req, data.job), *_evidence_checks(req, data)]
     return result(checks)
+
+
+def _evaluate_instances(
+    req: Requirement, pipeline: Pipeline, instances: list[tuple[str, RequirementInput]]
+) -> RequirementResult:
+    """Evaluate every instance as its own job; the requirement holds only if all of them do."""
+    single = req.model_copy(update={"applies_to": None})
+    checks: list[CheckResult] = []
+    findings: dict[str, int] = {}
+    for name, data in instances:
+        sub = evaluate_requirement(single, pipeline, data.model_copy(update={"instances": None}))
+        if data.job is None:
+            sub.checks = [
+                c.model_copy(update={"message": f"Expected instance '{name}' is missing"})
+                for c in sub.checks
+            ]
+        checks.extend(c.model_copy(update={"check": f"{c.check} [{name}]"}) for c in sub.checks)
+        for key, value in (sub.findings or {}).items():
+            findings[key] = findings.get(key, 0) + value
+    return RequirementResult(
+        id=req.id,
+        description=req.description,
+        tool=req.tool,
+        job_name=req.job_name,
+        job_id=None,
+        outcome=combine([c.outcome for c in checks]),
+        checks=checks,
+        findings=findings or None,
+        instances=[name for name, _ in instances],
+    )
 
 
 def _job_checks(req: Requirement, job: InspectedJob) -> list[CheckResult]:
@@ -281,6 +352,23 @@ def _evidence_checks(req: Requirement, data: RequirementInput) -> list[CheckResu
     ev = data.evidence
     if ev is None or not ev.present:
         reason = (ev.parse_error if ev else None) or "No report obtained"
+        status = data.job.latest.status if data.job else None
+        if (
+            c.report_required
+            and status is not None
+            and not status.is_terminal
+            and (status is not JobStatus.MANUAL)
+        ):
+            # The job hasn't finished: its report may simply not exist yet. That is "not
+            # ready" (exit 2), not "the control failed" (exit 1).
+            return [
+                _r(
+                    "report",
+                    Outcome.UNKNOWN,
+                    "REPORT_NOT_YET_AVAILABLE",
+                    f"{req.report_path}: job is still '{status.value}'",
+                )
+            ]
         if c.report_required:
             return [_r("report", Outcome.FAIL, "REPORT_MISSING", f"{req.report_path}: {reason}")]
         return [_r("report", Outcome.NOT_APPLICABLE, "REPORT_OPTIONAL_ABSENT", reason)]
@@ -476,3 +564,6 @@ def _min_resources(ev: ScanEvidence, minimum: int) -> CheckResult:
             f"{count} resource(s) evaluated, at least {minimum} required",
         )
     return _r(name, Outcome.PASS, "RESOURCES_OK", f"{count} resource(s) evaluated")
+
+
+RequirementInput.model_rebuild()

@@ -43,6 +43,7 @@ from scanproof.models import Job, JobStatus, Pipeline
 DEFAULT_GITHUB_API = "https://api.github.com"
 _REPO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 _EXIT_CODE = re.compile(r"Process completed with exit code [1-9]\d*")
+MAX_ANNOTATION_PAGES = 20  # 2,000 annotations; beyond that masking is reported as unknown
 
 _CONCLUSION = {
     "success": JobStatus.SUCCESS,
@@ -208,21 +209,36 @@ class GitHubConnector(HttpConnector):
 
     def _masked_step_failure(self, item: dict[str, Any]) -> str | bool | None:
         """Return the failure message if a step failed silently, False if none did, None if the
-        annotations could not be read."""
+        annotations could not all be read.
+
+        Every page is read: a job with many annotations (e.g. linter warnings) can push the
+        failure past the first page, which used to make a masked step look clean.
+        """
         url = item.get("check_run_url")
         if not url or origin_of(url) != self._origin:
             return None
-        try:
-            response = self._send(f"{url}/annotations", {"per_page": 100})
-            self._raise_for_status(response, "check run annotations")
-            annotations = response.json()
-        except (ConnectorError, ValueError):
-            return None
-        for note in annotations if isinstance(annotations, list) else []:
-            message = str(note.get("message", ""))
-            if note.get("annotation_level") == "failure" and _EXIT_CODE.search(message):
-                return message.strip()
-        return False
+        next_url: str | None = f"{url}/annotations"
+        params: dict[str, Any] | None = {"per_page": 100}
+        for _ in range(MAX_ANNOTATION_PAGES):
+            try:
+                response = self._send(next_url, params)
+                self._raise_for_status(response, "check run annotations")
+                annotations = response.json()
+            except (ConnectorError, ValueError):
+                return None
+            if not isinstance(annotations, list):
+                return None
+            for note in annotations:
+                message = str(note.get("message", "")) if isinstance(note, dict) else ""
+                if note.get("annotation_level") == "failure" and _EXIT_CODE.search(message):
+                    return message.strip()
+            next_url = response.links.get("next", {}).get("url")
+            if not next_url:
+                return False
+            if origin_of(next_url) != self._origin:
+                return None
+            params = None  # the next link carries its own query
+        return None  # too many pages to be sure: unknown, never "clean"
 
     def _extract(self, archive: bytes, report_path: str, artifact_name: str) -> bytes:
         wanted = report_path.strip().lstrip("/")

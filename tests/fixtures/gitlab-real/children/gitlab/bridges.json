@@ -1,0 +1,46 @@
+[
+  {
+    "id": 17480347875,
+    "name": "rspec-ee:predictive:trigger",
+    "stage": "test",
+    "status": "success",
+    "allow_failure": false,
+    "downstream_pipeline": {
+      "project_id": 278964,
+      "sha": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a",
+      "status": "success",
+      "ref": "refs/merge-requests/265141/merge",
+      "source": "parent_pipeline",
+      "finished_at": null,
+      "iid": 6667232,
+      "web_url": "https://gitlab.com/gitlab-org/gitlab/-/pipelines/2991221666",
+      "created_at": "2026-10-26T18:32:23.052Z",
+      "id": 2991221666
+    },
+    "commit": {
+      "id": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a"
+    }
+  },
+  {
+    "id": 17480347874,
+    "name": "rspec:predictive:trigger",
+    "stage": "test",
+    "status": "success",
+    "allow_failure": false,
+    "downstream_pipeline": {
+      "project_id": 278964,
+      "sha": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a",
+      "status": "success",
+      "ref": "refs/merge-requests/265141/merge",
+      "source": "parent_pipeline",
+      "finished_at": null,
+      "iid": 6667231,
+      "web_url": "https://gitlab.com/gitlab-org/gitlab/-/pipelines/2991221659",
+      "created_at": "2026-10-26T18:32:22.909Z",
+      "id": 2991221659
+    },
+    "commit": {
+      "id": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a"
+    }
+  }
+]

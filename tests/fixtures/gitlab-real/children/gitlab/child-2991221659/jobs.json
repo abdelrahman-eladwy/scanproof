@@ -1,0 +1,155 @@
+[
+  {
+    "id": 17480437602,
+    "status": "success",
+    "stage": "post-test",
+    "name": "rspec-predictive-artifact-collector",
+    "ref": "refs/merge-requests/265141/merge",
+    "allow_failure": false,
+    "created_at": "2026-10-26T18:32:23.181Z",
+    "started_at": "2026-10-26T18:40:54.486Z",
+    "finished_at": "2026-10-26T18:42:22.157Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab/-/jobs/17480437602",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2368299,
+        "filename": "predictive-coverage.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 817,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 46441,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a"
+    },
+    "pipeline": {
+      "id": 2991221659,
+      "project_id": 278964,
+      "sha": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a"
+    }
+  },
+  {
+    "id": 17480437601,
+    "status": "success",
+    "stage": "test",
+    "name": "rspec integration predictive",
+    "ref": "refs/merge-requests/265141/merge",
+    "allow_failure": false,
+    "created_at": "2026-10-26T18:32:23.181Z",
+    "started_at": "2026-10-26T18:32:24.689Z",
+    "finished_at": "2026-10-26T18:40:52.775Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab/-/jobs/17480437601",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2158815,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 1388,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 152380,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 8400,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a"
+    },
+    "pipeline": {
+      "id": 2991221659,
+      "project_id": 278964,
+      "sha": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a"
+    }
+  },
+  {
+    "id": 17480437600,
+    "status": "success",
+    "stage": "test",
+    "name": "rspec unit predictive",
+    "ref": "refs/merge-requests/265141/merge",
+    "allow_failure": false,
+    "created_at": "2026-10-26T18:32:23.181Z",
+    "started_at": "2026-10-26T18:32:24.497Z",
+    "finished_at": "2026-10-26T18:37:08.160Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab/-/jobs/17480437600",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1752935,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 1264,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 65999,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 3148,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a"
+    },
+    "pipeline": {
+      "id": 2991221659,
+      "project_id": 278964,
+      "sha": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a"
+    }
+  },
+  {
+    "id": 17480437599,
+    "status": "manual",
+    "stage": ".pre",
+    "name": "dont-interrupt-me",
+    "ref": "refs/merge-requests/265141/merge",
+    "allow_failure": true,
+    "created_at": "2026-10-26T18:32:23.181Z",
+    "started_at": null,
+    "finished_at": null,
+    "web_url": "https://gitlab.com/gitlab-org/gitlab/-/jobs/17480437599",
+    "artifacts": [],
+    "commit": {
+      "id": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a"
+    },
+    "pipeline": {
+      "id": 2991221659,
+      "project_id": 278964,
+      "sha": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a"
+    }
+  }
+]

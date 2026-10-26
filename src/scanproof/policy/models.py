@@ -102,6 +102,9 @@ class ProjectRef(_Strict):
 class Enforcement(_Strict):
     on_failure: Literal["block"] = "block"
     on_unknown: Literal["block", "warn"] = "block"
+    # When applies_to excludes every requirement nothing was verified. A release gate must not
+    # read that as VERIFIED unless the policy says so explicitly.
+    on_nothing_applicable: Literal["block", "allow"] = "block"
 
 
 class Metadata(_Strict):

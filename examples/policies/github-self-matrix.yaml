@@ -1,0 +1,14 @@
+# ScanProof verifying its own GitHub Actions run (github-contract.yml).
+# Expected: BLOCKED (exit 1): the go instance hid a failing scan step
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: github-self-matrix}
+project: {provider: github, id: abdelrahman-eladwy/scanproof}
+requirements:
+  - id: SCAN
+    tool: semgrep
+    job_name: matrix-sast
+    artifact_name: none
+    report_path: none.json
+    checks:
+      report_required: false   # this scenario is about the job result, not a report

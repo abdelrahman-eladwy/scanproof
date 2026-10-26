@@ -7,6 +7,8 @@ ConnectorError so callers can treat it as UNKNOWN rather than as a missing repor
 
 from __future__ import annotations
 
+import re
+
 from scanproof.connectors.base import (
     AuthError,
     CIConnector,
@@ -67,3 +69,52 @@ def collect_evidence(
 
 def find_job(jobs: list[InspectedJob], name: str) -> InspectedJob | None:
     return next((j for j in jobs if j.name == name), None)
+
+
+_PARALLEL = re.compile(r"^(?P<base>.+) (?P<index>\d+)/(?P<total>\d+)$")
+_TAIL_SEPARATORS = (" > ", " / ")  # ScanProof downstream prefix; GitHub reusable workflows
+
+
+def _tail(job_name: str) -> tuple[str, str]:
+    """Split 'trigger > child' / 'caller / callee' into (prefix, last segment)."""
+    cut = max(job_name.rfind(sep) + len(sep) if sep in job_name else 0 for sep in _TAIL_SEPARATORS)
+    return job_name[:cut], job_name[cut:]
+
+
+def _is_instance(tail: str, name: str) -> bool:
+    if tail == name:
+        return True
+    m = _PARALLEL.match(tail)
+    if m and m.group("base") == name:
+        return True
+    return (tail.startswith(f"{name}: [") and tail.endswith("]")) or (
+        tail.startswith(f"{name} (") and tail.endswith(")")
+    )
+
+
+def find_jobs(jobs: list[InspectedJob], name: str) -> tuple[list[InspectedJob], list[str]]:
+    """All jobs a requirement's job_name covers, and expected instances that are missing.
+
+    An exact name match wins. Otherwise every instance counts and every instance must pass:
+    parallel ('sast 2/3'), GitLab matrix ('sast: [py]'), GitHub matrix ('sast (py)'),
+    downstream ('trigger > sast') and GitHub reusable workflow ('caller / sast') jobs.
+    GitLab parallel names carry the total, so missing indices are reported.
+    """
+    exact = [j for j in jobs if j.name == name]
+    if exact:
+        return exact, []
+    matches = [j for j in jobs if _is_instance(_tail(j.name)[1], name)]
+    present: dict[tuple[str, int], set[int]] = {}
+    for j in matches:
+        prefix, tail = _tail(j.name)
+        m = _PARALLEL.match(tail)
+        if m and m.group("base") == name:
+            present.setdefault((prefix, int(m.group("total"))), set()).add(int(m.group("index")))
+    missing = [
+        f"{prefix}{name} {i}/{total}"
+        for (prefix, total), indices in sorted(present.items())
+        if total <= 1000
+        for i in range(1, total + 1)
+        if i not in indices
+    ]
+    return matches, missing

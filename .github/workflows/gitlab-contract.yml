@@ -29,6 +29,11 @@ jobs:
       - run: pip install -e .
       - name: Collect real GitLab responses
         run: python scripts/collect_gitlab_contract.py gitlab-contract
+      - name: Collect real parent/child pipelines (bridges)
+        continue-on-error: true
+        run: |
+          python scripts/collect_gitlab_bridges.py gitlab-contract/bridges
+          python -c "import json; [print('::notice title=bridges::' + json.dumps(e)[:3000]) for e in json.load(open('gitlab-contract/bridges/summary.json'))]"
       - name: Run scanproof inspect --anonymous on each pipeline found
         run: |
           python - <<'EOF'

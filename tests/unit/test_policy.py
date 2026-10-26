@@ -14,7 +14,7 @@ from scanproof.policy.engine import (
     evaluate,
     evaluate_requirement,
 )
-from scanproof.policy.models import Policy, PolicyError, Requirement, load_policy
+from scanproof.policy.models import Enforcement, Policy, PolicyError, Requirement, load_policy
 
 SHA = "a" * 40
 DIGEST = "sha256:" + "b" * 64
@@ -288,10 +288,20 @@ def _scoped_policy(refs: list[str]) -> Policy:
     )
 
 
-def test_nothing_applies_warns() -> None:
+def test_nothing_applicable_blocks_by_default() -> None:
+    """A release gate that verified nothing must not say VERIFIED (was a fail-open)."""
     result = evaluate(_scoped_policy(["release/*"]), PIPELINE, {})
-    assert result.decision is Decision.VERIFIED
+    assert result.decision is Decision.INDETERMINATE
     assert any("nothing was verified" in w for w in result.warnings)
+
+
+def test_nothing_applicable_can_be_explicitly_allowed() -> None:
+    policy = _scoped_policy(["release/*"]).model_copy(
+        update={"enforcement": Enforcement(on_nothing_applicable="allow")}
+    )
+    result = evaluate(policy, PIPELINE, {})
+    assert result.decision is Decision.VERIFIED
+    assert any("on_nothing_applicable=allow" in w for w in result.warnings)
 
 
 def test_matching_ref_is_evaluated() -> None:

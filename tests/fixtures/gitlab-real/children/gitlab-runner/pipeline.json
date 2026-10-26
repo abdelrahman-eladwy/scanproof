@@ -1,0 +1,12 @@
+{
+  "id": 2989607514,
+  "iid": 54051,
+  "project_id": 250833,
+  "sha": "7907ba1b1348b0fcb8c9aa81d4df74fa74cc8b08",
+  "ref": "refs/merge-requests/7700/merge",
+  "status": "success",
+  "source": "merge_request_event",
+  "created_at": "2026-10-26T12:20:22.933Z",
+  "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/pipelines/2989607514",
+  "finished_at": "2026-10-26T13:52:44.921Z"
+}

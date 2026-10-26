@@ -35,4 +35,9 @@ def connector(sleeps: list[float]) -> Iterator[GitLabConnector]:
 @pytest.fixture
 def mock_api() -> Iterator[respx.MockRouter]:
     with respx.mock(assert_all_called=False) as router:
+        # Every GitLab pipeline has a bridges endpoint; default to "no child pipelines".
+        # Tests that need children override it: mock_api.routes["bridges"].respond(json=[...])
+        router.get(
+            url__regex=r".*/api/v4/projects/[^/]+/pipelines/\d+/bridges", name="bridges"
+        ).respond(json=[])
         yield router
