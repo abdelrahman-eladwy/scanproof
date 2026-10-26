@@ -1,0 +1,73 @@
+# Generates REAL scanner reports used as test fixtures.
+# Run manually (Actions > fixtures > Run workflow) when bumping supported scanner versions,
+# then review and copy the outputs into tests/fixtures/{semgrep,trivy}/.
+name: fixtures
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["fixtures/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+    container: semgrep/semgrep:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Findings report (vulnerable sample app)
+        run: semgrep scan --config p/default --metrics=off --json --output semgrep-findings.json examples/gitlab-ci/sample-app/
+      - name: Clean report (no findings)
+        run: |
+          mkdir -p /tmp/clean && printf 'def add(a, b):\n    return a + b\n' > /tmp/clean/ok.py
+          semgrep scan --config p/default --metrics=off --json --output semgrep-clean.json /tmp/clean/
+      - name: Report with parse errors
+        run: |
+          mkdir -p /tmp/broken && cp examples/gitlab-ci/sample-app/app.py /tmp/broken/
+          printf 'def broken(:\n    return (\n' > /tmp/broken/bad.py
+          semgrep scan --config p/default --metrics=off --json --output semgrep-errors.json /tmp/broken/ || true
+      - run: semgrep --version > semgrep-version.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-fixtures
+          path: semgrep-*
+
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Image report (released image)
+        run: |
+          docker run --rm -v "$PWD:/out" aquasec/trivy:latest image \
+            --format json --output /out/trivy-python.json python:3.12-slim
+      - name: Image report (a different image)
+        run: |
+          docker run --rm -v "$PWD:/out" aquasec/trivy:latest image \
+            --format json --output /out/trivy-alpine.json alpine:3.20
+      - run: |
+          docker run --rm aquasec/trivy:latest --version > trivy-version.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trivy-fixtures
+          path: trivy-*
+
+  # On fixtures/** branches, commit the reports back so they can be fetched with git
+  # (useful where artifact storage is not reachable). Never runs on main.
+  publish:
+    if: startsWith(github.ref, 'refs/heads/fixtures/')
+    needs: [semgrep, trivy]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: generated-fixtures
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add generated-fixtures
+          git commit -m "chore: generated scanner fixtures [skip ci]"
+          git push
