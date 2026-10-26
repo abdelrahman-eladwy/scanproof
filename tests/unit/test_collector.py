@@ -64,8 +64,9 @@ def test_file_not_in_archive_is_missing(connector, mock_api) -> None:
 def test_auth_error_is_not_turned_into_missing(connector, mock_api) -> None:
     """403 means we couldn't look - that is UNKNOWN, not 'report missing'."""
     mock_api.get(URL).respond(403)
-    with pytest.raises(AuthError):
+    with pytest.raises(AuthError) as exc:
         _collect(connector, _job())
+    assert "Developer-role token" in str(exc.value)
 
 
 def test_find_job() -> None:

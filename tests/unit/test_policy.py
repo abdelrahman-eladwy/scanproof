@@ -297,3 +297,9 @@ def test_nothing_applies_warns() -> None:
 def test_matching_ref_is_evaluated() -> None:
     result = evaluate(_scoped_policy(["ma*"]), PIPELINE, {})
     assert result.decision is Decision.BLOCKED  # applies, and the job is absent
+
+
+def test_gitlab_templates_example_policy_loads(monkeypatch) -> None:
+    monkeypatch.setenv("RELEASE_IMAGE_DIGEST", DIGEST)
+    policy = load_policy(EXAMPLE.parent / "gitlab-templates.yaml")
+    assert [r.tool for r in policy.requirements] == ["gitlab-sast", "gitlab-container-scanning"]

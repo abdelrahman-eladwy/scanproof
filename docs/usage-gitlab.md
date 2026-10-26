@@ -2,7 +2,13 @@
 
 ## 1. Create a read-only token
 
-Project or group access token, role **Reporter**, scope **`read_api`** only, with an expiry.
+Project or group access token, role **Developer**, scope **`read_api`** only, with an expiry.
+
+Why Developer: since GitLab 17.0, artifacts produced by GitLab's security scanning templates are
+restricted to the Developer role, so a Reporter token gets HTTP 403 on the reports and every
+requirement ends INDETERMINATE. The `read_api` scope still makes the token read-only through
+the API. If your scans upload plain `artifacts:paths` with no `access:` restriction, Reporter is
+enough.
 Store it as a **masked, protected** CI/CD variable, e.g. `SCANPROOF_GITLAB_TOKEN`, and pass
 `--token-env SCANPROOF_GITLAB_TOKEN`. ScanProof never accepts tokens as arguments.
 
@@ -11,6 +17,19 @@ Store it as a **masked, protected** CI/CD variable, e.g. `SCANPROOF_GITLAB_TOKEN
 Start from [`examples/policies/scanproof.yaml`](../examples/policies/scanproof.yaml) and check it
 locally with `scanproof validate -P policy.yaml`. Keep the policy file under CODEOWNERS review: a
 policy the application team can edit is a policy they can weaken.
+
+### Using GitLab's own SAST / Container Scanning templates?
+
+Use the `gitlab-sast` and `gitlab-container-scanning` tools, which read GitLab's security report
+format. Start from [`examples/policies/gitlab-templates.yaml`](../examples/policies/gitlab-templates.yaml).
+That format has no list of scanned files, so scope checks are not available, and the container
+report only carries a digest if you scan by digest:
+
+```yaml
+container_scanning:
+  variables:
+    CS_IMAGE: "$CI_REGISTRY_IMAGE@$RELEASE_IMAGE_DIGEST"
+```
 
 ## 3. Bind the container scan to the image you ship
 

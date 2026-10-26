@@ -246,3 +246,33 @@ def test_module_level_respx_still_isolated() -> None:
     respx.get(PIPELINE_URL).respond(json=load_fixture("gitlab/pipeline.json"))
     with GitLabConnector(BASE, TOKEN) as gl:
         assert gl.get_pipeline("123", 1042).ref == "main"
+
+
+# ---------------------------------------------------------------- anonymous mode
+
+
+def test_anonymous_sends_no_credentials(mock_api) -> None:
+    route = mock_api.get(PIPELINE_URL).respond(json=load_fixture("gitlab/pipeline.json"))
+    with GitLabConnector(BASE, None, anonymous=True) as gl:
+        gl.get_pipeline("123", 1042)
+        assert "anonymous=True" in repr(gl)
+    assert "Authorization" not in route.calls.last.request.headers
+
+
+def test_anonymous_and_token_are_exclusive() -> None:
+    with pytest.raises(AuthError, match="not both"):
+        GitLabConnector(BASE, TOKEN, anonymous=True)
+
+
+def test_anonymous_403_hint(mock_api) -> None:
+    mock_api.get(PIPELINE_URL).respond(403)
+    with GitLabConnector(BASE, None, anonymous=True) as gl, pytest.raises(AuthError) as exc:
+        gl.get_pipeline("123", 1042)
+    assert "public projects" in str(exc.value)
+
+
+def test_anonymous_404_hint(mock_api) -> None:
+    mock_api.get(PIPELINE_URL).respond(404)
+    with GitLabConnector(BASE, None, anonymous=True) as gl, pytest.raises(NotFoundError) as exc:
+        gl.get_pipeline("123", 1042)
+    assert "anonymous access cannot see it" in str(exc.value)

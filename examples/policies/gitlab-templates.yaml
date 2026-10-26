@@ -1,0 +1,39 @@
+# Policy for projects using GitLab's own SAST and Container Scanning CI templates:
+#
+#   include:
+#     - template: Jobs/SAST.gitlab-ci.yml
+#     - template: Jobs/Container-Scanning.gitlab-ci.yml
+#
+# Token: Developer role + read_api (GitLab 17+ restricts these report artifacts to Developer).
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata:
+  name: gitlab-templates-release
+project:
+  provider: gitlab
+  id: your-group/your-app
+
+requirements:
+  - id: SAST-001
+    description: GitLab SAST (Semgrep analyzer) ran on this commit and reported success
+    tool: gitlab-sast
+    job_name: semgrep-sast
+    report_path: gl-sast-report.json
+    checks:
+      scanner_errors_allowed: 0        # scan.status must be success, no warn/fatal messages
+      # minimum_scanned_files / required_paths: not available in this format (would be UNKNOWN)
+
+  - id: CONTAINER-001
+    description: GitLab Container Scanning scanned the exact image being released
+    tool: gitlab-container-scanning
+    job_name: container_scanning
+    report_path: gl-container-scanning-report.json
+    checks:
+      scanner_errors_allowed: 0
+      # Requires the job to scan by digest: CS_IMAGE: "$CI_REGISTRY_IMAGE@$RELEASE_IMAGE_DIGEST".
+      # Scanning by tag records no digest, and this check would be UNKNOWN (blocks by default).
+      image_digest_must_match: ${RELEASE_IMAGE_DIGEST}
+
+enforcement:
+  on_failure: block
+  on_unknown: block

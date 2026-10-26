@@ -1,0 +1,1479 @@
+{
+  "vulnerabilities": [
+    {
+      "id": "d6325fde2b249fd4a7cdca210811f74512dff2f6",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "apt"
+          },
+          "version": "3.0.3"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2011-3374",
+          "value": "CVE-2011-3374",
+          "url": "https://access.redhat.com/security/cve/cve-2011-3374"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/security/cve/cve-2011-3374"
+        },
+        {
+          "url": "https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=642480"
+        },
+        {
+          "url": "https://people.canonical.com/~ubuntu-security/cve/2011/CVE-2011-3374.html"
+        },
+        {
+          "url": "https://seclists.org/fulldisclosure/2011/Sep/221"
+        },
+        {
+          "url": "https://security-tracker.debian.org/tracker/CVE-2011-3374"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-LINUX-APT-116518"
+        },
+        {
+          "url": "https://ubuntu.com/security/CVE-2011-3374"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "apt:3.0.3"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "It was found that apt-key in apt, all versions, do not correctly validate gpg keys with the master keyring, leading to a potential man-in-the-middle attack.",
+      "solution": ""
+    },
+    {
+      "id": "0bf50bc05fe4a2bf196d91dd6053aed33f50d745",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "bash"
+          },
+          "version": "5.2.37-2+b10"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "TEMP-0841856-B18BAF",
+          "value": "TEMP-0841856-B18BAF",
+          "url": "https://nvd.nist.gov/vuln/detail/TEMP-0841856-B18BAF"
+        }
+      ],
+      "links": [],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "bash:5.2.37-2+b10"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "",
+      "solution": ""
+    },
+    {
+      "id": "d5130fe83927e20c33f9d5c330b7a01f7b934ab0",
+      "severity": "High",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "bsdutils"
+          },
+          "version": "1:2.41.5-0+deb13u1"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-76642",
+          "value": "CVE-2026-76642",
+          "url": "https://access.redhat.com/security/cve/CVE-2026-76642"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-76642"
+        },
+        {
+          "url": "https://github.com/util-linux/util-linux"
+        },
+        {
+          "url": "https://github.com/util-linux/util-linux/blob/v2.42.2/libmount/src/context_mount.c#L476"
+        },
+        {
+          "url": "https://github.com/util-linux/util-linux/blob/v2.42.2/libmount/src/context_mount.c#L892"
+        },
+        {
+          "url": "https://github.com/util-linux/util-linux/commit/1d14676ea70003e9f5b2a6a76af0cadb1190411a"
+        },
+        {
+          "url": "https://github.com/util-linux/util-linux/commit/a15c00a9e545aa8b9cf6ec0f888ff6c7b3eaeedc"
+        },
+        {
+          "url": "https://github.com/util-linux/util-linux/commit/f57cea130839c0af8dc0525274267ae4cfd66bbf"
+        },
+        {
+          "url": "https://github.com/util-linux/util-linux/security/advisories/GHSA-m25x-3hj9-m26f"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-76642"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-76642"
+        },
+        {
+          "url": "https://www.vulncheck.com/advisories/util-linux-libmount-privilege-escalation-via-failed-mount-helper"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "bsdutils:1:2.41.5-0+deb13u1"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "util-linux versions through 2.41.5 and 2.42.2 fail to check mount helper exit status before running post-mount hooks, allowing unprivileged users to execute privileged operations on pre-existing filesystems. Attackers can exploit X-mount.idmap or X-mount.owner hooks to clone filesystems with inherited suid bits or modify target inode permissions after a helper fails, achieving privilege escalation.",
+      "solution": ""
+    },
+    {
+      "id": "0ded0fc4209b496f4c8e9444d66a392bb975bc72",
+      "severity": "High",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "bsdutils"
+          },
+          "version": "1:2.41.5-0+deb13u1"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-78408",
+          "value": "CVE-2026-78408",
+          "url": "http://www.openwall.com/lists/oss-security/2026/09/05/2"
+        }
+      ],
+      "links": [
+        {
+          "url": "http://www.openwall.com/lists/oss-security/2026/09/05/2"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:63162"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-78408"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2522497"
+        },
+        {
+          "url": "https://github.com/util-linux/util-linux/security/advisories/GHSA-55fx-f4gg-cfhj"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-78408"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-78408"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "bsdutils:1:2.41.5-0+deb13u1"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "The nsenter --join-cgroup option opens the target cgroup.procs file as root and leaves that file descriptor open across later namespace and credential changes and across execve(). Because the kernel checks later cgroup migrations using the credentials from the original open, a program run in an attacker-controlled target can inherit root's ability to move host processes between cgroups. After a privileged operator uses --join-cgroup against that target, an unprivileged user can migrate and terminate unrelated root processes.",
+      "solution": ""
+    },
+    {
+      "id": "9c50974705017094473c0a4d7592f2514ef41d19",
+      "severity": "High",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "bsdutils"
+          },
+          "version": "1:2.41.5-0+deb13u1"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-78409",
+          "value": "CVE-2026-78409",
+          "url": "https://access.redhat.com/errata/RHSA-2026:63162"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:63162"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-78409"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2522607"
+        },
+        {
+          "url": "https://github.com/util-linux/util-linux/security/advisories/GHSA-8f2p-47x3-43mv"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-78409"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-78409"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "bsdutils:1:2.41.5-0+deb13u1"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "The X-mount.subdir option uses a detached-tree fast path on Linux 6.15 and later and passes the configured subdirectory to open_tree() with AT_SYMLINK_NOFOLLOW. That flag does not stop intermediate symlink traversal or keep resolution inside the newly mounted filesystem. A local unprivileged user with an fstab-authorized X-mount.subdir entry can attach a host path at the intended mountpoint.",
+      "solution": ""
+    },
+    {
+      "id": "275dafd957094d8592e9cede143d56f4f354d53a",
+      "severity": "High",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "bsdutils"
+          },
+          "version": "1:2.41.5-0+deb13u1"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-78410",
+          "value": "CVE-2026-78410",
+          "url": "https://access.redhat.com/errata/RHSA-2026:63162"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:63162"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-78410"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2522684"
+        },
+        {
+          "url": "https://github.com/util-linux/util-linux/security/advisories/GHSA-rh77-686x-2f2m"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-78410"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-78410"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "bsdutils:1:2.41.5-0+deb13u1"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "A flaw was found in util-linux. Restricted bind mounts take the source path from fstab but do not pin that source before the privileged mount. A local unprivileged user who can replace the authorized source or a writable ancestor can redirect SUID mount(8) to bind another host directory. If the fstab entry also sets X-mount.owner, X-mount.group, or X-mount.mode, root then changes ownership or mode on that redirected inode.",
+      "solution": ""
+    },
+    {
+      "id": "14e2377d5ff7348d544807b36fe2c2183c0bf541",
+      "severity": "Medium",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "bsdutils"
+          },
+          "version": "1:2.41.5-0+deb13u1"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-3184",
+          "value": "CVE-2026-3184",
+          "url": "https://access.redhat.com/errata/RHSA-2026:7180"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:7180"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-3184"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2442570"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-3184"
+        },
+        {
+          "url": "https://ubuntu.com/security/notices/USN-8702-1"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-3184"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "bsdutils:1:2.41.5-0+deb13u1"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "A flaw was found in util-linux. Improper hostname canonicalization in the `login(1)` utility, when invoked with the `-h` option, can modify the supplied remote hostname before setting `PAM_RHOST`. A remote attacker could exploit this by providing a specially crafted hostname, potentially bypassing host-based Pluggable Authentication Modules (PAM) access control rules that rely on fully qualified domain names. This could lead to unauthorized access.",
+      "solution": ""
+    },
+    {
+      "id": "e2c016c1b4f6ef5c1f5363bb4e28e9a0399c25ce",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "bsdutils"
+          },
+          "version": "1:2.41.5-0+deb13u1"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2022-0563",
+          "value": "CVE-2022-0563",
+          "url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-0563"
+        }
+      ],
+      "links": [
+        {
+          "url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-0563"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2022-0563"
+        },
+        {
+          "url": "https://blog.trailofbits.com/2023/02/16/suid-logic-bug-linux-readline/"
+        },
+        {
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-398330.html"
+        },
+        {
+          "url": "https://github.com/bottlerocket-os/bottlerocket/security/advisories/GHSA-mv4q-wq4c-5xmg"
+        },
+        {
+          "url": "https://lore.kernel.org/util-linux/20220214110609.msiwlm457ngoic6w@ws.net.home/T/#u"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-0563"
+        },
+        {
+          "url": "https://security.gentoo.org/glsa/202401-08"
+        },
+        {
+          "url": "https://security.netapp.com/advisory/ntap-20220331-0002/"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2022-0563"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "bsdutils:1:2.41.5-0+deb13u1"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "A flaw was found in the util-linux chfn and chsh utilities when compiled with Readline support. The Readline library uses an \"INPUTRC\" environment variable to get a path to the library config file. When the library cannot parse the specified file, it prints an error message containing data from the file. This flaw allows an unprivileged user to read root-owned files, potentially leading to privilege escalation. This flaw affects util-linux versions prior to 2.37.4.",
+      "solution": ""
+    },
+    {
+      "id": "b6dbf9286a207879ccf1014b64da02032c378c54",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "coreutils"
+          },
+          "version": "9.7-3"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2017-18018",
+          "value": "CVE-2017-18018",
+          "url": "http://lists.gnu.org/archive/html/coreutils/2017-12/msg00045.html"
+        }
+      ],
+      "links": [
+        {
+          "url": "http://lists.gnu.org/archive/html/coreutils/2017-12/msg00045.html"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2017-18018"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2017-18018"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2017-18018"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "coreutils:9.7-3"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "In GNU Coreutils through 8.29, chown-core.c in chown and chgrp does not prevent replacement of a plain file with a symlink during use of the POSIX \"-R -L\" options, which allows local users to modify the ownership of arbitrary files by leveraging a race condition.",
+      "solution": ""
+    },
+    {
+      "id": "5c66c7a8c4a0890e5dd3bf82a79132d5249f9f34",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "coreutils"
+          },
+          "version": "9.7-3"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2025-5278",
+          "value": "CVE-2025-5278",
+          "url": "http://www.openwall.com/lists/oss-security/2025/05/27/2"
+        }
+      ],
+      "links": [
+        {
+          "url": "http://www.openwall.com/lists/oss-security/2025/05/27/2"
+        },
+        {
+          "url": "http://www.openwall.com/lists/oss-security/2025/05/29/1"
+        },
+        {
+          "url": "http://www.openwall.com/lists/oss-security/2025/05/29/2"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:28911"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:33124"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:33313"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:33612"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:34102"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:39981"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:44481"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:46836"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:50205"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:58981"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:69964"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:72502"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:82304"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:82322"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:82347"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:82354"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:82372"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:82857"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:82888"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2025-5278"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/2368764"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2368764"
+        },
+        {
+          "url": "https://cgit.git.savannah.gnu.org/cgit/coreutils.git/commit/?id=8c9602e3a145e9596dc1a63c6ed67865814b6633"
+        },
+        {
+          "url": "https://cgit.git.savannah.gnu.org/cgit/coreutils.git/tree/NEWS?id=8c9602e3a145e9596dc1a63c6ed67865814b6633#n14"
+        },
+        {
+          "url": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        {
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-5278"
+        },
+        {
+          "url": "https://debbugs.gnu.org/cgi/bugreport.cgi?bug=78507"
+        },
+        {
+          "url": "https://errata.almalinux.org/9/ALSA-2026-28911.html"
+        },
+        {
+          "url": "https://errata.rockylinux.org/RLSA-2026:33124"
+        },
+        {
+          "url": "https://linux.oracle.com/cve/CVE-2025-5278.html"
+        },
+        {
+          "url": "https://linux.oracle.com/errata/ELSA-2026-69964.html"
+        },
+        {
+          "url": "https://lists.gnu.org/archive/html/bug-coreutils/2025-05/msg00036.html"
+        },
+        {
+          "url": "https://lists.gnu.org/archive/html/bug-coreutils/2025-05/msg00040.html"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-5278"
+        },
+        {
+          "url": "https://security-tracker.debian.org/tracker/CVE-2025-5278"
+        },
+        {
+          "url": "https://ubuntu.com/security/notices/USN-8697-1"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2025-5278"
+        },
+        {
+          "url": "https://www.openwall.com/lists/oss-security/2025/05/27/2"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "coreutils:9.7-3"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "A flaw was found in GNU Coreutils. The sort utility's begfield() function is vulnerable to a heap buffer under-read. The program may access memory outside the allocated buffer if a user runs a crafted command using the traditional key format. A malicious input could lead to a crash or leak sensitive data.",
+      "solution": ""
+    },
+    {
+      "id": "7009cb3f5d61e1c4b625697c254ab2521d73d3b8",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "coreutils"
+          },
+          "version": "9.7-3"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-56391",
+          "value": "CVE-2026-56391",
+          "url": "https://access.redhat.com/errata/RHSA-2026:67886"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:67886"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-56391"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/2506691"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/2506694"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2506691"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2506694"
+        },
+        {
+          "url": "https://cert.pl/en/posts/2026/07/CVE-2026-56391"
+        },
+        {
+          "url": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        {
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-56391"
+        },
+        {
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-56392"
+        },
+        {
+          "url": "https://errata.almalinux.org/10/ALSA-2026-67886.html"
+        },
+        {
+          "url": "https://errata.rockylinux.org/RLSA-2026:67886"
+        },
+        {
+          "url": "https://git.savannah.gnu.org/cgit/coreutils.git"
+        },
+        {
+          "url": "https://git.savannah.gnu.org/cgit/coreutils.git/"
+        },
+        {
+          "url": "https://git.savannah.gnu.org/cgit/coreutils.git/commit/?id=d64e35a8a4c0e4608321433e0d84d917e4e36371"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-7xvj-m9x7-qgxq"
+        },
+        {
+          "url": "https://linux.oracle.com/cve/CVE-2026-56391.html"
+        },
+        {
+          "url": "https://linux.oracle.com/errata/ELSA-2026-67886.html"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-56391"
+        },
+        {
+          "url": "https://ubuntu.com/security/notices/USN-8697-1"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-56391"
+        },
+        {
+          "url": "https://www.openwall.com/lists/oss-security/2026/07/25/2"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "coreutils:9.7-3"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "GNU coreutils uniq is vulnerable to an out\u2011of\u2011bounds read due to incorrect handling of multibyte input when the -w (--check-chars) option is used. The find_field() function miscalculates the byte length of characters by repeatedly processing a fixed pointer instead of advancing through the input, resulting in an inflated length value. \nThis incorrect length is later used in a memcmp operation, causing reads beyond the allocated buffer when processing crafted multibyte input.\n\nWhen running GNU coreutils uniq with attacker-provided arguments, this behavior leads to a crash and potential adjacent heap memory exposure.\n\n\nThis issue has been fixed in the commit d64e35a8a4c0e4608321433e0d84d917e4e36371.",
+      "solution": ""
+    },
+    {
+      "id": "a21f5995e44236820a33f69ba552e283643840b7",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "coreutils"
+          },
+          "version": "9.7-3"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-56392",
+          "value": "CVE-2026-56392",
+          "url": "https://access.redhat.com/errata/RHSA-2026:66403"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:66403"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:67886"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-56392"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/2506694"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2506691"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2506694"
+        },
+        {
+          "url": "https://cert.pl/en/posts/2026/07/CVE-2026-56391"
+        },
+        {
+          "url": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        {
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-56391"
+        },
+        {
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-56392"
+        },
+        {
+          "url": "https://errata.almalinux.org/9/ALSA-2026-66403.html"
+        },
+        {
+          "url": "https://errata.rockylinux.org/RLSA-2026:67886"
+        },
+        {
+          "url": "https://git.savannah.gnu.org/cgit/coreutils.git"
+        },
+        {
+          "url": "https://git.savannah.gnu.org/cgit/coreutils.git/"
+        },
+        {
+          "url": "https://git.savannah.gnu.org/cgit/coreutils.git/commit/?id=b60a159fdc5bfcf9988d3a4cb6f53abe8ad5d35d"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-g24f-m2hx-pfgx"
+        },
+        {
+          "url": "https://linux.oracle.com/cve/CVE-2026-56392.html"
+        },
+        {
+          "url": "https://linux.oracle.com/errata/ELSA-2026-67886.html"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-56392"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-56392"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "coreutils:9.7-3"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "GNU coreutils unexpand is vulnerable to a heap-based buffer overflow due to an integer overflow during buffer allocation when processing large tab stop (-t) values. The multiplication used to calculate the allocation size can wrap around, resulting in an undersized buffer.\nWhen processing crafted input, subsequent writes exceed the allocated memory, leading to an out\u2011of\u2011bounds heap write.\n\nWhen running GNU coreutils unexpand with attacker-provided large tab stop (-t) arguments, this behavior leads to a crash and potentially achieve a heap write primitive depending on memory layout.\n\n\n\n\n\n\n\n\n\n\nThis issue has been fixed in the commit b60a159fdc5bfcf9988d3a4cb6f53abe8ad5d35d",
+      "solution": ""
+    },
+    {
+      "id": "250f53bbf4832674997702f5b384c0907bd63cd5",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "dash"
+          },
+          "version": "0.5.12-12"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-102473",
+          "value": "CVE-2026-102473",
+          "url": "https://access.redhat.com/security/cve/CVE-2026-102473"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-102473"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2543005"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-102473"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-102473"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "dash:0.5.12-12"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "A flaw was found in dash. When built without libc fnmatch, the internal pmatch() matcher implements * by unbounded recursion over candidate positions. A local user who can plant filenames, or otherwise feed that matcher, can make a short multi-star pattern such as *.*.*.*.*.tar.gz consume excessive CPU.",
+      "solution": ""
+    },
+    {
+      "id": "d7ab49871d30ee50586d19a88558364f18ee7b32",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "dash"
+          },
+          "version": "0.5.12-12"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-102474",
+          "value": "CVE-2026-102474",
+          "url": "https://access.redhat.com/security/cve/CVE-2026-102474"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-102474"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2543004"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-102474"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-102474"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "dash:0.5.12-12"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "A flaw was found in dash. The printf builtin reserves four bytes before converting a Unicode \\u or \\U escape, but the multi-byte token can need five or six bytes. A local user who can supply such an escape to dash printf or echo %b, including through dash -c and a positional argument, can write one or two bytes past that reservation.",
+      "solution": ""
+    },
+    {
+      "id": "bcceee5c203b011cad4075abdee6bcd05aae7d01",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "diffutils"
+          },
+          "version": "1:3.10-4"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-53910",
+          "value": "CVE-2026-53910",
+          "url": "https://access.redhat.com/security/cve/CVE-2026-53910"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-53910"
+        },
+        {
+          "url": "https://cert.pl/en/posts/2026/07/CVE-2026-53910"
+        },
+        {
+          "url": "https://cgit.git.savannah.gnu.org/cgit/diffutils.git/commit/?id=73ed7ce85cc78effb94daf028c9af6b4e5252e50"
+        },
+        {
+          "url": "https://cgit.git.savannah.gnu.org/cgit/diffutils.git/commit/?id=9ff04d5b84743e331e80b589335a52c5480d1815"
+        },
+        {
+          "url": "https://git.savannah.gnu.org/cgit/diffutils.git/"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-53910"
+        },
+        {
+          "url": "https://ubuntu.com/security/notices/USN-8692-1"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-53910"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "diffutils:1:3.10-4"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "diff3\u00a0tool from GNU diffutils\u00a0is vulnerable to a heap\u2011based buffer overflow due to multiple signed integer overflows in line\u2011mapping calculations. Incorrect arithmetic in mapping line ranges can result in corrupted values being used for memory allocation and loop bounds.\nWhen processing crafted diff output, these overflows may cause the application to allocate insufficient memory and subsequently perform out\u2011of\u2011bounds writes during internal processing.\u00a0\nAn attacker who can control the output of the diff program used by diff3 (e.g. via --diff-program pointing to a malicious script) can trigger out-of-bounds writes, resulting in a crash and potentially remote code execution depending on the environment.\n\n\nThis issue has been fixed in commit 9ff04d5b84743e331e80b589335a52c5480d1815\u00a0\n\nNOTE:\nThe project maintainers claim that this is not a security issue. They state that the worst outcome this issue can cause is a crash of diff and that it cannot be used to escalate privileges.",
+      "solution": ""
+    },
+    {
+      "id": "4699e9fba549c2ee1a63024b829fb1621f64df57",
+      "severity": "Medium",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "gcc-14-base"
+          },
+          "version": "14.2.0-19"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-102010",
+          "value": "CVE-2026-102010",
+          "url": "https://access.redhat.com/errata/RHSA-2026:73642"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:73642"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:74569"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-102010"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2478395"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-102010"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-102010"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "gcc-14-base:14.2.0-19"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "A flaw was found in GCC. When an application calls the erase_if function on a binary heap priority queue in libstdc++, the library reallocates storage but fails to update its internal entry pointer. An attacker capable of triggering this operation can exploit this use-after-free condition, leading to a Denial of Service (DoS) via an application crash or potential memory corruption.",
+      "solution": ""
+    },
+    {
+      "id": "82802bf4bbe789fa0d704ade5b8fa2975c968849",
+      "severity": "Medium",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "gcc-14-base"
+          },
+          "version": "14.2.0-19"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-95619",
+          "value": "CVE-2026-95619",
+          "url": "https://access.redhat.com/errata/RHSA-2026:58503"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:58503"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:67275"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-95619"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2537811"
+        },
+        {
+          "url": "https://gcc.gnu.org/pipermail/gcc-patches/2026-September/732381.html"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-95619"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-95619"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "gcc-14-base:14.2.0-19"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "A flaw was found in libstdc++. An integer overflow can occur when processing large inputs to the aligned operator new in the C++ library. This vulnerability could lead to an undersized memory allocation, potentially causing memory corruption or application instability.",
+      "solution": ""
+    },
+    {
+      "id": "cf2a930e774b3f90a0a66e0849188225c5f5d896",
+      "severity": "High",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "libacl1"
+          },
+          "version": "2.3.2-2+b1"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-54369",
+          "value": "CVE-2026-54369",
+          "url": "https://access.redhat.com/errata/RHSA-2026:34351"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:34351"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:42736"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:42739"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:43420"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:44481"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:46836"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:50205"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:53371"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:54769"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:58981"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:64805"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:67140"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:67142"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:67144"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-54369"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/2490277"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/2490279"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2490277"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2490279"
+        },
+        {
+          "url": "https://cgit.git.savannah.nongnu.org/cgit/acl.git/commit/?id=24a227d0ab8576612194f8a56c2314389adc74a5"
+        },
+        {
+          "url": "https://cgit.git.savannah.nongnu.org/cgit/acl.git/commit/?id=3589787cd589b34bdd9265936e17190b6d3f17d1"
+        },
+        {
+          "url": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        {
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-54369"
+        },
+        {
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-54370"
+        },
+        {
+          "url": "https://errata.almalinux.org/9/ALSA-2026-42736.html"
+        },
+        {
+          "url": "https://errata.rockylinux.org/RLSA-2026:42739"
+        },
+        {
+          "url": "https://linux.oracle.com/cve/CVE-2026-54369.html"
+        },
+        {
+          "url": "https://linux.oracle.com/errata/ELSA-2026-43420.html"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54369"
+        },
+        {
+          "url": "https://security.access.redhat.com/data/csaf/v2/vex/2026/cve-2026-54369.json"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-54369"
+        },
+        {
+          "url": "https://www.vulncheck.com/advisories/acl-symlink-traversal-privilege-escalation-via-libacl-functions"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "libacl1:2.3.2-2+b1"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "acl before version 2.4.0 contains a symlink traversal vulnerability in the libacl pathname-based functions acl_get_file(), acl_set_file(), acl_extended_file(), and acl_delete_def_file() that allows local attackers to escalate privileges by replacing any pathname component with a symbolic link. Attackers who control any component of a pathname processed by a privileged caller can redirect ACL read or write operations to arbitrary files or directories, enabling unauthorized manipulation of access control lists and local privilege escalation.",
+      "solution": ""
+    },
+    {
+      "id": "c10c1a3ddfe923f34ee5bb3beb554a8be86f5190",
+      "severity": "Medium",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "libacl1"
+          },
+          "version": "2.3.2-2+b1"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2026-54370",
+          "value": "CVE-2026-54370",
+          "url": "https://access.redhat.com/errata/RHSA-2026:42736"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:42736"
+        },
+        {
+          "url": "https://access.redhat.com/errata/RHSA-2026:42739"
+        },
+        {
+          "url": "https://access.redhat.com/security/cve/CVE-2026-54370"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/2490277"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/2490279"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2490277"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2490279"
+        },
+        {
+          "url": "https://cgit.git.savannah.nongnu.org/cgit/acl.git/commit/?id=24a227d0ab8576612194f8a56c2314389adc74a5"
+        },
+        {
+          "url": "https://cgit.git.savannah.nongnu.org/cgit/acl.git/commit/?id=3589787cd589b34bdd9265936e17190b6d3f17d1"
+        },
+        {
+          "url": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        {
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-54369"
+        },
+        {
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-54370"
+        },
+        {
+          "url": "https://errata.almalinux.org/9/ALSA-2026-42736.html"
+        },
+        {
+          "url": "https://errata.rockylinux.org/RLSA-2026:42739"
+        },
+        {
+          "url": "https://linux.oracle.com/cve/CVE-2026-54370.html"
+        },
+        {
+          "url": "https://linux.oracle.com/errata/ELSA-2026-43420.html"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54370"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2026-54370"
+        },
+        {
+          "url": "https://www.vulncheck.com/advisories/acl-toctou-symlink-traversal-via-getfacl-setfacl-chacl"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "libacl1:2.3.2-2+b1"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "acl before version 2.4.0 contains a time-of-check to time-of-use (TOCTOU) race condition vulnerability that allows local attackers to escalate privileges by replacing a pathname component with a symbolic link between an lstat() check and subsequent symlink-following operations such as stat(), chown(), chmod(), acl_get_file(), and acl_set_file(). Attackers who control a pathname component can redirect file access control list operations to arbitrary files when getfacl, setfacl, or chacl is invoked by a privileged process over an attacker-controlled path, resulting in local privilege escalation.",
+      "solution": ""
+    },
+    {
+      "id": "31d6f034f71f74d4237a39a48b8e719c799274d2",
+      "severity": "Low",
+      "location": {
+        "dependency": {
+          "package": {
+            "name": "libapt-pkg7.0"
+          },
+          "version": "3.0.3"
+        },
+        "operating_system": "debian 13.7",
+        "image": "python:3.12-slim"
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2011-3374",
+          "value": "CVE-2011-3374",
+          "url": "https://access.redhat.com/security/cve/cve-2011-3374"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://access.redhat.com/security/cve/cve-2011-3374"
+        },
+        {
+          "url": "https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=642480"
+        },
+        {
+          "url": "https://people.canonical.com/~ubuntu-security/cve/2011/CVE-2011-3374.html"
+        },
+        {
+          "url": "https://seclists.org/fulldisclosure/2011/Sep/221"
+        },
+        {
+          "url": "https://security-tracker.debian.org/tracker/CVE-2011-3374"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-LINUX-APT-116518"
+        },
+        {
+          "url": "https://ubuntu.com/security/CVE-2011-3374"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "name": "Vulnerable Package",
+          "type": "text",
+          "value": "libapt-pkg7.0:3.0.3"
+        },
+        "vendor_status": {
+          "name": "Vendor Status",
+          "type": "text",
+          "value": "affected"
+        }
+      },
+      "description": "It was found that apt-key in apt, all versions, do not correctly validate gpg keys with the master keyring, leading to a potential man-in-the-middle attack.",
+      "solution": ""
+    }
+  ],
+  "remediations": [],
+  "scan": {
+    "scanner": {
+      "id": "trivy",
+      "name": "Trivy",
+      "url": "https://github.com/aquasecurity/trivy/",
+      "vendor": {
+        "name": "GitLab"
+      },
+      "version": "0.72.0"
+    },
+    "analyzer": {
+      "id": "gcs",
+      "name": "GitLab Container Scanning",
+      "vendor": {
+        "name": "GitLab"
+      },
+      "version": "8.6.35"
+    },
+    "type": "container_scanning",
+    "start_time": "2026-10-26T17:46:59",
+    "end_time": "2026-10-26T17:47:00",
+    "status": "success"
+  },
+  "version": "15.1.1",
+  "_scanproof_fixture": {
+    "trimmed": true,
+    "kept_vulnerabilities": 20,
+    "original_severity_counts": {
+      "High": 44,
+      "Low": 61,
+      "Medium": 58,
+      "Unknown": 1
+    }
+  }
+}

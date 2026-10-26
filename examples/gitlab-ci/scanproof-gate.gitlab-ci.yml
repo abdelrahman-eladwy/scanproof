@@ -9,7 +9,8 @@
 #       file: scanproof-gate.gitlab-ci.yml
 #
 # Required CI/CD variable (masked + protected), set on the group or project:
-#   SCANPROOF_GITLAB_TOKEN   project/group access token, Reporter role, read_api scope only
+#   SCANPROOF_GITLAB_TOKEN   project/group access token, Developer role, read_api scope only
+#                            (Developer: GitLab 17+ restricts security-scan artifacts to it)
 #
 # See docs/usage-gitlab.md for how strong (or weak) each way of running this is.
 

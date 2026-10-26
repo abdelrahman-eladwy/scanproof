@@ -6,7 +6,7 @@ name: fixtures
 on:
   workflow_dispatch:
   push:
-    branches: ["fixtures/**"]
+    branches: ["fixtures/scanners/**"]
 
 permissions:
   contents: read
@@ -52,22 +52,70 @@ jobs:
           name: trivy-fixtures
           path: trivy-*
 
-  # On fixtures/** branches, commit the reports back so they can be fetched with git
+  # GitLab's own analyzers (what GitLab SAST / Container Scanning templates run), producing the
+  # GitLab security report format (gl-*-report.json).
+  gitlab-analyzers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: GitLab Semgrep analyzer -> gl-sast-report.json
+        run: |
+          mkdir -p out && cp -r examples/gitlab-ci/sample-app work-sast && chmod -R a+rwX work-sast
+          for tag in 6 5 4; do
+            img="registry.gitlab.com/security-products/semgrep:$tag"
+            if docker run --rm -v "$PWD/work-sast:/app" -w /app -e CI_PROJECT_DIR=/app "$img" /analyzer run \
+               && [ -s work-sast/gl-sast-report.json ]; then
+              cp work-sast/gl-sast-report.json out/gl-sast-report.json
+              echo "$img" > out/gl-sast-analyzer.txt
+              echo "::notice title=gitlab-semgrep::$img produced gl-sast-report.json"; break
+            fi
+            echo "::warning title=gitlab-semgrep::$img failed"
+          done
+      - name: GitLab container scanning -> gl-container-scanning-report.json
+        run: |
+          mkdir -p work-cs && chmod a+rwx work-cs
+          for tag in 8 7 6; do
+            img="registry.gitlab.com/security-products/container-scanning:$tag"
+            if docker run --rm -v "$PWD/work-cs:/work" -w /work -e CI_PROJECT_DIR=/work \
+                 -e CS_IMAGE=python:3.12-slim "$img" gtcs scan \
+               && [ -s work-cs/gl-container-scanning-report.json ]; then
+              cp work-cs/gl-container-scanning-report.json out/gl-container-scanning-report.json
+              echo "$img" > out/gl-cs-analyzer.txt
+              echo "::notice title=gitlab-cs::$img produced gl-container-scanning-report.json"; break
+            fi
+            echo "::warning title=gitlab-cs::$img failed"
+          done
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: gitlab-analyzer-fixtures
+          path: out/
+          if-no-files-found: warn
+
+  # On fixtures/scanners/** branches, commit the reports back so they can be fetched with git
   # (useful where artifact storage is not reachable). Never runs on main.
   publish:
-    if: startsWith(github.ref, 'refs/heads/fixtures/')
-    needs: [semgrep, trivy]
+    needs: [semgrep, trivy, gitlab-analyzers]
+    if: always() && startsWith(github.ref, 'refs/heads/fixtures/scanners/')
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true   # this job pushes; everything else uses false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           path: generated-fixtures
-      - run: |
+      - name: Commit outputs back to this fixtures branch
+        run: |
+          set -o pipefail
+          fail() { echo "::error title=publish::$1"; exit 1; }
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add generated-fixtures
-          git commit -m "chore: generated scanner fixtures [skip ci]"
-          git push
+          git add -f generated-fixtures 2>&1 | tail -3 || fail "git add failed"
+          git diff --cached --quiet && fail "nothing to commit (artifact empty?)"
+          out=$(git commit -q -m "chore: generated fixtures [skip ci]" 2>&1) || fail "commit: $out"
+          git pull -q --rebase origin "$GITHUB_REF_NAME" || fail "rebase failed"
+          out=$(git push 2>&1) || fail "push: $(echo "$out" | tail -3 | tr '\n' ' ')"
