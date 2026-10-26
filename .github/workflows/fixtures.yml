@@ -6,7 +6,7 @@ name: fixtures
 on:
   workflow_dispatch:
   push:
-    branches: ["fixtures/**"]
+    branches: ["fixtures/scanners/**"]
 
 permissions:
   contents: read
@@ -55,19 +55,26 @@ jobs:
   # On fixtures/** branches, commit the reports back so they can be fetched with git
   # (useful where artifact storage is not reachable). Never runs on main.
   publish:
-    if: startsWith(github.ref, 'refs/heads/fixtures/')
+    if: startsWith(github.ref, 'refs/heads/fixtures/scanners/')
     needs: [semgrep, trivy]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true   # this job pushes; everything else uses false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           path: generated-fixtures
-      - run: |
+      - name: Commit outputs back to this fixtures branch
+        run: |
+          set -o pipefail
+          fail() { echo "::error title=publish::$1"; exit 1; }
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add generated-fixtures
-          git commit -m "chore: generated scanner fixtures [skip ci]"
-          git push
+          git add -f generated-fixtures 2>&1 | tail -3 || fail "git add failed"
+          git diff --cached --quiet && fail "nothing to commit (artifact empty?)"
+          out=$(git commit -q -m "chore: generated fixtures [skip ci]" 2>&1) || fail "commit: $out"
+          git pull -q --rebase origin "$GITHUB_REF_NAME" || fail "rebase failed"
+          out=$(git push 2>&1) || fail "push: $(echo "$out" | tail -3 | tr '\n' ' ')"

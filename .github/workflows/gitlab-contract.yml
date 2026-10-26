@@ -2,7 +2,7 @@
 #
 # - Weekly / manual: runs `scanproof inspect --anonymous` on recent public pipelines and fails
 #   if ScanProof can no longer read GitLab's responses (API drift).
-# - On fixtures/** branches: also commits sanitized API responses and security reports back to
+# - On fixtures/gitlab/** branches: also commits sanitized API responses and security reports back to
 #   the branch, to refresh tests/fixtures/gitlab-real/.
 name: gitlab-contract
 
@@ -11,7 +11,7 @@ on:
   schedule:
     - cron: "17 6 * * 1"
   push:
-    branches: ["fixtures/**"]
+    branches: ["fixtures/gitlab/**"]
 
 permissions:
   contents: read
@@ -34,6 +34,8 @@ jobs:
           python - <<'EOF'
           import json, subprocess, sys
           summary = json.load(open("gitlab-contract/summary.json"))
+          for e in summary:  # annotations are readable via the API even when logs are not
+              print("::notice title=contract " + e["project"].split("/")[-1] + "::" + json.dumps(e)[:3500])
           found = [e for e in summary if "pipeline_id" in e]
           if not found:
               sys.exit("No public pipeline with security reports found; update CANDIDATES")
@@ -55,20 +57,27 @@ jobs:
           path: gitlab-contract/
 
   publish:
-    if: startsWith(github.ref, 'refs/heads/fixtures/')
+    if: startsWith(github.ref, 'refs/heads/fixtures/gitlab/')
     needs: contract
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true   # this job pushes; everything else uses false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: gitlab-contract
           path: generated-gitlab-contract
-      - run: |
+      - name: Commit outputs back to this fixtures branch
+        run: |
+          set -o pipefail
+          fail() { echo "::error title=publish::$1"; exit 1; }
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add generated-gitlab-contract
-          git commit -m "chore: real GitLab contract fixtures [skip ci]"
-          git push
+          git add -f generated-gitlab-contract 2>&1 | tail -3 || fail "git add failed"
+          git diff --cached --quiet && fail "nothing to commit (artifact empty?)"
+          out=$(git commit -q -m "chore: generated fixtures [skip ci]" 2>&1) || fail "commit: $out"
+          git pull -q --rebase origin "$GITHUB_REF_NAME" || fail "rebase failed"
+          out=$(git push 2>&1) || fail "push: $(echo "$out" | tail -3 | tr '\n' ' ')"
