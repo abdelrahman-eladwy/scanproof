@@ -52,8 +52,33 @@ jobs:
     steps:
       - run: echo never
 
+  # Matrix: one instance hides a failing scan step behind continue-on-error.
+  matrix-sast:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lang: [python, go]
+    steps:
+      - name: scan
+        continue-on-error: ${{ matrix.lang == 'go' }}
+        run: |
+          if [ "${{ matrix.lang }}" = "go" ]; then exit 1; fi
+          echo ok
+
+  # 150 warning annotations first, so the masked failure lands on annotation page 2.
+  noisy-masked:
+    runs-on: ubuntu-latest
+    steps:
+      - run: for i in $(seq 1 150); do echo "::warning title=lint::finding $i"; done
+      - name: scanner crashes
+        continue-on-error: true
+        run: exit 1
+
+  reusable-call:
+    uses: ./.github/workflows/reusable-scan.yml
+
   self-verify:
-    needs: [sast, masked-step, masked-job, skipped-scan]
+    needs: [sast, masked-step, masked-job, skipped-scan, matrix-sast, noisy-masked, reusable-call]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     permissions:
@@ -86,4 +111,7 @@ jobs:
           check examples/policies/github-self-masked-step.yaml 1
           check examples/policies/github-self-masked-job.yaml 1
           check examples/policies/github-self-skipped.yaml 1
+          check examples/policies/github-self-matrix.yaml 1
+          check examples/policies/github-self-noisy.yaml 1
+          check examples/policies/github-self-reusable.yaml 0
           exit $failed

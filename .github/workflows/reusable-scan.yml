@@ -1,0 +1,14 @@
+# Reusable workflow used by github-contract.yml: its job shows up as "<caller> / callee-sast".
+name: reusable-scan
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  callee-sast:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "scan ran inside a reusable workflow"
