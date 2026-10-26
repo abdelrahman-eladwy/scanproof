@@ -44,7 +44,8 @@ with the digest the build pushed.
 v0.1 gives *operational* assurance: it catches mistakes, drift and silent failures. It does not
 stop someone who can edit the pipeline from forging a report. The docs say this plainly and show
 where to run the gate so it is harder to bypass. Cryptographic evidence (attestations, SLSA
-provenance) is the next step, and ScanProof's own releases already ship with signed provenance.
+provenance) is the next step, and ScanProof's own release pipeline is built to attach signed SLSA
+provenance to every package and image it publishes.
 
 ## 5. Strict by default, impossible to weaken by typo
 
@@ -65,4 +66,5 @@ read as "couldn't verify".
 Parser tests use real Semgrep and Trivy output generated in CI, not hand-written JSON. Every
 scenario from the design table (absent job, masked failure, missing report, 403, wrong commit,
 wrong image, retried job) is an end-to-end test, and the security-critical checks were mutation
-tested: disabling any of them makes a test fail.
+tested: disabling any of them makes a test fail. Every adapter is also fuzzed with corrupted
+versions of real reports, which found (and now pins) a denial-of-service and several crash paths.

@@ -19,14 +19,16 @@ and still find critical vulnerabilities. ScanProof checks the *scan*, not the *c
 | Option | Gap ScanProof fills |
 |---|---|
 | GitLab scan execution / pipeline execution policies | Enforce that scans or jobs *run* (Ultimate tier). Their docs don't describe checking that the *report* is valid, covers the code, or is bound to the shipped image digest. ScanProof complements them, and on Free/Premium it is the check you have. ([GitLab docs](https://docs.gitlab.com/user/application_security/policies/)) |
+| GitHub required status checks | Prove a job *concluded success*. A scan step that failed under `continue-on-error`, or a scan job skipped by `if:`, still lets the release through. ScanProof detects both (verified on live runs). |
 | Checking job status in a script | `success` + `allow_failure` + retries + missing jobs + empty reports = many silent false passes. |
 | Sigstore / in-toto attestations | The right long-term answer (ScanProof's v0.2+ direction), but most teams don't have it yet. ScanProof gives assurance today and a path there. |
 
 ## Quick start
 
 ```bash
-pip install -e ".[dev]"
-export GITLAB_TOKEN=glpat-...                     # read_api scope, read-only
+git clone https://github.com/abdelrahman-eladwy/scanproof && cd scanproof
+pip install -e ".[dev]"                           # PyPI package arrives with v0.1.0
+export GITLAB_TOKEN=glpat-...                     # Developer role + read_api scope (read-only)
 export RELEASE_IMAGE_DIGEST=sha256:...            # the image you are about to ship
 
 scanproof validate -P examples/policies/scanproof.yaml
@@ -60,13 +62,17 @@ Every check returns PASS / FAIL / UNKNOWN / NOT_APPLICABLE with a stable code
 (`REQUIRED_JOB_ABSENT`, `FAILURE_MASKED_BY_ALLOW_FAILURE`, `REPORT_MISSING`, `COMMIT_MISMATCH`,
 `IMAGE_DIGEST_MISMATCH`, `EVIDENCE_UNAVAILABLE`, ...). Findings are reported, never judged.
 
+On GitHub Actions use `provider: github` in the policy and a `GITHUB_TOKEN` with `actions: read` and
+`checks: read` (see [docs/usage-github.md](docs/usage-github.md)).
+
 Lower-level commands:
 
 ```bash
 scanproof inspect -p my-group/my-app --pipeline 1042   # pipeline inventory, no policy
 ```
 
-Normalize a scanner report into ScanProof evidence (local file, or straight from a GitLab job):
+Normalize a scanner report into ScanProof evidence (local file, or straight from a CI job; on
+GitHub add `--provider github --artifact <name>`):
 
 ```bash
 scanproof evidence -t semgrep -f semgrep.json
@@ -93,6 +99,15 @@ A release gate should block on anything non-zero.
 - [x] **M2 — Scanner adapters:** Semgrep (scan scope, errors) and Trivy (image digest binding)
 - [x] **M3 — Policy engine:** YAML policies, PASS / FAIL / UNKNOWN / NOT_APPLICABLE, `verify` command
 - [ ] **M4 — Hardening & release:** pinned CI, release workflow with provenance, docs (done); demo project and first PyPI release (pending)
+
+Beyond the original plan (merged):
+
+- [x] Real gitlab.com contract tests, `--anonymous` for public projects
+- [x] GitLab security report formats (SAST, container, dependency, secrets)
+- [x] SARIF and CycloneDX (any SARIF producer, SBOMs), `expected_scanner`, `minimum_components`
+- [x] Dependency, secrets and IaC scan types (Checkov, Trivy filesystem)
+- [x] **GitHub Actions** connector, verified against its own live runs
+- [ ] Fortify FPR and Sonatype IQ (experimental, PR #9)
 
 See [`docs/issues/`](docs/issues/) for detailed acceptance criteria.
 

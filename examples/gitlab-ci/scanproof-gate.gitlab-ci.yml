@@ -17,7 +17,7 @@
 .scanproof-verify:
   stage: verify
   image:
-    name: ghcr.io/abdelrahman-eladwy/scanproof:0.1
+    name: ghcr.io/abdelrahman-eladwy/scanproof:0.1   # published from v0.1.0; until then build your own
     entrypoint: [""]
   variables:
     SCANPROOF_POLICY: .scanproof/policy.yaml
