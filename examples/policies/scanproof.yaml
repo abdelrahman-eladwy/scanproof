@@ -1,38 +1,46 @@
-# DRAFT policy format (implemented in milestone 3). Not read by any command yet.
+# Example policy for the demo project in examples/gitlab-ci/.
+#
+#   export RELEASE_IMAGE_DIGEST=sha256:...   # digest of the image you are about to ship
+#   scanproof validate -P examples/policies/scanproof.yaml
+#   scanproof verify   -P examples/policies/scanproof.yaml --pipeline <id> -o report.json
+#
+# Unknown keys are rejected, so a typo cannot silently disable a check.
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy
 metadata:
-  name: payment-service-release
+  name: scanproof-demo-release
 project:
   provider: gitlab
-  id: acme/payment-service
+  id: your-group/scanproof-demo        # or a numeric id; --project overrides it
 
 requirements:
   - id: SAST-001
-    description: Semgrep SAST ran on this commit and produced a complete report
+    description: Semgrep ran on this commit, cleanly, over the application code
     tool: semgrep
     job_name: semgrep-sast
     report_path: semgrep.json
     checks:
-      job_success: true            # latest attempt status == success
-      allow_failure_masking: deny  # a failed job with allow_failure is still FAIL
-      report_required: true
-      scanner_errors_allowed: 0
+      job_success: true                # latest attempt succeeded (allow_failure can't hide a failure)
+      same_commit: true                # job ran on the pipeline commit
+      report_required: true            # a parseable Semgrep report exists
+      scanner_errors_allowed: 0        # Semgrep reported no errors about its own run
+      ignore_scanner_warnings: false   # syntax "warn"ings also count (unparsed files = blind spots)
       minimum_scanned_files: 1
-      required_paths: ["src/"]     # at least one scanned file under each path
-      same_commit: true
+      required_paths: ["sample-app/"]  # at least one file under each prefix was scanned
 
   - id: CONTAINER-001
     description: Trivy scanned the exact image being released
     tool: trivy
     job_name: trivy-image
     report_path: trivy.json
+    applies_to:
+      refs: ["main", "release/*"]      # NOT_APPLICABLE on other branches
     checks:
       job_success: true
-      report_required: true
       same_commit: true
-      image_digest_must_match: ${RELEASE_IMAGE_DIGEST}  # bind evidence to the shipped artifact
+      report_required: true
+      image_digest_must_match: ${RELEASE_IMAGE_DIGEST}
 
 enforcement:
   on_failure: block
-  on_unknown: block
+  on_unknown: block                    # 'warn' lets INDETERMINATE pass with a warning

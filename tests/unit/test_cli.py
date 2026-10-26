@@ -177,3 +177,86 @@ def test_evidence_missing_report_is_still_evidence(env, mock_api) -> None:
     result = runner.invoke(app, EVIDENCE_ARGS)
     assert result.exit_code == EXIT_OK
     assert json.loads(result.stdout)["present"] is False
+
+
+# ---------------------------------------------------------------- verify / validate
+
+POLICY_YAML = """
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: cli-test}
+project: {provider: gitlab, id: 123}
+requirements:
+  - id: SAST-001
+    tool: semgrep
+    job_name: semgrep-sast
+    report_path: semgrep.json
+    checks: {scanner_errors_allowed: 0, minimum_scanned_files: 1}
+"""
+
+
+@pytest.fixture
+def policy_file(tmp_path):
+    p = tmp_path / "scanproof.yaml"
+    p.write_text(POLICY_YAML)
+    return p
+
+
+def _verify_args(policy_file):
+    return ["verify", "-P", str(policy_file), "--pipeline", "1042", "--gitlab-url", BASE]
+
+
+def test_verify_verified(env, mock_api, policy_file, tmp_path) -> None:
+    _mock_ok(mock_api)
+    mock_api.get(f"{API}/projects/123/jobs/8821/artifacts/semgrep.json").respond(
+        content=(FX / "semgrep/semgrep-findings.json").read_bytes()
+    )
+    out = tmp_path / "report.json"
+    result = runner.invoke(app, [*_verify_args(policy_file), "-o", str(out)])
+    assert result.exit_code == 0, result.stderr
+    report = json.loads(out.read_text())
+    assert report["decision"] == "VERIFIED"
+    assert "Decision: VERIFIED" in result.stderr
+    assert TOKEN not in result.stderr + out.read_text()
+
+
+def test_verify_blocked_exit_1(env, mock_api, policy_file) -> None:
+    _mock_ok(mock_api)
+    mock_api.get(f"{API}/projects/123/jobs/8821/artifacts/semgrep.json").respond(404)
+    result = runner.invoke(app, _verify_args(policy_file))
+    assert result.exit_code == 1
+    assert json.loads(result.stdout)["decision"] == "BLOCKED"
+    assert "REPORT_MISSING" in result.stderr
+
+
+def test_verify_pipeline_unreachable_writes_indeterminate_report(
+    env, mock_api, policy_file, tmp_path
+) -> None:
+    mock_api.get(f"{API}/projects/123/pipelines/1042").respond(403)
+    out = tmp_path / "report.json"
+    result = runner.invoke(app, [*_verify_args(policy_file), "-o", str(out)])
+    assert result.exit_code == 2
+    report = json.loads(out.read_text())
+    assert report["decision"] == "INDETERMINATE"
+    assert report["error"]["kind"] == "AUTH"
+
+
+def test_verify_project_override(env, mock_api, policy_file) -> None:
+    route = mock_api.get(f"{API}/projects/acme%2Fother/pipelines/1042").respond(404)
+    result = runner.invoke(app, [*_verify_args(policy_file), "-p", "acme/other"])
+    assert route.called
+    assert result.exit_code == 2
+
+
+def test_verify_invalid_policy_is_usage_error(env, tmp_path) -> None:
+    bad = tmp_path / "bad.yaml"
+    bad.write_text(POLICY_YAML.replace("minimum_scanned_files", "minimum_scaned_files"))
+    result = runner.invoke(app, _verify_args(bad))
+    assert result.exit_code == EXIT_USAGE
+    assert "minimum_scaned_files: unknown field" in result.stderr
+
+
+def test_validate(policy_file) -> None:
+    result = runner.invoke(app, ["validate", "-P", str(policy_file)])
+    assert result.exit_code == 0
+    assert "OK: policy 'cli-test'" in result.stderr

@@ -20,17 +20,33 @@ and still find critical vulnerabilities. ScanProof checks the *scan*, not the *c
 | Checking job status in a script | `success` + `allow_failure` + retries + missing jobs + empty reports = many silent false passes. |
 | Sigstore / in-toto attestations | The right long-term answer (ScanProof's v0.2+ direction), but most teams don't have it yet. ScanProof gives assurance today and a path there. |
 
-## What works today (M1 Pipeline Inspector, M2 Scanner Evidence)
+## Quick start
 
 ```bash
 pip install -e ".[dev]"
-export GITLAB_TOKEN=glpat-...          # read_api scope, read-only
-scanproof inspect --project my-group/my-app --pipeline 1042 -o inspection.json
+export GITLAB_TOKEN=glpat-...                     # read_api scope, read-only
+export RELEASE_IMAGE_DIGEST=sha256:...            # the image you are about to ship
+
+scanproof validate -P examples/policies/scanproof.yaml
+scanproof verify   -P examples/policies/scanproof.yaml --pipeline 1042 -o report.json
 ```
 
-Produces a JSON inventory of the pipeline: every job, its effective (latest) attempt, retry
-history, `allow_failure`, commit binding, and artifacts — plus warnings for things that
-deserve a second look. No policy is applied yet.
+```
+[PASS] SAST-001  semgrep @ semgrep-sast (job 8821)  findings=6
+[FAIL] CONTAINER-001  trivy @ trivy-image (job 8830)  findings=2
+         FAIL: IMAGE_DIGEST_MISMATCH: Scanned alpine:3.20 (...), expected sha256:a0f5...
+Decision: BLOCKED  (1 failed, 0 unknown)  exit 1
+```
+
+Every check returns PASS / FAIL / UNKNOWN / NOT_APPLICABLE with a stable code
+(`REQUIRED_JOB_ABSENT`, `FAILURE_MASKED_BY_ALLOW_FAILURE`, `REPORT_MISSING`, `COMMIT_MISMATCH`,
+`IMAGE_DIGEST_MISMATCH`, `EVIDENCE_UNAVAILABLE`, ...). Findings are reported, never judged.
+
+Lower-level commands:
+
+```bash
+scanproof inspect -p my-group/my-app --pipeline 1042   # pipeline inventory, no policy
+```
 
 Normalize a scanner report into ScanProof evidence (local file, or straight from a GitLab job):
 
@@ -46,10 +62,10 @@ Self-hosted GitLab: `--gitlab-url https://gitlab.internal` and, for a private CA
 
 | Code | Meaning |
 |---|---|
-| 0 | Completed (verification passed, from milestone 3) |
-| 1 | Policy failure (milestone 3) |
-| 2 | **Indeterminate** — could not obtain evidence (auth, network, not found) |
-| 3 | Usage error |
+| 0 | VERIFIED (or `inspect` / `evidence` completed) |
+| 1 | BLOCKED: a required control failed |
+| 2 | **INDETERMINATE**: evidence could not be obtained (auth, network, unfinished jobs) |
+| 3 | Usage error or invalid policy |
 
 A release gate should block on anything non-zero.
 
@@ -57,7 +73,7 @@ A release gate should block on anything non-zero.
 
 - [x] **M1 — GitLab Pipeline Inspector**
 - [x] **M2 — Scanner adapters:** Semgrep (scan scope, errors) and Trivy (image digest binding)
-- [ ] **M3 — Policy engine:** YAML policies, PASS / FAIL / UNKNOWN / NOT_APPLICABLE, `verify` command
+- [x] **M3 — Policy engine:** YAML policies, PASS / FAIL / UNKNOWN / NOT_APPLICABLE, `verify` command
 - [ ] **M4 — Hardening & release:** Docker image, docs, demo project, PyPI
 
 See [`docs/issues/`](docs/issues/) for detailed acceptance criteria.

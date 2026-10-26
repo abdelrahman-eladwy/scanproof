@@ -15,7 +15,8 @@ whether the application is secure.
 connectors/   CI platform access (GitLab). Returns models from scanproof.models only.
 scanners/     one adapter per tool: raw report bytes -> ScanEvidence. Never raise on bad input.
 evidence/     unified evidence model + collector (fetch job report -> evidence).
-policy/       (M3) YAML policy models + engine. Never imports connectors or raw scanner JSON.
+policy/       YAML policy models (extra=forbid) + pure engine. No I/O, no connector imports.
+verification.py orchestrates verify: inspection + evidence -> engine -> report.
 reporting/    console (stderr) and JSON (stdout / file) output.
 inspection.py M1 pipeline inventory, no judgement.
 cli.py        Typer CLI. Thin: parse args, call core, map errors to exit codes.
@@ -54,4 +55,6 @@ pytest
 ruff check . && ruff format .
 scanproof inspect -p <project> --pipeline <id>   # needs GITLAB_TOKEN
 scanproof evidence -t semgrep -f tests/fixtures/semgrep/semgrep-findings.json
+scanproof validate -P examples/policies/scanproof.yaml        # needs RELEASE_IMAGE_DIGEST
+scanproof verify -P <policy> --pipeline <id>
 ```
