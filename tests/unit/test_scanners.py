@@ -181,7 +181,14 @@ def test_trivy_target_without_digest() -> None:
 
 
 def test_registry() -> None:
-    assert set(ADAPTERS) == {"semgrep", "trivy", "gitlab-sast", "gitlab-container-scanning"}
+    assert {
+        "semgrep",
+        "trivy",
+        "gitlab-sast",
+        "gitlab-container-scanning",
+        "sarif",
+        "cyclonedx",
+    } <= set(ADAPTERS)
     assert get_adapter("Semgrep").tool == "semgrep"
-    with pytest.raises(KeyError, match="Supported: gitlab-container-scanning, gitlab-sast"):
+    with pytest.raises(KeyError, match="Supported: cyclonedx, gitlab-container-scanning"):
         get_adapter("fortify")

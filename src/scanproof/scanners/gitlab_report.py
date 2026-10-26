@@ -52,6 +52,7 @@ class _GitLabReportAdapter(ScannerAdapter):
         scan = data["scan"]
         return {
             "tool_version": _tool_version(scan),
+            "scanner_name": (scan.get("scanner") or {}).get("id"),
             "scanner_errors": _scanner_errors(scan),
             "scope": None,  # the format does not list scanned files
             "results_reported": True,

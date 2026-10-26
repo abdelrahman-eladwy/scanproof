@@ -1,0 +1,38 @@
+# Generic formats: any SARIF-producing scanner, plus an SBOM bound to the shipped image.
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata:
+  name: sarif-and-sbom-release
+project:
+  provider: gitlab
+  id: your-group/your-app
+
+requirements:
+  - id: SAST-CODEQL
+    description: CodeQL ran and uploaded SARIF (SARIF can come from anything, so pin the engine)
+    tool: sarif
+    job_name: codeql
+    report_path: codeql.sarif
+    checks:
+      expected_scanner: CodeQL
+      scanner_errors_allowed: 0     # needs runs[].invocations; UNKNOWN if the tool omits them
+
+  - id: IAC-CHECKOV
+    tool: sarif
+    job_name: checkov
+    report_path: results_sarif.sarif
+    checks:
+      expected_scanner: Checkov
+
+  - id: SBOM-001
+    description: An SBOM was generated for the exact image being released
+    tool: cyclonedx
+    job_name: sbom
+    report_path: sbom.cdx.json
+    checks:
+      minimum_components: 1
+      image_digest_must_match: ${RELEASE_IMAGE_DIGEST}
+
+enforcement:
+  on_failure: block
+  on_unknown: block

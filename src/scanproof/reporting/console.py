@@ -52,7 +52,8 @@ def _unknown(value: object) -> str:
 
 def print_evidence_summary(ev: ScanEvidence) -> None:
     out = lambda line="": typer.echo(line, err=True)  # noqa: E731
-    out(f"Evidence: {ev.tool} ({ev.scan_type.value})  version={_unknown(ev.tool_version)}")
+    engine = f"  engine={ev.scanner_name}" if ev.scanner_name else ""
+    out(f"Evidence: {ev.tool} ({ev.scan_type.value})  version={_unknown(ev.tool_version)}{engine}")
     if not ev.present:
         out(f"  report:   MISSING - {ev.parse_error}")
         return
@@ -64,7 +65,11 @@ def print_evidence_summary(ev: ScanEvidence) -> None:
     targets = (
         len(ev.scope.scanned_paths) if ev.scope and ev.scope.scanned_paths is not None else None
     )
-    out(f"  scope:    files={_unknown(files)}  targets={_unknown(targets)}")
+    components = ev.scope.components if ev.scope else None
+    if components is not None:
+        out(f"  scope:    components={components}")
+    else:
+        out(f"  scope:    files={_unknown(files)}  targets={_unknown(targets)}")
     out(f"  errors:   {_unknown(ev.scanner_error_count)}")
     if ev.findings is not None:
         sev = ", ".join(f"{k}={v}" for k, v in ev.findings.by_severity.items()) or "none"

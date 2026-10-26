@@ -63,7 +63,9 @@ class ScannerAdapter(ABC):
         """Map a well-shaped report onto ScanEvidence fields."""
 
     def _evidence(self, **fields: Any) -> ScanEvidence:
-        return ScanEvidence(tool=self.tool, scan_type=self.scan_type, **fields)
+        # An adapter may refine the scan type from report content (e.g. Trivy fs vs image).
+        scan_type = fields.pop("scan_type", None) or self.scan_type
+        return ScanEvidence(tool=self.tool, scan_type=scan_type, **fields)
 
 
 def count_by(values: list[str]) -> dict[str, int]:

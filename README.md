@@ -38,8 +38,16 @@ scanproof verify   -P examples/policies/scanproof.yaml --pipeline 1042 -o report
 Decision: BLOCKED  (1 failed, 0 unknown)  exit 1
 ```
 
-Supported reports: native **Semgrep** and **Trivy** JSON, and **GitLab's security report format**
-(`gl-sast-report.json`, `gl-container-scanning-report.json`) from GitLab's own CI templates.
+Supported reports:
+
+| `tool:` | Format | Typical producers |
+|---|---|---|
+| `semgrep`, `trivy` | native JSON | Semgrep, Trivy |
+| `gitlab-sast`, `gitlab-container-scanning` | GitLab security report | GitLab's own CI templates |
+| `sarif` | SARIF 2.1.0 | CodeQL, Semgrep, Trivy, gitleaks, Checkov, Snyk, ... (pin the engine with `expected_scanner`) |
+| `cyclonedx` | CycloneDX JSON SBOM | Trivy, Syft, cdxgen, ... |
+
+Details and tested versions: [docs/compatibility.md](docs/compatibility.md).
 
 Every check returns PASS / FAIL / UNKNOWN / NOT_APPLICABLE with a stable code
 (`REQUIRED_JOB_ABSENT`, `FAILURE_MASKED_BY_ALLOW_FAILURE`, `REPORT_MISSING`, `COMMIT_MISMATCH`,

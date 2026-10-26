@@ -60,6 +60,7 @@ class SemgrepAdapter(ScannerAdapter):
         ]
         return {
             "tool_version": data.get("version"),
+            "scanner_name": "semgrep",
             "scanner_errors": errors,
             "scope": scope,
             "results_reported": True,
