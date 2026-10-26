@@ -1,0 +1,67 @@
+# ScanProof demo / test project pipeline
+#
+# Copy this file (and sample-app/) into a NEW, empty GitLab project you own.
+# Run pipelines from CI/CD > Pipelines > "Run pipeline", optionally setting the
+# SCENARIO variable to reproduce the failure modes ScanProof must detect:
+#
+#   (unset)               happy path: both scans run and upload valid reports
+#   no_sast               semgrep-sast is removed from the pipeline by rules
+#   sast_allowed_failure  semgrep-sast fails, but allow_failure hides it
+#   no_report             semgrep-sast succeeds without uploading semgrep.json
+#   broken_report         semgrep-sast uploads invalid JSON
+#   trivy_wrong_image     Trivy scans a different image than the one "released"
+#
+# For a retried-job scenario, manually click "Retry" on trivy-image after it finishes.
+
+stages:
+  - security
+  - release
+
+variables:
+  # The image this pipeline pretends to release. Pin by digest in real projects.
+  RELEASE_IMAGE: "python:3.12-slim"
+
+semgrep-sast:
+  stage: security
+  image: semgrep/semgrep:latest
+  rules:
+    - if: '$SCENARIO == "no_sast"'
+      when: never
+    - if: '$SCENARIO == "sast_allowed_failure"'
+      allow_failure: true
+    - when: on_success
+  script:
+    - |
+      case "$SCENARIO" in
+        sast_allowed_failure) echo "simulating scanner crash"; exit 1 ;;
+        no_report)            echo "scan 'succeeded' but wrote nothing"; exit 0 ;;
+        broken_report)        echo '{"results": [ truncated' > semgrep.json; exit 0 ;;
+      esac
+    - semgrep scan --config p/default --metrics=off --json --output semgrep.json sample-app/
+  artifacts:
+    when: always
+    paths:
+      - semgrep.json
+    expire_in: 30 days
+
+trivy-image:
+  stage: security
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - |
+      TARGET="$RELEASE_IMAGE"
+      if [ "$SCENARIO" = "trivy_wrong_image" ]; then TARGET="alpine:3.20"; fi
+    - trivy image --format json --output trivy.json --exit-code 0 "$TARGET"
+  artifacts:
+    when: always
+    paths:
+      - trivy.json
+    expire_in: 30 days
+
+release:
+  stage: release
+  image: alpine:3.20
+  script:
+    - echo "Would release $RELEASE_IMAGE at $CI_COMMIT_SHA"

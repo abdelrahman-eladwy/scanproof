@@ -1,0 +1,38 @@
+# DRAFT policy format (implemented in milestone 3). Not read by any command yet.
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata:
+  name: payment-service-release
+project:
+  provider: gitlab
+  id: acme/payment-service
+
+requirements:
+  - id: SAST-001
+    description: Semgrep SAST ran on this commit and produced a complete report
+    tool: semgrep
+    job_name: semgrep-sast
+    report_path: semgrep.json
+    checks:
+      job_success: true            # latest attempt status == success
+      allow_failure_masking: deny  # a failed job with allow_failure is still FAIL
+      report_required: true
+      scanner_errors_allowed: 0
+      minimum_scanned_files: 1
+      required_paths: ["src/"]     # at least one scanned file under each path
+      same_commit: true
+
+  - id: CONTAINER-001
+    description: Trivy scanned the exact image being released
+    tool: trivy
+    job_name: trivy-image
+    report_path: trivy.json
+    checks:
+      job_success: true
+      report_required: true
+      same_commit: true
+      image_digest_must_match: ${RELEASE_IMAGE_DIGEST}  # bind evidence to the shipped artifact
+
+enforcement:
+  on_failure: block
+  on_unknown: block
