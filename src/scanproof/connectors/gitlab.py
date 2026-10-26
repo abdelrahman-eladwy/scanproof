@@ -19,34 +19,19 @@ from __future__ import annotations
 import time
 from collections.abc import Callable, Iterator
 from typing import Any
-from urllib.parse import quote, urljoin, urlsplit
+from urllib.parse import quote
 
 import httpx
 
-from scanproof import __version__
-from scanproof.connectors.base import (
-    AuthError,
-    CIConnector,
-    ConnectorError,
-    ErrorKind,
-    NotFoundError,
-)
+from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
+from scanproof.connectors.http import DEFAULT_MAX_ARTIFACT_BYTES, MAX_PAGES, HttpConnector
 from scanproof.models import ArtifactFile, Job, JobStatus, Pipeline
 
-RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504})
-DEFAULT_MAX_ARTIFACT_BYTES = 50 * 1024 * 1024
-MAX_PAGES = 100  # 100 pages x 100 jobs: far beyond any real pipeline
-MAX_REDIRECTS = 3
 
-
-def _origin(url: str | httpx.URL) -> tuple[str, str, int | None]:
-    parts = urlsplit(str(url))
-    default_port = {"https": 443, "http": 80}.get(parts.scheme)
-    return (parts.scheme, (parts.hostname or "").lower(), parts.port or default_port)
-
-
-class GitLabConnector(CIConnector):
+class GitLabConnector(HttpConnector):
     provider = "gitlab"
+    label = "GitLab"
+    auth_hint = "Set GITLAB_TOKEN (read_api scope)."
 
     def __init__(
         self,
@@ -62,34 +47,19 @@ class GitLabConnector(CIConnector):
         transport: httpx.BaseTransport | None = None,
         sleep: Callable[[float], None] = time.sleep,
     ) -> None:
-        # Anonymous access (public projects only) must be asked for explicitly, so a token
-        # that silently failed to load can never degrade into unauthenticated requests.
-        if anonymous and token:
-            raise AuthError("Use either a token or anonymous mode, not both.")
-        if not anonymous and not token:
-            raise AuthError("No GitLab token provided. Set GITLAB_TOKEN (read_api scope).")
-        base_url = base_url.rstrip("/")
-        if urlsplit(base_url).scheme != "https" and not _is_loopback(base_url):
-            raise ConnectorError(ErrorKind.NETWORK, f"Refusing non-HTTPS GitLab URL: {base_url}")
-        self.base_url = base_url
-        self.api_url = f"{base_url}/api/v4"
-        self._origin = _origin(base_url)
-        self._token = None if anonymous else token
-        self.anonymous = anonymous
-        self.max_retries = max_retries
-        self.backoff_seconds = backoff_seconds
-        self.max_artifact_bytes = max_artifact_bytes
-        self._sleep = sleep
-        self._client = httpx.Client(
+        super().__init__(
+            base_url,
+            token,
+            api_url=f"{base_url.rstrip('/')}/api/v4",
+            anonymous=anonymous,
             timeout=timeout,
-            verify=ca_bundle if ca_bundle else True,
-            follow_redirects=False,
-            headers={"User-Agent": f"scanproof/{__version__}", "Accept": "application/json"},
+            ca_bundle=ca_bundle,
+            max_retries=max_retries,
+            backoff_seconds=backoff_seconds,
+            max_artifact_bytes=max_artifact_bytes,
             transport=transport,
+            sleep=sleep,
         )
-
-    def __repr__(self) -> str:  # never expose the token
-        return f"GitLabConnector(base_url={self.base_url!r}, anonymous={self.anonymous})"
 
     # ------------------------------------------------------------------ public API
 
@@ -126,67 +96,17 @@ class GitLabConnector(CIConnector):
         url = f"{self.api_url}/projects/{_project_ref(project)}/jobs/{job_id}/artifacts/{safe_path}"
         return self._download(url)
 
-    def close(self) -> None:
-        self._client.close()
-
-    # ------------------------------------------------------------------ HTTP plumbing
-
-    def _auth_headers_for(self, url: str | httpx.URL) -> dict[str, str]:
-        if self._token and _origin(url) == self._origin:
-            return {"Authorization": f"Bearer {self._token}"}
-        return {}
-
-    def _send(
-        self, url: str, params: dict[str, Any] | None = None, *, stream: bool = False
-    ) -> httpx.Response:
-        """GET with retries and manual, credential-safe redirect handling."""
-        attempt = 0
-        while True:
-            try:
-                response = self._follow(url, params, stream=stream)
-            except httpx.TransportError as exc:
-                if attempt >= self.max_retries:
-                    raise ConnectorError(
-                        ErrorKind.NETWORK, f"Network error calling GitLab: {type(exc).__name__}"
-                    ) from exc
-                self._backoff(attempt, None)
-                attempt += 1
-                continue
-
-            if response.status_code in RETRYABLE_STATUS and attempt < self.max_retries:
-                retry_after = response.headers.get("Retry-After")
-                response.close()
-                self._backoff(attempt, retry_after)
-                attempt += 1
-                continue
-            return response
-
-    def _follow(self, url: str, params: dict[str, Any] | None, *, stream: bool) -> httpx.Response:
-        current: httpx.URL = httpx.URL(url, params=params)
-        for _ in range(MAX_REDIRECTS + 1):
-            request = self._client.build_request(
-                "GET", current, headers=self._auth_headers_for(current)
-            )
-            response = self._client.send(request, stream=stream)
-            if not response.is_redirect:
-                return response
-            location = response.headers.get("Location", "")
-            response.close()
-            target = httpx.URL(urljoin(str(current), location))
-            if current.scheme == "https" and target.scheme != "https":
-                raise ConnectorError(
-                    ErrorKind.UNSAFE_REDIRECT,
-                    f"Refused redirect from HTTPS to {target.scheme.upper()} ({target.host})",
-                    response.status_code,
-                )
-            current = target
-        raise ConnectorError(ErrorKind.UNSAFE_REDIRECT, f"More than {MAX_REDIRECTS} redirects")
-
-    def _backoff(self, attempt: int, retry_after: str | None) -> None:
-        delay = self.backoff_seconds * (2**attempt)
-        if retry_after and retry_after.isdigit():
-            delay = max(delay, float(retry_after))
-        self._sleep(min(delay, 60.0))
+    def fetch_report(
+        self, project: str, job: Job, report_path: str, artifact_name: str | None = None
+    ) -> bytes:
+        if not job.has_archive:
+            raise NotFoundError("Job uploaded no artifacts archive", status_code=None)
+        try:
+            return self.download_artifact_file(project, job.id, report_path)
+        except NotFoundError:
+            raise NotFoundError(
+                f"'{report_path}' not found in job artifacts (never uploaded, or expired)"
+            ) from None
 
     def _raise_for_status(self, response: httpx.Response, what: str) -> None:
         code = response.status_code
@@ -210,16 +130,6 @@ class GitLabConnector(CIConnector):
             raise ConnectorError(ErrorKind.SERVER, f"GitLab server error fetching {what}", code)
         raise ConnectorError(ErrorKind.INVALID_RESPONSE, f"HTTP {code} fetching {what}", code)
 
-    def _get_json(self, path: str, params: dict[str, Any] | None = None) -> Any:
-        response = self._send(f"{self.api_url}{path}", params)
-        self._raise_for_status(response, path)
-        try:
-            return response.json()
-        except ValueError as exc:
-            raise ConnectorError(
-                ErrorKind.INVALID_RESPONSE, f"Non-JSON response from {path}"
-            ) from exc
-
     def _paginate(self, path: str, params: dict[str, Any]) -> Iterator[dict[str, Any]]:
         page = 1
         for _ in range(MAX_PAGES):
@@ -242,37 +152,8 @@ class GitLabConnector(CIConnector):
             page = int(next_page)
         raise ConnectorError(ErrorKind.LIMIT_EXCEEDED, f"More than {MAX_PAGES} pages from {path}")
 
-    def _download(self, url: str) -> bytes:
-        response = self._send(url, stream=True)
-        try:
-            self._raise_for_status(response, urlsplit(url).path)
-            declared = response.headers.get("Content-Length")
-            if declared and declared.isdigit() and int(declared) > self.max_artifact_bytes:
-                raise ConnectorError(
-                    ErrorKind.LIMIT_EXCEEDED,
-                    f"Artifact is {int(declared)} bytes; limit is {self.max_artifact_bytes}",
-                )
-            chunks: list[bytes] = []
-            total = 0
-            for chunk in response.iter_bytes():
-                total += len(chunk)
-                if total > self.max_artifact_bytes:
-                    raise ConnectorError(
-                        ErrorKind.LIMIT_EXCEEDED,
-                        f"Artifact exceeded {self.max_artifact_bytes} bytes while streaming",
-                    )
-                chunks.append(chunk)
-            return b"".join(chunks)
-        finally:
-            response.close()
-
 
 # ---------------------------------------------------------------------- helpers
-
-
-def _is_loopback(url: str) -> bool:
-    host = (urlsplit(url).hostname or "").lower()
-    return host in {"localhost", "127.0.0.1", "::1"}
 
 
 def _project_ref(project: str) -> str:
