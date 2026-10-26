@@ -12,5 +12,12 @@ Versions ScanProof's adapters are tested against (real reports in `tests/fixture
 | SARIF 2.1.0 (`sarif`) | Semgrep 1.181.1, Trivy 0.76.1, gitleaks 8.30.1, Checkov 3.3.30 | any SARIF 2.x log | Engine = `runs[].tool.driver.name`; errors only when the producer writes `invocations` (Semgrep does; Trivy, gitleaks, Checkov don't, so errors are unknown); scope only when it lists `artifacts`; result level falls back to the rule default. gitleaks reports its SARIF version as `v8.0.0` regardless of release |
 | CycloneDX JSON (`cyclonedx`) | Trivy 0.76.1, Syft 1.55.0 (spec 1.7) | SBOM | Components counted recursively. Digest from `metadata.component` purl / bom-ref (Trivy has it, Syft doesn't). An empty `vulnerabilities: []` is treated as unknown, not zero: Trivy writes it without scanning |
 
+| GitLab Dependency Scanning (`gitlab-dependency-scanning`) | security-products/gemnasium:6 (6.6.5), schema 15.2.2 | `gl-dependency-scanning-report.json` | No `dependency_files` in schema 15, so lockfile scope is unknown |
+| GitLab Secret Detection (`gitlab-secret-detection`) | security-products/secrets:7 (7.40.3, gitleaks 8.30.1), schema 15.2.4 | `gl-secret-detection-report.json` | Report holds a hash of the secret, never the value |
+| Checkov (`checkov`) | 3.3.30 (terraform) | `checkov -o json` (object or list per framework) | `parsing_errors` = scanner errors; `resource_count` = scope. Severity needs a Prisma Cloud key, usually UNKNOWN |
+| Trivy filesystem (`trivy`) | 0.76.1 | `trivy fs --format json` | `ArtifactType: filesystem` -> DEPENDENCY scan; each Result target is a lockfile read |
+
+Which checks each format can satisfy: [scan-types.md](scan-types.md).
+
 Other versions likely work; unknown extra fields are ignored. Unsupported Trivy schema versions are
 rejected as unparseable rather than guessed at.

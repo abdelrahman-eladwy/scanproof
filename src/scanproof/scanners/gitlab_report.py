@@ -126,3 +126,22 @@ def _scanner_errors(scan: dict[str, Any]) -> list[ScannerError] | None:
             ScannerError(level="error", type="scan.status", message=f"scan.status is '{status}'"),
         )
     return errors
+
+
+class GitLabDependencyScanningAdapter(_GitLabReportAdapter):
+    """gl-dependency-scanning-report.json (tested: gemnasium:6, schema 15.2.2).
+
+    Schema 15.x no longer lists dependency_files, so which lockfiles were read is unknown.
+    """
+
+    tool = "gitlab-dependency-scanning"
+    scan_type = ScanType.DEPENDENCY
+    report_type = "dependency_scanning"
+
+
+class GitLabSecretDetectionAdapter(_GitLabReportAdapter):
+    """gl-secret-detection-report.json (tested: secrets:7, which runs gitleaks 8.30.1)."""
+
+    tool = "gitlab-secret-detection"
+    scan_type = ScanType.SECRETS
+    report_type = "secret_detection"

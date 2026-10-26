@@ -44,10 +44,13 @@ Supported reports:
 |---|---|---|
 | `semgrep`, `trivy` | native JSON | Semgrep, Trivy |
 | `gitlab-sast`, `gitlab-container-scanning` | GitLab security report | GitLab's own CI templates |
+| `gitlab-dependency-scanning`, `gitlab-secret-detection` | GitLab security report | GitLab's own CI templates |
+| `checkov` | native JSON | Checkov (IaC) |
 | `sarif` | SARIF 2.1.0 | CodeQL, Semgrep, Trivy, gitleaks, Checkov, Snyk, ... (pin the engine with `expected_scanner`) |
 | `cyclonedx` | CycloneDX JSON SBOM | Trivy, Syft, cdxgen, ... |
 
-Details and tested versions: [docs/compatibility.md](docs/compatibility.md).
+Tested versions: [docs/compatibility.md](docs/compatibility.md). Which checks each format can
+actually prove (SAST, dependency, secrets, IaC, container, SBOM): [docs/scan-types.md](docs/scan-types.md).
 
 Every check returns PASS / FAIL / UNKNOWN / NOT_APPLICABLE with a stable code
 (`REQUIRED_JOB_ABSENT`, `FAILURE_MASKED_BY_ALLOW_FAILURE`, `REPORT_MISSING`, `COMMIT_MISMATCH`,

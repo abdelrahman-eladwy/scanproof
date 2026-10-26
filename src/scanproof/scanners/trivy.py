@@ -49,8 +49,14 @@ class TrivyAdapter(ScannerAdapter):
         results = data.get("Results")
         scope = None
         findings = None
+        artifact_type = data.get("ArtifactType")
+        is_image = artifact_type in (None, "container_image")
         if isinstance(results, list):
-            scope = ScanScope(scanned_paths=[str(r.get("Target")) for r in results])
+            targets = [str(r.get("Target")) for r in results]
+            # For filesystem/repository scans each target is a lockfile or manifest Trivy read.
+            scope = ScanScope(
+                scanned_paths=targets, files_scanned=None if is_image else len(targets)
+            )
             severities = [
                 str(v.get("Severity", "UNKNOWN")).upper()
                 for r in results
@@ -63,6 +69,7 @@ class TrivyAdapter(ScannerAdapter):
         return {
             "tool_version": version,
             "scanner_name": "trivy",
+            "scan_type": ScanType.CONTAINER if is_image else ScanType.DEPENDENCY,
             "scanner_errors": None,
             "scope": scope,
             "results_reported": isinstance(results, list),

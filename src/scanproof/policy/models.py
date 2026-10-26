@@ -50,6 +50,9 @@ class Checks(_Strict):
         "case-insensitive",
     )
     minimum_components: int | None = Field(None, ge=0, description="SBOM: minimum components")
+    minimum_resources: int | None = Field(
+        None, ge=0, description="IaC: minimum resources the scanner evaluated"
+    )
 
     @field_validator("image_digest_must_match")
     @classmethod

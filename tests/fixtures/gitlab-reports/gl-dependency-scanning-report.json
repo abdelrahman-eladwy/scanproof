@@ -1,0 +1,576 @@
+{
+  "version": "15.2.2",
+  "vulnerabilities": [
+    {
+      "id": "144f9afeb1e0377b928698af314ecca55922e749083755fc178c230655436ab9",
+      "name": "Prototype Pollution in lodash",
+      "description": "Versions of lodash prior to 4.17.19 are vulnerable to Prototype Pollution. The functions `pick`, `set`, `setWith`, `update`, `updateWith`, and `zipObjectDeep` allow a malicious user to modify the prototype of Object if the property identifiers are user-supplied. Being affected by this issue requires manipulating objects based on user-provided property values or arrays.\n\nThis vulnerability causes the addition or modification of an existing property that will exist on all objects and may lead to Denial of Service or Code Execution under specific circumstances.",
+      "severity": "High",
+      "solution": "Upgrade to version 4.17.19 or above.",
+      "location": {
+        "file": "package-lock.json",
+        "dependency": {
+          "package": {
+            "name": "lodash"
+          },
+          "version": "4.17.15"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "gemnasium",
+          "name": "Gemnasium-1f7fa42b-6b17-46b7-88a5-8995b43d298f",
+          "value": "1f7fa42b-6b17-46b7-88a5-8995b43d298f",
+          "url": "https://gitlab.com/gitlab-org/security-products/gemnasium-db/-/blob/master/npm/lodash/CVE-2020-8203.yml"
+        },
+        {
+          "type": "cve",
+          "name": "CVE-2020-8203",
+          "value": "CVE-2020-8203",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-8203"
+        },
+        {
+          "type": "ghsa",
+          "name": "GHSA-p6mc-m468-83gw",
+          "value": "GHSA-p6mc-m468-83gw",
+          "url": "https://github.com/advisories/GHSA-p6mc-m468-83gw"
+        }
+      ],
+      "cvss_vectors": [
+        {
+          "vendor": "NVD",
+          "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:H"
+        },
+        {
+          "vendor": "NVD",
+          "vector": "AV:N/AC:M/Au:N/C:N/I:P/A:P"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://github.com/advisories/GHSA-p6mc-m468-83gw"
+        },
+        {
+          "url": "https://github.com/github/advisory-database/pull/2884"
+        },
+        {
+          "url": "https://github.com/lodash/lodash"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/commit/c84fe82760fb2d3e03a63379b297a1cc1a2fce12"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/issues/4744"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/issues/4874"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/wiki/Changelog#v41719"
+        },
+        {
+          "url": "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/lodash-rails/CVE-2020-8203.yml"
+        },
+        {
+          "url": "https://hackerone.com/reports/712065"
+        },
+        {
+          "url": "https://hackerone.com/reports/864701"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-8203"
+        },
+        {
+          "url": "https://security.netapp.com/advisory/ntap-20200724-0006"
+        },
+        {
+          "url": "https://web.archive.org/web/20210914001339/https://github.com/lodash/lodash/issues/4744"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "type": "text",
+          "name": "Vulnerable Package",
+          "value": "lodash:4.17.15"
+        }
+      }
+    },
+    {
+      "id": "28d54201049005c7165968cfd051c904b206233dc5810c21667ef7824accd966",
+      "name": "lodash vulnerable to Code Injection via `_.template` imports key names",
+      "description": "The fix for [CVE-2021-23337](https://github.com/advisories/GHSA-35jh-r3h4-6jhm) added validation for the `variable` option in `_.template` but did not apply the same validation to `options.imports` key names. Both paths flow into the same `Function()` constructor sink.\n\nWhen an application passes untrusted input as `options.imports` key names, an attacker can inject default-parameter expressions that execute arbitrary code at template compilation time.\n\nAdditionally, `_.template` uses `assignInWith` to merge imports, which enumerates inherited properties via `for..in`. If `Object.prototype` has been polluted by any other vector, the polluted keys are copied into the imports object and passed to `Function()`.",
+      "severity": "High",
+      "solution": "Upgrade to version 4.18.0 or above.",
+      "location": {
+        "file": "package-lock.json",
+        "dependency": {
+          "package": {
+            "name": "lodash"
+          },
+          "version": "4.17.15"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "gemnasium",
+          "name": "Gemnasium-cd02b702-718b-43b0-84b5-413ccbf7eabb",
+          "value": "cd02b702-718b-43b0-84b5-413ccbf7eabb",
+          "url": "https://gitlab.com/gitlab-org/security-products/gemnasium-db/-/blob/master/npm/lodash/CVE-2026-4800.yml"
+        },
+        {
+          "type": "cve",
+          "name": "CVE-2026-4800",
+          "value": "CVE-2026-4800",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-4800"
+        },
+        {
+          "type": "ghsa",
+          "name": "GHSA-r5fr-rjxr-66jc",
+          "value": "GHSA-r5fr-rjxr-66jc",
+          "url": "https://github.com/advisories/GHSA-r5fr-rjxr-66jc"
+        }
+      ],
+      "cvss_vectors": [
+        {
+          "vendor": "NVD",
+          "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://cna.openjsf.org/security-advisories.html"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-35jh-r3h4-6jhm"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-r5fr-rjxr-66jc"
+        },
+        {
+          "url": "https://github.com/lodash/lodash"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/commit/3469357cff396a26c363f8c1b5a91dde28ba4b1c"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/security/advisories/GHSA-r5fr-rjxr-66jc"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-4800"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "type": "text",
+          "name": "Vulnerable Package",
+          "value": "lodash:4.17.15"
+        }
+      }
+    },
+    {
+      "id": "cf01910261b5af3d047c20d7ebb0a07c74b619e94606e11b770f37ac03ef5b5d",
+      "name": "Command Injection in lodash",
+      "description": "`lodash` versions prior to 4.17.21 are vulnerable to Command Injection via the template function.",
+      "severity": "High",
+      "solution": "Upgrade to version 4.17.21 or above.",
+      "location": {
+        "file": "package-lock.json",
+        "dependency": {
+          "package": {
+            "name": "lodash"
+          },
+          "version": "4.17.15"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "gemnasium",
+          "name": "Gemnasium-e5737c01-5af2-4fe9-99c0-c232d7960f2b",
+          "value": "e5737c01-5af2-4fe9-99c0-c232d7960f2b",
+          "url": "https://gitlab.com/gitlab-org/security-products/gemnasium-db/-/blob/master/npm/lodash/CVE-2021-23337.yml"
+        },
+        {
+          "type": "cve",
+          "name": "CVE-2021-23337",
+          "value": "CVE-2021-23337",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-23337"
+        },
+        {
+          "type": "ghsa",
+          "name": "GHSA-35jh-r3h4-6jhm",
+          "value": "GHSA-35jh-r3h4-6jhm",
+          "url": "https://github.com/advisories/GHSA-35jh-r3h4-6jhm"
+        }
+      ],
+      "cvss_vectors": [
+        {
+          "vendor": "NVD",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H"
+        },
+        {
+          "vendor": "NVD",
+          "vector": "AV:N/AC:L/Au:S/C:P/I:P/A:P"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-35jh-r3h4-6jhm"
+        },
+        {
+          "url": "https://github.com/lodash/lodash"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/blob/ddfd9b11a0126db2302cb70ec9973b66baec0975/lodash.js#L14851"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/commit/3469357cff396a26c363f8c1b5a91dde28ba4b1c"
+        },
+        {
+          "url": "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/lodash-rails/CVE-2021-23337.yml"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-23337"
+        },
+        {
+          "url": "https://security.netapp.com/advisory/ntap-20210312-0006"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGFUJIONWEBJARS-1074932"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARS-1074930"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-1074928"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBLODASH-1074931"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1074929"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JS-LODASH-1040724"
+        },
+        {
+          "url": "https://www.oracle.com//security-alerts/cpujul2021.html"
+        },
+        {
+          "url": "https://www.oracle.com/security-alerts/cpujan2022.html"
+        },
+        {
+          "url": "https://www.oracle.com/security-alerts/cpujul2022.html"
+        },
+        {
+          "url": "https://www.oracle.com/security-alerts/cpuoct2021.html"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "type": "text",
+          "name": "Vulnerable Package",
+          "value": "lodash:4.17.15"
+        }
+      }
+    },
+    {
+      "id": "f377ff43d272c7bd035947a2aa0f9de3aba3b28699e1a2179b791fb3cc4a4f0a",
+      "name": "Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions",
+      "description": "Lodash versions 4.0.0 through 4.17.22 are vulnerable to prototype pollution in the `_.unset` and `_.omit` functions. An attacker can pass crafted paths which cause Lodash to delete methods from global prototypes.\n\nThe issue permits deletion of properties but does not allow overwriting their original behavior.",
+      "severity": "Medium",
+      "solution": "Upgrade to version 4.17.23 or above.",
+      "location": {
+        "file": "package-lock.json",
+        "dependency": {
+          "package": {
+            "name": "lodash"
+          },
+          "version": "4.17.15"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "gemnasium",
+          "name": "Gemnasium-1a5e7409-712c-4ac8-b9b0-ad8f61b15f05",
+          "value": "1a5e7409-712c-4ac8-b9b0-ad8f61b15f05",
+          "url": "https://gitlab.com/gitlab-org/security-products/gemnasium-db/-/blob/master/npm/lodash/CVE-2025-13465.yml"
+        },
+        {
+          "type": "cve",
+          "name": "CVE-2025-13465",
+          "value": "CVE-2025-13465",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-13465"
+        },
+        {
+          "type": "ghsa",
+          "name": "GHSA-xxjr-mmjv-4gpg",
+          "value": "GHSA-xxjr-mmjv-4gpg",
+          "url": "https://github.com/advisories/GHSA-xxjr-mmjv-4gpg"
+        }
+      ],
+      "cvss_vectors": [
+        {
+          "vendor": "NVD",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-253495.html"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-xxjr-mmjv-4gpg"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/commit/edadd452146f7e4bad4ea684e955708931d84d81"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-13465"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "type": "text",
+          "name": "Vulnerable Package",
+          "value": "lodash:4.17.15"
+        }
+      }
+    },
+    {
+      "id": "a6f7aac6e7eb2f80070ad7fb1207e74adba387cf02a4cd465f3c941656eba1c1",
+      "name": "lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit`",
+      "description": "Lodash versions 4.17.23 and earlier are vulnerable to prototype pollution in the `_.unset` and `_.omit` functions. The fix for [CVE-2025-13465](https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg) only guards against string key members, so an attacker can bypass the check by passing array-wrapped path segments. This allows deletion of properties from built-in prototypes such as `Object.prototype`, `Number.prototype`, and `String.prototype`.\n\nThe issue permits deletion of prototype properties but does not allow overwriting their original behavior.",
+      "severity": "Medium",
+      "solution": "Upgrade to version 4.18.0 or above.",
+      "location": {
+        "file": "package-lock.json",
+        "dependency": {
+          "package": {
+            "name": "lodash"
+          },
+          "version": "4.17.15"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "gemnasium",
+          "name": "Gemnasium-20a119ca-fb08-4579-a674-9a540f2e0815",
+          "value": "20a119ca-fb08-4579-a674-9a540f2e0815",
+          "url": "https://gitlab.com/gitlab-org/security-products/gemnasium-db/-/blob/master/npm/lodash/CVE-2026-2950.yml"
+        },
+        {
+          "type": "cve",
+          "name": "CVE-2026-2950",
+          "value": "CVE-2026-2950",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-2950"
+        },
+        {
+          "type": "ghsa",
+          "name": "GHSA-f23m-r3pf-42rh",
+          "value": "GHSA-f23m-r3pf-42rh",
+          "url": "https://github.com/advisories/GHSA-f23m-r3pf-42rh"
+        }
+      ],
+      "cvss_vectors": [
+        {
+          "vendor": "NVD",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://github.com/advisories/GHSA-f23m-r3pf-42rh"
+        },
+        {
+          "url": "https://github.com/lodash/lodash"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-2950"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "type": "text",
+          "name": "Vulnerable Package",
+          "value": "lodash:4.17.15"
+        }
+      }
+    },
+    {
+      "id": "48c17ffb9c3da42caa3dacb6e8897e2ab0fa9429b7fd1a11d2e4031b86368c48",
+      "name": "Regular Expression Denial of Service (ReDoS) in lodash",
+      "description": "All versions of package lodash prior to 4.17.21 are vulnerable to Regular Expression Denial of Service (ReDoS) via the `toNumber`, `trim` and `trimEnd` functions.\n\nSteps to reproduce (provided by reporter Liyuan Chen):\n```js\nvar lo = require('lodash');\n\nfunction build_blank(n) {\nvar ret = \"1\"\nfor (var i = 0; i \u003c n; i++) {\nret += \" \"\n}\nreturn ret + \"1\";\n}\nvar s = build_blank(50000) var time0 = Date.now();\nlo.trim(s)\nvar time_cost0 = Date.now() - time0;\nconsole.log(\"time_cost0: \" + time_cost0);\nvar time1 = Date.now();\nlo.toNumber(s) var time_cost1 = Date.now() - time1;\nconsole.log(\"time_cost1: \" + time_cost1);\nvar time2 = Date.now();\nlo.trimEnd(s);\nvar time_cost2 = Date.now() - time2;\nconsole.log(\"time_cost2: \" + time_cost2);\n```",
+      "severity": "Medium",
+      "solution": "Upgrade to version 4.17.21 or above.",
+      "location": {
+        "file": "package-lock.json",
+        "dependency": {
+          "package": {
+            "name": "lodash"
+          },
+          "version": "4.17.15"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "gemnasium",
+          "name": "Gemnasium-dfb5ce4b-88fa-4c99-9a00-c13bc4d39ff0",
+          "value": "dfb5ce4b-88fa-4c99-9a00-c13bc4d39ff0",
+          "url": "https://gitlab.com/gitlab-org/security-products/gemnasium-db/-/blob/master/npm/lodash/CVE-2020-28500.yml"
+        },
+        {
+          "type": "cve",
+          "name": "CVE-2020-28500",
+          "value": "CVE-2020-28500",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-28500"
+        },
+        {
+          "type": "ghsa",
+          "name": "GHSA-29mw-wpgm-hmr9",
+          "value": "GHSA-29mw-wpgm-hmr9",
+          "url": "https://github.com/advisories/GHSA-29mw-wpgm-hmr9"
+        }
+      ],
+      "cvss_vectors": [
+        {
+          "vendor": "NVD",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+        },
+        {
+          "vendor": "NVD",
+          "vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-29mw-wpgm-hmr9"
+        },
+        {
+          "url": "https://github.com/github/advisory-database/pull/6139"
+        },
+        {
+          "url": "https://github.com/lodash/lodash"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/blob/npm/trimEnd.js%23L8"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/commit/c4847ebe7d14540bb28a8b932a9ce1b9ecbfee1a"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/pull/5065"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/pull/5065/commits/02906b8191d3c100c193fe6f7b27d1c40f200bb7"
+        },
+        {
+          "url": "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/lodash-rails/CVE-2020-28500.yml"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-28500"
+        },
+        {
+          "url": "https://security.netapp.com/advisory/ntap-20210312-0006"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGFUJIONWEBJARS-1074896"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARS-1074894"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-1074892"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBLODASH-1074895"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1074893"
+        },
+        {
+          "url": "https://snyk.io/vuln/SNYK-JS-LODASH-1018905"
+        },
+        {
+          "url": "https://www.oracle.com//security-alerts/cpujul2021.html"
+        },
+        {
+          "url": "https://www.oracle.com/security-alerts/cpujan2022.html"
+        },
+        {
+          "url": "https://www.oracle.com/security-alerts/cpujul2022.html"
+        },
+        {
+          "url": "https://www.oracle.com/security-alerts/cpuoct2021.html"
+        }
+      ],
+      "details": {
+        "vulnerable_package": {
+          "type": "text",
+          "name": "Vulnerable Package",
+          "value": "lodash:4.17.15"
+        }
+      }
+    }
+  ],
+  "scan": {
+    "analyzer": {
+      "id": "gemnasium",
+      "name": "Gemnasium",
+      "url": "https://gitlab.com/gitlab-org/security-products/analyzers/gemnasium",
+      "vendor": {
+        "name": "GitLab"
+      },
+      "version": "6.6.5"
+    },
+    "scanner": {
+      "id": "gemnasium",
+      "name": "Gemnasium",
+      "url": "https://gitlab.com/gitlab-org/security-products/analyzers/gemnasium",
+      "vendor": {
+        "name": "GitLab"
+      },
+      "version": "6.6.5"
+    },
+    "type": "dependency_scanning",
+    "start_time": "2026-10-26T17:56:48",
+    "end_time": "2026-10-26T17:56:54",
+    "status": "success",
+    "observability": {
+      "events": [
+        {
+          "event": "collect_gemnasium_scan_metrics_from_pipeline",
+          "property": "113b590a-3f2b-422e-837e-93ca7022591f",
+          "label": "6.6.5",
+          "value": 6
+        },
+        {
+          "event": "collect_gemnasium_scan_performance_metrics_from_pipeline",
+          "property": "113b590a-3f2b-422e-837e-93ca7022591f",
+          "value": 5
+        },
+        {
+          "event": "collect_gemnasium_scan_sbom_metrics_from_pipeline",
+          "property": "113b590a-3f2b-422e-837e-93ca7022591f",
+          "label": "npm",
+          "value": 1,
+          "input_file_path": "package-lock.json"
+        }
+      ]
+    }
+  }
+}
