@@ -53,14 +53,14 @@ def verify_pipeline(
         connector, instance_url=instance_url, project=project, pipeline_id=pipeline_id
     )
     inputs: dict[str, RequirementInput] = {}
-    cache: dict[tuple[int, str, str], ScanEvidence] = {}
+    cache: dict[tuple[int, str, str, str | None], ScanEvidence] = {}
 
     for req in policy.requirements:
         job = find_job(inspection.jobs, req.job_name)
         if job is None:
             inputs[req.id] = RequirementInput()
             continue
-        key = (job.latest.id, req.report_path, req.tool.lower())
+        key = (job.latest.id, req.report_path, req.tool.lower(), req.artifact_name)
         try:
             if key not in cache:
                 cache[key] = collect_evidence(
@@ -70,6 +70,7 @@ def verify_pipeline(
                     job=job,
                     report_path=req.report_path,
                     adapter=get_adapter(req.tool),
+                    artifact_name=req.artifact_name,
                 )
             inputs[req.id] = RequirementInput(job=job, evidence=cache[key])
         except ConnectorError as exc:

@@ -28,6 +28,7 @@ class ErrorKind(StrEnum):
     LIMIT_EXCEEDED = "LIMIT_EXCEEDED"  # artifact larger than the configured cap
     UNSAFE_REDIRECT = "UNSAFE_REDIRECT"  # redirect we refused to follow
     INVALID_RESPONSE = "INVALID_RESPONSE"  # response did not match the expected shape
+    INTEGRITY = "INTEGRITY"  # downloaded bytes don't match the platform's recorded digest
 
 
 class ConnectorError(Exception):
@@ -66,8 +67,15 @@ class CIConnector(ABC):
         """Return every job attempt in the pipeline, including retried attempts."""
 
     @abstractmethod
-    def download_artifact_file(self, project: str, job_id: int, artifact_path: str) -> bytes:
-        """Download a single file from a job's artifacts archive, enforcing size limits."""
+    def fetch_report(
+        self, project: str, job: Job, report_path: str, artifact_name: str | None = None
+    ) -> bytes:
+        """Return the bytes of one report produced by `job`, enforcing size limits.
+
+        Raise NotFoundError (with a human reason) when the report does not exist: that is
+        missing evidence. Raise other ConnectorErrors when the platform cannot be asked.
+        `artifact_name` is required by platforms whose artifacts are not tied to jobs (GitHub).
+        """
 
     def close(self) -> None:  # pragma: no cover - default no-op
         return None

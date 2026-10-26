@@ -275,3 +275,23 @@ def test_missing_token_mentions_anonymous(monkeypatch) -> None:
     result = runner.invoke(app, ARGS)
     assert result.exit_code == EXIT_USAGE
     assert "--anonymous" in result.stderr
+
+
+def test_verify_provider_must_match_policy(env, policy_file) -> None:
+    result = runner.invoke(app, [*_verify_args(policy_file), "--provider", "github"])
+    assert result.exit_code == EXIT_USAGE
+    assert "contradicts" in result.stderr
+
+
+def test_unknown_provider(env) -> None:
+    result = runner.invoke(app, [*ARGS, "--provider", "jenkins"])
+    assert result.exit_code == EXIT_USAGE
+
+
+def test_github_provider_uses_github_token(monkeypatch, mock_api) -> None:
+    monkeypatch.delenv("GITLAB_TOKEN", raising=False)
+    monkeypatch.setenv("GITHUB_TOKEN", "ghp_x")
+    route = mock_api.get("https://api.github.com/repos/o/r/actions/runs/7").respond(404)
+    result = runner.invoke(app, ["inspect", "--provider", "github", "-p", "o/r", "--pipeline", "7"])
+    assert result.exit_code == EXIT_INDETERMINATE
+    assert route.calls.last.request.headers["Authorization"] == "Bearer ghp_x"

@@ -82,12 +82,15 @@ class Requirement(_Strict):
     tool: str
     job_name: str
     report_path: str
+    artifact_name: str | None = Field(
+        None, description="GitHub: name of the run artifact (zip) that contains report_path"
+    )
     applies_to: AppliesTo | None = None
     checks: Checks = Field(default_factory=Checks)
 
 
 class ProjectRef(_Strict):
-    provider: Literal["gitlab"]
+    provider: Literal["gitlab", "github"]
     id: str
 
     @field_validator("id", mode="before")
@@ -122,6 +125,11 @@ class Policy(_Strict):
             if req.id in seen:
                 raise ValueError(f"duplicate requirement id {req.id!r}")
             seen.add(req.id)
+            if self.project.provider == "github" and not req.artifact_name:
+                raise ValueError(
+                    f"requirement {req.id}: GitHub artifacts belong to the run, not a job; "
+                    "set artifact_name"
+                )
             if req.tool.lower() not in ADAPTERS:
                 raise ValueError(
                     f"requirement {req.id}: unsupported tool {req.tool!r} "

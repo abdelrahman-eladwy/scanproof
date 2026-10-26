@@ -63,9 +63,15 @@ def inspect_pipeline(
         # Manual jobs are allow_failure by default in GitLab; only real failures are masked.
         if job.latest.allow_failure and job.latest.status in _MASKABLE:
             warnings.append(
-                f"Job '{job.name}' ended '{job.latest.status.value}' but has allow_failure: true, "
-                "so the pipeline did not stop on it."
+                f"Job '{job.name}' ended '{job.latest.status.value}' but has allow_failure: true "
+                "(or continue-on-error), so the pipeline did not stop on it."
             )
+    unchecked = [j.name for j in inspected if j.latest.masking_checked is False]
+    if unchecked:
+        warnings.append(
+            "Could not read check-run annotations (grant checks:read) to rule out steps hidden by "
+            f"continue-on-error in: {', '.join(unchecked)}."
+        )
     if not inspected:
         warnings.append("Pipeline has no jobs visible to this token.")
 

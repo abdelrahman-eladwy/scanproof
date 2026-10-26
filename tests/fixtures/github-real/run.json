@@ -1,0 +1,18 @@
+{
+  "id": 40374759340,
+  "name": "github-contract",
+  "head_branch": "fixtures/github/scenarios",
+  "head_sha": "e0fca00149511349a96bda7d7d6c274da9f4fea2",
+  "path": ".github/workflows/github-contract.yml",
+  "display_title": "ci: GitHub Actions scenarios for the GitHub connector and self-verifi\u2026",
+  "run_number": 1,
+  "event": "push",
+  "status": "completed",
+  "conclusion": "success",
+  "workflow_id": 397386774,
+  "html_url": "https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40374759340",
+  "created_at": "2026-10-26T18:06:20Z",
+  "updated_at": "2026-10-26T18:07:10Z",
+  "run_attempt": 1,
+  "run_started_at": "2026-10-26T18:06:20Z"
+}

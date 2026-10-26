@@ -174,7 +174,17 @@ def _job_checks(req: Requirement, job: InspectedJob) -> list[CheckResult]:
 
     if c.job_success:
         status = latest.status
-        if status is JobStatus.SUCCESS:
+        if status is JobStatus.SUCCESS and latest.masking_checked is False:
+            out.append(
+                _r(
+                    "job_success",
+                    Outcome.UNKNOWN,
+                    "STEP_MASKING_UNKNOWN",
+                    f"Job {latest.id} reports success, but its check-run annotations could not "
+                    "be read to rule out a step hidden by continue-on-error (grant checks:read)",
+                )
+            )
+        elif status is JobStatus.SUCCESS:
             retried = f" after {job.attempts} attempts" if job.attempts > 1 else ""
             out.append(
                 _r(
@@ -190,8 +200,8 @@ def _job_checks(req: Requirement, job: InspectedJob) -> list[CheckResult]:
                     "job_success",
                     Outcome.FAIL,
                     "FAILURE_MASKED_BY_ALLOW_FAILURE",
-                    f"Job {latest.id} ended '{status.value}' but allow_failure "
-                    "let the pipeline continue",
+                    f"Job {latest.id} ended '{status.value}' but allow_failure / "
+                    f"continue-on-error let the pipeline continue ({latest.raw_status})",
                 )
             )
         elif status.is_terminal or status is JobStatus.MANUAL:

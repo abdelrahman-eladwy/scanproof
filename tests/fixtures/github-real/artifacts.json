@@ -1,0 +1,25 @@
+{
+  "total_count": 1,
+  "artifacts": [
+    {
+      "id": 12674466131,
+      "node_id": "MDg6QXJ0aWZhY3QxMjY3NDQ2NjEzMQ==",
+      "name": "semgrep-report",
+      "size_in_bytes": 193031,
+      "url": "https://api.github.com/repos/abdelrahman-eladwy/scanproof/actions/artifacts/12674466131",
+      "archive_download_url": "https://api.github.com/repos/abdelrahman-eladwy/scanproof/actions/artifacts/12674466131/zip",
+      "expired": false,
+      "digest": "sha256:e0c706853bf55cd521dbc0872f4453253007226474f1a15b2eed6de0a888d497",
+      "created_at": "2026-10-26T18:06:49Z",
+      "updated_at": "2026-10-26T18:06:49Z",
+      "expires_at": "2027-01-24T18:06:20Z",
+      "workflow_run": {
+        "id": 40374759340,
+        "repository_id": 1434685360,
+        "head_repository_id": 1434685360,
+        "head_branch": "fixtures/github/scenarios",
+        "head_sha": "e0fca00149511349a96bda7d7d6c274da9f4fea2"
+      }
+    }
+  ]
+}

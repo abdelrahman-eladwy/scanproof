@@ -1,0 +1,293 @@
+{
+  "total_count": 5,
+  "jobs": [
+    {
+      "id": 121754663632,
+      "run_id": 40374759340,
+      "run_attempt": 1,
+      "head_sha": "e0fca00149511349a96bda7d7d6c274da9f4fea2",
+      "head_branch": "fixtures/github/scenarios",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-26T18:06:20Z",
+      "started_at": "2026-10-26T18:06:23Z",
+      "completed_at": "2026-10-26T18:06:53Z",
+      "name": "sast",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-26T18:06:24Z",
+          "completed_at": "2026-10-26T18:06:25Z"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-26T18:06:25Z",
+          "completed_at": "2026-10-26T18:06:42Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-26T18:06:42Z",
+          "completed_at": "2026-10-26T18:06:43Z"
+        },
+        {
+          "name": "Run mkdir -p reports",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-26T18:06:43Z",
+          "completed_at": "2026-10-26T18:06:48Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-26T18:06:48Z",
+          "completed_at": "2026-10-26T18:06:50Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-26T18:06:50Z",
+          "completed_at": "2026-10-26T18:06:50Z"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-26T18:06:50Z",
+          "completed_at": "2026-10-26T18:06:50Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-26T18:06:50Z",
+          "completed_at": "2026-10-26T18:06:50Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/abdelrahman-eladwy/scanproof/check-runs/121754663632",
+      "html_url": "https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40374759340/job/121754663632",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "workflow_name": "github-contract"
+    },
+    {
+      "id": 121754663933,
+      "run_id": 40374759340,
+      "run_attempt": 1,
+      "head_sha": "e0fca00149511349a96bda7d7d6c274da9f4fea2",
+      "head_branch": "fixtures/github/scenarios",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-26T18:06:20Z",
+      "started_at": "2026-10-26T18:06:23Z",
+      "completed_at": "2026-10-26T18:06:26Z",
+      "name": "masked-step",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-26T18:06:24Z",
+          "completed_at": "2026-10-26T18:06:24Z"
+        },
+        {
+          "name": "scanner crashes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-26T18:06:24Z",
+          "completed_at": "2026-10-26T18:06:24Z"
+        },
+        {
+          "name": "Run echo \"job still reports success\"",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-26T18:06:24Z",
+          "completed_at": "2026-10-26T18:06:24Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-26T18:06:24Z",
+          "completed_at": "2026-10-26T18:06:24Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/abdelrahman-eladwy/scanproof/check-runs/121754663933",
+      "html_url": "https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40374759340/job/121754663933",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "workflow_name": "github-contract"
+    },
+    {
+      "id": 121754664191,
+      "run_id": 40374759340,
+      "run_attempt": 1,
+      "head_sha": "e0fca00149511349a96bda7d7d6c274da9f4fea2",
+      "head_branch": "fixtures/github/scenarios",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-26T18:06:20Z",
+      "started_at": "2026-10-26T18:06:24Z",
+      "completed_at": "2026-10-26T18:06:27Z",
+      "name": "masked-job",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-26T18:06:24Z",
+          "completed_at": "2026-10-26T18:06:25Z"
+        },
+        {
+          "name": "Run exit 1",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 2,
+          "started_at": "2026-10-26T18:06:25Z",
+          "completed_at": "2026-10-26T18:06:25Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-26T18:06:25Z",
+          "completed_at": "2026-10-26T18:06:25Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/abdelrahman-eladwy/scanproof/check-runs/121754664191",
+      "html_url": "https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40374759340/job/121754664191",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "workflow_name": "github-contract"
+    },
+    {
+      "id": 121754666337,
+      "run_id": 40374759340,
+      "run_attempt": 1,
+      "head_sha": "e0fca00149511349a96bda7d7d6c274da9f4fea2",
+      "head_branch": "fixtures/github/scenarios",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-26T18:06:21Z",
+      "started_at": "2026-10-26T18:06:21Z",
+      "completed_at": "2026-10-26T18:06:20Z",
+      "name": "skipped-scan",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/abdelrahman-eladwy/scanproof/check-runs/121754666337",
+      "html_url": "https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40374759340/job/121754666337",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "workflow_name": "github-contract"
+    },
+    {
+      "id": 121754955836,
+      "run_id": 40374759340,
+      "run_attempt": 1,
+      "head_sha": "e0fca00149511349a96bda7d7d6c274da9f4fea2",
+      "head_branch": "fixtures/github/scenarios",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-26T18:06:53Z",
+      "started_at": "2026-10-26T18:06:56Z",
+      "completed_at": "2026-10-26T18:07:09Z",
+      "name": "self-verify",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-26T18:06:57Z",
+          "completed_at": "2026-10-26T18:06:58Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-26T18:06:58Z",
+          "completed_at": "2026-10-26T18:06:59Z"
+        },
+        {
+          "name": "Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-26T18:06:59Z",
+          "completed_at": "2026-10-26T18:06:59Z"
+        },
+        {
+          "name": "Run pip install -e .",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-26T18:06:59Z",
+          "completed_at": "2026-10-26T18:07:07Z"
+        },
+        {
+          "name": "ScanProof verifies this run",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-10-26T18:07:07Z",
+          "completed_at": "2026-10-26T18:07:07Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-26T18:07:07Z",
+          "completed_at": "2026-10-26T18:07:07Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-26T18:07:07Z",
+          "completed_at": "2026-10-26T18:07:07Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-26T18:07:07Z",
+          "completed_at": "2026-10-26T18:07:07Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/abdelrahman-eladwy/scanproof/check-runs/121754955836",
+      "html_url": "https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40374759340/job/121754955836",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "workflow_name": "github-contract"
+    }
+  ]
+}

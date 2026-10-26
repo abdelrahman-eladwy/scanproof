@@ -1,0 +1,89 @@
+# Real GitHub Actions scenarios for the GitHub connector, and ScanProof verifying its own run.
+#
+# Runs on fixtures/github/** branches (and manually). The scenario jobs reproduce what ScanProof
+# must detect on GitHub; `self-verify` then runs `scanproof verify --provider github` against
+# THIS run and checks the decision is the expected one.
+name: github-contract
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["fixtures/github/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  sast:
+    runs-on: ubuntu-latest
+    container: semgrep/semgrep:1.181.1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: |
+          mkdir -p reports
+          semgrep scan --config p/default --metrics=off --json --output reports/semgrep.json examples/gitlab-ci/sample-app/
+          semgrep scan --config p/default --metrics=off --sarif --output reports/semgrep.sarif examples/gitlab-ci/sample-app/
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: semgrep-report
+          path: reports/
+
+  # A scan step fails, but continue-on-error on the STEP keeps the job green.
+  masked-step:
+    runs-on: ubuntu-latest
+    steps:
+      - name: scanner crashes
+        continue-on-error: true
+        run: exit 1
+      - run: echo "job still reports success"
+
+  # The whole JOB fails, but continue-on-error on the JOB keeps the workflow green.
+  masked-job:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - run: exit 1
+
+  skipped-scan:
+    if: ${{ github.event_name == 'never-happens' }}   # always skipped
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo never
+
+  self-verify:
+    needs: [sast, masked-step, masked-job, skipped-scan]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      checks: read     # annotations reveal steps hidden by continue-on-error
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: ScanProof verifies this run
+        if: ${{ hashFiles('src/scanproof/connectors/github.py') != '' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          check() {  # check <policy> <expected exit>
+            scanproof verify --provider github -P "$1" --pipeline "${{ github.run_id }}" \
+              -p "${{ github.repository }}" -o "out-$(basename "$1" .yaml).json"
+            rc=$?
+            echo "::notice title=self-verify $(basename "$1")::exit $rc (expected $2)"
+            [ "$rc" = "$2" ] || failed=1
+          }
+          failed=0
+          check examples/policies/github-self-sast.yaml 0
+          check examples/policies/github-self-masked-step.yaml 1
+          check examples/policies/github-self-masked-job.yaml 1
+          check examples/policies/github-self-skipped.yaml 1
+          exit $failed

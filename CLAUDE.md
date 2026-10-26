@@ -12,7 +12,8 @@ whether the application is secure.
 ## Architecture (modular monolith — keep the boundaries)
 
 ```
-connectors/   CI platform access (GitLab). Returns models from scanproof.models only.
+connectors/   CI platform access. http.py = shared hardened HTTP (all security rules live
+              here); gitlab.py, github.py add platform specifics. Return scanproof.models only.
 scanners/     one adapter per tool: raw report bytes -> ScanEvidence. Never raise on bad input.
 evidence/     unified evidence model + collector (fetch job report -> evidence).
 policy/       YAML policy models (extra=forbid) + pure engine. No I/O, no connector imports.
@@ -32,7 +33,7 @@ scanners are leaves. A new scanner or CI provider must not require changes to `p
 2. **Credentials:** token only from env vars; sent as `Authorization: Bearer` only to the
    configured GitLab origin; never in URLs, logs, exceptions, `repr`, or test snapshots.
 3. **TLS verification is always on.** Support `--ca-bundle`; never add a `--insecure` flag.
-4. **Redirects:** keep the manual redirect handling in `connectors/gitlab.py`. No HTTPS->HTTP.
+4. **Redirects:** keep the manual redirect handling in `connectors/http.py`. No HTTPS->HTTP.
 5. **Size limits** on every download. Stream; don't trust Content-Length alone.
 6. **Read-only.** ScanProof never writes to the CI platform.
 7. Exit codes are a public contract: 0 ok, 1 policy failure, 2 indeterminate, 3 usage.
