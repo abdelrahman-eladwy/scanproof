@@ -44,6 +44,12 @@ class Checks(_Strict):
     image_digest_must_match: str | None = Field(
         None, description="sha256:... digest (or ${ENV_VAR}) the scanned image must have"
     )
+    expected_scanner: str | None = Field(
+        None,
+        description="Engine that must have produced the report (e.g. CodeQL inside SARIF); "
+        "case-insensitive",
+    )
+    minimum_components: int | None = Field(None, ge=0, description="SBOM: minimum components")
 
     @field_validator("image_digest_must_match")
     @classmethod

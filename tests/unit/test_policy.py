@@ -303,3 +303,9 @@ def test_gitlab_templates_example_policy_loads(monkeypatch) -> None:
     monkeypatch.setenv("RELEASE_IMAGE_DIGEST", DIGEST)
     policy = load_policy(EXAMPLE.parent / "gitlab-templates.yaml")
     assert [r.tool for r in policy.requirements] == ["gitlab-sast", "gitlab-container-scanning"]
+
+
+def test_sarif_and_sbom_example_policy_loads(monkeypatch) -> None:
+    monkeypatch.setenv("RELEASE_IMAGE_DIGEST", DIGEST)
+    policy = load_policy(EXAMPLE.parent / "sarif-and-sbom.yaml")
+    assert [r.tool for r in policy.requirements] == ["sarif", "sarif", "cyclonedx"]

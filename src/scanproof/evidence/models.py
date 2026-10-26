@@ -17,6 +17,11 @@ from pydantic import BaseModel, Field
 class ScanType(StrEnum):
     SAST = "SAST"
     CONTAINER = "CONTAINER"
+    DEPENDENCY = "DEPENDENCY"
+    SECRETS = "SECRETS"
+    IAC = "IAC"
+    SBOM = "SBOM"
+    OTHER = "OTHER"  # generic formats (e.g. SARIF) whose producer decides the type
 
 
 class ScannerError(BaseModel):
@@ -36,6 +41,7 @@ class ScanScope(BaseModel):
         default=None, description="Files/targets the scanner reports as scanned"
     )
     skipped_paths: list[str] | None = None
+    components: int | None = Field(default=None, description="SBOM component count")
 
 
 class FindingsSummary(BaseModel):
@@ -81,6 +87,9 @@ class ScanEvidence(BaseModel):
     tool: str
     scan_type: ScanType
     tool_version: str | None = None
+    scanner_name: str | None = Field(
+        default=None, description="Engine that produced the findings, e.g. CodeQL inside SARIF"
+    )
 
     present: bool = Field(description="A report file was obtained")
     parseable: bool = Field(description="The report parsed as this tool's format")

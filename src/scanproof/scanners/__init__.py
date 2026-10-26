@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from scanproof.scanners.base import ScannerAdapter
+from scanproof.scanners.cyclonedx import CycloneDxAdapter
 from scanproof.scanners.gitlab_report import GitLabContainerScanningAdapter, GitLabSastAdapter
+from scanproof.scanners.sarif import SarifAdapter
 from scanproof.scanners.semgrep import SemgrepAdapter
 from scanproof.scanners.trivy import TrivyAdapter
 
@@ -14,6 +16,8 @@ ADAPTERS: dict[str, ScannerAdapter] = {
         TrivyAdapter(),
         GitLabSastAdapter(),
         GitLabContainerScanningAdapter(),
+        SarifAdapter(),
+        CycloneDxAdapter(),
     )
 }
 

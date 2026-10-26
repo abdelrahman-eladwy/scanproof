@@ -1,0 +1,1471 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "fullName": "Trivy Vulnerability Scanner",
+          "informationUri": "https://github.com/aquasecurity/trivy",
+          "name": "Trivy",
+          "rules": [
+            {
+              "id": "CVE-2011-3374",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "It was found that apt-key in apt, all versions, do not correctly valid ..."
+              },
+              "fullDescription": {
+                "text": "It was found that apt-key in apt, all versions, do not correctly validate gpg keys with the master keyring, leading to a potential man-in-the-middle attack."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2011-3374",
+              "help": {
+                "text": "Vulnerability CVE-2011-3374\nSeverity: LOW\nPackage: libapt-pkg7.0\nFixed Version: \nLink: [CVE-2011-3374](https://avd.aquasec.com/nvd/cve-2011-3374)\nIt was found that apt-key in apt, all versions, do not correctly validate gpg keys with the master keyring, leading to a potential man-in-the-middle attack.",
+                "markdown": "**Vulnerability CVE-2011-3374**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libapt-pkg7.0||[CVE-2011-3374](https://avd.aquasec.com/nvd/cve-2011-3374)|\n\nIt was found that apt-key in apt, all versions, do not correctly validate gpg keys with the master keyring, leading to a potential man-in-the-middle attack."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "TEMP-0841856-B18BAF",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "[Privilege escalation possible to other user than root]"
+              },
+              "fullDescription": {
+                "text": "[Privilege escalation possible to other user than root]"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://security-tracker.debian.org/tracker/TEMP-0841856-B18BAF",
+              "help": {
+                "text": "Vulnerability TEMP-0841856-B18BAF\nSeverity: LOW\nPackage: bash\nFixed Version: \nLink: [TEMP-0841856-B18BAF](https://security-tracker.debian.org/tracker/TEMP-0841856-B18BAF)\n",
+                "markdown": "**Vulnerability TEMP-0841856-B18BAF**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|bash||[TEMP-0841856-B18BAF](https://security-tracker.debian.org/tracker/TEMP-0841856-B18BAF)|\n\n"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-76642",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "util-linux: util-linux: failed external mount helper still runs privileged X-mount post-hooks"
+              },
+              "fullDescription": {
+                "text": "util-linux versions through 2.41.5 and 2.42.2 fail to check mount helper exit status before running post-mount hooks, allowing unprivileged users to execute privileged operations on pre-existing filesystems. Attackers can exploit X-mount.idmap or X-mount.owner hooks to clone filesystems with inherited suid bits or modify target inode permissions after a helper fails, achieving privilege escalation."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-76642",
+              "help": {
+                "text": "Vulnerability CVE-2026-76642\nSeverity: HIGH\nPackage: util-linux\nFixed Version: \nLink: [CVE-2026-76642](https://avd.aquasec.com/nvd/cve-2026-76642)\nutil-linux versions through 2.41.5 and 2.42.2 fail to check mount helper exit status before running post-mount hooks, allowing unprivileged users to execute privileged operations on pre-existing filesystems. Attackers can exploit X-mount.idmap or X-mount.owner hooks to clone filesystems with inherited suid bits or modify target inode permissions after a helper fails, achieving privilege escalation.",
+                "markdown": "**Vulnerability CVE-2026-76642**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|HIGH|util-linux||[CVE-2026-76642](https://avd.aquasec.com/nvd/cve-2026-76642)|\n\nutil-linux versions through 2.41.5 and 2.42.2 fail to check mount helper exit status before running post-mount hooks, allowing unprivileged users to execute privileged operations on pre-existing filesystems. Attackers can exploit X-mount.idmap or X-mount.owner hooks to clone filesystems with inherited suid bits or modify target inode permissions after a helper fails, achieving privilege escalation."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "8.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78408",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "util-linux: util-linux: nsenter --join-cgroup leaks root cgroup migration authority"
+              },
+              "fullDescription": {
+                "text": "The nsenter --join-cgroup option opens the target cgroup.procs file as root and leaves that file descriptor open across later namespace and credential changes and across execve(). Because the kernel checks later cgroup migrations using the credentials from the original open, a program run in an attacker-controlled target can inherit root's ability to move host processes between cgroups. After a privileged operator uses --join-cgroup against that target, an unprivileged user can migrate and terminate unrelated root processes."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-78408",
+              "help": {
+                "text": "Vulnerability CVE-2026-78408\nSeverity: HIGH\nPackage: util-linux\nFixed Version: \nLink: [CVE-2026-78408](https://avd.aquasec.com/nvd/cve-2026-78408)\nThe nsenter --join-cgroup option opens the target cgroup.procs file as root and leaves that file descriptor open across later namespace and credential changes and across execve(). Because the kernel checks later cgroup migrations using the credentials from the original open, a program run in an attacker-controlled target can inherit root's ability to move host processes between cgroups. After a privileged operator uses --join-cgroup against that target, an unprivileged user can migrate and terminate unrelated root processes.",
+                "markdown": "**Vulnerability CVE-2026-78408**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|HIGH|util-linux||[CVE-2026-78408](https://avd.aquasec.com/nvd/cve-2026-78408)|\n\nThe nsenter --join-cgroup option opens the target cgroup.procs file as root and leaves that file descriptor open across later namespace and credential changes and across execve(). Because the kernel checks later cgroup migrations using the credentials from the original open, a program run in an attacker-controlled target can inherit root's ability to move host processes between cgroups. After a privileged operator uses --join-cgroup against that target, an unprivileged user can migrate and terminate unrelated root processes."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "8.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78409",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "util-linux: util-linux: X-mount.subdir detached-tree resolution can escape via intermediate symlinks"
+              },
+              "fullDescription": {
+                "text": "The X-mount.subdir option uses a detached-tree fast path on Linux 6.15 and later and passes the configured subdirectory to open_tree() with AT_SYMLINK_NOFOLLOW. That flag does not stop intermediate symlink traversal or keep resolution inside the newly mounted filesystem. A local unprivileged user with an fstab-authorized X-mount.subdir entry can attach a host path at the intended mountpoint."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-78409",
+              "help": {
+                "text": "Vulnerability CVE-2026-78409\nSeverity: HIGH\nPackage: util-linux\nFixed Version: \nLink: [CVE-2026-78409](https://avd.aquasec.com/nvd/cve-2026-78409)\nThe X-mount.subdir option uses a detached-tree fast path on Linux 6.15 and later and passes the configured subdirectory to open_tree() with AT_SYMLINK_NOFOLLOW. That flag does not stop intermediate symlink traversal or keep resolution inside the newly mounted filesystem. A local unprivileged user with an fstab-authorized X-mount.subdir entry can attach a host path at the intended mountpoint.",
+                "markdown": "**Vulnerability CVE-2026-78409**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|HIGH|util-linux||[CVE-2026-78409](https://avd.aquasec.com/nvd/cve-2026-78409)|\n\nThe X-mount.subdir option uses a detached-tree fast path on Linux 6.15 and later and passes the configured subdirectory to open_tree() with AT_SYMLINK_NOFOLLOW. That flag does not stop intermediate symlink traversal or keep resolution inside the newly mounted filesystem. A local unprivileged user with an fstab-authorized X-mount.subdir entry can attach a host path at the intended mountpoint."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "8.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78410",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "util-linux: util-linux: restricted bind mounts do not pin the source, allowing X-mount.owner/group/mode redirection"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in util-linux. Restricted bind mounts take the source path from fstab but do not pin that source before the privileged mount. A local unprivileged user who can replace the authorized source or a writable ancestor can redirect SUID mount(8) to bind another host directory. If the fstab entry also sets X-mount.owner, X-mount.group, or X-mount.mode, root then changes ownership or mode on that redirected inode."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-78410",
+              "help": {
+                "text": "Vulnerability CVE-2026-78410\nSeverity: HIGH\nPackage: util-linux\nFixed Version: \nLink: [CVE-2026-78410](https://avd.aquasec.com/nvd/cve-2026-78410)\nA flaw was found in util-linux. Restricted bind mounts take the source path from fstab but do not pin that source before the privileged mount. A local unprivileged user who can replace the authorized source or a writable ancestor can redirect SUID mount(8) to bind another host directory. If the fstab entry also sets X-mount.owner, X-mount.group, or X-mount.mode, root then changes ownership or mode on that redirected inode.",
+                "markdown": "**Vulnerability CVE-2026-78410**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|HIGH|util-linux||[CVE-2026-78410](https://avd.aquasec.com/nvd/cve-2026-78410)|\n\nA flaw was found in util-linux. Restricted bind mounts take the source path from fstab but do not pin that source before the privileged mount. A local unprivileged user who can replace the authorized source or a writable ancestor can redirect SUID mount(8) to bind another host directory. If the fstab entry also sets X-mount.owner, X-mount.group, or X-mount.mode, root then changes ownership or mode on that redirected inode."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "8.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-3184",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "util-linux: util-linux: Access control bypass due to improper hostname canonicalization"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in util-linux. Improper hostname canonicalization in the `login(1)` utility, when invoked with the `-h` option, can modify the supplied remote hostname before setting `PAM_RHOST`. A remote attacker could exploit this by providing a specially crafted hostname, potentially bypassing host-based Pluggable Authentication Modules (PAM) access control rules that rely on fully qualified domain names. This could lead to unauthorized access."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-3184",
+              "help": {
+                "text": "Vulnerability CVE-2026-3184\nSeverity: MEDIUM\nPackage: util-linux\nFixed Version: \nLink: [CVE-2026-3184](https://avd.aquasec.com/nvd/cve-2026-3184)\nA flaw was found in util-linux. Improper hostname canonicalization in the `login(1)` utility, when invoked with the `-h` option, can modify the supplied remote hostname before setting `PAM_RHOST`. A remote attacker could exploit this by providing a specially crafted hostname, potentially bypassing host-based Pluggable Authentication Modules (PAM) access control rules that rely on fully qualified domain names. This could lead to unauthorized access.",
+                "markdown": "**Vulnerability CVE-2026-3184**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|util-linux||[CVE-2026-3184](https://avd.aquasec.com/nvd/cve-2026-3184)|\n\nA flaw was found in util-linux. Improper hostname canonicalization in the `login(1)` utility, when invoked with the `-h` option, can modify the supplied remote hostname before setting `PAM_RHOST`. A remote attacker could exploit this by providing a specially crafted hostname, potentially bypassing host-based Pluggable Authentication Modules (PAM) access control rules that rely on fully qualified domain names. This could lead to unauthorized access."
+              },
+              "properties": {
+                "cvssv3_baseScore": 5.3,
+                "cvssv3_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+                "precision": "very-high",
+                "security-severity": "5.3",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2022-0563",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "util-linux: partial disclosure of arbitrary files in chfn and chsh when compiled with libreadline"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in the util-linux chfn and chsh utilities when compiled with Readline support. The Readline library uses an \"INPUTRC\" environment variable to get a path to the library config file. When the library cannot parse the specified file, it prints an error message containing data from the file. This flaw allows an unprivileged user to read root-owned files, potentially leading to privilege escalation. This flaw affects util-linux versions prior to 2.37.4."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2022-0563",
+              "help": {
+                "text": "Vulnerability CVE-2022-0563\nSeverity: LOW\nPackage: util-linux\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)\nA flaw was found in the util-linux chfn and chsh utilities when compiled with Readline support. The Readline library uses an \"INPUTRC\" environment variable to get a path to the library config file. When the library cannot parse the specified file, it prints an error message containing data from the file. This flaw allows an unprivileged user to read root-owned files, potentially leading to privilege escalation. This flaw affects util-linux versions prior to 2.37.4.",
+                "markdown": "**Vulnerability CVE-2022-0563**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|util-linux||[CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)|\n\nA flaw was found in the util-linux chfn and chsh utilities when compiled with Readline support. The Readline library uses an \"INPUTRC\" environment variable to get a path to the library config file. When the library cannot parse the specified file, it prints an error message containing data from the file. This flaw allows an unprivileged user to read root-owned files, potentially leading to privilege escalation. This flaw affects util-linux versions prior to 2.37.4."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2017-18018",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "coreutils: race condition vulnerability in chown and chgrp"
+              },
+              "fullDescription": {
+                "text": "In GNU Coreutils through 8.29, chown-core.c in chown and chgrp does not prevent replacement of a plain file with a symlink during use of the POSIX \"-R -L\" options, which allows local users to modify the ownership of arbitrary files by leveraging a race condition."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2017-18018",
+              "help": {
+                "text": "Vulnerability CVE-2017-18018\nSeverity: LOW\nPackage: coreutils\nFixed Version: \nLink: [CVE-2017-18018](https://avd.aquasec.com/nvd/cve-2017-18018)\nIn GNU Coreutils through 8.29, chown-core.c in chown and chgrp does not prevent replacement of a plain file with a symlink during use of the POSIX \"-R -L\" options, which allows local users to modify the ownership of arbitrary files by leveraging a race condition.",
+                "markdown": "**Vulnerability CVE-2017-18018**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|coreutils||[CVE-2017-18018](https://avd.aquasec.com/nvd/cve-2017-18018)|\n\nIn GNU Coreutils through 8.29, chown-core.c in chown and chgrp does not prevent replacement of a plain file with a symlink during use of the POSIX \"-R -L\" options, which allows local users to modify the ownership of arbitrary files by leveraging a race condition."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2025-5278",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "coreutils: Heap Buffer Under-Read in GNU Coreutils sort via Key Specification"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in GNU Coreutils. The sort utility's begfield() function is vulnerable to a heap buffer under-read. The program may access memory outside the allocated buffer if a user runs a crafted command using the traditional key format. A malicious input could lead to a crash or leak sensitive data."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2025-5278",
+              "help": {
+                "text": "Vulnerability CVE-2025-5278\nSeverity: LOW\nPackage: coreutils\nFixed Version: \nLink: [CVE-2025-5278](https://avd.aquasec.com/nvd/cve-2025-5278)\nA flaw was found in GNU Coreutils. The sort utility's begfield() function is vulnerable to a heap buffer under-read. The program may access memory outside the allocated buffer if a user runs a crafted command using the traditional key format. A malicious input could lead to a crash or leak sensitive data.",
+                "markdown": "**Vulnerability CVE-2025-5278**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|coreutils||[CVE-2025-5278](https://avd.aquasec.com/nvd/cve-2025-5278)|\n\nA flaw was found in GNU Coreutils. The sort utility's begfield() function is vulnerable to a heap buffer under-read. The program may access memory outside the allocated buffer if a user runs a crafted command using the traditional key format. A malicious input could lead to a crash or leak sensitive data."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-56391",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "coreutils: GNU coreutils uniq: Denial of Service and information disclosure via out-of-bounds read with multibyte input"
+              },
+              "fullDescription": {
+                "text": "GNU coreutils uniq is vulnerable to an out\u2011of\u2011bounds read due to incorrect handling of multibyte input when the -w (--check-chars) option is used. The find_field() function miscalculates the byte length of characters by repeatedly processing a fixed pointer instead of advancing through the input, resulting in an inflated length value. \nThis incorrect length is later used in a memcmp operation, causing reads beyond the allocated buffer when processing crafted multibyte input.\n\nWhen running GNU coreutils uniq with attacker-provided arguments, this behavior leads to a crash and potential adjacent heap memory exposure.\n\n\nThis issue has been fixed in the commit d64e35a8a4c0e4608321433e0d84d917e4e36371."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-56391",
+              "help": {
+                "text": "Vulnerability CVE-2026-56391\nSeverity: LOW\nPackage: coreutils\nFixed Version: \nLink: [CVE-2026-56391](https://avd.aquasec.com/nvd/cve-2026-56391)\nGNU coreutils uniq is vulnerable to an out\u2011of\u2011bounds read due to incorrect handling of multibyte input when the -w (--check-chars) option is used. The find_field() function miscalculates the byte length of characters by repeatedly processing a fixed pointer instead of advancing through the input, resulting in an inflated length value. \nThis incorrect length is later used in a memcmp operation, causing reads beyond the allocated buffer when processing crafted multibyte input.\n\nWhen running GNU coreutils uniq with attacker-provided arguments, this behavior leads to a crash and potential adjacent heap memory exposure.\n\n\nThis issue has been fixed in the commit d64e35a8a4c0e4608321433e0d84d917e4e36371.",
+                "markdown": "**Vulnerability CVE-2026-56391**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|coreutils||[CVE-2026-56391](https://avd.aquasec.com/nvd/cve-2026-56391)|\n\nGNU coreutils uniq is vulnerable to an out\u2011of\u2011bounds read due to incorrect handling of multibyte input when the -w (--check-chars) option is used. The find_field() function miscalculates the byte length of characters by repeatedly processing a fixed pointer instead of advancing through the input, resulting in an inflated length value. \nThis incorrect length is later used in a memcmp operation, causing reads beyond the allocated buffer when processing crafted multibyte input.\n\nWhen running GNU coreutils uniq with attacker-provided arguments, this behavior leads to a crash and potential adjacent heap memory exposure.\n\n\nThis issue has been fixed in the commit d64e35a8a4c0e4608321433e0d84d917e4e36371."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-56392",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "coreutils: GNU coreutils unexpand: Denial of Service via crafted tab stop values"
+              },
+              "fullDescription": {
+                "text": "GNU coreutils unexpand is vulnerable to a heap-based buffer overflow due to an integer overflow during buffer allocation when processing large tab stop (-t) values. The multiplication used to calculate the allocation size can wrap around, resulting in an undersized buffer.\nWhen processing crafted input, subsequent writes exceed the allocated memory, leading to an out\u2011of\u2011bounds heap write.\n\nWhen running GNU coreutils unexpand with attacker-provided large tab stop (-t) arguments, this behavior leads to a crash and potentially achieve a heap write primitive depending on memory layout.\n\n\n\n\n\n\n\n\n\n\nThis issue has been fixed in the commit b60a159fdc5bfcf9988d3a4cb6f53abe8ad5d35d"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-56392",
+              "help": {
+                "text": "Vulnerability CVE-2026-56392\nSeverity: LOW\nPackage: coreutils\nFixed Version: \nLink: [CVE-2026-56392](https://avd.aquasec.com/nvd/cve-2026-56392)\nGNU coreutils unexpand is vulnerable to a heap-based buffer overflow due to an integer overflow during buffer allocation when processing large tab stop (-t) values. The multiplication used to calculate the allocation size can wrap around, resulting in an undersized buffer.\nWhen processing crafted input, subsequent writes exceed the allocated memory, leading to an out\u2011of\u2011bounds heap write.\n\nWhen running GNU coreutils unexpand with attacker-provided large tab stop (-t) arguments, this behavior leads to a crash and potentially achieve a heap write primitive depending on memory layout.\n\n\n\n\n\n\n\n\n\n\nThis issue has been fixed in the commit b60a159fdc5bfcf9988d3a4cb6f53abe8ad5d35d",
+                "markdown": "**Vulnerability CVE-2026-56392**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|coreutils||[CVE-2026-56392](https://avd.aquasec.com/nvd/cve-2026-56392)|\n\nGNU coreutils unexpand is vulnerable to a heap-based buffer overflow due to an integer overflow during buffer allocation when processing large tab stop (-t) values. The multiplication used to calculate the allocation size can wrap around, resulting in an undersized buffer.\nWhen processing crafted input, subsequent writes exceed the allocated memory, leading to an out\u2011of\u2011bounds heap write.\n\nWhen running GNU coreutils unexpand with attacker-provided large tab stop (-t) arguments, this behavior leads to a crash and potentially achieve a heap write primitive depending on memory layout.\n\n\n\n\n\n\n\n\n\n\nThis issue has been fixed in the commit b60a159fdc5bfcf9988d3a4cb6f53abe8ad5d35d"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-102473",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "dash: dash: Super-polynomial backtracking in pmatch when libc fnmatch is disabled"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in dash. When built without libc fnmatch, the internal pmatch() matcher implements * by unbounded recursion over candidate positions. A local user who can plant filenames, or otherwise feed that matcher, can make a short multi-star pattern such as *.*.*.*.*.tar.gz consume excessive CPU."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-102473",
+              "help": {
+                "text": "Vulnerability CVE-2026-102473\nSeverity: LOW\nPackage: dash\nFixed Version: \nLink: [CVE-2026-102473](https://avd.aquasec.com/nvd/cve-2026-102473)\nA flaw was found in dash. When built without libc fnmatch, the internal pmatch() matcher implements * by unbounded recursion over candidate positions. A local user who can plant filenames, or otherwise feed that matcher, can make a short multi-star pattern such as *.*.*.*.*.tar.gz consume excessive CPU.",
+                "markdown": "**Vulnerability CVE-2026-102473**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|dash||[CVE-2026-102473](https://avd.aquasec.com/nvd/cve-2026-102473)|\n\nA flaw was found in dash. When built without libc fnmatch, the internal pmatch() matcher implements * by unbounded recursion over candidate positions. A local user who can plant filenames, or otherwise feed that matcher, can make a short multi-star pattern such as *.*.*.*.*.tar.gz consume excessive CPU."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-102474",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "dash: dash: Heap out-of-bounds write in conv_escape via undersized Unicode escape reservation"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in dash. The printf builtin reserves four bytes before converting a Unicode \\u or \\U escape, but the multi-byte token can need five or six bytes. A local user who can supply such an escape to dash printf or echo %b, including through dash -c and a positional argument, can write one or two bytes past that reservation."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-102474",
+              "help": {
+                "text": "Vulnerability CVE-2026-102474\nSeverity: LOW\nPackage: dash\nFixed Version: \nLink: [CVE-2026-102474](https://avd.aquasec.com/nvd/cve-2026-102474)\nA flaw was found in dash. The printf builtin reserves four bytes before converting a Unicode \\u or \\U escape, but the multi-byte token can need five or six bytes. A local user who can supply such an escape to dash printf or echo %b, including through dash -c and a positional argument, can write one or two bytes past that reservation.",
+                "markdown": "**Vulnerability CVE-2026-102474**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|dash||[CVE-2026-102474](https://avd.aquasec.com/nvd/cve-2026-102474)|\n\nA flaw was found in dash. The printf builtin reserves four bytes before converting a Unicode \\u or \\U escape, but the multi-byte token can need five or six bytes. A local user who can supply such an escape to dash printf or echo %b, including through dash -c and a positional argument, can write one or two bytes past that reservation."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-53910",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "diffutils: heap\u2011based buffer overflow due to multiple signed integer overflows in line\u2011mapping calculations"
+              },
+              "fullDescription": {
+                "text": "diff3\u00a0tool from GNU diffutils\u00a0is vulnerable to a heap\u2011based buffer overflow due to multiple signed integer overflows in line\u2011mapping calculations. Incorrect arithmetic in mapping line ranges can result in corrupted values being used for memory allocation and loop bounds.\nWhen processing crafted diff output, these overflows may cause the application to allocate insufficient memory and subsequently perform out\u2011of\u2011bounds writes during internal processing.\u00a0\nAn attacker who can control the output of the diff program used by diff3 (e.g. via --diff-program pointing to a malicious script) can trigger out-of-bounds writes, resulting in a crash and potentially remote code execution depending on the environment.\n\n\nThis issue has been fixed in commit 9ff04d5b84743e331e80b589335a52c5480d1815\u00a0\n\nNOTE:\nThe project maintainers claim that this is not a security issue. They state that the worst outcome this issue can cause is a crash of diff and that it cannot be used to escalate privileges."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-53910",
+              "help": {
+                "text": "Vulnerability CVE-2026-53910\nSeverity: LOW\nPackage: diffutils\nFixed Version: \nLink: [CVE-2026-53910](https://avd.aquasec.com/nvd/cve-2026-53910)\ndiff3\u00a0tool from GNU diffutils\u00a0is vulnerable to a heap\u2011based buffer overflow due to multiple signed integer overflows in line\u2011mapping calculations. Incorrect arithmetic in mapping line ranges can result in corrupted values being used for memory allocation and loop bounds.\nWhen processing crafted diff output, these overflows may cause the application to allocate insufficient memory and subsequently perform out\u2011of\u2011bounds writes during internal processing.\u00a0\nAn attacker who can control the output of the diff program used by diff3 (e.g. via --diff-program pointing to a malicious script) can trigger out-of-bounds writes, resulting in a crash and potentially remote code execution depending on the environment.\n\n\nThis issue has been fixed in commit 9ff04d5b84743e331e80b589335a52c5480d1815\u00a0\n\nNOTE:\nThe project maintainers claim that this is not a security issue. They state that the worst outcome this issue can cause is a crash of diff and that it cannot be used to escalate privileges.",
+                "markdown": "**Vulnerability CVE-2026-53910**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|diffutils||[CVE-2026-53910](https://avd.aquasec.com/nvd/cve-2026-53910)|\n\ndiff3\u00a0tool from GNU diffutils\u00a0is vulnerable to a heap\u2011based buffer overflow due to multiple signed integer overflows in line\u2011mapping calculations. Incorrect arithmetic in mapping line ranges can result in corrupted values being used for memory allocation and loop bounds.\nWhen processing crafted diff output, these overflows may cause the application to allocate insufficient memory and subsequently perform out\u2011of\u2011bounds writes during internal processing.\u00a0\nAn attacker who can control the output of the diff program used by diff3 (e.g. via --diff-program pointing to a malicious script) can trigger out-of-bounds writes, resulting in a crash and potentially remote code execution depending on the environment.\n\n\nThis issue has been fixed in commit 9ff04d5b84743e331e80b589335a52c5480d1815\u00a0\n\nNOTE:\nThe project maintainers claim that this is not a security issue. They state that the worst outcome this issue can cause is a crash of diff and that it cannot be used to escalate privileges."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-102010",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "gcc-toolset-15-gcc: gcc: gcc-toolset-16: gcc: Denial of Service via use-after-free in binary heap erase_if"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in GCC. When an application calls the erase_if function on a binary heap priority queue in libstdc++, the library reallocates storage but fails to update its internal entry pointer. An attacker capable of triggering this operation can exploit this use-after-free condition, leading to a Denial of Service (DoS) via an application crash or potential memory corruption."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-102010",
+              "help": {
+                "text": "Vulnerability CVE-2026-102010\nSeverity: MEDIUM\nPackage: libstdc++6\nFixed Version: \nLink: [CVE-2026-102010](https://avd.aquasec.com/nvd/cve-2026-102010)\nA flaw was found in GCC. When an application calls the erase_if function on a binary heap priority queue in libstdc++, the library reallocates storage but fails to update its internal entry pointer. An attacker capable of triggering this operation can exploit this use-after-free condition, leading to a Denial of Service (DoS) via an application crash or potential memory corruption.",
+                "markdown": "**Vulnerability CVE-2026-102010**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|libstdc++6||[CVE-2026-102010](https://avd.aquasec.com/nvd/cve-2026-102010)|\n\nA flaw was found in GCC. When an application calls the erase_if function on a binary heap priority queue in libstdc++, the library reallocates storage but fails to update its internal entry pointer. An attacker capable of triggering this operation can exploit this use-after-free condition, leading to a Denial of Service (DoS) via an application crash or potential memory corruption."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "5.5",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-95619",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "gcc: libstdc++ integer overflow in `new` operator"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in libstdc++. An integer overflow can occur when processing large inputs to the aligned operator new in the C++ library. This vulnerability could lead to an undersized memory allocation, potentially causing memory corruption or application instability."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-95619",
+              "help": {
+                "text": "Vulnerability CVE-2026-95619\nSeverity: MEDIUM\nPackage: libstdc++6\nFixed Version: \nLink: [CVE-2026-95619](https://avd.aquasec.com/nvd/cve-2026-95619)\nA flaw was found in libstdc++. An integer overflow can occur when processing large inputs to the aligned operator new in the C++ library. This vulnerability could lead to an undersized memory allocation, potentially causing memory corruption or application instability.",
+                "markdown": "**Vulnerability CVE-2026-95619**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|libstdc++6||[CVE-2026-95619](https://avd.aquasec.com/nvd/cve-2026-95619)|\n\nA flaw was found in libstdc++. An integer overflow can occur when processing large inputs to the aligned operator new in the C++ library. This vulnerability could lead to an undersized memory allocation, potentially causing memory corruption or application instability."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "5.5",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-54369",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "acl: Symlink traversal privilege escalation via libacl functions"
+              },
+              "fullDescription": {
+                "text": "acl before version 2.4.0 contains a symlink traversal vulnerability in the libacl pathname-based functions acl_get_file(), acl_set_file(), acl_extended_file(), and acl_delete_def_file() that allows local attackers to escalate privileges by replacing any pathname component with a symbolic link. Attackers who control any component of a pathname processed by a privileged caller can redirect ACL read or write operations to arbitrary files or directories, enabling unauthorized manipulation of access control lists and local privilege escalation."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-54369",
+              "help": {
+                "text": "Vulnerability CVE-2026-54369\nSeverity: HIGH\nPackage: libacl1\nFixed Version: \nLink: [CVE-2026-54369](https://avd.aquasec.com/nvd/cve-2026-54369)\nacl before version 2.4.0 contains a symlink traversal vulnerability in the libacl pathname-based functions acl_get_file(), acl_set_file(), acl_extended_file(), and acl_delete_def_file() that allows local attackers to escalate privileges by replacing any pathname component with a symbolic link. Attackers who control any component of a pathname processed by a privileged caller can redirect ACL read or write operations to arbitrary files or directories, enabling unauthorized manipulation of access control lists and local privilege escalation.",
+                "markdown": "**Vulnerability CVE-2026-54369**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|HIGH|libacl1||[CVE-2026-54369](https://avd.aquasec.com/nvd/cve-2026-54369)|\n\nacl before version 2.4.0 contains a symlink traversal vulnerability in the libacl pathname-based functions acl_get_file(), acl_set_file(), acl_extended_file(), and acl_delete_def_file() that allows local attackers to escalate privileges by replacing any pathname component with a symbolic link. Attackers who control any component of a pathname processed by a privileged caller can redirect ACL read or write operations to arbitrary files or directories, enabling unauthorized manipulation of access control lists and local privilege escalation."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "8.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-54370",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "acl: TOCTOU Symlink Traversal via getfacl/setfacl"
+              },
+              "fullDescription": {
+                "text": "acl before version 2.4.0 contains a time-of-check to time-of-use (TOCTOU) race condition vulnerability that allows local attackers to escalate privileges by replacing a pathname component with a symbolic link between an lstat() check and subsequent symlink-following operations such as stat(), chown(), chmod(), acl_get_file(), and acl_set_file(). Attackers who control a pathname component can redirect file access control list operations to arbitrary files when getfacl, setfacl, or chacl is invoked by a privileged process over an attacker-controlled path, resulting in local privilege escalation."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-54370",
+              "help": {
+                "text": "Vulnerability CVE-2026-54370\nSeverity: MEDIUM\nPackage: libacl1\nFixed Version: \nLink: [CVE-2026-54370](https://avd.aquasec.com/nvd/cve-2026-54370)\nacl before version 2.4.0 contains a time-of-check to time-of-use (TOCTOU) race condition vulnerability that allows local attackers to escalate privileges by replacing a pathname component with a symbolic link between an lstat() check and subsequent symlink-following operations such as stat(), chown(), chmod(), acl_get_file(), and acl_set_file(). Attackers who control a pathname component can redirect file access control list operations to arbitrary files when getfacl, setfacl, or chacl is invoked by a privileged process over an attacker-controlled path, resulting in local privilege escalation.",
+                "markdown": "**Vulnerability CVE-2026-54370**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|libacl1||[CVE-2026-54370](https://avd.aquasec.com/nvd/cve-2026-54370)|\n\nacl before version 2.4.0 contains a time-of-check to time-of-use (TOCTOU) race condition vulnerability that allows local attackers to escalate privileges by replacing a pathname component with a symbolic link between an lstat() check and subsequent symlink-following operations such as stat(), chown(), chmod(), acl_get_file(), and acl_set_file(). Attackers who control a pathname component can redirect file access control list operations to arbitrary files when getfacl, setfacl, or chacl is invoked by a privileged process over an attacker-controlled path, resulting in local privilege escalation."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "5.5",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-54371",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "attr: attr: Symlink Traversal Privilege Escalation via getfattr and setfattr"
+              },
+              "fullDescription": {
+                "text": "attr before version 2.6.0 contains a symlink traversal vulnerability in the getfattr and setfattr utilities that allows local attackers to escalate privileges by replacing a pathname component with a symbolic link during directory hierarchy traversal. Attackers who control a pathname component can redirect getfattr and setfattr operations to arbitrary files by substituting a symlink, leading to local privilege escalation when getfattr or setfattr is invoked by a privileged process over an attacker-controlled path."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-54371",
+              "help": {
+                "text": "Vulnerability CVE-2026-54371\nSeverity: MEDIUM\nPackage: libattr1\nFixed Version: \nLink: [CVE-2026-54371](https://avd.aquasec.com/nvd/cve-2026-54371)\nattr before version 2.6.0 contains a symlink traversal vulnerability in the getfattr and setfattr utilities that allows local attackers to escalate privileges by replacing a pathname component with a symbolic link during directory hierarchy traversal. Attackers who control a pathname component can redirect getfattr and setfattr operations to arbitrary files by substituting a symlink, leading to local privilege escalation when getfattr or setfattr is invoked by a privileged process over an attacker-controlled path.",
+                "markdown": "**Vulnerability CVE-2026-54371**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|libattr1||[CVE-2026-54371](https://avd.aquasec.com/nvd/cve-2026-54371)|\n\nattr before version 2.6.0 contains a symlink traversal vulnerability in the getfattr and setfattr utilities that allows local attackers to escalate privileges by replacing a pathname component with a symbolic link during directory hierarchy traversal. Attackers who control a pathname component can redirect getfattr and setfattr operations to arbitrary files by substituting a symlink, leading to local privilege escalation when getfattr or setfattr is invoked by a privileged process over an attacker-controlled path."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "5.5",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-42250",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "bzip2: bzip2: Denial of Service in bzip2recover via a specially crafted file"
+              },
+              "fullDescription": {
+                "text": "bzip2 contains an off\u2011by\u2011one error in the bzip2recover utility. When processing a specially crafted file, the application performs an out\u2011of\u2011bounds write to a global buffer, resulting in memory corruption and a crash (denial of service).\n\nThis issue was fixed in bzip2 patch\u00a035d122a3df8b0cc4082a4d89fdc6ee99f375fe67"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-42250",
+              "help": {
+                "text": "Vulnerability CVE-2026-42250\nSeverity: MEDIUM\nPackage: libbz2-1.0\nFixed Version: \nLink: [CVE-2026-42250](https://avd.aquasec.com/nvd/cve-2026-42250)\nbzip2 contains an off\u2011by\u2011one error in the bzip2recover utility. When processing a specially crafted file, the application performs an out\u2011of\u2011bounds write to a global buffer, resulting in memory corruption and a crash (denial of service).\n\nThis issue was fixed in bzip2 patch\u00a035d122a3df8b0cc4082a4d89fdc6ee99f375fe67",
+                "markdown": "**Vulnerability CVE-2026-42250**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|libbz2-1.0||[CVE-2026-42250](https://avd.aquasec.com/nvd/cve-2026-42250)|\n\nbzip2 contains an off\u2011by\u2011one error in the bzip2recover utility. When processing a specially crafted file, the application performs an out\u2011of\u2011bounds write to a global buffer, resulting in memory corruption and a crash (denial of service).\n\nThis issue was fixed in bzip2 patch\u00a035d122a3df8b0cc4082a4d89fdc6ee99f375fe67"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "5.5",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-18374",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "glibc: glibc: Heap buffer overflow via attacker-controlled fopen mode string"
+              },
+              "fullDescription": {
+                "text": "Passing an effectively empty string to the `,ccs=` syntax extension of the mode argument in the `fopen` function in the GNU C Library version 2.45 or earlier may result in a heap buffer overflow when the mode string input to the function is attacker controlled.\n\n\n\nThis usage pattern is not seen in applications in common GNU/Linux distributions and applications that process user-supplied values for `ccs` should not pass them through without validation."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-18374",
+              "help": {
+                "text": "Vulnerability CVE-2026-18374\nSeverity: MEDIUM\nPackage: libc6\nFixed Version: \nLink: [CVE-2026-18374](https://avd.aquasec.com/nvd/cve-2026-18374)\nPassing an effectively empty string to the `,ccs=` syntax extension of the mode argument in the `fopen` function in the GNU C Library version 2.45 or earlier may result in a heap buffer overflow when the mode string input to the function is attacker controlled.\n\n\n\nThis usage pattern is not seen in applications in common GNU/Linux distributions and applications that process user-supplied values for `ccs` should not pass them through without validation.",
+                "markdown": "**Vulnerability CVE-2026-18374**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|libc6||[CVE-2026-18374](https://avd.aquasec.com/nvd/cve-2026-18374)|\n\nPassing an effectively empty string to the `,ccs=` syntax extension of the mode argument in the `fopen` function in the GNU C Library version 2.45 or earlier may result in a heap buffer overflow when the mode string input to the function is attacker controlled.\n\n\n\nThis usage pattern is not seen in applications in common GNU/Linux distributions and applications that process user-supplied values for `ccs` should not pass them through without validation."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "5.5",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-19499",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "glibc: Buffer Overflow in strfmon right-justification padding"
+              },
+              "fullDescription": {
+                "text": "Calling strfmon and strfmon_l in the GNU C Library version 2.38 to 2.44 can write past the end of the caller-supplied output buffer when a conversion uses right-justified width padding.\n\nExploitation requires an application code path that calls strfmon or strfmon_l with right-justified width padding into a destination buffer that is large enough for the padding to succeed but too small for the internal memmove call. The field width or format may be attacker-influenced or a fixed susceptible pattern in the caller.\n\nAt the time of publication, no network-facing application impact is known."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2026-19499",
+              "help": {
+                "text": "Vulnerability CVE-2026-19499\nSeverity: MEDIUM\nPackage: libc6\nFixed Version: \nLink: [CVE-2026-19499](https://avd.aquasec.com/nvd/cve-2026-19499)\nCalling strfmon and strfmon_l in the GNU C Library version 2.38 to 2.44 can write past the end of the caller-supplied output buffer when a conversion uses right-justified width padding.\n\nExploitation requires an application code path that calls strfmon or strfmon_l with right-justified width padding into a destination buffer that is large enough for the padding to succeed but too small for the internal memmove call. The field width or format may be attacker-influenced or a fixed susceptible pattern in the caller.\n\nAt the time of publication, no network-facing application impact is known.",
+                "markdown": "**Vulnerability CVE-2026-19499**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|libc6||[CVE-2026-19499](https://avd.aquasec.com/nvd/cve-2026-19499)|\n\nCalling strfmon and strfmon_l in the GNU C Library version 2.38 to 2.44 can write past the end of the caller-supplied output buffer when a conversion uses right-justified width padding.\n\nExploitation requires an application code path that calls strfmon or strfmon_l with right-justified width padding into a destination buffer that is large enough for the padding to succeed but too small for the internal memmove call. The field width or format may be attacker-influenced or a fixed susceptible pattern in the caller.\n\nAt the time of publication, no network-facing application impact is known."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "5.5",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            }
+          ],
+          "version": "0.76.1"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CVE-2011-3374",
+          "ruleIndex": 0,
+          "level": "note",
+          "message": {
+            "text": "Package: apt\nInstalled Version: 3.0.3\nVulnerability CVE-2011-3374\nSeverity: LOW\nFixed Version: \nLink: [CVE-2011-3374](https://avd.aquasec.com/nvd/cve-2011-3374)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: apt@3.0.3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TEMP-0841856-B18BAF",
+          "ruleIndex": 1,
+          "level": "note",
+          "message": {
+            "text": "Package: bash\nInstalled Version: 5.2.37-2+b10\nVulnerability TEMP-0841856-B18BAF\nSeverity: LOW\nFixed Version: \nLink: [TEMP-0841856-B18BAF](https://security-tracker.debian.org/tracker/TEMP-0841856-B18BAF)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: bash@5.2.37-2+b10"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-76642",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "Package: bsdutils\nInstalled Version: 1:2.41.5-0+deb13u1\nVulnerability CVE-2026-76642\nSeverity: HIGH\nFixed Version: \nLink: [CVE-2026-76642](https://avd.aquasec.com/nvd/cve-2026-76642)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: bsdutils@1:2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78408",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "Package: bsdutils\nInstalled Version: 1:2.41.5-0+deb13u1\nVulnerability CVE-2026-78408\nSeverity: HIGH\nFixed Version: \nLink: [CVE-2026-78408](https://avd.aquasec.com/nvd/cve-2026-78408)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: bsdutils@1:2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78409",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "Package: bsdutils\nInstalled Version: 1:2.41.5-0+deb13u1\nVulnerability CVE-2026-78409\nSeverity: HIGH\nFixed Version: \nLink: [CVE-2026-78409](https://avd.aquasec.com/nvd/cve-2026-78409)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: bsdutils@1:2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78410",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "Package: bsdutils\nInstalled Version: 1:2.41.5-0+deb13u1\nVulnerability CVE-2026-78410\nSeverity: HIGH\nFixed Version: \nLink: [CVE-2026-78410](https://avd.aquasec.com/nvd/cve-2026-78410)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: bsdutils@1:2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-3184",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "Package: bsdutils\nInstalled Version: 1:2.41.5-0+deb13u1\nVulnerability CVE-2026-3184\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2026-3184](https://avd.aquasec.com/nvd/cve-2026-3184)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: bsdutils@1:2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "Package: bsdutils\nInstalled Version: 1:2.41.5-0+deb13u1\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: bsdutils@1:2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2017-18018",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "Package: coreutils\nInstalled Version: 9.7-3\nVulnerability CVE-2017-18018\nSeverity: LOW\nFixed Version: \nLink: [CVE-2017-18018](https://avd.aquasec.com/nvd/cve-2017-18018)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: coreutils@9.7-3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-5278",
+          "ruleIndex": 9,
+          "level": "note",
+          "message": {
+            "text": "Package: coreutils\nInstalled Version: 9.7-3\nVulnerability CVE-2025-5278\nSeverity: LOW\nFixed Version: \nLink: [CVE-2025-5278](https://avd.aquasec.com/nvd/cve-2025-5278)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: coreutils@9.7-3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56391",
+          "ruleIndex": 10,
+          "level": "note",
+          "message": {
+            "text": "Package: coreutils\nInstalled Version: 9.7-3\nVulnerability CVE-2026-56391\nSeverity: LOW\nFixed Version: \nLink: [CVE-2026-56391](https://avd.aquasec.com/nvd/cve-2026-56391)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: coreutils@9.7-3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56392",
+          "ruleIndex": 11,
+          "level": "note",
+          "message": {
+            "text": "Package: coreutils\nInstalled Version: 9.7-3\nVulnerability CVE-2026-56392\nSeverity: LOW\nFixed Version: \nLink: [CVE-2026-56392](https://avd.aquasec.com/nvd/cve-2026-56392)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: coreutils@9.7-3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-102473",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "Package: dash\nInstalled Version: 0.5.12-12\nVulnerability CVE-2026-102473\nSeverity: LOW\nFixed Version: \nLink: [CVE-2026-102473](https://avd.aquasec.com/nvd/cve-2026-102473)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: dash@0.5.12-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-102474",
+          "ruleIndex": 13,
+          "level": "note",
+          "message": {
+            "text": "Package: dash\nInstalled Version: 0.5.12-12\nVulnerability CVE-2026-102474\nSeverity: LOW\nFixed Version: \nLink: [CVE-2026-102474](https://avd.aquasec.com/nvd/cve-2026-102474)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: dash@0.5.12-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-53910",
+          "ruleIndex": 14,
+          "level": "note",
+          "message": {
+            "text": "Package: diffutils\nInstalled Version: 1:3.10-4\nVulnerability CVE-2026-53910\nSeverity: LOW\nFixed Version: \nLink: [CVE-2026-53910](https://avd.aquasec.com/nvd/cve-2026-53910)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: diffutils@1:3.10-4"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-102010",
+          "ruleIndex": 15,
+          "level": "warning",
+          "message": {
+            "text": "Package: gcc-14-base\nInstalled Version: 14.2.0-19\nVulnerability CVE-2026-102010\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2026-102010](https://avd.aquasec.com/nvd/cve-2026-102010)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: gcc-14-base@14.2.0-19"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-95619",
+          "ruleIndex": 16,
+          "level": "warning",
+          "message": {
+            "text": "Package: gcc-14-base\nInstalled Version: 14.2.0-19\nVulnerability CVE-2026-95619\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2026-95619](https://avd.aquasec.com/nvd/cve-2026-95619)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: gcc-14-base@14.2.0-19"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-54369",
+          "ruleIndex": 17,
+          "level": "error",
+          "message": {
+            "text": "Package: libacl1\nInstalled Version: 2.3.2-2+b1\nVulnerability CVE-2026-54369\nSeverity: HIGH\nFixed Version: \nLink: [CVE-2026-54369](https://avd.aquasec.com/nvd/cve-2026-54369)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libacl1@2.3.2-2+b1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-54370",
+          "ruleIndex": 18,
+          "level": "warning",
+          "message": {
+            "text": "Package: libacl1\nInstalled Version: 2.3.2-2+b1\nVulnerability CVE-2026-54370\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2026-54370](https://avd.aquasec.com/nvd/cve-2026-54370)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libacl1@2.3.2-2+b1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2011-3374",
+          "ruleIndex": 0,
+          "level": "note",
+          "message": {
+            "text": "Package: libapt-pkg7.0\nInstalled Version: 3.0.3\nVulnerability CVE-2011-3374\nSeverity: LOW\nFixed Version: \nLink: [CVE-2011-3374](https://avd.aquasec.com/nvd/cve-2011-3374)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libapt-pkg7.0@3.0.3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-54371",
+          "ruleIndex": 19,
+          "level": "warning",
+          "message": {
+            "text": "Package: libattr1\nInstalled Version: 1:2.5.2-3\nVulnerability CVE-2026-54371\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2026-54371](https://avd.aquasec.com/nvd/cve-2026-54371)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libattr1@1:2.5.2-3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-76642",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "Package: libblkid1\nInstalled Version: 2.41.5-0+deb13u1\nVulnerability CVE-2026-76642\nSeverity: HIGH\nFixed Version: \nLink: [CVE-2026-76642](https://avd.aquasec.com/nvd/cve-2026-76642)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libblkid1@2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78408",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "Package: libblkid1\nInstalled Version: 2.41.5-0+deb13u1\nVulnerability CVE-2026-78408\nSeverity: HIGH\nFixed Version: \nLink: [CVE-2026-78408](https://avd.aquasec.com/nvd/cve-2026-78408)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libblkid1@2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78409",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "Package: libblkid1\nInstalled Version: 2.41.5-0+deb13u1\nVulnerability CVE-2026-78409\nSeverity: HIGH\nFixed Version: \nLink: [CVE-2026-78409](https://avd.aquasec.com/nvd/cve-2026-78409)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libblkid1@2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78410",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "Package: libblkid1\nInstalled Version: 2.41.5-0+deb13u1\nVulnerability CVE-2026-78410\nSeverity: HIGH\nFixed Version: \nLink: [CVE-2026-78410](https://avd.aquasec.com/nvd/cve-2026-78410)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libblkid1@2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-3184",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "Package: libblkid1\nInstalled Version: 2.41.5-0+deb13u1\nVulnerability CVE-2026-3184\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2026-3184](https://avd.aquasec.com/nvd/cve-2026-3184)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libblkid1@2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "Package: libblkid1\nInstalled Version: 2.41.5-0+deb13u1\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libblkid1@2.41.5-0+deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-42250",
+          "ruleIndex": 20,
+          "level": "warning",
+          "message": {
+            "text": "Package: libbz2-1.0\nInstalled Version: 1.0.8-6\nVulnerability CVE-2026-42250\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2026-42250](https://avd.aquasec.com/nvd/cve-2026-42250)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libbz2-1.0@1.0.8-6"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-18374",
+          "ruleIndex": 21,
+          "level": "warning",
+          "message": {
+            "text": "Package: libc-bin\nInstalled Version: 2.41-12+deb13u4\nVulnerability CVE-2026-18374\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2026-18374](https://avd.aquasec.com/nvd/cve-2026-18374)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libc-bin@2.41-12+deb13u4"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-19499",
+          "ruleIndex": 22,
+          "level": "warning",
+          "message": {
+            "text": "Package: libc-bin\nInstalled Version: 2.41-12+deb13u4\nVulnerability CVE-2026-19499\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2026-19499](https://avd.aquasec.com/nvd/cve-2026-19499)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/python",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/python: libc-bin@2.41-12+deb13u4"
+              }
+            }
+          ]
+        }
+      ],
+      "columnKind": "utf16CodeUnits",
+      "properties": {
+        "imageID": "sha256:a33c10a97f11005523814c6eee013986119fe41f3122f444518117536675c8e1",
+        "imageName": "python:3.12-slim",
+        "repoDigests": [
+          "python@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704"
+        ],
+        "repoTags": [
+          "python:3.12-slim"
+        ]
+      }
+    }
+  ],
+  "_scanproof_fixture": {
+    "trimmed": true,
+    "kept_results_per_run": 30,
+    "original_results_per_run": [
+      170
+    ]
+  }
+}

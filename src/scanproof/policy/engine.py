@@ -257,6 +257,8 @@ def _evidence_checks(req: Requirement, data: RequirementInput) -> list[CheckResu
             c.minimum_scanned_files is not None,
             c.required_paths,
             c.image_digest_must_match,
+            c.expected_scanner,
+            c.minimum_components is not None,
         ]
     )
     if not wants_evidence:
@@ -304,6 +306,10 @@ def _evidence_checks(req: Requirement, data: RequirementInput) -> list[CheckResu
         out.append(_required_paths(ev, c.required_paths))
     if c.image_digest_must_match:
         out.append(_image_digest(ev, c.image_digest_must_match))
+    if c.expected_scanner:
+        out.append(_expected_scanner(ev, c.expected_scanner))
+    if c.minimum_components is not None:
+        out.append(_min_components(ev, c.minimum_components))
     return out
 
 
@@ -410,3 +416,35 @@ def _image_digest(ev: ScanEvidence, expected: str) -> CheckResult:
             f"Scanned {scanned or 'an image'} ({', '.join(sorted(known))}), expected {expected}",
         )
     return _r(name, Outcome.PASS, "IMAGE_DIGEST_MATCHES", f"Scanned image has digest {expected}")
+
+
+def _expected_scanner(ev: ScanEvidence, expected: str) -> CheckResult:
+    name = "expected_scanner"
+    if not ev.scanner_name:
+        return _r(
+            name, Outcome.UNKNOWN, "SCANNER_UNKNOWN", "Report does not name the engine that ran"
+        )
+    produced = {n.strip().lower() for n in ev.scanner_name.split(",")}
+    if produced != {expected.strip().lower()}:
+        return _r(
+            name,
+            Outcome.FAIL,
+            "SCANNER_MISMATCH",
+            f"Report was produced by {ev.scanner_name}, expected {expected}",
+        )
+    return _r(name, Outcome.PASS, "SCANNER_MATCHES", f"Report produced by {ev.scanner_name}")
+
+
+def _min_components(ev: ScanEvidence, minimum: int) -> CheckResult:
+    name = "minimum_components"
+    count = ev.scope.components if ev.scope else None
+    if count is None:
+        return _r(name, Outcome.UNKNOWN, "COMPONENTS_UNKNOWN", "Report does not list components")
+    if count < minimum:
+        return _r(
+            name,
+            Outcome.FAIL,
+            "SBOM_TOO_SMALL",
+            f"{count} component(s) in SBOM, at least {minimum} required",
+        )
+    return _r(name, Outcome.PASS, "SBOM_COMPONENTS_OK", f"{count} component(s) in SBOM")

@@ -62,6 +62,7 @@ class TrivyAdapter(ScannerAdapter):
         version = trivy_meta.get("Version") if isinstance(trivy_meta, dict) else None
         return {
             "tool_version": version,
+            "scanner_name": "trivy",
             "scanner_errors": None,
             "scope": scope,
             "results_reported": isinstance(results, list),
