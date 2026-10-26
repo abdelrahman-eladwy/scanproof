@@ -93,6 +93,10 @@ Self-hosted GitLab: `--gitlab-url https://gitlab.internal` and, for a private CA
 
 A release gate should block on anything non-zero.
 
+If no requirement applies to the pipeline (for example every requirement has `applies_to.refs`
+and this is a merge-request pipeline), the decision is INDETERMINATE: nothing was verified. Set
+`enforcement: {on_nothing_applicable: allow}` to make that VERIFIED with a warning instead.
+
 ## Roadmap to v0.1
 
 - [x] **M1 — GitLab Pipeline Inspector**
@@ -112,6 +116,9 @@ Beyond the original plan (merged):
 See [`docs/issues/`](docs/issues/) for detailed acceptance criteria.
 
 ## Using it in CI
+
+Tested scenarios (child/parallel/matrix pipelines, re-runs, faults, scale) and their results:
+[docs/scenarios.md](docs/scenarios.md).
 
 - **GitHub Actions**: [docs/usage-github.md](docs/usage-github.md). On GitHub a step that fails under
   `continue-on-error` is reported as *success* by the API; ScanProof still catches it.

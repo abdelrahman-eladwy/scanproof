@@ -76,3 +76,15 @@ own run on every change:
 | Token lacks `checks: read` | annotations 403 | INDETERMINATE: `STEP_MASKING_UNKNOWN` |
 | Artifact bytes differ from GitHub's digest | — | BLOCKED: report unparseable (digest mismatch) |
 | Re-run attempts | jobs from every attempt | latest attempt is judged; retries are reported |
+| Matrix job, one instance masked | `sast (python)` success, `sast (go)` success + failure annotation | BLOCKED: `job_success [sast (go)]` |
+| Job in a reusable workflow | `caller / sast` | matched by `job_name: sast` |
+| Workflow still running | job `in_progress` | INDETERMINATE: `JOB_NOT_FINISHED` |
+
+`job_name` matches the job exactly, its matrix instances (`name (...)`) and its name inside a
+reusable workflow (`caller / name`); when several match, every one must pass. All matrix
+instances share the one `artifact_name` you give, so give each instance its own artifact (e.g.
+`semgrep-${{ matrix.lang }}`) and one requirement per artifact if each report must be checked.
+
+GitHub keeps only a limited number of annotations per step and per job (in our live run, 10 of
+150 warnings from one step). ScanProof still reads every annotation page, and treats a list it
+cannot finish reading as UNKNOWN.
