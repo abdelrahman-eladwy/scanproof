@@ -93,6 +93,9 @@ Self-hosted GitLab: `--gitlab-url https://gitlab.internal` and, for a private CA
 
 A release gate should block on anything non-zero.
 
+`evidence` and `inspect` only describe; they exit 0 even when a report is invalid (the output says
+`INVALID`). Use `verify` with a policy to gate.
+
 If no requirement applies to the pipeline (for example every requirement has `applies_to.refs`
 and this is a merge-request pipeline), the decision is INDETERMINATE: nothing was verified. Set
 `enforcement: {on_nothing_applicable: allow}` to make that VERIFIED with a warning instead.
