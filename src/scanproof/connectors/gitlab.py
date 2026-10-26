@@ -77,7 +77,7 @@ class GitLabConnector(HttpConnector):
                 finished_at=data.get("finished_at"),
                 web_url=data.get("web_url"),
             )
-        except (KeyError, TypeError, ValueError) as exc:
+        except (KeyError, TypeError, ValueError, AttributeError) as exc:
             raise ConnectorError(
                 ErrorKind.INVALID_RESPONSE, f"Unexpected pipeline payload: {exc}"
             ) from exc
@@ -193,5 +193,5 @@ def _parse_job(item: dict[str, Any]) -> Job:
             artifacts_expire_at=item.get("artifacts_expire_at"),
             web_url=item.get("web_url"),
         )
-    except (KeyError, TypeError, ValueError) as exc:
+    except (KeyError, TypeError, ValueError, AttributeError) as exc:
         raise ConnectorError(ErrorKind.INVALID_RESPONSE, f"Unexpected job payload: {exc}") from exc

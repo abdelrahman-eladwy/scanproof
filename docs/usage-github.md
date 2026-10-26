@@ -1,5 +1,9 @@
 # Using ScanProof with GitHub Actions
 
+> **Before v0.1.0 is released** there is no PyPI package or container image yet. Until then install
+> from source with `pip install "git+https://github.com/abdelrahman-eladwy/scanproof"` and build the
+> image yourself with `docker build -t scanproof .` from a checkout.
+
 ## Token permissions
 
 | Permission | Why |
@@ -46,8 +50,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions: {contents: read, actions: read, checks: read}
     steps:
-      - uses: actions/checkout@v5
-      - run: pip install scanproof
+      - uses: actions/checkout@v5        # pin to a commit SHA in real workflows
+      - run: pip install scanproof          # until v0.1.0: pip install "git+https://github.com/abdelrahman-eladwy/scanproof"
       - run: scanproof verify -P .scanproof/policy.yaml --pipeline "${{ github.run_id }}" -o scanproof-report.json
         env:
           GITHUB_TOKEN: ${{ github.token }}

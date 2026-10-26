@@ -45,6 +45,8 @@ scanners are leaves. A new scanner or CI provider must not require changes to `p
 - Tests first for parsers and the policy engine. Use `respx` to mock GitLab; put real
   (sanitized) reports in `tests/fixtures/`. No network in unit tests.
 - Before opening a PR run: `ruff check . && ruff format --check . && pytest`.
+- New scanner adapter? Add its real fixtures to `SAMPLES` in `tests/unit/test_robustness.py`
+  so it is fuzzed: adapters must never raise on any input.
 - Don't add dependencies without stating why in the PR. Prefer stdlib.
 - Don't touch: `LICENSE`, exit-code meanings, the security rules above — ask instead.
 

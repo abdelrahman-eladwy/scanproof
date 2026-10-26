@@ -1,5 +1,9 @@
 # Using ScanProof with GitLab
 
+> **Before v0.1.0 is released** there is no PyPI package or container image yet. Until then install
+> from source with `pip install "git+https://github.com/abdelrahman-eladwy/scanproof"` and build the
+> image yourself with `docker build -t scanproof .` from a checkout.
+
 ## 1. Create a read-only token
 
 Project or group access token, role **Developer**, scope **`read_api`** only, with an expiry.

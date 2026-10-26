@@ -76,9 +76,19 @@ def _tools(tools: Any) -> list[tuple[str, str]]:
 
 
 def _count(components: Any) -> int:
-    if not isinstance(components, list):
-        return 0
-    return sum(1 + _count(c.get("components")) for c in components if isinstance(c, dict))
+    """Count components at every nesting level. Iterative: a deeply nested BOM must not be able
+    to exhaust the interpreter's recursion limit (found by fuzzing)."""
+    total = 0
+    stack = [components]
+    while stack:
+        current = stack.pop()
+        if not isinstance(current, list):
+            continue
+        for comp in current:
+            if isinstance(comp, dict):
+                total += 1
+                stack.append(comp.get("components"))
+    return total
 
 
 def _severity(vuln: dict[str, Any]) -> str:
