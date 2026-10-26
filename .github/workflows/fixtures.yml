@@ -14,9 +14,9 @@ permissions:
 jobs:
   semgrep:
     runs-on: ubuntu-latest
-    container: semgrep/semgrep:latest
+    container: semgrep/semgrep:1.181.1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Findings report (vulnerable sample app)
         run: semgrep scan --config p/default --metrics=off --json --output semgrep-findings.json examples/gitlab-ci/sample-app/
       - name: Clean report (no findings)
@@ -29,7 +29,7 @@ jobs:
           printf 'def broken(:\n    return (\n' > /tmp/broken/bad.py
           semgrep scan --config p/default --metrics=off --json --output semgrep-errors.json /tmp/broken/ || true
       - run: semgrep --version > semgrep-version.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: semgrep-fixtures
           path: semgrep-*
@@ -39,15 +39,15 @@ jobs:
     steps:
       - name: Image report (released image)
         run: |
-          docker run --rm -v "$PWD:/out" aquasec/trivy:latest image \
+          docker run --rm -v "$PWD:/out" aquasec/trivy:0.76.1 image \
             --format json --output /out/trivy-python.json python:3.12-slim
       - name: Image report (a different image)
         run: |
-          docker run --rm -v "$PWD:/out" aquasec/trivy:latest image \
+          docker run --rm -v "$PWD:/out" aquasec/trivy:0.76.1 image \
             --format json --output /out/trivy-alpine.json alpine:3.20
       - run: |
-          docker run --rm aquasec/trivy:latest --version > trivy-version.txt
-      - uses: actions/upload-artifact@v4
+          docker run --rm aquasec/trivy:0.76.1 --version > trivy-version.txt
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: trivy-fixtures
           path: trivy-*
@@ -61,8 +61,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           path: generated-fixtures
       - run: |

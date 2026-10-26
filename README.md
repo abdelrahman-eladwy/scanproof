@@ -16,7 +16,7 @@ and still find critical vulnerabilities. ScanProof checks the *scan*, not the *c
 
 | Option | Gap ScanProof fills |
 |---|---|
-| GitLab Ultimate scan execution / pipeline execution policies | Force scans to *run*; don't verify the *report* is valid, non-empty, and bound to the shipped image. Ultimate-only. |
+| GitLab scan execution / pipeline execution policies | Enforce that scans or jobs *run* (Ultimate tier). Their docs don't describe checking that the *report* is valid, covers the code, or is bound to the shipped image digest. ScanProof complements them, and on Free/Premium it is the check you have. ([GitLab docs](https://docs.gitlab.com/user/application_security/policies/)) |
 | Checking job status in a script | `success` + `allow_failure` + retries + missing jobs + empty reports = many silent false passes. |
 | Sigstore / in-toto attestations | The right long-term answer (ScanProof's v0.2+ direction), but most teams don't have it yet. ScanProof gives assurance today and a path there. |
 
@@ -74,9 +74,15 @@ A release gate should block on anything non-zero.
 - [x] **M1 — GitLab Pipeline Inspector**
 - [x] **M2 — Scanner adapters:** Semgrep (scan scope, errors) and Trivy (image digest binding)
 - [x] **M3 — Policy engine:** YAML policies, PASS / FAIL / UNKNOWN / NOT_APPLICABLE, `verify` command
-- [ ] **M4 — Hardening & release:** Docker image, docs, demo project, PyPI
+- [ ] **M4 — Hardening & release:** pinned CI, release workflow with provenance, docs (done); demo project and first PyPI release (pending)
 
 See [`docs/issues/`](docs/issues/) for detailed acceptance criteria.
+
+## Using it in GitLab CI
+
+See [docs/usage-gitlab.md](docs/usage-gitlab.md) for a copy-paste release gate
+([`examples/gitlab-ci/scanproof-gate.gitlab-ci.yml`](examples/gitlab-ci/scanproof-gate.gitlab-ci.yml)),
+binding Trivy to the image digest you ship, and where to run the gate so it is hard to bypass.
 
 ## Security model
 
