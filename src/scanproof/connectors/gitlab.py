@@ -25,7 +25,7 @@ import httpx
 
 from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
 from scanproof.connectors.http import DEFAULT_MAX_ARTIFACT_BYTES, MAX_PAGES, HttpConnector
-from scanproof.models import ArtifactFile, Job, JobStatus, Pipeline
+from scanproof.models import ArtifactFile, Downstream, Job, JobStatus, Pipeline
 
 
 class GitLabConnector(HttpConnector):
@@ -96,13 +96,37 @@ class GitLabConnector(HttpConnector):
         url = f"{self.api_url}/projects/{_project_ref(project)}/jobs/{job_id}/artifacts/{safe_path}"
         return self._download(url)
 
+    def list_downstream(self, project: str, pipeline_id: int) -> list[Downstream]:
+        path = f"/projects/{_project_ref(project)}/pipelines/{pipeline_id}/bridges"
+        out: list[Downstream] = []
+        for item in self._paginate(path, {}):
+            try:
+                ds = item.get("downstream_pipeline") or {}
+                if not isinstance(ds, dict):
+                    raise TypeError("downstream_pipeline must be an object")
+                out.append(
+                    Downstream(
+                        trigger_name=item["name"],
+                        trigger_status=JobStatus.from_provider(item.get("status")),
+                        pipeline_id=ds.get("id"),
+                        project=str(ds["project_id"]) if ds.get("project_id") is not None else None,
+                        sha=ds.get("sha"),
+                        status=ds.get("status"),
+                    )
+                )
+            except (KeyError, TypeError, ValueError, AttributeError) as exc:
+                raise ConnectorError(
+                    ErrorKind.INVALID_RESPONSE, f"Unexpected bridge payload: {exc}"
+                ) from exc
+        return out
+
     def fetch_report(
         self, project: str, job: Job, report_path: str, artifact_name: str | None = None
     ) -> bytes:
         if not job.has_archive:
             raise NotFoundError("Job uploaded no artifacts archive", status_code=None)
         try:
-            return self.download_artifact_file(project, job.id, report_path)
+            return self.download_artifact_file(job.project or project, job.id, report_path)
         except NotFoundError:
             raise NotFoundError(
                 f"'{report_path}' not found in job artifacts (never uploaded, or expired)"

@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field
 
 from scanproof import __version__
 from scanproof.connectors.base import CIConnector, ConnectorError
-from scanproof.evidence.collector import collect_evidence, find_job
+from scanproof.evidence.collector import collect_evidence, find_jobs
 from scanproof.evidence.models import ScanEvidence
 from scanproof.inspection import inspect_pipeline
 from scanproof.models import Pipeline
@@ -55,11 +55,9 @@ def verify_pipeline(
     inputs: dict[str, RequirementInput] = {}
     cache: dict[tuple[int, str, str, str | None], ScanEvidence] = {}
 
-    for req in policy.requirements:
-        job = find_job(inspection.jobs, req.job_name)
-        if job is None:
-            inputs[req.id] = RequirementInput()
-            continue
+    unreadable = inspection.unreadable_downstream
+
+    def collect(req, job) -> RequirementInput:
         key = (job.latest.id, req.report_path, req.tool.lower(), req.artifact_name)
         try:
             if key not in cache:
@@ -72,17 +70,40 @@ def verify_pipeline(
                     adapter=get_adapter(req.tool),
                     artifact_name=req.artifact_name,
                 )
-            inputs[req.id] = RequirementInput(job=job, evidence=cache[key])
+            return RequirementInput(job=job, evidence=cache[key])
         except ConnectorError as exc:
-            inputs[req.id] = RequirementInput(
+            return RequirementInput(
                 job=job,
                 evidence_error=(
                     f"Could not fetch {req.report_path}: {exc.kind.value}: {exc.message}"
                 ),
             )
 
+    for req in policy.requirements:
+        matches, missing = find_jobs(inspection.jobs, req.job_name)
+        if not matches:
+            inputs[req.id] = RequirementInput(
+                absence_unknown=(
+                    f"these pipelines could not be read: {', '.join(unreadable)}"
+                    if unreadable
+                    else None
+                )
+            )
+        elif len(matches) == 1 and not missing:
+            inputs[req.id] = collect(req, matches[0])
+        else:
+            instances = [(job.name, collect(req, job)) for job in matches]
+            instances += [(name, RequirementInput()) for name in missing]
+            inputs[req.id] = RequirementInput(instances=instances)
+
     evaluation = evaluate(policy, inspection.pipeline, inputs)
-    evidence = {rid: i.evidence for rid, i in inputs.items() if i.evidence is not None}
+    evidence: dict[str, ScanEvidence] = {}
+    for rid, item in inputs.items():
+        if item.evidence is not None:
+            evidence[rid] = item.evidence
+        for name, inst in item.instances or []:
+            if inst.evidence is not None:
+                evidence[f"{rid} [{name}]"] = inst.evidence
     return VerificationReport(
         scanproof_version=__version__,
         generated_at=datetime.now(UTC),

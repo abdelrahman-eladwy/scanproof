@@ -10,7 +10,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from enum import StrEnum
 
-from scanproof.models import Job, Pipeline
+from scanproof.models import Downstream, Job, Pipeline
 
 
 class ErrorKind(StrEnum):
@@ -76,6 +76,10 @@ class CIConnector(ABC):
         missing evidence. Raise other ConnectorErrors when the platform cannot be asked.
         `artifact_name` is required by platforms whose artifacts are not tied to jobs (GitHub).
         """
+
+    def list_downstream(self, project: str, pipeline_id: int) -> list[Downstream]:
+        """Pipelines started by trigger jobs (GitLab child / multi-project). Default: none."""
+        return []
 
     def close(self) -> None:  # pragma: no cover - default no-op
         return None
