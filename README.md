@@ -20,7 +20,7 @@ and still find critical vulnerabilities. ScanProof checks the *scan*, not the *c
 | Checking job status in a script | `success` + `allow_failure` + retries + missing jobs + empty reports = many silent false passes. |
 | Sigstore / in-toto attestations | The right long-term answer (ScanProof's v0.2+ direction), but most teams don't have it yet. ScanProof gives assurance today and a path there. |
 
-## What works today (Milestone 1: Pipeline Inspector)
+## What works today (M1 Pipeline Inspector, M2 Scanner Evidence)
 
 ```bash
 pip install -e ".[dev]"
@@ -31,6 +31,13 @@ scanproof inspect --project my-group/my-app --pipeline 1042 -o inspection.json
 Produces a JSON inventory of the pipeline: every job, its effective (latest) attempt, retry
 history, `allow_failure`, commit binding, and artifacts — plus warnings for things that
 deserve a second look. No policy is applied yet.
+
+Normalize a scanner report into ScanProof evidence (local file, or straight from a GitLab job):
+
+```bash
+scanproof evidence -t semgrep -f semgrep.json
+scanproof evidence -t trivy -p my-group/my-app --pipeline 1042 --job trivy-image --report trivy.json
+```
 
 Self-hosted GitLab: `--gitlab-url https://gitlab.internal` and, for a private CA,
 `--ca-bundle /path/to/ca.pem`. TLS verification cannot be turned off.
@@ -49,7 +56,7 @@ A release gate should block on anything non-zero.
 ## Roadmap to v0.1
 
 - [x] **M1 — GitLab Pipeline Inspector**
-- [ ] **M2 — Scanner adapters:** Semgrep (scan scope, errors) and Trivy (image digest binding)
+- [x] **M2 — Scanner adapters:** Semgrep (scan scope, errors) and Trivy (image digest binding)
 - [ ] **M3 — Policy engine:** YAML policies, PASS / FAIL / UNKNOWN / NOT_APPLICABLE, `verify` command
 - [ ] **M4 — Hardening & release:** Docker image, docs, demo project, PyPI
 
