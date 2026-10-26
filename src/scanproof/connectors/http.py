@@ -185,6 +185,23 @@ class HttpConnector(CIConnector):
             ) from exc
 
     def _download(self, url: str, what: str | None = None) -> bytes:
+        """Stream a download with a size cap. A connection that drops mid-body is retried from
+        the start (found in complex-scenario testing: it used to escape as httpx.ReadError)."""
+        attempt = 0
+        while True:
+            try:
+                return self._download_once(url, what)
+            except httpx.TransportError as exc:
+                if attempt >= self.max_retries:
+                    raise ConnectorError(
+                        ErrorKind.NETWORK,
+                        f"Download from {self.label} kept failing mid-transfer: "
+                        f"{type(exc).__name__}",
+                    ) from exc
+                self._backoff(attempt, None)
+                attempt += 1
+
+    def _download_once(self, url: str, what: str | None) -> bytes:
         response = self._send(url, stream=True)
         try:
             self._raise_for_status(response, what or urlsplit(url).path)
