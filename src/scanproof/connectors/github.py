@@ -116,7 +116,7 @@ class GitHubConnector(HttpConnector):
                 finished_at=run.get("updated_at") if run.get("status") == "completed" else None,
                 web_url=run.get("html_url"),
             )
-        except (KeyError, TypeError, ValueError) as exc:
+        except (KeyError, TypeError, ValueError, AttributeError) as exc:
             raise ConnectorError(
                 ErrorKind.INVALID_RESPONSE, f"Unexpected run payload: {exc}"
             ) from exc
@@ -201,7 +201,7 @@ class GitHubConnector(HttpConnector):
                 web_url=item.get("html_url"),
                 attempt=item.get("run_attempt"),
             )
-        except (KeyError, TypeError, ValueError) as exc:
+        except (KeyError, TypeError, ValueError, AttributeError) as exc:
             raise ConnectorError(
                 ErrorKind.INVALID_RESPONSE, f"Unexpected job payload: {exc}"
             ) from exc
@@ -249,7 +249,10 @@ class GitHubConnector(HttpConnector):
                 with zf.open(info) as fh:
                     while chunk := fh.read(65536):
                         out += chunk
-                        if len(out) > self.max_artifact_bytes:  # header may lie (zip bomb)
+                        # Defense in depth: CPython's zipfile already stops at the declared
+                        # size (a lying header fails its CRC check), so this cap should never
+                        # trigger; it guards against other zip implementations or regressions.
+                        if len(out) > self.max_artifact_bytes:
                             raise ConnectorError(
                                 ErrorKind.LIMIT_EXCEEDED,
                                 f"'{wanted}' exceeded {self.max_artifact_bytes} bytes",

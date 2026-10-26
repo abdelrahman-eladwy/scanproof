@@ -6,6 +6,7 @@ import respx
 
 from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
 from scanproof.connectors.gitlab import GitLabConnector
+from scanproof.connectors.http import MAX_REDIRECTS
 from scanproof.models import JobStatus
 from tests.conftest import API, BASE, TOKEN, load_fixture
 
@@ -200,11 +201,17 @@ def test_refuses_redirect_loops(connector, mock_api) -> None:
     with pytest.raises(ConnectorError) as exc:
         connector.download_artifact_file("123", 8821, "semgrep.json")
     assert exc.value.kind is ErrorKind.UNSAFE_REDIRECT
+    assert mock_api.calls.call_count == MAX_REDIRECTS + 1  # gives up after the cap, not later
 
 
-def test_rejects_path_traversal(connector) -> None:
-    with pytest.raises(ConnectorError):
-        connector.download_artifact_file("123", 8821, "../../secrets.json")
+@pytest.mark.parametrize("path", ["../../user", "reports/../../../../user", "a/../../b"])
+def test_rejects_path_traversal_before_any_request(connector, mock_api, path) -> None:
+    """'../' would make the token-bearing request hit another GitLab API endpoint."""
+    with pytest.raises(ConnectorError) as exc:
+        connector.download_artifact_file("123", 8821, path)
+    assert exc.value.kind is ErrorKind.INVALID_RESPONSE
+    assert "'..'" in exc.value.message
+    assert mock_api.calls.call_count == 0
 
 
 def test_artifact_size_limit_from_content_length(mock_api) -> None:
@@ -276,3 +283,24 @@ def test_anonymous_404_hint(mock_api) -> None:
     with GitLabConnector(BASE, None, anonymous=True) as gl, pytest.raises(NotFoundError) as exc:
         gl.get_pipeline("123", 1042)
     assert "anonymous access cannot see it" in str(exc.value)
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [{"commit": "abc"}, {"pipeline": 5}, {"artifacts": ["x"]}, {"artifacts": [None]}],
+)
+def test_malformed_job_payload_is_invalid_response_not_crash(connector, mock_api, bad) -> None:
+    """Found by fuzzing: unexpected types used to escape as AttributeError (a traceback
+    instead of INDETERMINATE)."""
+    job = {**load_fixture("gitlab/jobs_page1.json")[0], **bad}
+    mock_api.get(JOBS_URL).respond(json=[job])
+    with pytest.raises(ConnectorError) as exc:
+        connector.list_jobs("123", 1042)
+    assert exc.value.kind is ErrorKind.INVALID_RESPONSE
+
+
+def test_pipeline_payload_that_is_a_list(connector, mock_api) -> None:
+    mock_api.get(PIPELINE_URL).respond(json=[1, 2])
+    with pytest.raises(ConnectorError) as exc:
+        connector.get_pipeline("123", 1042)
+    assert exc.value.kind is ErrorKind.INVALID_RESPONSE

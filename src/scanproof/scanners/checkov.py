@@ -19,6 +19,8 @@ from typing import Any
 from scanproof.evidence.models import FindingsSummary, ScannerError, ScanScope, ScanType
 from scanproof.scanners.base import ScannerAdapter, count_by
 
+MAX_PARSING_ERRORS = 100_000
+
 
 class CheckovAdapter(ScannerAdapter):
     tool = "checkov"
@@ -49,6 +51,10 @@ class CheckovAdapter(ScannerAdapter):
             resources += int(summary.get("resource_count") or 0)
             listed = [str(p) for p in results.get("parsing_errors") or []]
             count = max(int(summary.get("parsing_errors") or 0), len(listed))
+            if not 0 <= count <= MAX_PARSING_ERRORS:
+                # Found by fuzzing: an absurd count made us allocate one entry per error until
+                # memory ran out. A report claiming this many is malformed, not evidence.
+                raise ValueError(f"implausible parsing_errors count: {count}")
             for i in range(count):
                 path = listed[i] if i < len(listed) else None
                 errors.append(

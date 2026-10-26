@@ -17,6 +17,10 @@ from scanproof.evidence.models import ScanEvidence, ScanType
 INVALID_JSON = "Report is not valid JSON"
 
 
+# ValueError covers pydantic.ValidationError (a ValueError subclass).
+_STRUCTURE_ERRORS = (KeyError, TypeError, ValueError, AttributeError, RecursionError, OverflowError)
+
+
 class ReportLoadError(Exception):
     """The report bytes could not be decoded; becomes parseable=False with this message."""
 
@@ -41,20 +45,23 @@ class ScannerAdapter(ABC):
         except ReportLoadError as exc:
             return self._evidence(present=True, parseable=False, parse_error=str(exc), **base)
 
-        problem = self.shape_problem(data)
-        if problem:
-            return self._evidence(present=True, parseable=False, parse_error=problem, **base)
-
+        # Everything below runs on untrusted content, so any structural surprise (wrong types,
+        # absurd values, deep nesting) must become "unparseable", never an unhandled exception.
+        # Found by fuzzing: fields of the wrong type used to escape as pydantic ValidationErrors.
         try:
+            problem = self.shape_problem(data)
+            if problem:
+                return self._evidence(present=True, parseable=False, parse_error=problem, **base)
             fields = self.extract(data)
-        except (KeyError, TypeError, ValueError, AttributeError) as exc:
+            return self._evidence(present=True, parseable=True, **base, **fields)
+        except _STRUCTURE_ERRORS as exc:
             return self._evidence(
                 present=True,
                 parseable=False,
-                parse_error=f"Unexpected {self.tool} report structure: {type(exc).__name__}: {exc}",
+                parse_error=f"Unexpected {self.tool} report structure: {type(exc).__name__}: "
+                f"{str(exc)[:300]}",
                 **base,
             )
-        return self._evidence(present=True, parseable=True, **base, **fields)
 
     def load(self, raw: bytes) -> Any:
         """Decode report bytes. JSON by default; non-JSON formats (e.g. Fortify FPR) override."""
