@@ -1,0 +1,23 @@
+# ScanProof verifying its own GitHub Actions run (.github/workflows/github-contract.yml).
+# Expected: VERIFIED (exit 0).
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: github-self-sast}
+project: {provider: github, id: abdelrahman-eladwy/scanproof}
+requirements:
+  - id: SAST-NATIVE
+    tool: semgrep
+    job_name: sast
+    artifact_name: semgrep-report
+    report_path: semgrep.json
+    checks:
+      scanner_errors_allowed: 0
+      minimum_scanned_files: 1
+      required_paths: ["examples/gitlab-ci/sample-app/"]
+  - id: SAST-SARIF
+    tool: sarif
+    job_name: sast
+    artifact_name: semgrep-report
+    report_path: semgrep.sarif
+    checks:
+      expected_scanner: Semgrep OSS

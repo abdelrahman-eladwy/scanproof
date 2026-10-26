@@ -18,7 +18,8 @@ from typing import Annotated
 import typer
 
 from scanproof import __version__
-from scanproof.connectors.base import ConnectorError
+from scanproof.connectors.base import CIConnector, ConnectorError
+from scanproof.connectors.github import DEFAULT_GITHUB_API, GitHubConnector
 from scanproof.connectors.gitlab import GitLabConnector
 from scanproof.evidence.collector import collect_evidence, find_job
 from scanproof.evidence.models import EvidenceSource
@@ -54,10 +55,22 @@ GitLabUrlOpt = Annotated[
     str, typer.Option("--gitlab-url", envvar="GITLAB_URL", help="GitLab base URL.")
 ]
 TokenEnvOpt = Annotated[
+    str | None,
+    typer.Option(
+        "--token-env",
+        help="Env var holding the token (default GITLAB_TOKEN / GITHUB_TOKEN by provider). "
+        "Tokens are never accepted as arguments.",
+    ),
+]
+GitHubUrlOpt = Annotated[
     str,
     typer.Option(
-        "--token-env", help="Env var holding the token. Tokens are never accepted as arguments."
+        "--github-url", envvar="GITHUB_API_URL", help="GitHub API URL (GHES: https://host/api/v3)."
     ),
+]
+ProviderOpt = Annotated[
+    str | None,
+    typer.Option("--provider", help="gitlab (default) or github. verify defaults to the policy's."),
 ]
 CaBundleOpt = Annotated[
     Path | None,
@@ -81,7 +94,8 @@ AnonymousOpt = Annotated[
 ]
 
 DEFAULT_GITLAB = "https://gitlab.com"
-DEFAULT_TOKEN_ENV = "GITLAB_TOKEN"  # noqa: S105 - env var name, not a secret
+DEFAULT_GITHUB = DEFAULT_GITHUB_API
+DEFAULT_TOKEN_ENV = {"gitlab": "GITLAB_TOKEN", "github": "GITHUB_TOKEN"}  # env var names
 
 
 def _fail(code: int, message: str) -> typer.Exit:
@@ -90,8 +104,17 @@ def _fail(code: int, message: str) -> typer.Exit:
 
 
 def _connector(
-    gitlab_url: str, token_env: str, ca_bundle: Path | None, anonymous: bool = False
-) -> GitLabConnector:
+    provider: str | None,
+    gitlab_url: str,
+    github_url: str,
+    token_env: str | None,
+    ca_bundle: Path | None,
+    anonymous: bool = False,
+) -> CIConnector:
+    provider = (provider or "gitlab").lower()
+    if provider not in DEFAULT_TOKEN_ENV:
+        raise _fail(EXIT_USAGE, f"error: unknown provider {provider!r} (gitlab or github)")
+    token_env = token_env or DEFAULT_TOKEN_ENV[provider]
     token = os.environ.get(token_env, "")
     if anonymous:
         token = ""  # never send a token in anonymous mode, even if one is set
@@ -101,13 +124,11 @@ def _connector(
             f"error: environment variable {token_env} is not set "
             "(use --anonymous for public projects)",
         )
+    ca = str(ca_bundle) if ca_bundle else None
     try:
-        return GitLabConnector(
-            gitlab_url,
-            token or None,
-            anonymous=anonymous,
-            ca_bundle=str(ca_bundle) if ca_bundle else None,
-        )
+        if provider == "github":
+            return GitHubConnector(github_url, token or None, anonymous=anonymous, ca_bundle=ca)
+        return GitLabConnector(gitlab_url, token or None, anonymous=anonymous, ca_bundle=ca)
     except ConnectorError as exc:
         raise _fail(EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}") from None
 
@@ -149,7 +170,9 @@ def inspect(
     project: ProjectOpt = None,
     pipeline: PipelineOpt = None,
     gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
-    token_env: TokenEnvOpt = DEFAULT_TOKEN_ENV,
+    github_url: GitHubUrlOpt = DEFAULT_GITHUB,
+    provider: ProviderOpt = None,
+    token_env: TokenEnvOpt = None,
     ca_bundle: CaBundleOpt = None,
     anonymous: AnonymousOpt = False,
     output: OutputOpt = None,
@@ -158,7 +181,7 @@ def inspect(
     """Inspect a GitLab pipeline: jobs, retries and artifacts. No policy is applied."""
     _require(project=project, pipeline=pipeline)
     try:
-        with _connector(gitlab_url, token_env, ca_bundle, anonymous) as gl:
+        with _connector(provider, gitlab_url, github_url, token_env, ca_bundle, anonymous) as gl:
             report = inspect_pipeline(
                 gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
             )
@@ -188,8 +211,14 @@ def evidence(
     report: Annotated[
         str | None, typer.Option("--report", help="Report path inside the job's artifacts.")
     ] = None,
+    artifact: Annotated[
+        str | None,
+        typer.Option("--artifact", help="GitHub: run artifact name that contains --report."),
+    ] = None,
     gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
-    token_env: TokenEnvOpt = DEFAULT_TOKEN_ENV,
+    github_url: GitHubUrlOpt = DEFAULT_GITHUB,
+    provider: ProviderOpt = None,
+    token_env: TokenEnvOpt = None,
     ca_bundle: CaBundleOpt = None,
     anonymous: AnonymousOpt = False,
     output: OutputOpt = None,
@@ -202,7 +231,7 @@ def evidence(
         raise _fail(EXIT_USAGE, f"error: {exc.args[0]}") from None
 
     if file is not None:
-        if any(v is not None for v in (project, pipeline, job, report)):
+        if any(v is not None for v in (project, pipeline, job, report, artifact)):
             raise _fail(
                 EXIT_USAGE, "error: use either --file or --project/--pipeline/--job/--report"
             )
@@ -211,7 +240,9 @@ def evidence(
     else:
         _require(project=project, pipeline=pipeline, job=job, report=report)
         try:
-            with _connector(gitlab_url, token_env, ca_bundle, anonymous) as gl:
+            with _connector(
+                provider, gitlab_url, github_url, token_env, ca_bundle, anonymous
+            ) as gl:
                 inspection = inspect_pipeline(
                     gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
                 )
@@ -228,6 +259,7 @@ def evidence(
                     job=found,
                     report_path=report,
                     adapter=adapter,
+                    artifact_name=artifact,
                 )
         except ConnectorError as exc:
             raise _fail(
@@ -273,7 +305,9 @@ def verify(
         typer.Option("--project", "-p", help="Override the project id/path from the policy."),
     ] = None,
     gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
-    token_env: TokenEnvOpt = DEFAULT_TOKEN_ENV,
+    github_url: GitHubUrlOpt = DEFAULT_GITHUB,
+    provider: ProviderOpt = None,
+    token_env: TokenEnvOpt = None,
     ca_bundle: CaBundleOpt = None,
     anonymous: AnonymousOpt = False,
     output: OutputOpt = None,
@@ -286,8 +320,15 @@ def verify(
     _require(pipeline=pipeline)
     loaded = _load(policy)
     target_project = project or loaded.project.id
+    if provider and provider.lower() != loaded.project.provider:
+        raise _fail(
+            EXIT_USAGE,
+            f"error: --provider {provider} contradicts the policy's provider "
+            f"'{loaded.project.provider}'",
+        )
+    provider = loaded.project.provider
     try:
-        with _connector(gitlab_url, token_env, ca_bundle, anonymous) as gl:
+        with _connector(provider, gitlab_url, github_url, token_env, ca_bundle, anonymous) as gl:
             report = verify_pipeline(
                 gl, loaded, instance_url=gl.base_url, project=target_project, pipeline_id=pipeline
             )

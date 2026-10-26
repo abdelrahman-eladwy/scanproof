@@ -87,6 +87,12 @@ class Job(_Frozen):
     artifacts: tuple[ArtifactFile, ...] = ()
     artifacts_expire_at: datetime | None = None
     web_url: str | None = None
+    attempt: int | None = None
+    masking_checked: bool | None = Field(
+        default=None,
+        description="GitHub: whether a silent step failure (continue-on-error) could be ruled "
+        "out. False = could not check; None = not applicable to this platform.",
+    )
 
     @property
     def has_archive(self) -> bool:

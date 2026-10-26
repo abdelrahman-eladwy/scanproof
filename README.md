@@ -5,6 +5,8 @@
 **Security Scan Assurance Engine.** ScanProof verifies that the security scans your release
 depends on actually ran, produced valid evidence, and covered what you are about to ship.
 
+Works with **GitLab CI** and **GitHub Actions**.
+
 It answers a question most pipelines can't: *"Did SAST and container scanning really run
 against this commit and this image — or did a job get skipped, fail with `allow_failure`,
 or upload an empty report?"*
@@ -92,9 +94,11 @@ A release gate should block on anything non-zero.
 
 See [`docs/issues/`](docs/issues/) for detailed acceptance criteria.
 
-## Using it in GitLab CI
+## Using it in CI
 
-See [docs/usage-gitlab.md](docs/usage-gitlab.md) for a copy-paste release gate
+- **GitHub Actions**: [docs/usage-github.md](docs/usage-github.md). On GitHub a step that fails under
+  `continue-on-error` is reported as *success* by the API; ScanProof still catches it.
+- **GitLab CI**: see [docs/usage-gitlab.md](docs/usage-gitlab.md) for a copy-paste release gate
 ([`examples/gitlab-ci/scanproof-gate.gitlab-ci.yml`](examples/gitlab-ci/scanproof-gate.gitlab-ci.yml)),
 binding Trivy to the image digest you ship, and where to run the gate so it is hard to bypass.
 

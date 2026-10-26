@@ -29,9 +29,10 @@ Keep policy files under code-owner protection.
 
 | Control | Implementation |
 |---|---|
-| Least privilege | `read_api` token; ScanProof never writes to GitLab |
+| Least privilege | GitLab: `read_api` (Developer role for security-report artifacts). GitHub: `actions: read` + `checks: read`. ScanProof never writes to the CI platform |
 | No token leakage | Env var only; `Authorization: Bearer`; excluded from `repr`, errors, logs |
 | Redirects | Followed manually; credentials only to the configured origin; HTTPS->HTTP refused; max 3 |
 | TLS | Always verified; private CAs via `--ca-bundle` |
-| Resource limits | Artifact downloads streamed and capped (50 MB default); pagination capped |
+| Resource limits | Artifact downloads streamed and capped (50 MB default); zip members capped while reading (zip-bomb safe); pagination capped and must stay on the API origin |
+| Artifact integrity | GitHub: downloaded zip must match the sha256 digest GitHub recorded, otherwise BLOCKED |
 | Failure semantics | Any error -> INDETERMINATE (exit 2), never pass |
