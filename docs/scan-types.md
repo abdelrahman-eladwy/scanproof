@@ -14,6 +14,8 @@ by default), so leave it out of the policy or choose a format that records it.
 | `gitlab-dependency-scanning` | Dependency | ✓ | — (schema 15 dropped `dependency_files`) | | | ✓ |
 | `gitlab-secret-detection` | Secrets | ✓ | — | | | ✓ |
 | `checkov` | IaC | ✓ parsing errors | — | ✓ `minimum_resources` | | ✓ |
+| `fortify` *(experimental)* | SAST | ✓ `EngineData/Errors` | ✓ `Build/SourceFiles` | | | ✓ |
+| `sonatype-iq` *(experimental)* | Dependency | — | — | ✓ `minimum_components` | | ✓ |
 | `sarif` | any | only if producer writes `invocations` (Semgrep yes; Trivy, gitleaks, Checkov no) | only if producer writes `artifacts` | | Trivy image SARIF ✓ | ✓ (use it!) |
 | `cyclonedx` | SBOM | — | — | ✓ `minimum_components` | Trivy ✓, Syft — | ✓ |
 

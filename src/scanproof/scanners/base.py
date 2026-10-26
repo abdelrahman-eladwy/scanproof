@@ -17,6 +17,10 @@ from scanproof.evidence.models import ScanEvidence, ScanType
 INVALID_JSON = "Report is not valid JSON"
 
 
+class ReportLoadError(Exception):
+    """The report bytes could not be decoded; becomes parseable=False with this message."""
+
+
 class ScannerAdapter(ABC):
     tool: ClassVar[str]
     scan_type: ClassVar[ScanType]
@@ -33,11 +37,9 @@ class ScannerAdapter(ABC):
                 present=True, parseable=False, parse_error="Report is empty", **base
             )
         try:
-            data = json.loads(raw)
-        except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as exc:
-            return self._evidence(
-                present=True, parseable=False, parse_error=f"{INVALID_JSON}: {exc}", **base
-            )
+            data = self.load(raw)
+        except ReportLoadError as exc:
+            return self._evidence(present=True, parseable=False, parse_error=str(exc), **base)
 
         problem = self.shape_problem(data)
         if problem:
@@ -53,6 +55,13 @@ class ScannerAdapter(ABC):
                 **base,
             )
         return self._evidence(present=True, parseable=True, **base, **fields)
+
+    def load(self, raw: bytes) -> Any:
+        """Decode report bytes. JSON by default; non-JSON formats (e.g. Fortify FPR) override."""
+        try:
+            return json.loads(raw)
+        except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as exc:
+            raise ReportLoadError(f"{INVALID_JSON}: {exc}") from None
 
     @abstractmethod
     def shape_problem(self, data: Any) -> str | None:

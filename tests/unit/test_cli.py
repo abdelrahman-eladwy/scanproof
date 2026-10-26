@@ -114,7 +114,7 @@ def test_evidence_from_local_file() -> None:
 
 def test_evidence_unknown_tool_is_usage_error() -> None:
     result = runner.invoke(
-        app, ["evidence", "-t", "fortify", "-f", str(FX / "semgrep/semgrep-clean.json")]
+        app, ["evidence", "-t", "nosuchscanner", "-f", str(FX / "semgrep/semgrep-clean.json")]
     )
     assert result.exit_code == EXIT_USAGE
 

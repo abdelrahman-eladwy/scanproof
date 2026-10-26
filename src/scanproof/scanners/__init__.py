@@ -5,6 +5,7 @@ from __future__ import annotations
 from scanproof.scanners.base import ScannerAdapter
 from scanproof.scanners.checkov import CheckovAdapter
 from scanproof.scanners.cyclonedx import CycloneDxAdapter
+from scanproof.scanners.fortify import FortifyAdapter
 from scanproof.scanners.gitlab_report import (
     GitLabContainerScanningAdapter,
     GitLabDependencyScanningAdapter,
@@ -13,6 +14,7 @@ from scanproof.scanners.gitlab_report import (
 )
 from scanproof.scanners.sarif import SarifAdapter
 from scanproof.scanners.semgrep import SemgrepAdapter
+from scanproof.scanners.sonatype import SonatypeIqAdapter
 from scanproof.scanners.trivy import TrivyAdapter
 
 ADAPTERS: dict[str, ScannerAdapter] = {
@@ -27,6 +29,8 @@ ADAPTERS: dict[str, ScannerAdapter] = {
         GitLabDependencyScanningAdapter(),
         GitLabSecretDetectionAdapter(),
         CheckovAdapter(),
+        FortifyAdapter(),
+        SonatypeIqAdapter(),
     )
 }
 

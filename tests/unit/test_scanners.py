@@ -190,5 +190,5 @@ def test_registry() -> None:
         "cyclonedx",
     } <= set(ADAPTERS)
     assert get_adapter("Semgrep").tool == "semgrep"
-    with pytest.raises(KeyError, match=r"Unsupported tool .fortify.\. Supported: checkov, "):
-        get_adapter("fortify")
+    with pytest.raises(KeyError, match=r"Unsupported tool .nosuchscanner.\. Supported: checkov, "):
+        get_adapter("nosuchscanner")

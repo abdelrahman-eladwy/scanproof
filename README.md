@@ -48,6 +48,8 @@ Supported reports:
 | `gitlab-sast`, `gitlab-container-scanning` | GitLab security report | GitLab's own CI templates |
 | `gitlab-dependency-scanning`, `gitlab-secret-detection` | GitLab security report | GitLab's own CI templates |
 | `checkov` | native JSON | Checkov (IaC) |
+| `fortify` *(experimental)* | FPR / FVDL | Fortify Static Code Analyzer |
+| `sonatype-iq` *(experimental)* | IQ raw application report | Sonatype Lifecycle / IQ Server |
 | `sarif` | SARIF 2.1.0 | CodeQL, Semgrep, Trivy, gitleaks, Checkov, Snyk, ... (pin the engine with `expected_scanner`) |
 | `cyclonedx` | CycloneDX JSON SBOM | Trivy, Syft, cdxgen, ... |
 
