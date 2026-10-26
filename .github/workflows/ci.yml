@@ -60,7 +60,8 @@ jobs:
           /tmp/v/bin/scanproof --version
           /tmp/v/bin/scanproof evidence -t semgrep -q \
             -f "$GITHUB_WORKSPACE/tests/fixtures/semgrep/semgrep-findings.json" > /dev/null
-          /tmp/v/bin/scanproof validate -P "$GITHUB_WORKSPACE/examples/policies/sarif-and-sbom.yaml"
+          RELEASE_IMAGE_DIGEST="sha256:$(printf '0%.0s' $(seq 64))" \
+            /tmp/v/bin/scanproof validate -P "$GITHUB_WORKSPACE/examples/policies/sarif-and-sbom.yaml"
           set +e; /tmp/v/bin/scanproof evidence -t nosuch -f /dev/null; rc=$?; set -e
           test "$rc" = 3
 
