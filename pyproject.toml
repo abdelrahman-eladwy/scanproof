@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scanproof"
-version = "0.1.0.dev0"
+version = "0.1.0"
 description = "Security Scan Assurance Engine: verify that required security scans ran, produced valid evidence, and covered the release."
 readme = "README.md"
 license = "Apache-2.0"
