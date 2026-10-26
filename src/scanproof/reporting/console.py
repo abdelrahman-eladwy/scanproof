@@ -66,8 +66,11 @@ def print_evidence_summary(ev: ScanEvidence) -> None:
         len(ev.scope.scanned_paths) if ev.scope and ev.scope.scanned_paths is not None else None
     )
     components = ev.scope.components if ev.scope else None
+    resources = ev.scope.resources if ev.scope else None
     if components is not None:
         out(f"  scope:    components={components}")
+    elif resources is not None:
+        out(f"  scope:    resources={resources}")
     else:
         out(f"  scope:    files={_unknown(files)}  targets={_unknown(targets)}")
     out(f"  errors:   {_unknown(ev.scanner_error_count)}")

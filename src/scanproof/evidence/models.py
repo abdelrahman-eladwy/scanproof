@@ -42,6 +42,7 @@ class ScanScope(BaseModel):
     )
     skipped_paths: list[str] | None = None
     components: int | None = Field(default=None, description="SBOM component count")
+    resources: int | None = Field(default=None, description="IaC resources evaluated")
 
 
 class FindingsSummary(BaseModel):

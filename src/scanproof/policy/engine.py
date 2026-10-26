@@ -259,6 +259,7 @@ def _evidence_checks(req: Requirement, data: RequirementInput) -> list[CheckResu
             c.image_digest_must_match,
             c.expected_scanner,
             c.minimum_components is not None,
+            c.minimum_resources is not None,
         ]
     )
     if not wants_evidence:
@@ -310,6 +311,8 @@ def _evidence_checks(req: Requirement, data: RequirementInput) -> list[CheckResu
         out.append(_expected_scanner(ev, c.expected_scanner))
     if c.minimum_components is not None:
         out.append(_min_components(ev, c.minimum_components))
+    if c.minimum_resources is not None:
+        out.append(_min_resources(ev, c.minimum_resources))
     return out
 
 
@@ -448,3 +451,18 @@ def _min_components(ev: ScanEvidence, minimum: int) -> CheckResult:
             f"{count} component(s) in SBOM, at least {minimum} required",
         )
     return _r(name, Outcome.PASS, "SBOM_COMPONENTS_OK", f"{count} component(s) in SBOM")
+
+
+def _min_resources(ev: ScanEvidence, minimum: int) -> CheckResult:
+    name = "minimum_resources"
+    count = ev.scope.resources if ev.scope else None
+    if count is None:
+        return _r(name, Outcome.UNKNOWN, "RESOURCES_UNKNOWN", "Report does not state resources")
+    if count < minimum:
+        return _r(
+            name,
+            Outcome.FAIL,
+            "TOO_FEW_RESOURCES",
+            f"{count} resource(s) evaluated, at least {minimum} required",
+        )
+    return _r(name, Outcome.PASS, "RESOURCES_OK", f"{count} resource(s) evaluated")
