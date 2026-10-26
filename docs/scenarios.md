@@ -58,7 +58,7 @@ streaming (`connectors/http.py`), so a pipeline can't make ScanProof parse anyth
 
 ## Bugs these scenarios found
 
-Run against the code before this change, 21 of these 30 tests fail. The underlying bugs:
+Run against the code before this change, 21 of these 29 tests fail. The underlying bugs:
 
 1. Jobs in child / multi-project pipelines were invisible, so their requirement reported "job
    absent" (or passed on a same-named parent job).

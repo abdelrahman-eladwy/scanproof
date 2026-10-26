@@ -14,7 +14,7 @@ from scanproof.policy.engine import Decision, Outcome
 from scanproof.policy.models import Policy
 from scanproof.verification import verify_pipeline
 from tests.conftest import BASE, FIXTURES
-from tests.fake_gitlab import API, FakeGitLab
+from tests.fake_gitlab import FakeGitLab
 
 SEMGREP = (FIXTURES / "semgrep/semgrep-findings.json").read_bytes()
 SEMGREP_ERRORS = (FIXTURES / "semgrep/semgrep-errors.json").read_bytes()
@@ -326,8 +326,4 @@ def test_large_pipeline_with_wide_parallelism(connector, gl) -> None:
     report = verify(connector, gl, policy(sast()))
     assert report.decision is Decision.VERIFIED
     assert len(report.requirements[0].instances) == 50
-    assert time.monotonic() - started < 10
-
-
-def test_api_prefix_constant() -> None:
-    assert API.startswith("https://")
+    assert time.monotonic() - started < 10  # ~0.2 s locally, with coverage

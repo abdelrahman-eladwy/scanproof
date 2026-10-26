@@ -146,6 +146,9 @@ class FakeGitLab:
                     }
                 )
             bridges[(pipe.project, pipe.pipeline_id)] = entries
+        # Any artifact path not scripted above is "not in the archive". One route, added last
+        # (respx matches in order), so large pipelines don't pay a regex per job per request.
+        self.router.get(url__regex=r".*/projects/[^/]+/jobs/\d+/artifacts/.*").respond(404)
 
         def serve_bridges(request: httpx.Request) -> httpx.Response:
             m = re.search(r"/projects/([^/]+)/pipelines/(\d+)/bridges", request.url.path)
@@ -184,5 +187,3 @@ class FakeGitLab:
                     route.mock(side_effect=payload)
                 else:
                     route.mock(return_value=httpx.Response(200, content=payload))
-            # anything not scripted is "not in the archive"
-            self.router.get(url__regex=rf"{base}/jobs/{j.id}/artifacts/.*").respond(404)
