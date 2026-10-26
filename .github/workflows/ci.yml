@@ -8,6 +8,7 @@ on:
 permissions:
   contents: read
 
+# Third-party actions are pinned to commit SHAs (tags are mutable). Dependabot keeps them current.
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -15,19 +16,28 @@ jobs:
       matrix:
         python: ["3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python }}
       - run: pip install -e ".[dev]"
       - run: ruff check .
       - run: ruff format --check .
-      - run: pytest --cov=scanproof --cov-report=term-missing
+      - run: pytest --cov=scanproof --cov-branch --cov-report=term-missing --cov-fail-under=90
 
   docker:
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - run: docker build -t scanproof:ci .
-      - run: docker run --rm scanproof:ci --version
+      - name: Smoke test (runs as non-root)
+        run: |
+          docker run --rm scanproof:ci --version
+          test "$(docker run --rm --entrypoint id scanproof:ci -u)" != "0"
+          docker run --rm -v "$PWD/tests/fixtures:/fx:ro" scanproof:ci \
+            evidence -t semgrep -f /fx/semgrep/semgrep-findings.json -q > /dev/null

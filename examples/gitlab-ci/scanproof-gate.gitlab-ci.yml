@@ -1,0 +1,36 @@
+# Reusable ScanProof release gate for GitLab CI.
+#
+# Keep this file (and your policy) in a separate, protected "security templates" project and
+# include it from application pipelines:
+#
+#   include:
+#     - project: my-group/security-templates
+#       ref: v1                      # pin a protected tag, not a branch
+#       file: scanproof-gate.gitlab-ci.yml
+#
+# Required CI/CD variable (masked + protected), set on the group or project:
+#   SCANPROOF_GITLAB_TOKEN   project/group access token, Reporter role, read_api scope only
+#
+# See docs/usage-gitlab.md for how strong (or weak) each way of running this is.
+
+.scanproof-verify:
+  stage: verify
+  image:
+    name: ghcr.io/abdelrahman-eladwy/scanproof:0.1
+    entrypoint: [""]
+  variables:
+    SCANPROOF_POLICY: .scanproof/policy.yaml
+    # RELEASE_IMAGE_DIGEST must be provided by the build job, e.g. via a dotenv report.
+  script:
+    - scanproof verify
+        --policy "$SCANPROOF_POLICY"
+        --project "$CI_PROJECT_ID"
+        --pipeline "$CI_PIPELINE_ID"
+        --gitlab-url "$CI_SERVER_URL"
+        --token-env SCANPROOF_GITLAB_TOKEN
+        --output scanproof-report.json
+  artifacts:
+    when: always
+    paths: [scanproof-report.json]
+    expire_in: 90 days
+  allow_failure: false          # the whole point: a BLOCKED or INDETERMINATE result stops the release
