@@ -1,0 +1,46 @@
+[
+  {
+    "id": 17468047244,
+    "name": "trigger runner-incept tests",
+    "stage": "postrelease",
+    "status": "success",
+    "allow_failure": false,
+    "downstream_pipeline": {
+      "project_id": 24519238,
+      "sha": "5bd17470707c46e005e6eb9bbb83c19511807dbc",
+      "status": "failed",
+      "ref": "main",
+      "source": "pipeline",
+      "finished_at": null,
+      "iid": 17809,
+      "web_url": "https://gitlab.com/gitlab-org/ci-cd/tests/runner-incept/-/pipelines/2989758003",
+      "created_at": "2026-10-26T12:57:15.816Z",
+      "id": 2989758003
+    },
+    "commit": {
+      "id": "7907ba1b1348b0fcb8c9aa81d4df74fa74cc8b08"
+    }
+  },
+  {
+    "id": 17468047243,
+    "name": "trigger UBI images build",
+    "stage": "postrelease",
+    "status": "success",
+    "allow_failure": false,
+    "downstream_pipeline": {
+      "project_id": 17019611,
+      "sha": "07e737e0cbe551b36fb8060d4d2cc03cd0939091",
+      "status": "success",
+      "ref": "master",
+      "source": "pipeline",
+      "finished_at": null,
+      "iid": 6836,
+      "web_url": "https://gitlab.com/gitlab-org/ci-cd/gitlab-runner-ubi-images/-/pipelines/2989995320",
+      "created_at": "2026-10-26T13:49:51.263Z",
+      "id": 2989995320
+    },
+    "commit": {
+      "id": "7907ba1b1348b0fcb8c9aa81d4df74fa74cc8b08"
+    }
+  }
+]

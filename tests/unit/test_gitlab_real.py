@@ -125,3 +125,104 @@ def test_verify_real_restricted_artifact_is_indeterminate(connector, mock_api) -
     (unknown,) = [c for c in report.requirements[0].checks if c.outcome is Outcome.UNKNOWN]
     assert unknown.code == "EVIDENCE_UNAVAILABLE"
     assert "Developer-role token" in unknown.message
+
+
+# ---------------------------------------------------------------- real parent/child pipelines
+
+CHILDREN = FIXTURES / "gitlab-real/children"
+
+
+def serve_tree(mock_api, name: str) -> dict:
+    """Serve a real parent pipeline, its real bridges and its real downstream pipelines."""
+    root = CHILDREN / name
+    pipeline = json.loads((root / "pipeline.json").read_text())
+    pid, proj = pipeline["id"], pipeline["project_id"]
+    mock_api.get(f"{API}/projects/{proj}/pipelines/{pid}").respond(json=pipeline)
+    mock_api.get(f"{API}/projects/{proj}/pipelines/{pid}/jobs").respond(
+        json=json.loads((root / "jobs.json").read_text())
+    )
+    bridges = json.loads((root / "bridges.json").read_text())
+    by_pipeline = {(str(proj), pid): bridges}
+    for child_dir in root.glob("child-*"):
+        child_jobs = json.loads((child_dir / "jobs.json").read_text())
+        child_pipe = json.loads((child_dir / "pipeline.json").read_text())
+        b = next(
+            b
+            for b in bridges
+            if (b["downstream_pipeline"] or {}).get("id") == int(child_dir.name[6:])
+        )
+        cproj = b["downstream_pipeline"]["project_id"]
+        url = f"{API}/projects/{cproj}/pipelines/{child_dir.name[6:]}/jobs"
+        if isinstance(child_jobs, dict) and child_jobs.get("_error"):
+            mock_api.get(url).respond(child_jobs["_error"])  # real 403 from gitlab.com
+        else:
+            mock_api.get(url).respond(json=child_jobs)
+        assert isinstance(child_pipe, dict)
+    mock_api.routes["bridges"].mock(
+        side_effect=lambda req: httpx.Response(
+            200,
+            json=next(
+                (
+                    v
+                    for (p, i), v in by_pipeline.items()
+                    if f"/projects/{p}/pipelines/{i}/bridges" in req.url.path
+                ),
+                [],
+            ),
+        )
+    )
+    return pipeline
+
+
+def test_real_parent_child_pipeline(connector, mock_api) -> None:
+    """gitlab-org/gitlab: two child pipelines (same project, same commit)."""
+    pipeline = serve_tree(mock_api, "gitlab")
+    report = inspect_pipeline(
+        connector,
+        instance_url=BASE,
+        project=str(pipeline["project_id"]),
+        pipeline_id=pipeline["id"],
+    )
+    names = {j.name for j in report.jobs}
+    assert "rspec-ee:predictive:trigger > rspec-ee unit predictive" in names
+    assert "rspec:predictive:trigger > rspec unit predictive" in names
+    children = [j for j in report.jobs if " > " in j.name]
+    assert len(children) == 8
+    assert all(j.commit_matches_pipeline for j in children)
+    assert report.unreadable_downstream == []
+
+
+def test_real_multi_project_downstream_with_private_child(connector, mock_api) -> None:
+    """gitlab-org/gitlab-runner: one readable downstream (other project), one private (403)."""
+    pipeline = serve_tree(mock_api, "gitlab-runner")
+    report = inspect_pipeline(
+        connector,
+        instance_url=BASE,
+        project=str(pipeline["project_id"]),
+        pipeline_id=pipeline["id"],
+    )
+    readable = [j for j in report.jobs if j.name.startswith("trigger UBI images build > ")]
+    assert len(readable) == 5
+    assert all(j.latest.project == "17019611" for j in readable)
+    assert all(j.commit_matches_pipeline is False for j in readable)  # other repo's commit
+    assert len(report.unreadable_downstream) == 1
+    assert "trigger runner-incept tests" in report.unreadable_downstream[0]
+
+    pol = Policy.model_validate(
+        {
+            "apiVersion": "scanproof.dev/v1alpha1",
+            "kind": "PipelineAssurancePolicy",
+            "project": {"provider": "gitlab", "id": pipeline["project_id"]},
+            "requirements": [
+                {"id": "X", "tool": "semgrep", "job_name": "incept-sast", "report_path": "r.json"}
+            ],
+        }
+    )
+    verdict = verify_pipeline(
+        connector,
+        pol,
+        instance_url=BASE,
+        project=str(pipeline["project_id"]),
+        pipeline_id=pipeline["id"],
+    )
+    assert verdict.decision is Decision.INDETERMINATE  # may be in the private child: unknown

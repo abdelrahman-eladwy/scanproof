@@ -1,0 +1,142 @@
+[
+  {
+    "id": 17471008232,
+    "status": "success",
+    "stage": "manifest",
+    "name": "create ocp manifest",
+    "ref": "master",
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:49:54.338Z",
+    "started_at": "2026-10-26T13:51:56.057Z",
+    "finished_at": "2026-10-26T13:52:42.865Z",
+    "web_url": "https://gitlab.com/gitlab-org/ci-cd/gitlab-runner-ubi-images/-/jobs/17471008232",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 11247,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "07e737e0cbe551b36fb8060d4d2cc03cd0939091"
+    },
+    "pipeline": {
+      "id": 2989995320,
+      "project_id": 17019611,
+      "sha": "07e737e0cbe551b36fb8060d4d2cc03cd0939091"
+    }
+  },
+  {
+    "id": 17471008231,
+    "status": "success",
+    "stage": "images",
+    "name": "build and push ubi images from parent pipeline: [linux/arm64]",
+    "ref": "master",
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:49:54.338Z",
+    "started_at": "2026-10-26T13:49:56.172Z",
+    "finished_at": "2026-10-26T13:51:54.337Z",
+    "web_url": "https://gitlab.com/gitlab-org/ci-cd/gitlab-runner-ubi-images/-/jobs/17471008231",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 36665,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "07e737e0cbe551b36fb8060d4d2cc03cd0939091"
+    },
+    "pipeline": {
+      "id": 2989995320,
+      "project_id": 17019611,
+      "sha": "07e737e0cbe551b36fb8060d4d2cc03cd0939091"
+    }
+  },
+  {
+    "id": 17471008230,
+    "status": "success",
+    "stage": "images",
+    "name": "build and push ubi images from parent pipeline: [linux/ppc64le]",
+    "ref": "master",
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:49:54.338Z",
+    "started_at": "2026-10-26T13:49:55.973Z",
+    "finished_at": "2026-10-26T13:51:43.271Z",
+    "web_url": "https://gitlab.com/gitlab-org/ci-cd/gitlab-runner-ubi-images/-/jobs/17471008230",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 36565,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "07e737e0cbe551b36fb8060d4d2cc03cd0939091"
+    },
+    "pipeline": {
+      "id": 2989995320,
+      "project_id": 17019611,
+      "sha": "07e737e0cbe551b36fb8060d4d2cc03cd0939091"
+    }
+  },
+  {
+    "id": 17471008229,
+    "status": "success",
+    "stage": "images",
+    "name": "build and push ubi images from parent pipeline: [linux/amd64]",
+    "ref": "master",
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:49:54.338Z",
+    "started_at": "2026-10-26T13:49:55.889Z",
+    "finished_at": "2026-10-26T13:51:45.348Z",
+    "web_url": "https://gitlab.com/gitlab-org/ci-cd/gitlab-runner-ubi-images/-/jobs/17471008229",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 36013,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "07e737e0cbe551b36fb8060d4d2cc03cd0939091"
+    },
+    "pipeline": {
+      "id": 2989995320,
+      "project_id": 17019611,
+      "sha": "07e737e0cbe551b36fb8060d4d2cc03cd0939091"
+    }
+  },
+  {
+    "id": 17471008228,
+    "status": "success",
+    "stage": "application-security-testing",
+    "name": "dependency-scanning-profile-0",
+    "ref": "master",
+    "allow_failure": true,
+    "created_at": "2026-10-26T13:49:54.338Z",
+    "started_at": "2026-10-26T13:49:55.264Z",
+    "finished_at": "2026-10-26T13:50:11.094Z",
+    "web_url": "https://gitlab.com/gitlab-org/ci-cd/gitlab-runner-ubi-images/-/jobs/17471008228",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 11400,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "07e737e0cbe551b36fb8060d4d2cc03cd0939091"
+    },
+    "pipeline": {
+      "id": 2989995320,
+      "project_id": 17019611,
+      "sha": "07e737e0cbe551b36fb8060d4d2cc03cd0939091"
+    }
+  }
+]

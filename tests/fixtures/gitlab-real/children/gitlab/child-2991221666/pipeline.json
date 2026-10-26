@@ -1,0 +1,12 @@
+{
+  "id": 2991221666,
+  "iid": 6667232,
+  "project_id": 278964,
+  "sha": "6bbdfff5e69703bc829a316ddc7f85e972ad9f4a",
+  "ref": "refs/merge-requests/265141/merge",
+  "status": "success",
+  "source": "parent_pipeline",
+  "created_at": "2026-10-26T18:32:23.052Z",
+  "web_url": "https://gitlab.com/gitlab-org/gitlab/-/pipelines/2991221666",
+  "finished_at": "2026-10-26T18:41:35.864Z"
+}
