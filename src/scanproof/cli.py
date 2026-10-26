@@ -73,6 +73,12 @@ OutputOpt = Annotated[
     Path | None, typer.Option("--output", "-o", help="Write JSON here instead of stdout.")
 ]
 QuietOpt = Annotated[bool, typer.Option("--quiet", "-q", help="No human summary on stderr.")]
+AnonymousOpt = Annotated[
+    bool,
+    typer.Option(
+        "--anonymous", help="No token: read a PUBLIC project's pipelines without authenticating."
+    ),
+]
 
 DEFAULT_GITLAB = "https://gitlab.com"
 DEFAULT_TOKEN_ENV = "GITLAB_TOKEN"  # noqa: S105 - env var name, not a secret
@@ -83,12 +89,25 @@ def _fail(code: int, message: str) -> typer.Exit:
     return typer.Exit(code)
 
 
-def _connector(gitlab_url: str, token_env: str, ca_bundle: Path | None) -> GitLabConnector:
+def _connector(
+    gitlab_url: str, token_env: str, ca_bundle: Path | None, anonymous: bool = False
+) -> GitLabConnector:
     token = os.environ.get(token_env, "")
-    if not token:
-        raise _fail(EXIT_USAGE, f"error: environment variable {token_env} is not set")
+    if anonymous:
+        token = ""  # never send a token in anonymous mode, even if one is set
+    elif not token:
+        raise _fail(
+            EXIT_USAGE,
+            f"error: environment variable {token_env} is not set "
+            "(use --anonymous for public projects)",
+        )
     try:
-        return GitLabConnector(gitlab_url, token, ca_bundle=str(ca_bundle) if ca_bundle else None)
+        return GitLabConnector(
+            gitlab_url,
+            token or None,
+            anonymous=anonymous,
+            ca_bundle=str(ca_bundle) if ca_bundle else None,
+        )
     except ConnectorError as exc:
         raise _fail(EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}") from None
 
@@ -132,13 +151,14 @@ def inspect(
     gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
     token_env: TokenEnvOpt = DEFAULT_TOKEN_ENV,
     ca_bundle: CaBundleOpt = None,
+    anonymous: AnonymousOpt = False,
     output: OutputOpt = None,
     quiet: QuietOpt = False,
 ) -> None:
     """Inspect a GitLab pipeline: jobs, retries and artifacts. No policy is applied."""
     _require(project=project, pipeline=pipeline)
     try:
-        with _connector(gitlab_url, token_env, ca_bundle) as gl:
+        with _connector(gitlab_url, token_env, ca_bundle, anonymous) as gl:
             report = inspect_pipeline(
                 gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
             )
@@ -171,6 +191,7 @@ def evidence(
     gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
     token_env: TokenEnvOpt = DEFAULT_TOKEN_ENV,
     ca_bundle: CaBundleOpt = None,
+    anonymous: AnonymousOpt = False,
     output: OutputOpt = None,
     quiet: QuietOpt = False,
 ) -> None:
@@ -190,7 +211,7 @@ def evidence(
     else:
         _require(project=project, pipeline=pipeline, job=job, report=report)
         try:
-            with _connector(gitlab_url, token_env, ca_bundle) as gl:
+            with _connector(gitlab_url, token_env, ca_bundle, anonymous) as gl:
                 inspection = inspect_pipeline(
                     gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
                 )
@@ -254,6 +275,7 @@ def verify(
     gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
     token_env: TokenEnvOpt = DEFAULT_TOKEN_ENV,
     ca_bundle: CaBundleOpt = None,
+    anonymous: AnonymousOpt = False,
     output: OutputOpt = None,
     quiet: QuietOpt = False,
 ) -> None:
@@ -265,7 +287,7 @@ def verify(
     loaded = _load(policy)
     target_project = project or loaded.project.id
     try:
-        with _connector(gitlab_url, token_env, ca_bundle) as gl:
+        with _connector(gitlab_url, token_env, ca_bundle, anonymous) as gl:
             report = verify_pipeline(
                 gl, loaded, instance_url=gl.base_url, project=target_project, pipeline_id=pipeline
             )

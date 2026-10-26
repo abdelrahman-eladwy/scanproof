@@ -51,8 +51,9 @@ class GitLabConnector(CIConnector):
     def __init__(
         self,
         base_url: str,
-        token: str,
+        token: str | None,
         *,
+        anonymous: bool = False,
         timeout: float = 30.0,
         ca_bundle: str | None = None,
         max_retries: int = 3,
@@ -61,7 +62,11 @@ class GitLabConnector(CIConnector):
         transport: httpx.BaseTransport | None = None,
         sleep: Callable[[float], None] = time.sleep,
     ) -> None:
-        if not token:
+        # Anonymous access (public projects only) must be asked for explicitly, so a token
+        # that silently failed to load can never degrade into unauthenticated requests.
+        if anonymous and token:
+            raise AuthError("Use either a token or anonymous mode, not both.")
+        if not anonymous and not token:
             raise AuthError("No GitLab token provided. Set GITLAB_TOKEN (read_api scope).")
         base_url = base_url.rstrip("/")
         if urlsplit(base_url).scheme != "https" and not _is_loopback(base_url):
@@ -69,7 +74,8 @@ class GitLabConnector(CIConnector):
         self.base_url = base_url
         self.api_url = f"{base_url}/api/v4"
         self._origin = _origin(base_url)
-        self._token = token
+        self._token = None if anonymous else token
+        self.anonymous = anonymous
         self.max_retries = max_retries
         self.backoff_seconds = backoff_seconds
         self.max_artifact_bytes = max_artifact_bytes
@@ -83,7 +89,7 @@ class GitLabConnector(CIConnector):
         )
 
     def __repr__(self) -> str:  # never expose the token
-        return f"GitLabConnector(base_url={self.base_url!r})"
+        return f"GitLabConnector(base_url={self.base_url!r}, anonymous={self.anonymous})"
 
     # ------------------------------------------------------------------ public API
 
@@ -126,7 +132,7 @@ class GitLabConnector(CIConnector):
     # ------------------------------------------------------------------ HTTP plumbing
 
     def _auth_headers_for(self, url: str | httpx.URL) -> dict[str, str]:
-        if _origin(url) == self._origin:
+        if self._token and _origin(url) == self._origin:
             return {"Authorization": f"Bearer {self._token}"}
         return {}
 
@@ -186,15 +192,17 @@ class GitLabConnector(CIConnector):
         code = response.status_code
         if code < 400:
             return
+        who = "anonymous access" if self.anonymous else "the token"
         if code in (401, 403):
-            raise AuthError(
-                f"GitLab denied access to {what} (HTTP {code}). "
-                "Check the token is valid and has read_api scope on this project.",
-                code,
+            hint = (
+                "Anonymous mode only works for public projects with public pipelines."
+                if self.anonymous
+                else "Check the token is valid and has read_api scope on this project."
             )
+            raise AuthError(f"GitLab denied access to {what} (HTTP {code}). {hint}", code)
         if code == 404:
             raise NotFoundError(
-                f"{what} not found (HTTP 404). It may not exist, or the token cannot see it."
+                f"{what} not found (HTTP 404). It may not exist, or {who} cannot see it."
             )
         if code == 429:
             raise ConnectorError(ErrorKind.RATE_LIMITED, f"Rate limited fetching {what}", code)

@@ -260,3 +260,18 @@ def test_validate(policy_file) -> None:
     result = runner.invoke(app, ["validate", "-P", str(policy_file)])
     assert result.exit_code == 0
     assert "OK: policy 'cli-test'" in result.stderr
+
+
+def test_anonymous_ignores_token_in_env(env, mock_api) -> None:
+    """With --anonymous, a GITLAB_TOKEN in the environment must not be sent."""
+    _mock_ok(mock_api)
+    result = runner.invoke(app, [*ARGS, "--anonymous", "-q"])
+    assert result.exit_code == EXIT_OK, result.stderr
+    assert all("Authorization" not in c.request.headers for c in mock_api.calls)
+
+
+def test_missing_token_mentions_anonymous(monkeypatch) -> None:
+    monkeypatch.delenv("GITLAB_TOKEN", raising=False)
+    result = runner.invoke(app, ARGS)
+    assert result.exit_code == EXIT_USAGE
+    assert "--anonymous" in result.stderr
