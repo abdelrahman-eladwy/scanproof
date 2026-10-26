@@ -1,0 +1,24 @@
+# Demo (.github/workflows/demo.yml): the same controls on a pipeline where both scan jobs are
+# green but neither proves anything. Expected: BLOCKED (exit 1), both requirements fail.
+#   sast-masked:          Semgrep crashed; `continue-on-error: true` kept the job green.
+#   container-scan-drift: Trivy scanned `alpine:3.21`, not the image being released.
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: demo-release-broken}
+project: {provider: github, id: abdelrahman-eladwy/scanproof}
+requirements:
+  - id: SAST
+    tool: semgrep
+    job_name: sast-masked
+    artifact_name: semgrep-report-masked
+    report_path: semgrep.json
+    checks:
+      scanner_errors_allowed: 0
+      required_paths: ["examples/gitlab-ci/sample-app/"]
+  - id: CONTAINER
+    tool: trivy
+    job_name: container-scan-drift
+    artifact_name: trivy-report-drift
+    report_path: trivy.json
+    checks:
+      image_digest_must_match: ${RELEASE_IMAGE_DIGEST}
