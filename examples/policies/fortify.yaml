@@ -1,0 +1,15 @@
+# EXPERIMENTAL: Fortify SCA results (FPR) as release evidence.
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: fortify-release}
+project: {provider: gitlab, id: your-group/your-app}
+requirements:
+  - id: SAST-FORTIFY
+    description: Fortify translated and scanned the application code without errors
+    tool: fortify
+    job_name: fortify-sca
+    report_path: results.fpr
+    checks:
+      scanner_errors_allowed: 0          # translation/scan errors = code Fortify never analysed
+      minimum_scanned_files: 1
+      required_paths: ["src/main/java/"] # paths relative to the FPR's SourceBasePath

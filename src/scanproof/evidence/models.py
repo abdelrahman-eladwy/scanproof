@@ -48,6 +48,9 @@ class ScanScope(BaseModel):
 class FindingsSummary(BaseModel):
     total: int
     by_severity: dict[str, int] = Field(default_factory=dict)
+    suppressed: int | None = Field(
+        default=None, description="Findings excluded from total because they were suppressed/waived"
+    )
 
 
 class ScanTarget(BaseModel):

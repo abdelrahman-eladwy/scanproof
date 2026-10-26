@@ -63,7 +63,7 @@ def test_defaults_are_strict(tmp_path) -> None:
     [
         (", checks: {job_sucess: true}", "job_sucess: unknown field"),
         (", colour: red", "colour: unknown field"),
-        (", tool: fortify", None),
+        (", tool: nosuchscanner", None),
         (", checks: {scanner_errors_allowed: -1}", "scanner_errors_allowed"),
         (", checks: {image_digest_must_match: 'latest'}", "sha256"),
         (", checks: {image_digest_must_match: '${NOPE_NOT_SET}'}", "NOPE_NOT_SET is not set"),
@@ -71,8 +71,8 @@ def test_defaults_are_strict(tmp_path) -> None:
 )
 def test_invalid_policies(tmp_path, snippet, message) -> None:
     text = (BASE_YAML % "").replace("report_path: s.json", "report_path: s.json" + snippet)
-    if "tool: fortify" in snippet:
-        text = BASE_YAML.replace("tool: semgrep", "tool: fortify") % ""
+    if "tool: nosuchscanner" in snippet:
+        text = BASE_YAML.replace("tool: semgrep", "tool: nosuchscanner") % ""
     with pytest.raises(PolicyError) as exc:
         load_policy(write(tmp_path, text))
     if message:
@@ -86,8 +86,8 @@ def test_duplicate_ids(tmp_path) -> None:
 
 
 def test_unknown_tool(tmp_path) -> None:
-    with pytest.raises(PolicyError, match="unsupported tool 'fortify'"):
-        load_policy(write(tmp_path, BASE_YAML.replace("tool: semgrep", "tool: fortify") % ""))
+    with pytest.raises(PolicyError, match="unsupported tool 'nosuchscanner'"):
+        load_policy(write(tmp_path, BASE_YAML.replace("tool: semgrep", "tool: nosuchscanner") % ""))
 
 
 def test_wrong_api_version(tmp_path) -> None:
@@ -309,3 +309,7 @@ def test_sarif_and_sbom_example_policy_loads(monkeypatch) -> None:
     monkeypatch.setenv("RELEASE_IMAGE_DIGEST", DIGEST)
     policy = load_policy(EXAMPLE.parent / "sarif-and-sbom.yaml")
     assert [r.tool for r in policy.requirements] == ["sarif", "sarif", "cyclonedx"]
+
+
+def test_fortify_example_policy_loads() -> None:
+    assert load_policy(EXAMPLE.parent / "fortify.yaml").requirements[0].tool == "fortify"

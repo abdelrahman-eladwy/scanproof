@@ -26,6 +26,7 @@ dependencies = [
   "httpx>=0.27",
   "pydantic>=2.7",
   "pyyaml>=6.0",
+  "defusedxml>=0.7",  # Fortify FVDL is untrusted XML: block entity expansion / external entities
 ]
 
 [project.optional-dependencies]

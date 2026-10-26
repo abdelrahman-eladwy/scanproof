@@ -17,6 +17,12 @@ Versions ScanProof's adapters are tested against (real reports in `tests/fixture
 | Checkov (`checkov`) | 3.3.30 (terraform) | `checkov -o json` (object or list per framework) | `parsing_errors` = scanner errors; `resource_count` = scope. Severity needs a Prisma Cloud key, usually UNKNOWN |
 | Trivy filesystem (`trivy`) | 0.76.1 | `trivy fs --format json` | `ArtifactType: filesystem` -> DEPENDENCY scan; each Result target is a lockfile read |
 
+| Fortify SCA (`fortify`) **experimental** | FPR from SCA 24.2.0 (FVDL 1.12), via DefectDojo's test suite | `.fpr` (zip) or bare `audit.fvdl` | defusedxml (no DTD/entities). Scope from `Build/SourceFiles`; errors from `EngineData/Errors`; audit.xml suppressions excluded; priority via Fortify's impact/likelihood formula (matches DefectDojo on the same file). Error-element shape not yet seen in a real FPR |
+| Sonatype IQ (`sonatype-iq`) **experimental** | IQ raw application report samples, via DefectDojo's test suite | `GET /api/v2/applications/{id}/reports/{scanId}/raw` | Not the `nexus-iq-cli -r` result file. Scope = `matchSummary.totalComponentCount`; Waived issues counted as suppressed; no error section |
+
+**Experimental** = parsed and tested against real files from a third party, but not yet against
+output from your own Fortify / IQ Server. Please report any mismatch.
+
 Which checks each format can satisfy: [scan-types.md](scan-types.md).
 
 Other versions likely work; unknown extra fields are ignored. Unsupported Trivy schema versions are
