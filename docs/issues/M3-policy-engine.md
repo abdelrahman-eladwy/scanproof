@@ -1,4 +1,4 @@
-# M3 — Policy engine and `scanproof verify`
+# M3 — Policy engine and `scanproof verify` ✅
 
 **Goal:** evaluate a YAML policy against inspection + evidence and return a decision.
 
@@ -31,6 +31,7 @@
 | Findings present, scan complete | VERIFIED (findings are reported, not judged), 0 |
 | Retried job: failed then succeeded | VERIFIED, retry recorded in report |
 
-- [ ] Each row is a test using real fixtures from the demo project
-- [ ] Engine has 100% branch coverage
-- [ ] Policy typo (`job_sucess: true`) fails validation with a clear message, exit 3
+- [x] Each row is a test (`tests/unit/test_verify_scenarios.py`) using real scanner reports;
+      GitLab responses are simulated until the demo project exists
+- [x] Engine has 100% branch coverage
+- [x] Policy typo (`job_sucess: true`) fails validation with a clear message, exit 3

@@ -1,14 +1,15 @@
 """ScanProof command-line interface.
 
 Exit codes (stable contract, see README):
-  0  inspection / verification completed
-  1  policy failure                     (from milestone 3 onwards)
+  0  VERIFIED, or inspect / evidence completed
+  1  BLOCKED: a required control failed
   2  indeterminate: could not obtain evidence (auth, network, not found...)
   3  usage error
 """
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from pathlib import Path
@@ -22,8 +23,14 @@ from scanproof.connectors.gitlab import GitLabConnector
 from scanproof.evidence.collector import collect_evidence, find_job
 from scanproof.evidence.models import EvidenceSource
 from scanproof.inspection import inspect_pipeline
-from scanproof.reporting.console import print_evidence_summary, print_inspection_summary
+from scanproof.policy.models import PolicyError, load_policy
+from scanproof.reporting.console import (
+    print_evidence_summary,
+    print_inspection_summary,
+    print_verification_summary,
+)
 from scanproof.scanners import ADAPTERS, get_adapter
+from scanproof.verification import verify_pipeline
 
 EXIT_OK = 0
 EXIT_POLICY_FAILURE = 1
@@ -210,6 +217,81 @@ def evidence(
     if not quiet:
         print_evidence_summary(ev)
     raise typer.Exit(EXIT_OK)
+
+
+PolicyOpt = Annotated[
+    Path, typer.Option("--policy", "-P", exists=True, dir_okay=False, help="Policy YAML file.")
+]
+
+
+def _load(policy_path: Path):
+    try:
+        return load_policy(policy_path)
+    except PolicyError as exc:
+        raise _fail(EXIT_USAGE, f"error: {exc}") from None
+
+
+@app.command()
+def validate(policy: PolicyOpt) -> None:
+    """Check a policy file without contacting GitLab."""
+    loaded = _load(policy)
+    typer.echo(
+        f"OK: policy '{loaded.name}' with {len(loaded.requirements)} requirement(s): "
+        + ", ".join(r.id for r in loaded.requirements),
+        err=True,
+    )
+    raise typer.Exit(EXIT_OK)
+
+
+@app.command()
+def verify(
+    policy: PolicyOpt,
+    pipeline: PipelineOpt = None,
+    project: Annotated[
+        str | None,
+        typer.Option("--project", "-p", help="Override the project id/path from the policy."),
+    ] = None,
+    gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
+    token_env: TokenEnvOpt = DEFAULT_TOKEN_ENV,
+    ca_bundle: CaBundleOpt = None,
+    output: OutputOpt = None,
+    quiet: QuietOpt = False,
+) -> None:
+    """Verify a pipeline's security-scan evidence against a policy.
+
+    Exit 0 VERIFIED, 1 BLOCKED, 2 INDETERMINATE, 3 usage/policy error.
+    """
+    _require(pipeline=pipeline)
+    loaded = _load(policy)
+    target_project = project or loaded.project.id
+    try:
+        with _connector(gitlab_url, token_env, ca_bundle) as gl:
+            report = verify_pipeline(
+                gl, loaded, instance_url=gl.base_url, project=target_project, pipeline_id=pipeline
+            )
+    except ConnectorError as exc:
+        if output:
+            output.write_text(
+                json.dumps(
+                    {
+                        "schema_version": "scanproof.dev/verification/v1alpha1",
+                        "decision": "INDETERMINATE",
+                        "exit_code": EXIT_INDETERMINATE,
+                        "project": target_project,
+                        "pipeline_id": pipeline,
+                        "error": exc.to_dict(),
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+        raise _fail(EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}") from None
+
+    _emit(report.model_dump_json(indent=2), output)
+    if not quiet:
+        print_verification_summary(report)
+    raise typer.Exit(report.exit_code)
 
 
 # ---------------------------------------------------------------- entry point

@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import typer
 
 from scanproof.evidence.models import ScanEvidence
 from scanproof.models import InspectionReport, JobStatus
+
+if TYPE_CHECKING:
+    from scanproof.verification import VerificationReport
 
 _STATUS_MARK = {
     JobStatus.SUCCESS: "OK  ",
@@ -67,3 +72,33 @@ def print_evidence_summary(ev: ScanEvidence) -> None:
     if ev.target is not None:
         digests = ", ".join(sorted(ev.target.digests())) or "unknown"
         out(f"  target:   {_unknown(ev.target.artifact_name)}  digest={digests}")
+
+
+def print_verification_summary(report: VerificationReport) -> None:
+    out = lambda line="": typer.echo(line, err=True)  # noqa: E731
+    p = report.pipeline
+    out(f"ScanProof {report.scanproof_version} - verify")
+    out(f"Policy:   {report.policy}")
+    out(f"Project:  {report.project}")
+    out(f"Pipeline: #{p.id}  ref={p.ref}  sha={p.sha[:12]}")
+    out()
+    for req in report.requirements:
+        job = f"job {req.job_id}" if req.job_id else "no job"
+        findings = f"  findings={req.findings['total']}" if req.findings else ""
+        out(f"[{req.outcome.value:<4}] {req.id}  {req.tool} @ {req.job_name} ({job}){findings}")
+        for check in req.checks:
+            if check.outcome.value in {"FAIL", "UNKNOWN"}:
+                out(f"         {check.outcome.value}: {check.code}: {check.message}")
+    if report.warnings:
+        out()
+        out("Warnings:")
+        for w in report.warnings:
+            out(f"  - {w}")
+    out()
+    failed = sum(r.outcome.value == "FAIL" for r in report.requirements)
+    unknown = sum(r.outcome.value == "UNKNOWN" for r in report.requirements)
+    out(
+        f"Decision: {report.decision.value}  "
+        f"({failed} failed, {unknown} unknown)  exit {report.exit_code}"
+    )
+    out("Note: ScanProof verifies scan evidence, not the absence of vulnerabilities.")
