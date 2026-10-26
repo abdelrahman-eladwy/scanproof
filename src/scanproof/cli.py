@@ -19,8 +19,11 @@ import typer
 from scanproof import __version__
 from scanproof.connectors.base import ConnectorError
 from scanproof.connectors.gitlab import GitLabConnector
+from scanproof.evidence.collector import collect_evidence, find_job
+from scanproof.evidence.models import EvidenceSource
 from scanproof.inspection import inspect_pipeline
-from scanproof.reporting.console import print_inspection_summary
+from scanproof.reporting.console import print_evidence_summary, print_inspection_summary
+from scanproof.scanners import ADAPTERS, get_adapter
 
 EXIT_OK = 0
 EXIT_POLICY_FAILURE = 1
@@ -33,6 +36,70 @@ app = typer.Typer(
     no_args_is_help=True,
     add_completion=False,
 )
+
+# ---------------------------------------------------------------- shared options
+
+ProjectOpt = Annotated[
+    str | None, typer.Option("--project", "-p", help="Project id or full path (group/project).")
+]
+PipelineOpt = Annotated[int | None, typer.Option("--pipeline", help="Pipeline id.")]
+GitLabUrlOpt = Annotated[
+    str, typer.Option("--gitlab-url", envvar="GITLAB_URL", help="GitLab base URL.")
+]
+TokenEnvOpt = Annotated[
+    str,
+    typer.Option(
+        "--token-env", help="Env var holding the token. Tokens are never accepted as arguments."
+    ),
+]
+CaBundleOpt = Annotated[
+    Path | None,
+    typer.Option(
+        "--ca-bundle",
+        envvar="SCANPROOF_CA_BUNDLE",
+        exists=True,
+        dir_okay=False,
+        help="CA bundle for self-hosted GitLab with a private CA.",
+    ),
+]
+OutputOpt = Annotated[
+    Path | None, typer.Option("--output", "-o", help="Write JSON here instead of stdout.")
+]
+QuietOpt = Annotated[bool, typer.Option("--quiet", "-q", help="No human summary on stderr.")]
+
+DEFAULT_GITLAB = "https://gitlab.com"
+DEFAULT_TOKEN_ENV = "GITLAB_TOKEN"  # noqa: S105 - env var name, not a secret
+
+
+def _fail(code: int, message: str) -> typer.Exit:
+    typer.echo(message, err=True)
+    return typer.Exit(code)
+
+
+def _connector(gitlab_url: str, token_env: str, ca_bundle: Path | None) -> GitLabConnector:
+    token = os.environ.get(token_env, "")
+    if not token:
+        raise _fail(EXIT_USAGE, f"error: environment variable {token_env} is not set")
+    try:
+        return GitLabConnector(gitlab_url, token, ca_bundle=str(ca_bundle) if ca_bundle else None)
+    except ConnectorError as exc:
+        raise _fail(EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}") from None
+
+
+def _emit(payload: str, output: Path | None) -> None:
+    if output:
+        output.write_text(payload + "\n", encoding="utf-8")
+    else:
+        typer.echo(payload)
+
+
+def _require(**values: object) -> None:
+    missing = [f"--{k.replace('_', '-')}" for k, v in values.items() if v is None]
+    if missing:
+        raise _fail(EXIT_USAGE, f"error: missing required option(s): {', '.join(missing)}")
+
+
+# ---------------------------------------------------------------- commands
 
 
 def _version_callback(value: bool) -> None:
@@ -53,64 +120,99 @@ def main(
 
 @app.command()
 def inspect(
-    project: Annotated[
-        str, typer.Option("--project", "-p", help="Project id or full path (group/project).")
-    ],
-    pipeline: Annotated[int, typer.Option("--pipeline", help="Pipeline id.")],
-    gitlab_url: Annotated[
-        str, typer.Option("--gitlab-url", envvar="GITLAB_URL", help="GitLab base URL.")
-    ] = "https://gitlab.com",
-    token_env: Annotated[
-        str,
-        typer.Option(
-            "--token-env",
-            help="Env var holding the token. Tokens are never accepted as arguments.",
-        ),
-    ] = "GITLAB_TOKEN",  # noqa: S107 - env var name, not a secret
-    ca_bundle: Annotated[
-        Path | None,
-        typer.Option(
-            "--ca-bundle",
-            envvar="SCANPROOF_CA_BUNDLE",
-            exists=True,
-            dir_okay=False,
-            help="CA bundle for self-hosted GitLab with a private CA.",
-        ),
-    ] = None,
-    output: Annotated[
-        Path | None, typer.Option("--output", "-o", help="Write JSON here instead of stdout.")
-    ] = None,
-    quiet: Annotated[
-        bool, typer.Option("--quiet", "-q", help="No human summary on stderr.")
-    ] = False,
+    project: ProjectOpt = None,
+    pipeline: PipelineOpt = None,
+    gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
+    token_env: TokenEnvOpt = DEFAULT_TOKEN_ENV,
+    ca_bundle: CaBundleOpt = None,
+    output: OutputOpt = None,
+    quiet: QuietOpt = False,
 ) -> None:
     """Inspect a GitLab pipeline: jobs, retries and artifacts. No policy is applied."""
-    token = os.environ.get(token_env, "")
-    if not token:
-        typer.echo(f"error: environment variable {token_env} is not set", err=True)
-        raise typer.Exit(EXIT_USAGE)
-
+    _require(project=project, pipeline=pipeline)
     try:
-        with GitLabConnector(
-            gitlab_url, token, ca_bundle=str(ca_bundle) if ca_bundle else None
-        ) as gl:
+        with _connector(gitlab_url, token_env, ca_bundle) as gl:
             report = inspect_pipeline(
                 gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
             )
     except ConnectorError as exc:
-        typer.echo(f"INDETERMINATE: {exc.kind.value}: {exc.message}", err=True)
-        raise typer.Exit(EXIT_INDETERMINATE) from None
+        raise _fail(EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}") from None
 
-    payload = report.model_dump_json(indent=2)
-    if output:
-        output.write_text(payload + "\n", encoding="utf-8")
-    else:
-        typer.echo(payload)
+    _emit(report.model_dump_json(indent=2), output)
     if not quiet:
         print_inspection_summary(report)
-        if output:
-            typer.echo(f"\nReport written to {output}", err=True)
     raise typer.Exit(EXIT_OK)
+
+
+@app.command()
+def evidence(
+    tool: Annotated[
+        str, typer.Option("--tool", "-t", help=f"Scanner: {', '.join(sorted(ADAPTERS))}.")
+    ],
+    file: Annotated[
+        Path | None,
+        typer.Option("--file", "-f", exists=True, dir_okay=False, help="Parse a local report."),
+    ] = None,
+    project: ProjectOpt = None,
+    pipeline: PipelineOpt = None,
+    job: Annotated[
+        str | None, typer.Option("--job", help="Job name that produced the report.")
+    ] = None,
+    report: Annotated[
+        str | None, typer.Option("--report", help="Report path inside the job's artifacts.")
+    ] = None,
+    gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
+    token_env: TokenEnvOpt = DEFAULT_TOKEN_ENV,
+    ca_bundle: CaBundleOpt = None,
+    output: OutputOpt = None,
+    quiet: QuietOpt = False,
+) -> None:
+    """Normalize one scanner report into ScanProof evidence (local file or GitLab job)."""
+    try:
+        adapter = get_adapter(tool)
+    except KeyError as exc:
+        raise _fail(EXIT_USAGE, f"error: {exc.args[0]}") from None
+
+    if file is not None:
+        if any(v is not None for v in (project, pipeline, job, report)):
+            raise _fail(
+                EXIT_USAGE, "error: use either --file or --project/--pipeline/--job/--report"
+            )
+        ev = adapter.parse(file.read_bytes())
+        ev.source = EvidenceSource(local_file=str(file))
+    else:
+        _require(project=project, pipeline=pipeline, job=job, report=report)
+        try:
+            with _connector(gitlab_url, token_env, ca_bundle) as gl:
+                inspection = inspect_pipeline(
+                    gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
+                )
+                found = find_job(inspection.jobs, job)
+                if found is None:
+                    raise _fail(
+                        EXIT_INDETERMINATE,
+                        f"REQUIRED_JOB_ABSENT: no job named '{job}' in pipeline {pipeline}",
+                    )
+                ev = collect_evidence(
+                    gl,
+                    project=project,
+                    pipeline=inspection.pipeline,
+                    job=found,
+                    report_path=report,
+                    adapter=adapter,
+                )
+        except ConnectorError as exc:
+            raise _fail(
+                EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}"
+            ) from None
+
+    _emit(ev.model_dump_json(indent=2), output)
+    if not quiet:
+        print_evidence_summary(ev)
+    raise typer.Exit(EXIT_OK)
+
+
+# ---------------------------------------------------------------- entry point
 
 
 def run() -> None:

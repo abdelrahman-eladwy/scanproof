@@ -13,8 +13,8 @@ whether the application is secure.
 
 ```
 connectors/   CI platform access (GitLab). Returns models from scanproof.models only.
-scanners/     (M2) one adapter per tool: raw report bytes -> normalized evidence.
-evidence/     (M2) unified evidence model.
+scanners/     one adapter per tool: raw report bytes -> ScanEvidence. Never raise on bad input.
+evidence/     unified evidence model + collector (fetch job report -> evidence).
 policy/       (M3) YAML policy models + engine. Never imports connectors or raw scanner JSON.
 reporting/    console (stderr) and JSON (stdout / file) output.
 inspection.py M1 pipeline inventory, no judgement.
@@ -53,4 +53,5 @@ pip install -e ".[dev]"
 pytest
 ruff check . && ruff format .
 scanproof inspect -p <project> --pipeline <id>   # needs GITLAB_TOKEN
+scanproof evidence -t semgrep -f tests/fixtures/semgrep/semgrep-findings.json
 ```
