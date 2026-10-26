@@ -6,7 +6,7 @@ Used for real-world testing of ScanProof (milestone 1 onwards).
 
 1. Create a new **private** project on gitlab.com (or your own GitLab), e.g. `scanproof-demo`.
 2. Copy `.gitlab-ci.yml` and `sample-app/` from this folder into it and push.
-3. Create a **project access token**: Settings > Access tokens, role *Reporter*,
+3. Create a **project access token**: Settings > Access tokens, role *Developer*,
    scope **`read_api` only**, expiry 30–90 days.
 4. Locally: `export GITLAB_TOKEN=<token>` (don't paste it into chats, issues or commits).
 

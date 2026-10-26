@@ -1,0 +1,935 @@
+[
+  {
+    "id": 17470045714,
+    "status": "failed",
+    "stage": "release",
+    "name": "snapcraft_release_edge",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": true,
+    "created_at": "2026-10-26T13:21:48.841Z",
+    "started_at": "2026-10-26T13:21:49.065Z",
+    "finished_at": "2026-10-26T13:22:48.583Z",
+    "duration": 59.518351,
+    "failure_reason": "script_failure",
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17470045714",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 10398,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": null,
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17470008102,
+    "status": "failed",
+    "stage": "release",
+    "name": "snapcraft_release_edge",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": true,
+    "created_at": "2026-10-26T13:20:46.178Z",
+    "started_at": "2026-10-26T13:20:46.612Z",
+    "finished_at": "2026-10-26T13:21:47.489Z",
+    "duration": 60.876862,
+    "failure_reason": "script_failure",
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17470008102",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 10398,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": null,
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533042,
+    "status": "failed",
+    "stage": "release",
+    "name": "snapcraft_release_edge",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": true,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:20:11.156Z",
+    "finished_at": "2026-10-26T13:20:44.729Z",
+    "duration": 33.572439,
+    "failure_reason": "script_failure",
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533042",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 9256,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": null,
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533041,
+    "status": "success",
+    "stage": "build",
+    "name": "snapcraft_build_edge",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:17:37.725Z",
+    "finished_at": "2026-10-26T13:20:09.381Z",
+    "duration": 151.65652,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533041",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 34318679,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 204,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 54957,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:20:06.420Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533040,
+    "status": "success",
+    "stage": "build",
+    "name": "build_windows: [arm64]",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.727Z",
+    "finished_at": "2026-10-26T13:10:08.978Z",
+    "duration": 139.250881,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533040",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 17135235,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 189,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 10504,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:10:07.576Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533039,
+    "status": "success",
+    "stage": "build",
+    "name": "build_windows: [amd64]",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.715Z",
+    "finished_at": "2026-10-26T13:10:17.664Z",
+    "duration": 147.949115,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533039",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 18987049,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 189,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 10504,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:10:15.994Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533038,
+    "status": "success",
+    "stage": "build",
+    "name": "windows_installer: [arm64, arm64]",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:10:20.435Z",
+    "finished_at": "2026-10-26T13:10:58.314Z",
+    "duration": 37.879097,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533038",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 13976105,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 202,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 26570,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:10:57.061Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533037,
+    "status": "success",
+    "stage": "build",
+    "name": "windows_installer: [amd64, x86_64]",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:10:20.347Z",
+    "finished_at": "2026-10-26T13:10:58.089Z",
+    "duration": 37.741495,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533037",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 15342129,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 203,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 26505,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:10:56.920Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533036,
+    "status": "success",
+    "stage": "build",
+    "name": "build_test",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:17:37.686Z",
+    "finished_at": "2026-10-26T13:22:51.605Z",
+    "duration": 313.919387,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533036",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 840951023,
+        "filename": "goreleaser-artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 1725,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 31399,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:22:49.369Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533035,
+    "status": "success",
+    "stage": "test",
+    "name": "tests:coverage",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:17:37.541Z",
+    "finished_at": "2026-10-26T13:18:47.369Z",
+    "duration": 69.828285,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533035",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 201735,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 178,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 396806,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:18:45.858Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533034,
+    "status": "success",
+    "stage": "test",
+    "name": "tests:integration",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.693Z",
+    "finished_at": "2026-10-26T13:11:33.706Z",
+    "duration": 224.013306,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533034",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 9927,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 186,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 13130,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 1084,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:11:32.516Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533033,
+    "status": "success",
+    "stage": "test",
+    "name": "tests:unit",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.584Z",
+    "finished_at": "2026-10-26T13:17:35.861Z",
+    "duration": 586.276421,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533033",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 192020,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 183,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 51216,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 94079,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:17:33.857Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533032,
+    "status": "success",
+    "stage": "test",
+    "name": "lint",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.519Z",
+    "finished_at": "2026-10-26T13:09:48.025Z",
+    "duration": 118.506298,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533032",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 226,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 183,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 10857,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "codequality",
+        "size": 3,
+        "filename": "gl-code-quality-report.json",
+        "file_format": "raw"
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:09:46.478Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533031,
+    "status": "success",
+    "stage": "test",
+    "name": "lint:comments",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.476Z",
+    "finished_at": "2026-10-26T13:08:19.593Z",
+    "duration": 30.116192,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533031",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 9869,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": null,
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533030,
+    "status": "success",
+    "stage": "checks",
+    "name": "check_args",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.369Z",
+    "finished_at": "2026-10-26T13:08:01.071Z",
+    "duration": 11.701801,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533030",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 7557,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": null,
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533029,
+    "status": "success",
+    "stage": "checks",
+    "name": "check_embed",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.350Z",
+    "finished_at": "2026-10-26T13:08:01.842Z",
+    "duration": 12.492295,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533029",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 7558,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": null,
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533028,
+    "status": "success",
+    "stage": "checks",
+    "name": "check_go_generated_code",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.320Z",
+    "finished_at": "2026-10-26T13:08:59.189Z",
+    "duration": 69.868782,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533028",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 9766,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "artifacts_expire_at": null,
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533027,
+    "status": "success",
+    "stage": "application-security-testing",
+    "name": "dependency-scanning-profile-0",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": true,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.191Z",
+    "finished_at": "2026-10-26T13:08:17.020Z",
+    "duration": 27.828573,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533027",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 12958,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 298,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 20711,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "dependency_scanning",
+        "size": 21135,
+        "filename": "gl-dependency-scanning-report.json",
+        "file_format": "raw"
+      },
+      {
+        "file_type": "cyclonedx",
+        "size": 8047,
+        "filename": "gl-sbom.cdx.json.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "artifacts_expire_at": "2026-11-25T13:08:16.106Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533026,
+    "status": "success",
+    "stage": "application-security-testing",
+    "name": "govulncheck",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": false,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:49.142Z",
+    "finished_at": "2026-10-26T13:08:56.814Z",
+    "duration": 67.671928,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533026",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 110325,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 181,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 10996,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "dependency_scanning",
+        "size": 652,
+        "filename": "gl-dependency-scanning-report.json",
+        "file_format": "raw"
+      }
+    ],
+    "artifacts_expire_at": "2026-11-02T13:08:55.698Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533025,
+    "status": "success",
+    "stage": "application-security-testing",
+    "name": "secret_detection",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": true,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:48.891Z",
+    "finished_at": "2026-10-26T13:08:04.492Z",
+    "duration": 15.601264,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533025",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 728,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 191,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 10868,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "secret_detection",
+        "size": 1320,
+        "filename": "gl-secret-detection-report.json",
+        "file_format": "raw"
+      }
+    ],
+    "artifacts_expire_at": "2026-11-25T13:08:03.575Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  },
+  {
+    "id": 17469533024,
+    "status": "success",
+    "stage": "application-security-testing",
+    "name": "gitlab-advanced-sast",
+    "ref": "main",
+    "tag": false,
+    "allow_failure": true,
+    "created_at": "2026-10-26T13:07:48.291Z",
+    "started_at": "2026-10-26T13:07:48.856Z",
+    "finished_at": "2026-10-26T13:10:37.881Z",
+    "duration": 169.024714,
+    "web_url": "https://gitlab.com/gitlab-org/cli/-/jobs/17469533024",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 11380,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 182,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 78687,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "sast",
+        "size": 147463,
+        "filename": "gl-sast-report.json",
+        "file_format": "raw"
+      }
+    ],
+    "artifacts_expire_at": "2026-11-25T13:10:36.802Z",
+    "commit": {
+      "id": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "short_id": "5885f3d6"
+    },
+    "pipeline": {
+      "id": 2989808289,
+      "project_id": 34675721,
+      "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+      "ref": "main",
+      "status": "success"
+    }
+  }
+]

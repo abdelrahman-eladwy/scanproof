@@ -1,0 +1,15 @@
+{
+  "id": 2989808289,
+  "iid": 16016,
+  "project_id": 34675721,
+  "sha": "5885f3d6fd49e213e8a310ef61dea449b7c9c495",
+  "ref": "main",
+  "status": "success",
+  "source": "push",
+  "created_at": "2026-10-26T13:07:48.221Z",
+  "updated_at": "2026-10-26T13:22:53.798Z",
+  "web_url": "https://gitlab.com/gitlab-org/cli/-/pipelines/2989808289",
+  "tag": false,
+  "started_at": "2026-10-26T13:07:49.954Z",
+  "finished_at": "2026-10-26T13:22:53.784Z"
+}
