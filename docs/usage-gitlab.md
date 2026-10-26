@@ -18,6 +18,19 @@ Start from [`examples/policies/scanproof.yaml`](../examples/policies/scanproof.y
 locally with `scanproof validate -P policy.yaml`. Keep the policy file under CODEOWNERS review: a
 policy the application team can edit is a policy they can weaken.
 
+### Using GitLab's own SAST / Container Scanning templates?
+
+Use the `gitlab-sast` and `gitlab-container-scanning` tools, which read GitLab's security report
+format. Start from [`examples/policies/gitlab-templates.yaml`](../examples/policies/gitlab-templates.yaml).
+That format has no list of scanned files, so scope checks are not available, and the container
+report only carries a digest if you scan by digest:
+
+```yaml
+container_scanning:
+  variables:
+    CS_IMAGE: "$CI_REGISTRY_IMAGE@$RELEASE_IMAGE_DIGEST"
+```
+
 ## 3. Bind the container scan to the image you ship
 
 The build job knows the digest it pushed. Hand it to later jobs with a dotenv report:
