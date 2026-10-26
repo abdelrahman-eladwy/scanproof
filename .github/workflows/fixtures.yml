@@ -93,10 +93,105 @@ jobs:
           path: out/
           if-no-files-found: warn
 
+  # Standard formats (SARIF, CycloneDX) and extra scan types (secrets, IaC, dependencies).
+  formats:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: mkdir -p out && chmod a+rwx out
+      - name: Semgrep SARIF
+        continue-on-error: true
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src semgrep/semgrep:1.181.1 semgrep scan \
+            --config p/default --metrics=off --sarif --output out/semgrep.sarif examples/gitlab-ci/sample-app/
+          echo "::notice title=semgrep-sarif::ok"
+      - name: Trivy SARIF + CycloneDX (image) and filesystem JSON
+        continue-on-error: true
+        run: |
+          T="docker run --rm -v $PWD:/w -w /w aquasec/trivy:0.76.1"
+          $T image --format sarif --output out/trivy-image.sarif python:3.12-slim
+          $T image --format cyclonedx --output out/trivy-image.cdx.json python:3.12-slim
+          $T fs --format json --output out/trivy-fs.json examples/sample-projects/node
+          echo "::notice title=trivy-formats::ok"
+      - name: Syft CycloneDX SBOM
+        continue-on-error: true
+        run: |
+          docker run --rm anchore/syft:latest version | head -3 > out/syft-version.txt
+          docker run --rm anchore/syft:latest alpine:3.20 -o cyclonedx-json > out/syft-alpine.cdx.json
+          echo "::notice title=syft::$(head -1 out/syft-version.txt)"
+      - name: gitleaks SARIF (random fake token, redacted)
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/leak && chmod a+rwx /tmp/leak
+          tok="ghp_$(head -c 200 /dev/urandom | tr -dc 'A-Za-z0-9' | head -c 36)"
+          printf 'config:\n  github_token: "%s"\n' "$tok" > /tmp/leak/config.yml
+          docker run --rm -v /tmp/leak:/scan -v "$PWD/out:/out" zricethezav/gitleaks:latest \
+            dir /scan --redact --report-format sarif --report-path /out/gitleaks.sarif --exit-code 0 \
+            || docker run --rm -v /tmp/leak:/scan -v "$PWD/out:/out" zricethezav/gitleaks:latest \
+            detect --no-git --source /scan --redact --report-format sarif --report-path /out/gitleaks.sarif --exit-code 0
+          docker run --rm zricethezav/gitleaks:latest version > out/gitleaks-version.txt
+          ! grep -q "$tok" out/gitleaks.sarif || { echo "::error::unredacted token in report"; rm out/gitleaks.sarif; exit 1; }
+          echo "::notice title=gitleaks::$(cat out/gitleaks-version.txt)"
+      - name: Checkov native JSON + SARIF
+        continue-on-error: true
+        run: |
+          pip install -q checkov
+          checkov --version > out/checkov-version.txt
+          checkov -d examples/sample-projects/terraform -o json -o sarif --output-file-path out --soft-fail --quiet || true
+          ls out
+          [ -f out/results_json.json ] && mv out/results_json.json out/checkov.json
+          [ -f out/results_sarif.sarif ] && mv out/results_sarif.sarif out/checkov.sarif
+          echo "::notice title=checkov::$(cat out/checkov-version.txt) files: $(ls out | tr '\n' ' ')"
+      - name: GitLab secret detection analyzer
+        continue-on-error: true
+        run: |
+          mkdir -p work-secrets && chmod a+rwx work-secrets
+          tok="ghp_$(head -c 200 /dev/urandom | tr -dc 'A-Za-z0-9' | head -c 36)"
+          printf 'token = "%s"\n' "$tok" > work-secrets/settings.py
+          for tag in 7 6 5; do
+            img="registry.gitlab.com/security-products/secrets:$tag"
+            if docker run --rm -v "$PWD/work-secrets:/code" -w /code -e CI_PROJECT_DIR=/code "$img" /analyzer run \
+               && [ -s work-secrets/gl-secret-detection-report.json ]; then
+              python3 - "$tok" <<'PY'
+          import json, sys
+          tok = sys.argv[1]
+          p = "work-secrets/gl-secret-detection-report.json"
+          d = json.load(open(p))
+          for v in d.get("vulnerabilities", []):
+              for k in ("raw_source_code_extract",):
+                  v.pop(k, None)
+          s = json.dumps(d, indent=2).replace(tok, "REDACTED")
+          open("out/gl-secret-detection-report.json", "w").write(s)
+          PY
+              echo "$img" > out/gl-secrets-analyzer.txt
+              echo "::notice title=gitlab-secrets::$img ok"; break
+            fi
+            echo "::warning title=gitlab-secrets::$img failed"
+          done
+      - name: GitLab dependency scanning analyzer
+        continue-on-error: true
+        run: |
+          cp -r examples/sample-projects/node work-deps && chmod -R a+rwX work-deps
+          for img in registry.gitlab.com/security-products/gemnasium:6 registry.gitlab.com/security-products/gemnasium:5 registry.gitlab.com/security-products/dependency-scanning:0; do
+            if docker run --rm -v "$PWD/work-deps:/code" -w /code -e CI_PROJECT_DIR=/code "$img" /analyzer run \
+               && [ -s work-deps/gl-dependency-scanning-report.json ]; then
+              cp work-deps/gl-dependency-scanning-report.json out/
+              echo "$img" > out/gl-deps-analyzer.txt
+              echo "::notice title=gitlab-deps::$img ok"; break
+            fi
+            echo "::warning title=gitlab-deps::$img failed"
+          done
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: format-fixtures
+          path: out/
+
   # On fixtures/scanners/** branches, commit the reports back so they can be fetched with git
   # (useful where artifact storage is not reachable). Never runs on main.
   publish:
-    needs: [semgrep, trivy, gitlab-analyzers]
+    needs: [semgrep, trivy, gitlab-analyzers, formats]
     if: always() && startsWith(github.ref, 'refs/heads/fixtures/scanners/')
     runs-on: ubuntu-latest
     permissions:
