@@ -678,7 +678,31 @@ def _freshness_checks(
         ]
     if finished.tzinfo is None:
         finished = finished.replace(tzinfo=UTC)
-    age = ((now or datetime.now(UTC)) - finished).total_seconds() / 3600
+    age_seconds = ((now or datetime.now(UTC)) - finished).total_seconds()
+    # Provider clocks can differ slightly. Larger future offsets are not proof
+    # of freshness and must never silently satisfy a release-gating check.
+    allowed_clock_skew_seconds = 5 * 60
+    if age_seconds < -allowed_clock_skew_seconds:
+        return [
+            _r(
+                "max_age",
+                Outcome.UNKNOWN,
+                "SCAN_TIMESTAMP_IN_FUTURE",
+                f"Scan finish time {finished.isoformat()} is "
+                f"{-age_seconds / 60:.1f} min in the future (tolerance: 5 min)",
+            )
+        ]
+    if age_seconds < 0:
+        return [
+            _r(
+                "max_age",
+                Outcome.PASS,
+                "SCAN_FRESH",
+                f"Scan finish time is {-age_seconds / 60:.1f} min ahead "
+                "of verification time, within the 5 min clock-skew tolerance",
+            )
+        ]
+    age = age_seconds / 3600
     if age > limit:
         return [
             _r(
