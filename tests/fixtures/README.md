@@ -10,7 +10,6 @@
 | `cyclonedx/` | **Real** CycloneDX 1.7 SBOMs from Trivy 0.76.1 and Syft 1.55.0, trimmed to 30 components. |
 | `checkov/` | **Real** Checkov 3.3.30 JSON for `examples/sample-projects/terraform`. |
 | `trivy/` | **Real** output of Trivy 0.76.1. `trivy-python.json` was trimmed with `scripts/trim_trivy_report.py` (package list removed, 10 vulns per result kept; original counts recorded under `_scanproof_fixture`). |
-
 | `fortify/` | **Real** FPR produced by Fortify SCA 24.2.0, from [DefectDojo](https://github.com/DefectDojo/django-DefectDojo)'s test suite (`unittests/scans/fortify/hello_world.fpr`). |
 | `sonatype/` | **Real** Sonatype IQ raw application reports from DefectDojo's test suite (`unittests/scans/sonatype/`). |
 
@@ -38,3 +37,19 @@ random fake token and `--redact`; grype 0.121.0 on pinned alpine and python:3.12
 trimmed to 30 matches; osv-scanner 2.7.0 on `examples/sample-projects/node`; kubescape v3.0.46
 on `examples/sample-projects/kubernetes`; ZAP 2.17.0 baseline and Nuclei v3.11.1 against a local
 nginx container). `nuclei-empty-export.json` is what `-je` writes when nothing is found.
+
+## Real Azure DevOps, Jenkins and Bitbucket API responses
+
+Collected by `.github/workflows/platforms-contract.yml` (run 40463320446) with
+`scripts/collect_{azure_devops,jenkins,bitbucket}.py`. Only whitelisted fields are kept: no
+people (requestedBy/For, creators, authors), avatars, logs or commit messages.
+
+- `azure-real/` - anonymous reads of the public projects `dnceng-public/public` (dotnet) and
+  `azure-sdk/public`: build, timeline (and `timeline-<id>.json` for earlier attempts of re-run
+  jobs) and artifact listings. Builds: partially succeeded (tasks failed under continueOnError),
+  succeeded, and one with a re-run job.
+- `jenkins-real/` - a throwaway Jenkins 2.580.1 (`tests/contract/jenkins/`) running one pipeline per masking
+  pattern: `api/json`, Pipeline Graph View (`stages/tree`, `stages/allSteps`) and Stage View
+  (`wfapi`) responses. The only user is the throwaway `scanproof` account.
+- `bitbucket-real/` - anonymous reads of public Atlassian pipe repositories: pipelines, steps,
+  and Code Insights reports with annotations (`report-<uuid>[-annotations].json`).

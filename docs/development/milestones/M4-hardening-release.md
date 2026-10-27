@@ -4,7 +4,7 @@
 
 - [x] Docker image builds in CI, runs as non-root (checked), `--version` and a real `evidence`
       run work inside it; base image pinned by digest
-- [x] `docs/usage-gitlab.md`: protected gate job, pipeline execution policy, separate audit
+- [x] `docs/platforms/gitlab.md`: protected gate job, pipeline execution policy, separate audit
       project, with copy-paste snippets and `examples/gitlab-ci/scanproof-gate.gitlab-ci.yml`
 - [x] `SECURITY.md` with private disclosure (GitHub private vulnerability reporting)
 - [x] Release workflow: tag `vX.Y.Z` -> version check -> tests -> wheel + sdist -> PyPI
@@ -12,8 +12,8 @@
       no long-lived publishing tokens
 - [x] All third-party actions pinned to commit SHAs; Dependabot for actions, pip and Docker
 - [x] README "Why not just use…" reviewed against current GitLab docs
-- [x] Write-up of the design decisions (`docs/design-decisions.md`)
-- [ ] One-time PyPI / GitHub setup in `docs/releasing.md` ← maintainer
+- [x] Write-up of the design decisions (`docs/development/design-decisions.md`)
+- [ ] One-time PyPI / GitHub setup in `docs/development/releasing.md` ← maintainer
 - [x] Demo: real run showing VERIFIED and BLOCKED, on GitHub Actions (`.github/workflows/demo.yml`,
       `docs/demo.md`). A GitLab demo project is optional; it needs a gitlab.com project and a
       Developer-role token ← maintainer

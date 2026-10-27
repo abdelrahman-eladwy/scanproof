@@ -150,10 +150,10 @@ jobs:
             [ "$rc" = "$2" ] || failed=1
           }
           failed=0
-          check examples/policies/attest-self-ok.yaml 0
-          check examples/policies/attest-self-wrong-signer.yaml 1
-          check examples/policies/attest-self-reusable.yaml 0
-          check examples/policies/attest-self-reusable-caller.yaml 1
+          check tests/contract/policies/attest-self-ok.yaml 0
+          check tests/contract/policies/attest-self-wrong-signer.yaml 1
+          check tests/contract/policies/attest-self-reusable.yaml 0
+          check tests/contract/policies/attest-self-reusable-caller.yaml 1
           exit $failed
 
   publish:

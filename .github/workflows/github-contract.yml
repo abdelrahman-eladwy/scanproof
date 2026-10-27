@@ -119,13 +119,13 @@ jobs:
             [ "$rc" = "$2" ] || failed=1
           }
           failed=0
-          check examples/policies/github-self-sast.yaml 0
-          check examples/policies/github-self-masked-step.yaml 1
-          check examples/policies/github-self-masked-job.yaml 1
-          check examples/policies/github-self-skipped.yaml 1
-          check examples/policies/github-self-matrix.yaml 1
-          check examples/policies/github-self-noisy.yaml 1
-          check examples/policies/github-self-reusable.yaml 0
+          check tests/contract/policies/github-self-sast.yaml 0
+          check tests/contract/policies/github-self-masked-step.yaml 1
+          check tests/contract/policies/github-self-masked-job.yaml 1
+          check tests/contract/policies/github-self-skipped.yaml 1
+          check tests/contract/policies/github-self-matrix.yaml 1
+          check tests/contract/policies/github-self-noisy.yaml 1
+          check tests/contract/policies/github-self-reusable.yaml 0
 
           # Extra real-provider tests for the opt-in reported_scope assurance.
           cat > /tmp/scanproof-scoped-ok.yaml <<'POLICY'

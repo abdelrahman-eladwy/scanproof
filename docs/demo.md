@@ -76,5 +76,5 @@ steps:
       RELEASE_IMAGE_DIGEST: sha256:...   # the digest your build pushed
 ```
 
-See [usage-github.md](usage-github.md), or [usage-gitlab.md](usage-gitlab.md) for the same gate
+See [GitHub guide](platforms/github.md), or [GitLab guide](platforms/gitlab.md) for the same gate
 on GitLab.

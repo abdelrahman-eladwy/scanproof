@@ -44,7 +44,7 @@ scanners are leaves. A new scanner or CI provider must not require changes to `p
 
 ## Workflow
 
-- One issue = one branch = one PR. Historical milestone specifications in `docs/milestones/`
+- One issue = one branch = one PR. Historical milestone specifications in `docs/development/milestones/`
   retain acceptance criteria; satisfy them and say which test covers each.
 - Tests first for parsers and the policy engine. Use `respx` to mock GitLab; put real
   (sanitized) reports in `tests/fixtures/`. No network in unit tests.

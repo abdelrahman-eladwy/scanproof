@@ -7,9 +7,9 @@
 depends on actually ran, produced valid evidence, and covered what you are about to ship.
 
 Works with **GitLab CI**, **GitHub Actions**, **Azure DevOps**, **Jenkins** and **Bitbucket
-Pipelines** ([GitLab](docs/usage-gitlab.md), [GitHub](docs/usage-github.md),
-[Azure DevOps](docs/usage-azure-devops.md), [Jenkins](docs/usage-jenkins.md),
-[Bitbucket](docs/usage-bitbucket.md)).
+Pipelines** ([GitLab](docs/platforms/gitlab.md), [GitHub](docs/platforms/github.md),
+[Azure DevOps](docs/platforms/azure-devops.md), [Jenkins](docs/platforms/jenkins.md),
+[Bitbucket](docs/platforms/bitbucket.md)).
 
 It answers a question most pipelines can't: *"Did SAST and container scanning really run
 against this commit and this image — or did a job get skipped, fail with `allow_failure`,
@@ -67,7 +67,7 @@ Every check returns PASS / FAIL / UNKNOWN / NOT_APPLICABLE with a stable code
 `IMAGE_DIGEST_MISMATCH`, `EVIDENCE_UNAVAILABLE`, ...). Findings are reported, never judged.
 
 On GitHub Actions use `provider: github` in the policy and a `GITHUB_TOKEN` with `actions: read` and
-`checks: read` (see [docs/usage-github.md](docs/usage-github.md)).
+`checks: read` (see [docs/platforms/github.md](docs/platforms/github.md)).
 
 Lower-level commands:
 
@@ -104,21 +104,14 @@ If no requirement applies to the pipeline (for example every requirement has `ap
 and this is a merge-request pipeline), the decision is INDETERMINATE: nothing was verified. Set
 `enforcement: {on_nothing_applicable: allow}` to make that VERIFIED with a warning instead.
 
-## Project status
-
-ScanProof is pre-alpha. Current readiness work follows the
-[production-readiness program](docs/production-readiness.md); active work is tracked in
-[GitHub Issues](https://github.com/abdelrahman-eladwy/scanproof/issues). The original M1–M4
-implementation records and acceptance criteria are kept in [docs/milestones/](docs/milestones/).
-
 ## Using it in CI
 
 Tested scenarios (child/parallel/matrix pipelines, re-runs, faults, scale) and their results:
 [docs/scenarios.md](docs/scenarios.md).
 
-- **GitHub Actions**: [docs/usage-github.md](docs/usage-github.md). On GitHub a step that fails under
+- **GitHub Actions**: [docs/platforms/github.md](docs/platforms/github.md). On GitHub a step that fails under
   `continue-on-error` is reported as *success* by the API; ScanProof still catches it.
-- **GitLab CI**: see [docs/usage-gitlab.md](docs/usage-gitlab.md) for a copy-paste release gate
+- **GitLab CI**: see [docs/platforms/gitlab.md](docs/platforms/gitlab.md) for a copy-paste release gate
 ([`examples/gitlab-ci/scanproof-gate.gitlab-ci.yml`](examples/gitlab-ci/scanproof-gate.gitlab-ci.yml)),
 binding Trivy to the image digest you ship, and where to run the gate so it is hard to bypass.
 
@@ -131,6 +124,18 @@ a Sigstore-signed attestation from a pinned workflow, at this commit, in this ru
 ([docs/attestations.md](docs/attestations.md)). Either way, run ScanProof from a protected context
 (protected deploy job or a separate audit project) and keep policy files under code-owner
 protection. See [`docs/security.md`](docs/security.md).
+
+## Documentation
+
+Full index: **[docs/](docs/README.md)**. Example policies: [examples/](examples/README.md).
+Contributing: [CONTRIBUTING.md](CONTRIBUTING.md). Security reports: [SECURITY.md](SECURITY.md).
+
+## Project status
+
+ScanProof is pre-alpha. Current readiness work follows the
+[production-readiness program](docs/development/production-readiness.md); active work is tracked in
+[GitHub Issues](https://github.com/abdelrahman-eladwy/scanproof/issues). Historical M1–M4
+milestone records are in [docs/development/milestones/](docs/development/milestones/).
 
 ## License
 

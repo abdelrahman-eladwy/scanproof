@@ -1,4 +1,4 @@
-"""Acceptance suite from docs/milestones/M3-policy-engine.md, end to end through
+"""Acceptance suite from docs/development/milestones/M3-policy-engine.md, end to end through
 verify_pipeline() with a fake GitLab and REAL Semgrep/Trivy reports."""
 
 from __future__ import annotations

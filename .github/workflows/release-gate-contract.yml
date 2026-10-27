@@ -59,7 +59,7 @@ jobs:
       - name: Verify before healthy deploy
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: scanproof verify --provider github -P examples/policies/github-release-contract-good.yaml --pipeline "$GITHUB_RUN_ID" -p "$GITHUB_REPOSITORY" -o gate-good.json
+        run: scanproof verify --provider github -P tests/contract/policies/github-release-contract-good.yaml --pipeline "$GITHUB_RUN_ID" -p "$GITHUB_REPOSITORY" -o gate-good.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
         with:
@@ -87,7 +87,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         # Intentionally NO continue-on-error, and no expected-exit wrapper.
-        run: scanproof verify --provider github -P examples/policies/github-release-contract-bad.yaml --pipeline "$GITHUB_RUN_ID" -p "$GITHUB_REPOSITORY" -o gate-bad.json
+        run: scanproof verify --provider github -P tests/contract/policies/github-release-contract-bad.yaml --pipeline "$GITHUB_RUN_ID" -p "$GITHUB_REPOSITORY" -o gate-bad.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
         with:
