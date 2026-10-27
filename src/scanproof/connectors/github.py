@@ -43,7 +43,7 @@ DEFAULT_GITHUB_API = "https://api.github.com"
 _REPO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 _EXIT_CODE = re.compile(r"Process completed with exit code [1-9]\d*")
 _RUN_URI = re.compile(
-    r"^(?P<host>https://[^/]+)/(?P<repo>[^/]+/[^/]+)/actions/runs/(?P<run>\d+)(?:/attempts/\d+)?/?$"
+    r"^(?P<host>https://[^/]+)/(?P<repo>[^/]+/[^/]+)/actions/runs/(?P<run>\d+)(?:/attempts/(?P<attempt>\d+))?/?$"
 )
 MAX_ANNOTATION_PAGES = 20  # 2,000 annotations; beyond that masking is reported as unknown
 
@@ -153,7 +153,14 @@ class GitHubConnector(HttpConnector):
                 m.group("repo").lower(),
             ):
                 return False
-        return int(m.group("run")) == pipeline.id
+        if int(m.group("run")) != pipeline.id:
+            return False
+        # Run IDs survive reruns. Both attempt numbers are required to
+        # establish that signed evidence belongs to the current attempt.
+        signed_attempt = m.group("attempt")
+        if signed_attempt is None or pipeline.run_attempt is None:
+            return None
+        return int(signed_attempt) == pipeline.run_attempt
 
     def get_pipeline(self, project: str, pipeline_id: int) -> Pipeline:
         run = self._get_json(f"/repos/{_repo(project)}/actions/runs/{int(pipeline_id)}")
@@ -161,6 +168,7 @@ class GitHubConnector(HttpConnector):
             self._run_conclusion[(project, int(pipeline_id))] = run.get("conclusion")
             return Pipeline(
                 id=run["id"],
+                run_attempt=run.get("run_attempt"),
                 sha=run["head_sha"],
                 ref=run.get("head_branch"),
                 status=run.get("conclusion") or run["status"],

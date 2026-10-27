@@ -61,6 +61,11 @@ class ArtifactFile(_Frozen):
 class Pipeline(_Frozen):
     id: int
     project_id: int | None = None
+    run_attempt: int | None = Field(
+        default=None,
+        ge=1,
+        description="GitHub Actions: current workflow run attempt; None when unavailable",
+    )
     sha: str
     ref: str | None = None
     status: str
