@@ -33,6 +33,7 @@ from scanproof.policy.models import PolicyError, load_policy
 from scanproof.reporting.console import (
     print_evidence_summary,
     print_inspection_summary,
+    print_release_summary,
     print_verification_summary,
 )
 from scanproof.scanners import ADAPTERS, get_adapter
@@ -539,6 +540,62 @@ def verify(
     _emit(report.model_dump_json(indent=2), output)
     if not quiet:
         print_verification_summary(report)
+    raise typer.Exit(report.exit_code)
+
+
+@app.command("verify-release")
+def verify_release_cmd(
+    release_file: Annotated[
+        Path,
+        typer.Option("--release", "-R", exists=True, dir_okay=False, help="Release YAML file."),
+    ],
+    gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
+    github_url: GitHubUrlOpt = DEFAULT_GITHUB,
+    user_env: UserEnvOpt = None,
+    auth_scheme: AuthSchemeOpt = None,
+    ca_bundle: CaBundleOpt = None,
+    output: OutputOpt = None,
+    quiet: QuietOpt = False,
+    trusted_root: TrustedRootOpt = None,
+    sigstore_offline: SigstoreOfflineOpt = False,
+) -> None:
+    """Verify every component of a release (several pipelines, any platforms) in one decision.
+
+    Exit 0 if all are VERIFIED, 1 if any is BLOCKED, 2 if any could not be verified, 3 usage.
+    Each component's token comes from its provider's env var (GITLAB_TOKEN, GITHUB_TOKEN...).
+    """
+    from scanproof.release import load_release, verify_release
+
+    try:
+        release = load_release(release_file)
+    except PolicyError as exc:
+        raise _fail(EXIT_USAGE, f"error: {exc}") from None
+
+    def connect(provider: str, url: str | None) -> CIConnector:
+        return _connector(
+            provider,
+            url if provider == "gitlab" and url else gitlab_url,
+            url if provider == "github" and url else github_url,
+            None,
+            ca_bundle,
+            False,
+            url if provider not in ("gitlab", "github") else None,
+            user_env,
+            auth_scheme,
+        )
+
+    try:
+        report = verify_release(
+            release,
+            release_file.parent,
+            connect,
+            trust=TrustConfig(trusted_root, offline=sigstore_offline),
+        )
+    except PolicyError as exc:
+        raise _fail(EXIT_USAGE, f"error: {exc}") from None
+    _emit(report.model_dump_json(indent=2), output)
+    if not quiet:
+        print_release_summary(report)
     raise typer.Exit(report.exit_code)
 
 

@@ -27,6 +27,12 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   generated in CI (Snyk: DefectDojo samples). All fuzzed.
 - DAST checks: `target_url_must_match` (the scan hit the URL being released: same origin, path
   at or below it) and `minimum_endpoints` (ZAP's endpoint count). New scan type `DAST`.
+- **Waivers** with reason, approver and expiry (`waivers:`, `enforcement.max_waiver_days`): a
+  matching failed / unknown check becomes `WAIVED` (new outcome) until it expires.
+- `max_age_hours` (scan freshness from the platform's job finish time) and `same_target_as`
+  (two requirements' scans must be about the same image digest or DAST origin).
+- `scanproof verify-release -R release.yaml`: one decision over several pipelines on any
+  platforms (`ReleaseAssurance` files).
 - HTTP Basic auth (Jenkins API tokens, Azure DevOps PATs, Bitbucket API tokens) with the same
   guarantees as Bearer: secrets from env vars only, sent only to the API origin.
 - `--sigstore-trusted-root` (e.g. GitHub's instance for private repos) and `--sigstore-offline`.

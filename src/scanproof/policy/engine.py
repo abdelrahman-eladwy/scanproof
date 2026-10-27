@@ -8,6 +8,7 @@ a machine-readable code and a human message for every check.
 from __future__ import annotations
 
 import re
+from datetime import UTC, date, datetime
 from enum import StrEnum
 from fnmatch import fnmatchcase
 from urllib.parse import urlsplit
@@ -27,6 +28,7 @@ class Outcome(StrEnum):
     FAIL = "FAIL"
     UNKNOWN = "UNKNOWN"
     NOT_APPLICABLE = "NOT_APPLICABLE"
+    WAIVED = "WAIVED"  # failed or unknown, but covered by an unexpired waiver in the policy
 
 
 class Decision(StrEnum):
@@ -107,13 +109,22 @@ def combine(outcomes: list[Outcome]) -> Outcome:
     return Outcome.PASS
 
 
-def evaluate(policy: Policy, pipeline: Pipeline, inputs: dict[str, RequirementInput]) -> Evaluation:
+def evaluate(
+    policy: Policy,
+    pipeline: Pipeline,
+    inputs: dict[str, RequirementInput],
+    now: datetime | None = None,
+) -> Evaluation:
+    """`now` is injected (the engine does no I/O and reads no clock of its own when given one);
+    it decides scan freshness and waiver expiry."""
+    now = now or datetime.now(UTC)
     results = [
-        evaluate_requirement(req, pipeline, inputs.get(req.id, RequirementInput()))
+        evaluate_requirement(req, pipeline, inputs.get(req.id, RequirementInput()), now=now)
         for req in policy.requirements
     ]
+    _cross_requirement_checks(policy, inputs, results)
+    warnings: list[str] = _apply_waivers(policy, results, now.date())
     outcomes = [r.outcome for r in results]
-    warnings: list[str] = []
 
     if all(o is Outcome.NOT_APPLICABLE for o in outcomes):
         message = f"No requirement applies to ref '{pipeline.ref}'; nothing was verified."
@@ -152,7 +163,11 @@ def evaluate(policy: Policy, pipeline: Pipeline, inputs: dict[str, RequirementIn
 
 
 def evaluate_requirement(
-    req: Requirement, pipeline: Pipeline, data: RequirementInput
+    req: Requirement,
+    pipeline: Pipeline,
+    data: RequirementInput,
+    *,
+    now: datetime | None = None,
 ) -> RequirementResult:
     def result(checks: list[CheckResult]) -> RequirementResult:
         ev = data.evidence
@@ -184,7 +199,7 @@ def evaluate_requirement(
             )
 
     if data.instances:
-        return _evaluate_instances(req, pipeline, data.instances)
+        return _evaluate_instances(req, pipeline, data.instances, now)
 
     if data.job is None and data.absence_unknown:
         return result(
@@ -215,6 +230,7 @@ def evaluate_requirement(
 
     checks = [
         *_job_checks(req, data.job),
+        *_freshness_checks(req, data.job, now),
         *_evidence_checks(req, data),
         *_attestation_checks(req, pipeline, data),
     ]
@@ -222,14 +238,19 @@ def evaluate_requirement(
 
 
 def _evaluate_instances(
-    req: Requirement, pipeline: Pipeline, instances: list[tuple[str, RequirementInput]]
+    req: Requirement,
+    pipeline: Pipeline,
+    instances: list[tuple[str, RequirementInput]],
+    now: datetime | None = None,
 ) -> RequirementResult:
     """Evaluate every instance as its own job; the requirement holds only if all of them do."""
     single = req.model_copy(update={"applies_to": None})
     checks: list[CheckResult] = []
     findings: dict[str, int] = {}
     for name, data in instances:
-        sub = evaluate_requirement(single, pipeline, data.model_copy(update={"instances": None}))
+        sub = evaluate_requirement(
+            single, pipeline, data.model_copy(update={"instances": None}), now=now
+        )
         if data.job is None:
             sub.checks = [
                 c.model_copy(update={"message": f"Expected instance '{name}' is missing"})
@@ -634,6 +655,138 @@ def _min_resources(ev: ScanEvidence, minimum: int) -> CheckResult:
             f"{count} resource(s) evaluated, at least {minimum} required",
         )
     return _r(name, Outcome.PASS, "RESOURCES_OK", f"{count} resource(s) evaluated")
+
+
+# ---------------------------------------------------------------- freshness, cross checks, waivers
+
+
+def _freshness_checks(
+    req: Requirement, job: InspectedJob, now: datetime | None
+) -> list[CheckResult]:
+    limit = req.checks.max_age_hours
+    if limit is None:
+        return []
+    finished = job.latest.finished_at
+    if finished is None:
+        return [
+            _r(
+                "max_age",
+                Outcome.UNKNOWN,
+                "SCAN_AGE_UNKNOWN",
+                f"Job {job.latest.id} has no finish time; cannot tell how old the scan is",
+            )
+        ]
+    if finished.tzinfo is None:
+        finished = finished.replace(tzinfo=UTC)
+    age = ((now or datetime.now(UTC)) - finished).total_seconds() / 3600
+    if age > limit:
+        return [
+            _r(
+                "max_age",
+                Outcome.FAIL,
+                "SCAN_TOO_OLD",
+                f"Scan finished {age:.1f} h ago ({finished.isoformat()}); policy allows {limit} h",
+            )
+        ]
+    return [_r("max_age", Outcome.PASS, "SCAN_FRESH", f"Scan finished {age:.1f} h ago")]
+
+
+def _target_keys(ev: ScanEvidence | None) -> set[str]:
+    if ev is None or ev.target is None:
+        return set()
+    keys = set(ev.target.digests())
+    if ev.target.image_id:
+        keys.add(ev.target.image_id)
+    for url in ev.target.urls or []:
+        got = _origin_and_path(url)
+        if got:
+            keys.add("{}://{}:{}".format(*got[0]))
+    return keys
+
+
+def _cross_requirement_checks(
+    policy: Policy, inputs: dict[str, RequirementInput], results: list[RequirementResult]
+) -> None:
+    """same_target_as: two requirements' scans must be about one image (or one DAST origin)."""
+    by_id = {r.id: r for r in results}
+    for req in policy.requirements:
+        other = req.checks.same_target_as
+        res = by_id[req.id]
+        if other is None or res.outcome is Outcome.NOT_APPLICABLE:
+            continue
+        mine, theirs = inputs.get(req.id), inputs.get(other)
+        if (mine and mine.instances) or (theirs and theirs.instances):
+            check = _r(
+                "same_target",
+                Outcome.UNKNOWN,
+                "TARGET_UNKNOWN",
+                "same_target_as is not supported for parallel / matrix requirements",
+            )
+        else:
+            a = _target_keys(mine.evidence if mine else None)
+            b = _target_keys(theirs.evidence if theirs else None)
+            if not a or not b:
+                check = _r(
+                    "same_target",
+                    Outcome.UNKNOWN,
+                    "TARGET_UNKNOWN",
+                    f"Cannot compare targets with {other}: one of the reports names no target",
+                )
+            elif a & b:
+                shared = sorted(a & b)[0]
+                check = _r("same_target", Outcome.PASS, "SAME_TARGET", f"Same as {other}: {shared}")
+            else:
+                check = _r(
+                    "same_target",
+                    Outcome.FAIL,
+                    "TARGET_DIFFERS",
+                    f"Scanned {', '.join(sorted(a)[:3])}; "
+                    f"{other} scanned {', '.join(sorted(b)[:3])}",
+                )
+        res.checks.append(check)
+        res.outcome = combine([c.outcome for c in res.checks])
+
+
+def _apply_waivers(policy: Policy, results: list[RequirementResult], today: date) -> list[str]:
+    warnings: list[str] = []
+    used: set[int] = set()
+    by_id = {r.id: r for r in results}
+    for i, w in enumerate(policy.waivers):
+        res = by_id.get(w.requirement)
+        if res is None:
+            continue
+        matched = False
+        for n, check in enumerate(res.checks):
+            if check.outcome not in (Outcome.FAIL, Outcome.UNKNOWN):
+                continue
+            if not (check.check == w.check or check.check.startswith(f"{w.check} [")):
+                continue
+            if w.code is not None and check.code != w.code:
+                continue
+            matched = True
+            if w.expires < today:
+                continue
+            if w.created is not None and w.created > today:
+                continue
+            res.checks[n] = check.model_copy(
+                update={
+                    "outcome": Outcome.WAIVED,
+                    "message": f"{check.message} [waived until {w.expires} by {w.approved_by}: "
+                    f"{w.reason}]",
+                }
+            )
+            used.add(i)
+        label = f"{w.requirement}/{w.check}" + (f" ({w.code})" if w.code else "")
+        if matched and w.expires < today:
+            warnings.append(f"Waiver {label} expired on {w.expires}; not applied.")
+        elif matched and w.created is not None and w.created > today:
+            warnings.append(f"Waiver {label} starts on {w.created}; not applied yet.")
+        elif not matched:
+            warnings.append(f"Waiver {label} matched nothing; remove it if the risk is gone.")
+        if i in used:
+            warnings.append(f"Waiver {label} applied (expires {w.expires}, by {w.approved_by}).")
+        res.outcome = combine([c.outcome for c in res.checks])
+    return warnings
 
 
 # ---------------------------------------------------------------- attestations

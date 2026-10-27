@@ -1,0 +1,7 @@
+# scanproof verify-release -R examples/release.yaml   (see docs/advanced-policy.md)
+apiVersion: scanproof.dev/v1alpha1
+kind: ReleaseAssurance
+metadata: {name: example-release}
+components:
+  - {name: gitlab-app, policy: policies/scanproof.yaml, pipeline: "${GITLAB_PIPELINE_ID}"}
+  - {name: github-app, policy: policies/attested-release.yaml, pipeline: "${GITHUB_RUN_ID}"}
