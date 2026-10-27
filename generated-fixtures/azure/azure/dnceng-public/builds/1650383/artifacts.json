@@ -1,0 +1,269 @@
+{
+ "count": 18,
+ "value": [
+  {
+   "id": 50497871,
+   "name": "Linux_Linux release_configuration_Attempt1",
+   "source": "bc12bbe5-eaf6-5049-afd7-08c32396b448",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "3EAF6B371DF39E9E93DE6C2AA30EABC34F244C2F3AFDB0991C9BA16A922C9A6B01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=Linux_Linux%20release_configuration_Attempt1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODMvYXJ0aWZhY3ROYW1lL0xpbnV4X0xpbnV4K3JlbGVhc2VfY29uZmlndXJhdGlvbl9BdHRlbXB0MQ2/content?format=zip",
+    "properties": {
+     "RootId": "6ABA46B679F7E9B3B0F3B508BF12F086A06852FE6C3DB025CC6284B026AD2BFA02",
+     "artifactsize": "13222641",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497878,
+   "name": "PackageArtifacts",
+   "source": "d6d0747d-862c-5953-c201-f4e1a93f2cef",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/PackageArtifacts",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=PackageArtifacts&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=PackageArtifacts&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "193487363"
+    }
+   }
+  },
+  {
+   "id": 50497879,
+   "name": "BlobArtifacts",
+   "source": "d6d0747d-862c-5953-c201-f4e1a93f2cef",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/BlobArtifacts",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=BlobArtifacts&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=BlobArtifacts&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "196966985"
+    }
+   }
+  },
+  {
+   "id": 50497884,
+   "name": "AssetManifests",
+   "source": "d6d0747d-862c-5953-c201-f4e1a93f2cef",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/AssetManifests",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=AssetManifests&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=AssetManifests&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "14476"
+    }
+   }
+  },
+  {
+   "id": 50497912,
+   "name": "PdbArtifacts",
+   "source": "d6d0747d-862c-5953-c201-f4e1a93f2cef",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/PdbArtifacts",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=PdbArtifacts&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=PdbArtifacts&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "55104512"
+    }
+   }
+  },
+  {
+   "id": 50497926,
+   "name": "Windows_NT_Windows_NT Build_Debug_Attempt1",
+   "source": "d6d0747d-862c-5953-c201-f4e1a93f2cef",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "5BCF84830E4AC707EDE4CCA8680A252B9F9FA436C20B67800226B19BC1B6F05D01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=Windows_NT_Windows_NT%20Build_Debug_Attempt1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODMvYXJ0aWZhY3ROYW1lL1dpbmRvd3NfTlRfV2luZG93c19OVCtCdWlsZF9EZWJ1Z19BdHRlbXB0MQ2/content?format=zip",
+    "properties": {
+     "RootId": "11EA93F4CDE8FFE6F43BA08037BBC14497FD7465EB074CAB2FCC68912C0A8DBC02",
+     "artifactsize": "13570564",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497937,
+   "name": "Linux_Linux debug_configuration_Attempt1",
+   "source": "20e39d96-d36e-5f44-fa1b-cb4055793b30",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "EE009670CB7ADFB03168FC3B629E3421F6907505F42E28D4A330CC50BA5C90F801",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=Linux_Linux%20debug_configuration_Attempt1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODMvYXJ0aWZhY3ROYW1lL0xpbnV4X0xpbnV4K2RlYnVnX2NvbmZpZ3VyYXRpb25fQXR0ZW1wdDE1/content?format=zip",
+    "properties": {
+     "RootId": "9D8212AE9E43D84F6D1ED1E111287ED75596FA7E5A55B7061B1AFAE13B738E1A02",
+     "artifactsize": "13271354",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498277,
+   "name": "Windows_NT_Windows_NT Build_Release_Attempt1",
+   "source": "fa59fe4e-195c-56fa-189b-58fd241f10dd",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "DA9055E4F9FC0D16412F588EFE25FCB80A22BE616BC7DC3F6AD20A3FACFBFB9F01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=Windows_NT_Windows_NT%20Build_Release_Attempt1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODMvYXJ0aWZhY3ROYW1lL1dpbmRvd3NfTlRfV2luZG93c19OVCtCdWlsZF9SZWxlYXNlX0F0dGVtcHQx0/content?format=zip",
+    "properties": {
+     "RootId": "5522E9208905E1B033B7EBC24E81E73ECBB6B17536FC35C2981FB7A26B95FA8D02",
+     "artifactsize": "13604523",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498712,
+   "name": "Darwin_OSX release_configuration_Attempt1",
+   "source": "8cc09400-3cd5-552e-3d2b-7454c0e251f5",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "1C32AB55A38D21E0923B9CE3718D7CA070CF714368C9ADD34BFEC535C7B10E1501",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=Darwin_OSX%20release_configuration_Attempt1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODMvYXJ0aWZhY3ROYW1lL0Rhcndpbl9PU1grcmVsZWFzZV9jb25maWd1cmF0aW9uX0F0dGVtcHQx0/content?format=zip",
+    "properties": {
+     "RootId": "3B08FEAD1C15AABB395F5C065EB7FDC1EA9595CEACD8549BB2D48368FA04F30302",
+     "artifactsize": "13127597",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498741,
+   "name": "Darwin_OSX debug_configuration_Attempt1",
+   "source": "d95ecb92-a867-5487-8c7e-441219a26602",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "CB5505FFAA61629DBCE1BFF5F10EB038F59243CBF3C8DC32210C23B455F448DD01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=Darwin_OSX%20debug_configuration_Attempt1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODMvYXJ0aWZhY3ROYW1lL0Rhcndpbl9PU1grZGVidWdfY29uZmlndXJhdGlvbl9BdHRlbXB0MQ2/content?format=zip",
+    "properties": {
+     "RootId": "BDA51FD5CC57881025F398BCEDB7387EF5961B1DF285D51780B7C2D75F0FFE0002",
+     "artifactsize": "13193590",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498811,
+   "name": "TestResults-CLIOptionCoverage",
+   "source": "d46b5784-15a9-5a68-7d6d-8630fde1c1d0",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/TestResults-CLIOptionCoverage",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-CLIOptionCoverage&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-CLIOptionCoverage&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "250796"
+    }
+   }
+  },
+  {
+   "id": 50498903,
+   "name": "TestResults-Integration-EntraId",
+   "source": "a608df91-5805-5c39-0f3f-b7171c4c6b69",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/TestResults-Integration-EntraId",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-EntraId&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-EntraId&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "125038"
+    }
+   }
+  },
+  {
+   "id": 50498931,
+   "name": "TestResults-Integration-Aspire",
+   "source": "3d64d61a-c9ee-56b3-2d9f-bf3e4aaf2066",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/TestResults-Integration-Aspire",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-Aspire&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-Aspire&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "45372"
+    }
+   }
+  },
+  {
+   "id": 50498947,
+   "name": "TestResults-Integration-API",
+   "source": "ea57fc9b-0f67-5d8f-a7be-f80e56d646b3",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/TestResults-Integration-API",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-API&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-API&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "344877"
+    }
+   }
+  },
+  {
+   "id": 50498950,
+   "name": "TestResults-Integration-RazorPages",
+   "source": "3384894b-2d05-554d-f2de-84bf1870ae5e",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/TestResults-Integration-RazorPages",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-RazorPages&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-RazorPages&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "367336"
+    }
+   }
+  },
+  {
+   "id": 50498955,
+   "name": "TestResults-Integration-MVC",
+   "source": "2a5134dc-89ca-56fe-9702-ff17ca53784f",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/TestResults-Integration-MVC",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-MVC&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-MVC&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "768464"
+    }
+   }
+  },
+  {
+   "id": 50498967,
+   "name": "TestResults-Integration-Identity",
+   "source": "a5bf8bea-dc26-51c6-b879-af97063aea90",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/TestResults-Integration-Identity",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-Identity&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-Identity&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "239371"
+    }
+   }
+  },
+  {
+   "id": 50498985,
+   "name": "TestResults-Integration-Blazor",
+   "source": "c91546ba-c875-5c60-e096-100453ade079",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693890/TestResults-Integration-Blazor",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-Blazor&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650383/artifacts?artifactName=TestResults-Integration-Blazor&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "291479"
+    }
+   }
+  }
+ ]
+}

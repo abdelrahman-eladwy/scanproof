@@ -1,0 +1,37 @@
+{
+ "count": 2,
+ "value": [
+  {
+   "id": 31594736,
+   "name": "packages-FailedAttempt1",
+   "source": "b766ebde-1fdb-5f11-1350-46ddc53b23cf",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "6C901C0C9F7B53AE39FB0C58A21C7EA3319E35057BCDEF540D7534B16ED7196301",
+    "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/builds/6975296/artifacts?artifactName=packages-FailedAttempt1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A0fb41ef4-5012-48a9-bf39-4ee3de03ee35/29ec6040-b234-4e31-b139-33dc4287b756/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2F6dXJlLXNkay9wcm9qZWN0SWQvMjllYzYwNDAtYjIzNC00ZTMxLWIxMzktMzNkYzQyODdiNzU2L2J1aWxkSWQvNjk3NTI5Ni9hcnRpZmFjdE5hbWUvcGFja2FnZXMtRmFpbGVkQXR0ZW1wdDE1/content?format=zip",
+    "properties": {
+     "RootId": "0748613BD959F8E4FE3CD26E5B4D82C27CB1A2146FA40BB4319528CC887B643102",
+     "artifactsize": "29829",
+     "HashType": "DEDUP1024K"
+    }
+   }
+  },
+  {
+   "id": 31599779,
+   "name": "packages-FailedAttempt2",
+   "source": "8e2176bf-d0b1-5680-e3f6-92ee5a0e92fd",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "5B3B4E5CC761BDD9C8034786D381EBA0F259E5BED41488115DA29E6243BD525A01",
+    "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/builds/6975296/artifacts?artifactName=packages-FailedAttempt2&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A0fb41ef4-5012-48a9-bf39-4ee3de03ee35/29ec6040-b234-4e31-b139-33dc4287b756/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2F6dXJlLXNkay9wcm9qZWN0SWQvMjllYzYwNDAtYjIzNC00ZTMxLWIxMzktMzNkYzQyODdiNzU2L2J1aWxkSWQvNjk3NTI5Ni9hcnRpZmFjdE5hbWUvcGFja2FnZXMtRmFpbGVkQXR0ZW1wdDI1/content?format=zip",
+    "properties": {
+     "RootId": "DE3F12028C727B6540D47595318BF05CD91E7E06171E2E872156836CDE7ABBBF02",
+     "artifactsize": "29829",
+     "HashType": "DEDUP1024K"
+    }
+   }
+  }
+ ]
+}

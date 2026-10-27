@@ -1,0 +1,27 @@
+{
+ "sourceVersion": "95b2c5f8c3061035d0f35158c8361dc07f19efab",
+ "finishTime": "2026-10-27T06:58:59.8593987Z",
+ "queueTime": "2026-10-27T05:56:15.0004697Z",
+ "result": "succeeded",
+ "startTime": "2026-10-27T05:59:24.4585566Z",
+ "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/Builds/1650377",
+ "status": "completed",
+ "reason": "pullRequest",
+ "retainedByRelease": false,
+ "sourceBranch": "refs/pull/136498/merge",
+ "id": 1650377,
+ "buildNumber": "20261026.110",
+ "definition": {
+  "id": 139,
+  "name": "dotnet-linker-tests"
+ },
+ "project": {
+  "id": "cbb18261-c48f-4abb-8651-8cdcb5474649",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_build/results?buildId=1650377"
+  }
+ }
+}

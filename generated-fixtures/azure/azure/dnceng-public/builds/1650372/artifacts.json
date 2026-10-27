@@ -1,0 +1,75 @@
+{
+ "count": 5,
+ "value": [
+  {
+   "id": 50498909,
+   "name": "Components_E2E_Mono_Client_Logs",
+   "source": "6b376bcc-32d6-5634-69f7-364a2bf2ba53",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693462/Components_E2E_Mono_Client_Logs",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650372/artifacts?artifactName=Components_E2E_Mono_Client_Logs&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650372/artifacts?artifactName=Components_E2E_Mono_Client_Logs&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "261"
+    }
+   }
+  },
+  {
+   "id": 50498910,
+   "name": "Components_E2E_Mono_Client_Test_Logs",
+   "source": "6b376bcc-32d6-5634-69f7-364a2bf2ba53",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693462/Components_E2E_Mono_Client_Test_Logs",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650372/artifacts?artifactName=Components_E2E_Mono_Client_Test_Logs&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650372/artifacts?artifactName=Components_E2E_Mono_Client_Test_Logs&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "18460533"
+    }
+   }
+  },
+  {
+   "id": 50498933,
+   "name": "Components_E2E_CoreCLR_Test_Logs",
+   "source": "f72afecd-3729-54ef-6881-e5c43738c65f",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693462/Components_E2E_CoreCLR_Test_Logs",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650372/artifacts?artifactName=Components_E2E_CoreCLR_Test_Logs&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650372/artifacts?artifactName=Components_E2E_CoreCLR_Test_Logs&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "18125283"
+    }
+   }
+  },
+  {
+   "id": 50498951,
+   "name": "Components_E2E_Mono_Server_Logs",
+   "source": "52d664e6-75d8-5f1e-b3ed-84cdfdda589c",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693462/Components_E2E_Mono_Server_Logs",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650372/artifacts?artifactName=Components_E2E_Mono_Server_Logs&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650372/artifacts?artifactName=Components_E2E_Mono_Server_Logs&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "261"
+    }
+   }
+  },
+  {
+   "id": 50498952,
+   "name": "Components_E2E_Mono_Server_Test_Logs",
+   "source": "52d664e6-75d8-5f1e-b3ed-84cdfdda589c",
+   "resource": {
+    "type": "Container",
+    "data": "#/57693462/Components_E2E_Mono_Server_Test_Logs",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650372/artifacts?artifactName=Components_E2E_Mono_Server_Test_Logs&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650372/artifacts?artifactName=Components_E2E_Mono_Server_Test_Logs&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "4313718"
+    }
+   }
+  }
+ ]
+}

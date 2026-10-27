@@ -1,0 +1,27 @@
+{
+ "result": "partiallySucceeded",
+ "finishTime": "2026-10-27T06:43:13.1083493Z",
+ "sourceBranch": "refs/pull/46853/merge",
+ "reason": "pullRequest",
+ "id": 7003615,
+ "sourceVersion": "7556230f438c9f1598c72fa6971d67bc417d2267",
+ "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/Builds/7003615",
+ "status": "completed",
+ "buildNumber": "20261026.86",
+ "queueTime": "2026-10-27T06:38:45.6313253Z",
+ "retainedByRelease": false,
+ "startTime": "2026-10-27T06:41:14.7321567Z",
+ "definition": {
+  "id": 7293,
+  "name": "Swagger APIView"
+ },
+ "project": {
+  "id": "29ec6040-b234-4e31-b139-33dc4287b756",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_build/results?buildId=7003615"
+  }
+ }
+}

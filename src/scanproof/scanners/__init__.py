@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from scanproof.scanners.base import ScannerAdapter
+from scanproof.scanners.bitbucket_insights import BitbucketCodeInsightsAdapter
 from scanproof.scanners.checkov import CheckovAdapter
 from scanproof.scanners.cyclonedx import CycloneDxAdapter
 from scanproof.scanners.fortify import FortifyAdapter
@@ -31,6 +32,7 @@ ADAPTERS: dict[str, ScannerAdapter] = {
         CheckovAdapter(),
         FortifyAdapter(),
         SonatypeIqAdapter(),
+        BitbucketCodeInsightsAdapter(),
     )
 }
 

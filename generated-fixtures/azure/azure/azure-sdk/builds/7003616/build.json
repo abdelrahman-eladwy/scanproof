@@ -1,0 +1,27 @@
+{
+ "retainedByRelease": false,
+ "sourceBranch": "refs/pull/46853/merge",
+ "startTime": "2026-10-27T06:41:15.7547609Z",
+ "buildNumber": "20261026.128",
+ "status": "completed",
+ "finishTime": "2026-10-27T06:52:10.6770103Z",
+ "result": "partiallySucceeded",
+ "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/Builds/7003616",
+ "id": 7003616,
+ "sourceVersion": "7556230f438c9f1598c72fa6971d67bc417d2267",
+ "reason": "pullRequest",
+ "queueTime": "2026-10-27T06:38:48.0092383Z",
+ "definition": {
+  "id": 7515,
+  "name": "SDK Validation - Java"
+ },
+ "project": {
+  "id": "29ec6040-b234-4e31-b139-33dc4287b756",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_build/results?buildId=7003616"
+  }
+ }
+}

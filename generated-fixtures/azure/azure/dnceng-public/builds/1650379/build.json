@@ -1,0 +1,27 @@
+{
+ "sourceVersion": "6d19d4682bd30ed676cd45999cfc5c40fff3e9fc",
+ "finishTime": "2026-10-27T06:47:36.3008549Z",
+ "queueTime": "2026-10-27T06:00:14.4722034Z",
+ "result": "failed",
+ "startTime": "2026-10-27T06:00:43.3330142Z",
+ "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/Builds/1650379",
+ "status": "completed",
+ "reason": "schedule",
+ "retainedByRelease": false,
+ "sourceBranch": "refs/heads/main",
+ "id": 1650379,
+ "buildNumber": "20261026.1",
+ "definition": {
+  "id": 135,
+  "name": "coreclr-release-outerloop-nightly"
+ },
+ "project": {
+  "id": "cbb18261-c48f-4abb-8651-8cdcb5474649",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_build/results?buildId=1650379"
+  }
+ }
+}

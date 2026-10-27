@@ -1,0 +1,62 @@
+{
+ "_links": {
+  "self": {
+   "href": "/job/sast-parallel/1/wfapi/describe"
+  },
+  "artifacts": {
+   "href": "/job/sast-parallel/1/wfapi/artifacts"
+  }
+ },
+ "id": "1",
+ "name": "#1",
+ "status": "SUCCESS",
+ "startTimeMillis": 1793083771275,
+ "endTimeMillis": 1793083774968,
+ "durationMillis": 3693,
+ "queueDurationMillis": 13,
+ "pauseDurationMillis": 0,
+ "stages": [
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-parallel/1/execution/node/6/wfapi/describe"
+    }
+   },
+   "id": "6",
+   "name": "Scans",
+   "execNode": "",
+   "status": "SUCCESS",
+   "startTimeMillis": 1793083774177,
+   "durationMillis": 176,
+   "pauseDurationMillis": 0
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-parallel/1/execution/node/12/wfapi/describe"
+    }
+   },
+   "id": "12",
+   "name": "sast-python",
+   "execNode": "",
+   "status": "SUCCESS",
+   "startTimeMillis": 1793083774353,
+   "durationMillis": 391,
+   "pauseDurationMillis": 0
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-parallel/1/execution/node/14/wfapi/describe"
+    }
+   },
+   "id": "14",
+   "name": "sast-go",
+   "execNode": "",
+   "status": "FAILED",
+   "startTimeMillis": 1793083774369,
+   "durationMillis": 431,
+   "pauseDurationMillis": 0
+  }
+ ]
+}

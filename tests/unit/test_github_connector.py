@@ -384,3 +384,12 @@ def test_anonymous_github_hint(mock_api) -> None:
     with GitHubConnector(API, None, anonymous=True) as anon, pytest.raises(AuthError) as exc:
         anon.get_pipeline(REPO, RUN_ID)
     assert "Anonymous access" in str(exc.value)
+
+
+def test_basic_auth_username_cannot_smuggle_a_colon_or_control_chars() -> None:
+    from scanproof.connectors.base import AuthError
+    from scanproof.connectors.jenkins import JenkinsConnector
+
+    for bad in ("a:b", "a\nb", "a\x00b"):
+        with pytest.raises(AuthError, match="Username"):
+            JenkinsConnector("https://jenkins.example.com", "t", username=bad)

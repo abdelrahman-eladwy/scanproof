@@ -1,0 +1,12 @@
+# Live Jenkins contract (.github/workflows/platforms-contract.yml): job sast-parallel, build #1.
+# Expected exit: 1
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: jenkins-self-sast-parallel}
+project: {provider: jenkins, id: sast-parallel}
+requirements:
+  - id: SAST
+    tool: semgrep
+    job_name: "sast-go"
+    report_path: py/semgrep.json
+    checks: {same_commit: false}   # the contract jobs have no SCM checkout

@@ -32,8 +32,10 @@ scanners are leaves. A new scanner or CI provider must not require changes to `p
 
 1. **Unknown is never pass.** Any missing data, API error, unrecognized status or unparseable
    field maps to UNKNOWN / INDETERMINATE. Never default to success.
-2. **Credentials:** token only from env vars; sent as `Authorization: Bearer` only to the
-   configured GitLab origin; never in URLs, logs, exceptions, `repr`, or test snapshots.
+2. **Credentials:** token (and the username, for Basic auth) only from env vars; sent in the
+   `Authorization` header (Bearer, or Basic where the platform requires it: Jenkins, Azure
+   DevOps PATs, Bitbucket API tokens) only to the configured API origin; never in URLs, logs,
+   exceptions, `repr`, or test snapshots.
 3. **TLS verification is always on.** Support `--ca-bundle`; never add a `--insecure` flag.
 4. **Redirects:** keep the manual redirect handling in `connectors/http.py`. No HTTPS->HTTP.
 5. **Size limits** on every download. Stream; don't trust Content-Length alone.

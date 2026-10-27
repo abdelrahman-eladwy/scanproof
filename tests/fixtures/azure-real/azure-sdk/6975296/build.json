@@ -1,0 +1,27 @@
+{
+ "result": "canceled",
+ "finishTime": "2026-10-19T21:48:20.3278849Z",
+ "sourceBranch": "refs/heads/users/kundadebdatta/5447_add_query_hedging_support",
+ "reason": "manual",
+ "id": 6975296,
+ "sourceVersion": "e55e3b92555cc34b9c481e2b732b12e129d7c706",
+ "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/Builds/6975296",
+ "status": "completed",
+ "buildNumber": "20261019.11",
+ "queueTime": "2026-10-19T19:53:52.8839614Z",
+ "retainedByRelease": false,
+ "startTime": "2026-10-19T21:14:32.690634Z",
+ "definition": {
+  "id": 7126,
+  "name": "rust - pullrequest"
+ },
+ "project": {
+  "id": "29ec6040-b234-4e31-b139-33dc4287b756",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_build/results?buildId=6975296"
+  }
+ }
+}

@@ -93,6 +93,11 @@ class Job(_Frozen):
         description="Project of a downstream (child / multi-project) pipeline's job; artifacts "
         "are fetched from here. None = the inspected project.",
     )
+    ref: str | None = Field(
+        default=None,
+        description="The platform's own id when it is not an integer (Azure timeline record "
+        "GUID, Bitbucket step UUID); `id` is then a stable number derived from it.",
+    )
     masking_checked: bool | None = Field(
         default=None,
         description="GitHub: whether a silent step failure (continue-on-error) could be ruled "

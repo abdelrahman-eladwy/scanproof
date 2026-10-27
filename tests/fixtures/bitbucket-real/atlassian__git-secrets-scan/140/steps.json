@@ -1,0 +1,103 @@
+{
+ "values": [
+  {
+   "uuid": "{05b6f38b-0a37-428f-a641-45030f591d54}",
+   "name": "Test",
+   "started_on": "2024-10-29T10:05:00.984781089Z",
+   "completed_on": "2024-10-29T10:05:31.231919108Z",
+   "duration_in_seconds": 30,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "FAILED",
+     "type": "pipeline_step_state_completed_failed"
+    }
+   },
+   "image": {
+    "name": "python:3.10"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 30,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  },
+  {
+   "uuid": "{c6b4c926-81a6-4a7c-a257-dbd22c6c460d}",
+   "name": "Lint the Dockerfile",
+   "started_on": "2024-10-29T10:05:01.052599715Z",
+   "completed_on": "2024-10-29T10:05:05.106468628Z",
+   "duration_in_seconds": 4,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_step_state_completed_successful"
+    }
+   },
+   "image": {
+    "name": "hadolint/hadolint:latest-debian"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 4,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  },
+  {
+   "uuid": "{00f9e678-d720-4763-8ff0-299d56ecf752}",
+   "name": "Release development version",
+   "started_on": "2024-10-29T10:05:31.337543412Z",
+   "completed_on": "2024-10-29T10:05:31.337543412Z",
+   "duration_in_seconds": 0,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_manual",
+    "triggerer": {
+     "type": "user"
+    }
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "NOT_RUN",
+     "type": "pipeline_step_state_completed_not_run"
+    }
+   },
+   "image": {
+    "name": "python:3.10"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 0,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  }
+ ]
+}

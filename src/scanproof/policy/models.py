@@ -158,7 +158,7 @@ class Requirement(_Strict):
 
 
 class ProjectRef(_Strict):
-    provider: Literal["gitlab", "github"]
+    provider: Literal["gitlab", "github", "azure-devops", "jenkins", "bitbucket"]
     id: str
 
     @field_validator("id", mode="before")
@@ -196,10 +196,10 @@ class Policy(_Strict):
             if req.id in seen:
                 raise ValueError(f"duplicate requirement id {req.id!r}")
             seen.add(req.id)
-            if self.project.provider == "github" and not req.artifact_name:
+            if self.project.provider in ("github", "azure-devops") and not req.artifact_name:
                 raise ValueError(
-                    f"requirement {req.id}: GitHub artifacts belong to the run, not a job; "
-                    "set artifact_name"
+                    f"requirement {req.id}: {self.project.provider} artifacts are named per "
+                    "run / build; set artifact_name"
                 )
             if (
                 req.attestation

@@ -1,0 +1,27 @@
+{
+ "sourceVersion": "b7c712c834e96939bbc7fde2a82d12a326faab9d",
+ "finishTime": "2026-10-27T00:00:49.1865817Z",
+ "queueTime": "2026-10-27T00:00:17.9376445Z",
+ "result": "canceled",
+ "startTime": "2026-10-27T00:00:49.1865817Z",
+ "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/Builds/1650144",
+ "status": "completed",
+ "reason": "schedule",
+ "retainedByRelease": false,
+ "sourceBranch": "refs/heads/main-vs-deps",
+ "id": 1650144,
+ "buildNumber": "20261026.2",
+ "definition": {
+  "id": 98,
+  "name": "roslyn-scouting-integration-ci"
+ },
+ "project": {
+  "id": "cbb18261-c48f-4abb-8651-8cdcb5474649",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_build/results?buildId=1650144"
+  }
+ }
+}

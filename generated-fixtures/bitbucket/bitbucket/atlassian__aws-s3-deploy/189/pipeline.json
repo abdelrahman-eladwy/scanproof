@@ -1,0 +1,30 @@
+{
+ "uuid": "{e9c00de3-4936-4396-ab30-6bb1e43c14cb}",
+ "build_number": 189,
+ "state": {
+  "name": "COMPLETED",
+  "type": "pipeline_state_completed",
+  "result": {
+   "name": "SUCCESSFUL",
+   "type": "pipeline_state_completed_successful"
+  }
+ },
+ "created_on": "2025-06-16T23:40:48.188487518Z",
+ "completed_on": "2025-06-16T23:45:47.87339354Z",
+ "duration_in_seconds": 260,
+ "target": {
+  "type": "pipeline_ref_target",
+  "ref_type": "branch",
+  "ref_name": "master",
+  "commit": {
+   "hash": "fdd0efb820730333c541a6828dcf06a944d9ae6f"
+  },
+  "selector": {
+   "type": "branches",
+   "pattern": "master"
+  }
+ },
+ "trigger": {
+  "type": "pipeline_trigger_push"
+ }
+}

@@ -1,0 +1,27 @@
+{
+ "sourceVersion": "e4ec73bdf307a939b749899247af94001267fb57",
+ "finishTime": "2026-10-27T07:03:16.4120084Z",
+ "queueTime": "2026-10-27T06:17:17.6013574Z",
+ "result": "partiallySucceeded",
+ "startTime": "2026-10-27T06:20:33.5869914Z",
+ "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/Builds/1650385",
+ "status": "completed",
+ "reason": "pullRequest",
+ "retainedByRelease": false,
+ "sourceBranch": "refs/pull/7446/merge",
+ "id": 1650385,
+ "buildNumber": "20261026.6",
+ "definition": {
+  "id": 181,
+  "name": "dotnet-docker-nightly-pr"
+ },
+ "project": {
+  "id": "cbb18261-c48f-4abb-8651-8cdcb5474649",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_build/results?buildId=1650385"
+  }
+ }
+}

@@ -1,0 +1,53 @@
+{
+ "count": 3,
+ "value": [
+  {
+   "id": 31877499,
+   "name": "spec-gen-sdk-artifact",
+   "source": "83516c17-6666-5250-abde-63983ce72a49",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "912FBED0C465FC90812281CCB322AD16F4741D6CFEBA5D214CA9463B67B802EF01",
+    "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/builds/7003618/artifacts?artifactName=spec-gen-sdk-artifact&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A0fb41ef4-5012-48a9-bf39-4ee3de03ee35/29ec6040-b234-4e31-b139-33dc4287b756/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2F6dXJlLXNkay9wcm9qZWN0SWQvMjllYzYwNDAtYjIzNC00ZTMxLWIxMzktMzNkYzQyODdiNzU2L2J1aWxkSWQvNzAwMzYxOC9hcnRpZmFjdE5hbWUvc3BlYy1nZW4tc2RrLWFydGlmYWN00/content?format=zip",
+    "properties": {
+     "RootId": "E4CE73653FD33BE215417C695207FD15F4BF1378A5E829362B551F177050D26F02",
+     "artifactsize": "387",
+     "HashType": "DEDUP1024K"
+    }
+   }
+  },
+  {
+   "id": 31877501,
+   "name": "packages",
+   "source": "83516c17-6666-5250-abde-63983ce72a49",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "890AEB7F089AEEFBDC14104675065D96E81F76F09E4F69ADB84F30B9D304467C01",
+    "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/builds/7003618/artifacts?artifactName=packages&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A0fb41ef4-5012-48a9-bf39-4ee3de03ee35/29ec6040-b234-4e31-b139-33dc4287b756/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2F6dXJlLXNkay9wcm9qZWN0SWQvMjllYzYwNDAtYjIzNC00ZTMxLWIxMzktMzNkYzQyODdiNzU2L2J1aWxkSWQvNzAwMzYxOC9hcnRpZmFjdE5hbWUvcGFja2FnZXM1/content?format=zip",
+    "properties": {
+     "RootId": "76F48AB17C8379272F5E8D3D6A47AAE0144D86BDF0C024928B39E6C77A56F3C202",
+     "artifactsize": "1672706",
+     "HashType": "DEDUP1024K"
+    }
+   }
+  },
+  {
+   "id": 31877508,
+   "name": "spec-gen-sdk-logs",
+   "source": "83516c17-6666-5250-abde-63983ce72a49",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "05FF31B04422E73919AEDC242A94E3A3D9E79A3A31AA6E2519462E24DDB99D8601",
+    "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/builds/7003618/artifacts?artifactName=spec-gen-sdk-logs&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A0fb41ef4-5012-48a9-bf39-4ee3de03ee35/29ec6040-b234-4e31-b139-33dc4287b756/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2F6dXJlLXNkay9wcm9qZWN0SWQvMjllYzYwNDAtYjIzNC00ZTMxLWIxMzktMzNkYzQyODdiNzU2L2J1aWxkSWQvNzAwMzYxOC9hcnRpZmFjdE5hbWUvc3BlYy1nZW4tc2RrLWxvZ3M1/content?format=zip",
+    "properties": {
+     "RootId": "D1BF851780A9B2D26B61C889A22BF372C85C4E8D1B4717E90682B9AC4CC15EAB02",
+     "artifactsize": "163094",
+     "HashType": "DEDUP1024K"
+    }
+   }
+  }
+ ]
+}

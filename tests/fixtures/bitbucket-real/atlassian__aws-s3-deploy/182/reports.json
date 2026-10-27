@@ -1,0 +1,22 @@
+{
+ "values": [
+  {
+   "uuid": "{4d860a37-b493-5c88-8a13-66492a4e3f88}",
+   "external_id": "6aa5cd50-4106-401a-91d4-3996fb86ad6b",
+   "title": "Git secrets Security Scan report",
+   "report_type": "SECURITY",
+   "reporter": "Created by git-secrets-scan pipe.",
+   "result": null,
+   "created_on": "2025-01-31T12:11:52.703562814Z"
+  },
+  {
+   "uuid": "{5f435ad8-3d90-583a-82d1-afffe602dbeb}",
+   "external_id": "com.atlassian.securityassistant",
+   "title": "Security Assistant Results",
+   "report_type": "SECURITY",
+   "reporter": null,
+   "result": null,
+   "created_on": "2025-01-31T12:12:39.874512118Z"
+  }
+ ]
+}

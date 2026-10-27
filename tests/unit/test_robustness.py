@@ -23,6 +23,7 @@ SAMPLES = {
     "cyclonedx": ["cyclonedx/trivy-image.cdx.json", "cyclonedx/syft-alpine.cdx.json"],
     "checkov": ["checkov/checkov.json"],
     "sonatype-iq": ["sonatype/many_vulns.json"],
+    "bitbucket-code-insights": ["bitbucket-real/code-insights-git-secrets.json"],
 }
 WEIRD = [None, 0, -1, 1.5, "", "x", [], {}, [None], {"a": None}, True, "9" * 30, 10**30]
 

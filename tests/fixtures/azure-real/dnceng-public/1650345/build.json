@@ -1,0 +1,27 @@
+{
+ "sourceVersion": "56449ca84d112401b8bcf7e4f3b846703f0fc822",
+ "id": 1650345,
+ "startTime": "2026-10-27T05:23:11.2710989Z",
+ "queueTime": "2026-10-27T05:20:54.2862702Z",
+ "status": "completed",
+ "buildNumber": "20261026.49",
+ "finishTime": "2026-10-27T06:27:08.5955062Z",
+ "sourceBranch": "refs/pull/70060/merge",
+ "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/Builds/1650345",
+ "retainedByRelease": false,
+ "result": "partiallySucceeded",
+ "reason": "pullRequest",
+ "definition": {
+  "id": 86,
+  "name": "aspnetcore-quarantined-pr"
+ },
+ "project": {
+  "id": "cbb18261-c48f-4abb-8651-8cdcb5474649",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_build/results?buildId=1650345"
+  }
+ }
+}

@@ -1,0 +1,34 @@
+{
+ "_links": {
+  "self": {
+   "href": "/job/sast-ok/1/wfapi/describe"
+  },
+  "artifacts": {
+   "href": "/job/sast-ok/1/wfapi/artifacts"
+  }
+ },
+ "id": "1",
+ "name": "#1",
+ "status": "SUCCESS",
+ "startTimeMillis": 1793084638694,
+ "endTimeMillis": 1793084642025,
+ "durationMillis": 3331,
+ "queueDurationMillis": 14,
+ "pauseDurationMillis": 0,
+ "stages": [
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-ok/1/execution/node/6/wfapi/describe"
+    }
+   },
+   "id": "6",
+   "name": "Scan",
+   "execNode": "",
+   "status": "SUCCESS",
+   "startTimeMillis": 1793084641493,
+   "durationMillis": 435,
+   "pauseDurationMillis": 0
+  }
+ ]
+}

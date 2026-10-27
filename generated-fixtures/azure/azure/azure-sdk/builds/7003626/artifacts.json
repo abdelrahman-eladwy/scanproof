@@ -1,0 +1,21 @@
+{
+ "count": 1,
+ "value": [
+  {
+   "id": 31877770,
+   "name": "build_artifacts_java",
+   "source": "a19da4f6-b3e3-58ac-b33e-3aea9afa3aea",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "511A1781FA9B9963652BB38ABBD339EE91E2B7FB07DB6F11CBCEBDF1DE3754FF01",
+    "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/builds/7003626/artifacts?artifactName=build_artifacts_java&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A0fb41ef4-5012-48a9-bf39-4ee3de03ee35/29ec6040-b234-4e31-b139-33dc4287b756/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2F6dXJlLXNkay9wcm9qZWN0SWQvMjllYzYwNDAtYjIzNC00ZTMxLWIxMzktMzNkYzQyODdiNzU2L2J1aWxkSWQvNzAwMzYyNi9hcnRpZmFjdE5hbWUvYnVpbGRfYXJ0aWZhY3RzX2phdmE1/content?format=zip",
+    "properties": {
+     "RootId": "7B79DC41A4F9D36F4F7A47DA293762C18D551CE7A77552A995FDBA2C3D948F0B02",
+     "artifactsize": "17073554",
+     "HashType": "DEDUP1024K"
+    }
+   }
+  }
+ ]
+}

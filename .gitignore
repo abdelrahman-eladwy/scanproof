@@ -13,3 +13,6 @@ htmlcov/
 *.local.yaml
 inspection*.json
 report*.json
+# Real test data may share those names (e.g. Bitbucket Code Insights reports)
+!tests/fixtures/**/report*.json
+!tests/fixtures/**/inspection*.json
