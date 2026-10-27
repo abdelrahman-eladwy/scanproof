@@ -108,7 +108,9 @@ jobs:
           if-no-files-found: error
 
   deploy-bad:
-    needs: [gate-bad]
+    # SECURITY PROBE - deliberately wrong dependency, DO NOT MERGE.
+    # This bypasses the required gate. The PR exists only to test ruleset enforcement.
+    needs: [scan-scope-free]
     runs-on: ubuntu-latest
     steps:
       - name: Must never execute
