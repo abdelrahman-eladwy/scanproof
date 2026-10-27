@@ -1,3 +1,0 @@
-Application:   syft
-Version:       1.55.0
-BuildDate:     2026-10-19T18:54:46Z
