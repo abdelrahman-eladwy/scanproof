@@ -81,7 +81,9 @@ ScanProof checks its own run daily against `main`:
 | Workflow still running | job `in_progress` | INDETERMINATE: `JOB_NOT_FINISHED` |
 
 `job_name` matches the job exactly, its matrix instances (`name (...)`) and its name inside a
-reusable workflow (`caller / name`); when several match, every one must pass. All matrix
+reusable workflow (`caller / name`); when several match, every one must pass. That includes the
+exact-name job: a passing `sast` does not stand in for a failing `sast (py)` or `caller / sast`
+([#59](https://github.com/abdelrahman-eladwy/scanproof/issues/59)). All matrix
 instances share the one `artifact_name` you give, so give each instance its own artifact (e.g.
 `semgrep-${{ matrix.lang }}`) and one requirement per artifact if each report must be checked.
 

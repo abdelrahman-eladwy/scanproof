@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 
 import pytest
 
+from scanproof.evidence.collector import find_jobs
 from scanproof.models import InspectedJob, Job, JobStatus, Pipeline
 from scanproof.policy.engine import Decision, RequirementInput, evaluate
 from scanproof.policy.models import Policy
@@ -99,3 +100,27 @@ def test_unknown_warn_is_explicit_opt_in_not_default():
     result = evaluate(policy(on_unknown="warn"), PIPELINE, unknown, now=NOW)
     assert result.decision is Decision.VERIFIED
     assert result.warnings
+
+
+def named(name: str, status=JobStatus.SUCCESS) -> InspectedJob:
+    item = Job(id=hash(name) % 10_000, name=name, status=status, commit_sha=SHA, finished_at=NOW)
+    return InspectedJob(
+        name=name, stage=None, latest=item, attempt_ids=[item.id], commit_matches_pipeline=True
+    )
+
+
+@pytest.mark.parametrize(
+    "instance", ["sast (py)", "sast: [py]", "sast 1/1", "trigger > sast", "caller / sast"]
+)
+def test_exact_name_job_cannot_hide_a_failing_instance(instance):
+    """#59: a passing job named exactly 'sast' must not stand in for a failing instance."""
+    jobs = [named("sast"), named(instance, JobStatus.FAILED)]
+    matches, missing = find_jobs(jobs, "sast")  # what verification.py feeds the engine
+    assert sorted(j.name for j in matches) == sorted(["sast", instance])
+    assert missing == []
+    inputs = {
+        "SAST": RequirementInput(
+            instances=[(j.name, RequirementInput(job=j, evidence=report())) for j in matches]
+        )
+    }
+    assert evaluate(policy(), PIPELINE, inputs, now=NOW).decision is Decision.BLOCKED
