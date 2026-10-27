@@ -13,10 +13,17 @@ from scanproof.scanners.gitlab_report import (
     GitLabSastAdapter,
     GitLabSecretDetectionAdapter,
 )
+from scanproof.scanners.gitleaks import GitleaksAdapter
+from scanproof.scanners.grype import GrypeAdapter
+from scanproof.scanners.kubescape import KubescapeAdapter
+from scanproof.scanners.nuclei import NucleiAdapter
+from scanproof.scanners.osv import OsvScannerAdapter
 from scanproof.scanners.sarif import SarifAdapter
 from scanproof.scanners.semgrep import SemgrepAdapter
+from scanproof.scanners.snyk import SnykAdapter
 from scanproof.scanners.sonatype import SonatypeIqAdapter
 from scanproof.scanners.trivy import TrivyAdapter
+from scanproof.scanners.zap import ZapAdapter
 
 ADAPTERS: dict[str, ScannerAdapter] = {
     a.tool: a
@@ -33,6 +40,13 @@ ADAPTERS: dict[str, ScannerAdapter] = {
         FortifyAdapter(),
         SonatypeIqAdapter(),
         BitbucketCodeInsightsAdapter(),
+        GitleaksAdapter(),
+        GrypeAdapter(),
+        OsvScannerAdapter(),
+        SnykAdapter(),
+        KubescapeAdapter(),
+        ZapAdapter(),
+        NucleiAdapter(),
     )
 }
 
