@@ -13,8 +13,32 @@ from scanproof.scanners import ADAPTERS
     ("tool", "report"),
     [
         ("trivy", {"SchemaVersion": 2, "ArtifactName": chr(0xD800), "Results": []}),
-        ("semgrep", {"results": [{"check_id": chr(0xD800), "path": "a.py", "start": {"line": 1}, "extra": {"message": "x", "severity": "ERROR"}}], "errors": []}),
-        ("gitlab-sast", {"version": "15.0.0", "vulnerabilities": [], "scan": {"scanner": {"id": chr(0xD800), "name": "test"}, "type": "sast", "status": "success"}}),
+        (
+            "semgrep",
+            {
+                "results": [
+                    {
+                        "check_id": chr(0xD800),
+                        "path": "a.py",
+                        "start": {"line": 1},
+                        "extra": {"message": "x", "severity": "ERROR"},
+                    }
+                ],
+                "errors": [],
+            },
+        ),
+        (
+            "gitlab-sast",
+            {
+                "version": "15.0.0",
+                "vulnerabilities": [],
+                "scan": {
+                    "scanner": {"id": chr(0xD800), "name": "test"},
+                    "type": "sast",
+                    "status": "success",
+                },
+            },
+        ),
     ],
 )
 def test_unpaired_unicode_surrogate_never_escapes_to_serialized_evidence(tool, report):
