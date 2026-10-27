@@ -152,7 +152,9 @@ is matched ([#65](https://github.com/abdelrahman-eladwy/scanproof/issues/65), [d
 
 ScanProof follows downstream pipelines up to 3 levels and 50 pipelines. If a downstream pipeline
 can't be read (the token has no access to that project) and the required job isn't found
-elsewhere, the result is INDETERMINATE (`JOB_MAYBE_IN_UNREADABLE_PIPELINE`), not "job absent".
+elsewhere, the result is INDETERMINATE (`JOB_MAYBE_IN_UNREADABLE_PIPELINE`), not "job absent". The same holds
+while a trigger hasn't started its pipeline yet. Exactly when a missing job counts as proven
+absent: [Missing or unreadable](../advanced-policy.md#missing-or-unreadable-when-absence-is-proven).
 Multi-project pipelines usually run on **another repository's commit**, so `same_commit` fails
 there unless you set `same_commit: false` for that requirement on purpose.
 

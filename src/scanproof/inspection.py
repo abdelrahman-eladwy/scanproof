@@ -73,6 +73,16 @@ def _walk_downstream(
             label = f"{prefix}{bridge.trigger_name}"
             seen.append(bridge)
             if bridge.pipeline_id is None or bridge.project is None:
+                status = bridge.trigger_status
+                if not status.is_terminal and status is not JobStatus.MANUAL:
+                    # Not started yet (or a status we don't recognize): its jobs may still
+                    # appear, so their absence is unknown, not proven (#68).
+                    unreadable.append(f"{label} (not started: {status.value})")
+                    warnings.append(
+                        f"Trigger '{label}' ({status.value}) has not started its downstream "
+                        "pipeline yet; jobs in it can't be verified."
+                    )
+                    continue
                 warnings.append(
                     f"Trigger '{label}' ({bridge.trigger_status.value}) did not start a "
                     "downstream pipeline."
