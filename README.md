@@ -104,31 +104,12 @@ If no requirement applies to the pipeline (for example every requirement has `ap
 and this is a merge-request pipeline), the decision is INDETERMINATE: nothing was verified. Set
 `enforcement: {on_nothing_applicable: allow}` to make that VERIFIED with a warning instead.
 
-## Roadmap to v0.1
+## Project status
 
-- [x] **M1 — GitLab Pipeline Inspector**
-- [x] **M2 — Scanner adapters:** Semgrep (scan scope, errors) and Trivy (image digest binding)
-- [x] **M3 — Policy engine:** YAML policies, PASS / FAIL / UNKNOWN / NOT_APPLICABLE, `verify` command
-- [x] **M4 — Hardening & release:** pinned CI, release workflow with provenance, docs, live [demo](docs/demo.md); first PyPI release (pending maintainer setup)
-
-Beyond the original plan (merged):
-
-- [x] Real gitlab.com contract tests, `--anonymous` for public projects
-- [x] GitLab security report formats (SAST, container, dependency, secrets)
-- [x] SARIF and CycloneDX (any SARIF producer, SBOMs), `expected_scanner`, `minimum_components`
-- [x] Dependency, secrets and IaC scan types (Checkov, Trivy filesystem)
-- [x] **GitHub Actions** connector, verified against its own live runs
-- [x] Fortify FPR and Sonatype IQ (experimental)
-- [x] Complex pipelines: child / multi-project / parallel / matrix, re-runs ([scenarios](docs/scenarios.md))
-
-Next (v0.2, in progress):
-
-- [x] **Signed evidence:** Sigstore / in-toto / SLSA attestations ([attestations](docs/attestations.md))
-- [x] More CI platforms: Azure DevOps, Jenkins (verified live), Bitbucket Pipelines
-- [x] More scanners and DAST: Gitleaks, Grype, OSV-Scanner, Snyk, Kubescape, OWASP ZAP and Nuclei ([scan types](docs/scan-types.md))
-- [x] Advanced policy: expiring waivers, scan freshness, same-target binding, multi-pipeline releases ([advanced policy](docs/advanced-policy.md))
-
-See [`docs/issues/`](docs/issues/) for detailed acceptance criteria.
+ScanProof is pre-alpha. Current readiness work follows the
+[production-readiness program](docs/production-readiness.md); active work is tracked in
+[GitHub Issues](https://github.com/abdelrahman-eladwy/scanproof/issues). The original M1–M4
+implementation records and acceptance criteria are kept in [docs/milestones/](docs/milestones/).
 
 ## Using it in CI
 
