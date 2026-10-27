@@ -29,6 +29,7 @@ class ErrorKind(StrEnum):
     UNSAFE_REDIRECT = "UNSAFE_REDIRECT"  # redirect we refused to follow
     INVALID_RESPONSE = "INVALID_RESPONSE"  # response did not match the expected shape
     INTEGRITY = "INTEGRITY"  # downloaded bytes don't match the platform's recorded digest
+    UNSUPPORTED = "UNSUPPORTED"  # the platform has no such feature (e.g. an attestation store)
 
 
 class ConnectorError(Exception):
@@ -76,6 +77,20 @@ class CIConnector(ABC):
         missing evidence. Raise other ConnectorErrors when the platform cannot be asked.
         `artifact_name` is required by platforms whose artifacts are not tied to jobs (GitHub).
         """
+
+    def fetch_attestations(self, project: str, subject_digest: str) -> bytes:
+        """Sigstore bundles the platform stores for `sha256:<hex>`, as JSON
+        `{"attestations": [{"bundle": {...}}]}` (empty list when there are none)."""
+        raise ConnectorError(
+            ErrorKind.UNSUPPORTED, f"{self.provider} has no attestation store; use source: artifact"
+        )
+
+    def run_matches(
+        self, invocation_uri: str | None, pipeline: Pipeline, job_ids: set[int]
+    ) -> bool | None:
+        """Whether a certificate's Run Invocation URI is this pipeline (or one of its jobs).
+        None when the platform can't tell; that is never treated as a match."""
+        return None
 
     def list_downstream(self, project: str, pipeline_id: int) -> list[Downstream]:
         """Pipelines started by trigger jobs (GitLab child / multi-project). Default: none."""
