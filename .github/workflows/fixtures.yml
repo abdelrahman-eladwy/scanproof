@@ -190,8 +190,71 @@ jobs:
 
   # On fixtures/scanners/** branches, commit the reports back so they can be fetched with git
   # (useful where artifact storage is not reachable). Never runs on main.
+  # More scanners and DAST. Each step records the tool's version next to its report.
+  scanners-v2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: mkdir -p out/v2 && chmod -R a+rwx out
+      - name: gitleaks native JSON (random fake token, redacted) and a clean run
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/leak /tmp/clean && chmod a+rwx /tmp/leak /tmp/clean
+          tok="ghp_$(head -c 200 /dev/urandom | tr -dc 'A-Za-z0-9' | head -c 36)"
+          printf 'config:\n  github_token: "%s"\n' "$tok" > /tmp/leak/config.yml
+          echo "nothing to see" > /tmp/clean/readme.txt
+          G="docker run --rm -v /tmp/leak:/scan -v /tmp/clean:/clean -v $PWD/out/v2:/out zricethezav/gitleaks:latest"
+          $G dir /scan --redact --report-format json --report-path /out/gitleaks-leak.json --exit-code 0
+          $G dir /clean --redact --report-format json --report-path /out/gitleaks-clean.json --exit-code 0
+          docker run --rm zricethezav/gitleaks:latest version > out/v2/gitleaks-version.txt
+          ! grep -q "$tok" out/v2/gitleaks-*.json || { echo "::error::unredacted token"; rm out/v2/gitleaks-*.json; exit 1; }
+          echo "::notice title=gitleaks::$(cat out/v2/gitleaks-version.txt)"
+      - name: Grype JSON (image)
+        continue-on-error: true
+        run: |
+          IMG=alpine@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
+          docker run --rm anchore/grype:latest version > out/v2/grype-version.txt 2>&1
+          docker run --rm anchore/grype:latest "$IMG" -o json > out/v2/grype-alpine.json
+          docker run --rm anchore/grype:latest python:3.12-slim -o json > out/v2/grype-python.json
+          echo "::notice title=grype::$(head -2 out/v2/grype-version.txt | tr '\n' ' ')"
+      - name: OSV-Scanner JSON (lockfile)
+        continue-on-error: true
+        run: |
+          O="docker run --rm -v $PWD/examples/sample-projects/node:/src ghcr.io/google/osv-scanner:latest"
+          $O --version > out/v2/osv-version.txt 2>&1 || true
+          $O scan source --format json -r /src > out/v2/osv-node.json || true
+          echo "::notice title=osv::$(head -1 out/v2/osv-version.txt) $(wc -c < out/v2/osv-node.json) bytes"
+      - name: Kubescape JSON (manifests)
+        continue-on-error: true
+        run: |
+          K="docker run --rm -v $PWD/examples/sample-projects/kubernetes:/k8s -v $PWD/out/v2:/out quay.io/kubescape/kubescape-cli:latest"
+          $K version > out/v2/kubescape-version.txt 2>&1 || true
+          $K scan /k8s --format json --output /out/kubescape.json || true
+          echo "::notice title=kubescape::$(head -1 out/v2/kubescape-version.txt) $(wc -c < out/v2/kubescape.json) bytes"
+      - name: DAST target (nginx) + OWASP ZAP baseline + Nuclei
+        continue-on-error: true
+        run: |
+          docker network create dast
+          docker run -d --name target --network dast nginx:1.27-alpine
+          sleep 3
+          docker run --rm --network dast -v "$PWD/out/v2:/zap/wrk:rw" ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py -t http://target -J zap-baseline.json -I || true
+          docker run --rm ghcr.io/zaproxy/zaproxy:stable zap.sh -cmd -version > out/v2/zap-version.txt 2>&1 || true
+          N="docker run --rm --network dast -v $PWD/out/v2:/out projectdiscovery/nuclei:latest"
+          $N -version > out/v2/nuclei-version.txt 2>&1 || true
+          $N -u http://target -t http/technologies/ -jsonl -o /out/nuclei.jsonl -je /out/nuclei-export.json -silent -duc || true
+          $N -u http://target -t http/cves/2099/ -jsonl -o /out/nuclei-empty.jsonl -je /out/nuclei-empty-export.json -silent -duc || true
+          ls -la out/v2
+          echo "::notice title=dast::zap $(wc -c < out/v2/zap-baseline.json 2>/dev/null) nuclei $(wc -l < out/v2/nuclei.jsonl 2>/dev/null) empty-export $(cat out/v2/nuclei-empty-export.json 2>/dev/null | head -c 100)"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: scanners-v2
+          path: out/v2/
+
   publish:
-    needs: [semgrep, trivy, gitlab-analyzers, formats]
+    needs: [semgrep, trivy, gitlab-analyzers, formats, scanners-v2]
     if: always() && startsWith(github.ref, 'refs/heads/fixtures/scanners/')
     runs-on: ubuntu-latest
     permissions:
