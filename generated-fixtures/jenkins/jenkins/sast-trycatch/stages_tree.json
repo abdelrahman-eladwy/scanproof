@@ -1,1 +1,0 @@
-{"status":"ok","data":{"stages":[{"id":"6","name":"Scan","children":[],"state":"success","type":"STAGE","title":"Scan","isSequential":false,"synthetic":false,"placeholder":false,"pauseDurationMillis":0,"totalDurationMillis":766,"startTimeMillis":1793084640051,"agent":"built-in","url":"/job/sast-trycatch/1/stages/?selected-node=6"}],"complete":true}}

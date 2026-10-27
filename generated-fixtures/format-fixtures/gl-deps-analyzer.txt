@@ -1,1 +1,0 @@
-registry.gitlab.com/security-products/gemnasium:6

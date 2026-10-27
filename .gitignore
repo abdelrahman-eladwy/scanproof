@@ -16,3 +16,7 @@ report*.json
 # Real test data may share those names (e.g. Bitbucket Code Insights reports)
 !tests/fixtures/**/report*.json
 !tests/fixtures/**/inspection*.json
+
+# Raw output of the fixture-collection workflows. They commit it (git add -f) only to
+# fixtures/** branches; reviewed copies live in tests/fixtures/.
+generated-fixtures/
