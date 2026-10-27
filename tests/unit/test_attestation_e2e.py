@@ -300,9 +300,10 @@ def test_github_run_attempt_missing_is_unknown() -> None:
         web_url="https://github.com/acme/app/actions/runs/7",
     )
     with GitHubConnector(API, "t") as c:
-        assert c.run_matches(
-            "https://github.com/acme/app/actions/runs/7/attempts/1", pipe, set()
-        ) is None
+        assert (
+            c.run_matches("https://github.com/acme/app/actions/runs/7/attempts/1", pipe, set())
+            is None
+        )
 
 
 @pytest.mark.parametrize(
