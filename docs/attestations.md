@@ -3,7 +3,9 @@
 Without signatures, ScanProof gives *operational* assurance: anyone who can edit the pipeline can
 upload a convincing fake report. With an `attestation:` block, a requirement also demands a
 **Sigstore-signed in-toto attestation** that binds the report (or the image) to the CI identity
-that produced it, the commit, and the run. A forged or replayed report then fails.
+that produced it, the commit, and the run attempt where the CI provider exposes it.
+An invalid signature or a report digest mismatch is rejected. These checks do not by themselves
+prove that the scanner actually covered the application or that release policies are protected.
 
 ```bash
 pip install "scanproof[attestations]"     # adds sigstore-python; the Docker image includes it
@@ -22,12 +24,18 @@ after that does ScanProof read the claims, and then the policy is checked agains
 | `predicateType` is the one the policy asks for | `ATTESTATION_PREDICATE_MISMATCH` |
 | Certificate issuer, source repository, Build Signer URI (regex, full match) | `ATTESTATION_SIGNER_MISMATCH` |
 | `same_commit`: certificate source commit = pipeline commit | `ATTESTATION_WRONG_COMMIT` |
-| `same_run`: certificate run = the pipeline being verified | `ATTESTATION_WRONG_RUN` |
+| `same_run`: signing run (and, on GitHub, attempt) = the verified pipeline attempt | `ATTESTATION_WRONG_RUN` |
 | No bundle at all | `ATTESTATION_MISSING` |
 
 It is UNKNOWN (exit 2), never a pass, when the bundles can't be fetched (`ATTESTATION_UNAVAILABLE`),
 sigstore isn't installed or the trust root can't be loaded (`ATTESTATION_UNVERIFIABLE`), or a
 claim the policy needs isn't in the certificate (`ATTESTATION_CLAIM_MISSING`, `ATTESTATION_RUN_UNKNOWN`).
+For GitHub, `same_run: true` also verifies that the signed invocation URI's
+`/attempts/<n>` agrees with `run_attempt` returned by the workflow run API. If either
+attempt number is unavailable, the check is UNKNOWN (`ATTESTATION_RUN_UNKNOWN`), not a
+success. A mismatch is a definite failure. GitLab's `same_run` still binds the
+certificate's job ID to a job in the inspected pipeline.
+
 If several bundles exist for one subject (re-runs, other workflows), one acceptable bundle is
 enough, and the report lists why each of the others was rejected.
 
