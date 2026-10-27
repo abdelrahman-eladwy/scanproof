@@ -36,6 +36,7 @@ class FakeGitHub:
     run_id: int = RUN
     sha: str = SHA
     run_conclusion: str | None = "success"
+    run_attempt: int = 1
     jobs: list[dict] = field(default_factory=list)
     annotations: dict[int, list] = field(default_factory=dict)  # job id -> pages / HTTP status
     artifacts: list[dict] = field(default_factory=list)
@@ -76,6 +77,7 @@ class FakeGitHub:
         r.get(f"{API}/repos/{repo}/actions/runs/{run}").respond(
             json={
                 "id": run,
+                "run_attempt": self.run_attempt,
                 "head_sha": self.sha,
                 "head_branch": "main",
                 "event": "push",
