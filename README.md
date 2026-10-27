@@ -63,11 +63,17 @@ Supported reports:
 | `sonatype-iq` *(experimental)* | IQ raw application report | Sonatype Lifecycle / IQ Server |
 | `sarif` | SARIF 2.1.0 | CodeQL, Semgrep, Trivy, gitleaks, Checkov, Snyk, ... (pin the engine with `expected_scanner`) |
 | `cyclonedx` | CycloneDX JSON SBOM | Trivy, Syft, cdxgen, ... |
+| `gitleaks` | native JSON | Gitleaks (secrets) |
+| `grype`, `osv-scanner`, `snyk` | native JSON | Grype, OSV-Scanner, Snyk (dependencies, containers) |
+| `kubescape` | native JSON | Kubescape (Kubernetes manifests) |
+| `zap`, `nuclei` | native JSON | OWASP ZAP, Nuclei (DAST, bound to the URL you release) |
+| `bitbucket-code-insights` | Code Insights reports | Any tool reporting to Bitbucket Pipelines |
 
 Tested versions: [docs/compatibility.md](docs/compatibility.md). Which checks each format can
 actually prove (SAST, dependency, secrets, IaC, container, SBOM): [docs/scan-types.md](docs/scan-types.md).
 
-Every check returns PASS / FAIL / UNKNOWN / NOT_APPLICABLE with a stable code
+Every check returns PASS / FAIL / UNKNOWN / NOT_APPLICABLE (or WAIVED, under a time-limited
+policy waiver) with a stable code
 (`REQUIRED_JOB_ABSENT`, `FAILURE_MASKED_BY_ALLOW_FAILURE`, `REPORT_MISSING`, `COMMIT_MISMATCH`,
 `IMAGE_DIGEST_MISMATCH`, `EVIDENCE_UNAVAILABLE`, ...). Findings are reported, never judged.
 
@@ -86,6 +92,14 @@ GitHub add `--provider github --artifact <name>`):
 ```bash
 scanproof evidence -t semgrep -f semgrep.json
 scanproof evidence -t trivy -p my-group/my-app --pipeline 1042 --job trivy-image --report trivy.json
+```
+
+Several pipelines, one decision (for example a GitLab app and a GitHub app shipped together), and
+checking what a Sigstore bundle proves:
+
+```bash
+scanproof verify-release -R examples/release.yaml
+scanproof attestation -b semgrep.json.sigstore.json -f semgrep.json
 ```
 
 Self-hosted GitLab: `--gitlab-url https://gitlab.internal` and, for a private CA,
