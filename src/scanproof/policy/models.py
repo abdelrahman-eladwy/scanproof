@@ -229,11 +229,22 @@ class Metadata(_Strict):
     name: str
 
 
+class Assurance(_Strict):
+    """A policy's minimum claimed assurance. A report only proves its own assertions.
+
+    'reported_scope' checks that the scanner claims a nonempty examined scope;
+    it does not cryptographically prove that scan work happened.
+    """
+
+    minimum_level: Literal["report", "reported_scope"] = "report"
+
+
 class Policy(_Strict):
     apiVersion: Literal["scanproof.dev/v1alpha1"]
     kind: Literal["PipelineAssurancePolicy"]
     metadata: Metadata | None = None
     project: ProjectRef
+    assurance: Assurance = Field(default_factory=Assurance)
     requirements: list[Requirement] = Field(min_length=1)
     enforcement: Enforcement = Field(default_factory=Enforcement)
     waivers: list[Waiver] = Field(default_factory=list)
@@ -241,6 +252,22 @@ class Policy(_Strict):
     @model_validator(mode="after")
     def _unique_ids_and_known_tools(self) -> Policy:
         from scanproof.scanners import ADAPTERS
+
+        if self.assurance.minimum_level == "reported_scope":
+            if self.enforcement.on_unknown != "block":
+                raise ValueError(
+                    "reported_scope assurance requires enforcement.on_unknown: block"
+                )
+            if self.enforcement.on_nothing_applicable != "block":
+                raise ValueError(
+                    "reported_scope assurance requires "
+                    "enforcement.on_nothing_applicable: block"
+                )
+            if any(not req.checks.report_required for req in self.requirements):
+                raise ValueError(
+                    "reported_scope assurance requires checks.report_required: true "
+                    "for every requirement"
+                )
 
         seen: set[str] = set()
         for req in self.requirements:
