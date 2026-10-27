@@ -39,7 +39,10 @@ def policy(**enforcement):
 def job(status=JobStatus.SUCCESS, sha=SHA):
     item = Job(id=9, name="sast", status=status, commit_sha=sha, finished_at=NOW)
     return InspectedJob(
-        name="sast", stage=None, latest=item, attempt_ids=[9],
+        name="sast",
+        stage=None,
+        latest=item,
+        attempt_ids=[9],
         commit_matches_pipeline=sha == SHA,
     )
 
@@ -70,8 +73,10 @@ def report(path="semgrep/semgrep-clean.json"):
 def test_fail_closed_security_decisions(input_data, decision):
     actual = evaluate(policy(), PIPELINE, {"SAST": input_data}, now=NOW)
     assert actual.decision is decision
-    assert actual.decision.exit_code == {Decision.VERIFIED: 0, Decision.BLOCKED: 1,
-                                         Decision.INDETERMINATE: 2}[decision]
+    assert (
+        actual.decision.exit_code
+        == {Decision.VERIFIED: 0, Decision.BLOCKED: 1, Decision.INDETERMINATE: 2}[decision]
+    )
 
 
 def test_matrix_requires_every_instance_to_pass():
@@ -80,7 +85,8 @@ def test_matrix_requires_every_instance_to_pass():
     unknown = RequirementInput(job=job(), evidence_error="timeout")
     for bad, expected in [(failed, Decision.BLOCKED), (unknown, Decision.INDETERMINATE)]:
         result = evaluate(
-            policy(), PIPELINE,
+            policy(),
+            PIPELINE,
             {"SAST": RequirementInput(instances=[("linux", ok), ("windows", bad)])},
             now=NOW,
         )
