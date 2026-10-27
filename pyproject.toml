@@ -36,7 +36,10 @@ Issues = "https://github.com/abdelrahman-eladwy/scanproof/issues"
 Changelog = "https://github.com/abdelrahman-eladwy/scanproof/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
+# Verify Sigstore-signed attestations (attestation: in policies). Crypto stays in a vetted library.
+attestations = ["sigstore>=4.0,<5"]
 dev = [
+  "scanproof[attestations]",
   "pytest>=8",
   "pytest-cov>=5",
   "respx>=0.22",  # 0.21 breaks with httpx 0.28
