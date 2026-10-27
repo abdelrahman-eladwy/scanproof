@@ -1,0 +1,22 @@
+# DAST evidence bound to the deployment being released. See docs/scan-types.md.
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: dast-release}
+project: {provider: gitlab, id: my-group/my-app}
+requirements:
+  - id: DAST-ZAP
+    tool: zap
+    job_name: dast
+    report_path: zap.json                 # zap-baseline.py -J zap.json
+    checks:
+      target_url_must_match: ${DEPLOY_URL}
+      minimum_endpoints: 5
+  - id: DAST-NUCLEI
+    tool: nuclei
+    job_name: nuclei
+    report_path: nuclei.json              # nuclei -je nuclei.json
+  - id: K8S
+    tool: kubescape
+    job_name: kubescape
+    report_path: kubescape.json
+    checks: {minimum_resources: 1}

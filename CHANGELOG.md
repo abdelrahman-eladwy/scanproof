@@ -22,6 +22,11 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   reports must come from an artifact the required job published itself. Bitbucket evidence is
   Code Insights reports (new tool `bitbucket-code-insights`). Built on real API responses; the
   Jenkins connector is verified live against a real Jenkins in CI.
+- Adapters for **Gitleaks** (native JSON), **Grype**, **OSV-Scanner**, **Snyk** (open source and
+  container), **Kubescape** and the DAST scanners **OWASP ZAP** and **Nuclei**, from real output
+  generated in CI (Snyk: DefectDojo samples). All fuzzed.
+- DAST checks: `target_url_must_match` (the scan hit the URL being released: same origin, path
+  at or below it) and `minimum_endpoints` (ZAP's endpoint count). New scan type `DAST`.
 - HTTP Basic auth (Jenkins API tokens, Azure DevOps PATs, Bitbucket API tokens) with the same
   guarantees as Bearer: secrets from env vars only, sent only to the API origin.
 - `--sigstore-trusted-root` (e.g. GitHub's instance for private repos) and `--sigstore-offline`.

@@ -18,6 +18,14 @@ by default), so leave it out of the policy or choose a format that records it.
 | `sonatype-iq` *(experimental)* | Dependency | — | — | ✓ `minimum_components` | | ✓ |
 | `sarif` | any | only if producer writes `invocations` (Semgrep yes; Trivy, gitleaks, Checkov no) | only if producer writes `artifacts` | | Trivy image SARIF ✓ | ✓ (use it!) |
 | `cyclonedx` | SBOM | — | — | ✓ `minimum_components` | Trivy ✓, Syft — | ✓ |
+| `gitleaks` | Secrets | — | — (not reported) | | | ✓ |
+| `grype` | Container / Dependency | — | — | | ✓ repoDigests | ✓ |
+| `osv-scanner` | Dependency | — | — (lists only sources with vulnerabilities) | | | ✓ |
+| `snyk` | Dependency / Container | — | ✓ target files | ✓ `minimum_components` (dependencyCount) | — | ✓ |
+| `kubescape` | Kubernetes (IaC) | — | ✓ manifests | ✓ `minimum_resources` | | ✓ |
+| `zap` | **DAST** | — | | ✓ `minimum_endpoints` (ZAP 2.16+) | ✓ `target_url_must_match` (sites) | ✓ |
+| `nuclei` | **DAST** | — | | | ✓ `target_url_must_match` (only when there are findings) | ✓ |
+| `bitbucket-code-insights` | as reported | — | — | | | ✓ reporter |
 
 `job_success`, `same_commit` and `report_required` work for every type: they come from the CI
 platform and the report's presence, not from the report contents.
@@ -67,3 +75,25 @@ checks: {minimum_components: 1, image_digest_must_match: ${RELEASE_IMAGE_DIGEST}
 tool: sarif
 checks: {expected_scanner: CodeQL}
 ```
+
+## DAST: bind the scan to the deployment
+
+A DAST report is only evidence for the environment it hit. `target_url_must_match` takes the
+URL being released (or `${ENV_VAR}`) and passes when a scanned target has the same scheme, host
+and port, and a path at or below it (`https://app.example.com/shop` covers `/shop/cart`, not
+`/shopping`). If the report does not say what it scanned, the check is UNKNOWN.
+
+```yaml
+  - id: DAST
+    tool: zap
+    job_name: dast
+    report_path: zap.json            # zap-baseline.py -J zap.json
+    checks:
+      target_url_must_match: ${DEPLOY_URL}
+      minimum_endpoints: 5           # the spider found and tested at least 5 endpoints
+```
+
+For Nuclei use `-je report.json`: it writes `[]` when nothing is found, while `-jsonl` writes an
+empty file that ScanProof cannot tell from a scan that never ran. With no findings Nuclei does
+not record its target, so pair it with ZAP when the target must be proven.
+
