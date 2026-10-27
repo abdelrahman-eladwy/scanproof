@@ -45,6 +45,36 @@ produced; it caps annotations per step and per job. So on github.com today the f
 fits on the first page. ScanProof still reads every page, and treats an unfinished read as UNKNOWN,
 in case GHES or future limits differ.
 
+## Jenkins, live (`platforms-contract.yml`, `tests/unit/test_jenkins.py`)
+
+A real Jenkins 2.580.1 runs each pipeline; ScanProof then verifies it over the REST API.
+
+| Pipeline | Jenkins shows | Decision | Source |
+|---|---|---|---|
+| plain scan | SUCCESS | VERIFIED | live + test |
+| `catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE')` | build SUCCESS, stage failed | BLOCKED `FAILURE_MASKED_BY_ALLOW_FAILURE` | live + test |
+| `warnError` | UNSTABLE | BLOCKED `FAILURE_MASKED_BY_ALLOW_FAILURE` | live + test |
+| scripted `try/catch` around the scan | stage SUCCESS, step node failed | BLOCKED (caught) | live + test |
+| `retry(2)`, second try passes | step failed, same step then succeeded | VERIFIED | live + test |
+| stage skipped by `when` | NOT_EXECUTED | BLOCKED `JOB_NOT_SUCCESS` | live + test |
+| stage fails, build fails | FAILURE | BLOCKED `JOB_NOT_SUCCESS` | live + test |
+| `parallel`: failed `sast-go`, healthy `sast-python` | build SUCCESS | BLOCKED / VERIFIED per branch | live + test |
+| `matrix`: `go` instance failed | build SUCCESS | BLOCKED (`job_name: sast` covers every instance) | live + test |
+| no Pipeline Graph View plugin | | falls back to Stage View | test |
+| step nodes unreadable | | INDETERMINATE | test |
+
+## Azure DevOps and Bitbucket (real API responses)
+
+| Scenario | Decision | Source |
+|---|---|---|
+| Azure: tasks failed under `continueOnError` (dnceng-public build 1650345) | BLOCKED `FAILURE_MASKED_BY_ALLOW_FAILURE` | test |
+| Azure: report artifact published by another job | BLOCKED `REPORT_MISSING` | test |
+| Azure: artifact from a re-run job's failed first attempt (azure-sdk 6975296) | not accepted | test |
+| Azure: Pipeline Artifact redirected to artifacts.visualstudio.com | INDETERMINATE, token not sent | test |
+| Bitbucket: Security Scan step + git-secrets Code Insights report | VERIFIED | test |
+| Bitbucket: two reports with one title on a commit (re-run) | newest used | test |
+| Bitbucket: failed step in a successful pipeline (`on-fail: ignore`) | BLOCKED `FAILURE_MASKED_BY_ALLOW_FAILURE` | test |
+
 ## Scale (measured in the development workspace)
 
 | Input | Time | Peak memory |

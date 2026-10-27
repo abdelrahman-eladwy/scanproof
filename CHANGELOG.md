@@ -15,6 +15,15 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   Tested against real bundles from this repository's own runs, forgeries made from them, and a
   live self-verify run. See `docs/attestations.md`.
 - `scanproof attestation -b BUNDLE [-f FILE]` prints what a bundle proves.
+- **Azure DevOps, Jenkins and Bitbucket Pipelines** connectors (`--provider azure-devops |
+  jenkins | bitbucket`, `--url`, `--user-env`, `--auth-scheme`). Each sees through its own
+  masking: Azure `continueOnError` (`succeededWithIssues`), Jenkins `catchError` / `warnError` /
+  swallowed `try/catch` step failures (but not `retry`), Bitbucket `on-fail: ignore`. Azure
+  reports must come from an artifact the required job published itself. Bitbucket evidence is
+  Code Insights reports (new tool `bitbucket-code-insights`). Built on real API responses; the
+  Jenkins connector is verified live against a real Jenkins in CI.
+- HTTP Basic auth (Jenkins API tokens, Azure DevOps PATs, Bitbucket API tokens) with the same
+  guarantees as Bearer: secrets from env vars only, sent only to the API origin.
 - `--sigstore-trusted-root` (e.g. GitHub's instance for private repos) and `--sigstore-offline`.
 
 ### Fixed

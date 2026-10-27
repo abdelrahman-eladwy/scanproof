@@ -6,7 +6,10 @@
 **Security Scan Assurance Engine.** ScanProof verifies that the security scans your release
 depends on actually ran, produced valid evidence, and covered what you are about to ship.
 
-Works with **GitLab CI** and **GitHub Actions**.
+Works with **GitLab CI**, **GitHub Actions**, **Azure DevOps**, **Jenkins** and **Bitbucket
+Pipelines** ([GitLab](docs/usage-gitlab.md), [GitHub](docs/usage-github.md),
+[Azure DevOps](docs/usage-azure-devops.md), [Jenkins](docs/usage-jenkins.md),
+[Bitbucket](docs/usage-bitbucket.md)).
 
 It answers a question most pipelines can't: *"Did SAST and container scanning really run
 against this commit and this image — or did a job get skipped, fail with `allow_failure`,
@@ -121,7 +124,7 @@ Beyond the original plan (merged):
 Next (v0.2, in progress):
 
 - [x] **Signed evidence:** Sigstore / in-toto / SLSA attestations ([attestations](docs/attestations.md))
-- [ ] More CI platforms: Azure DevOps, Jenkins, Bitbucket Pipelines
+- [x] More CI platforms: Azure DevOps, Jenkins (verified live), Bitbucket Pipelines
 - [ ] More scanners and DAST: Gitleaks, Grype, OSV-Scanner, Snyk, OWASP ZAP, Nuclei, Kubescape
 - [ ] Advanced policy: expiring waivers, scan freshness, SBOM-to-image binding, multi-repo releases
 
