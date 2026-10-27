@@ -1,0 +1,422 @@
+[
+  {
+    "project": "gitlab-org/security-products/analyzers/semgrep",
+    "project_id": 24075172,
+    "pipeline_id": 2989042936,
+    "jobs": 47,
+    "retried_names": [],
+    "report_jobs": [
+      {
+        "job": "container_scanning-fips",
+        "job_id": 17464187215,
+        "status": "success",
+        "file_type": "container_scanning",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "container_scanning",
+        "job_id": 17464187214,
+        "status": "success",
+        "file_type": "container_scanning",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "secret_detection",
+        "job_id": 17464187213,
+        "status": "success",
+        "file_type": "secret_detection",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "gitlab-advanced-sast-ext",
+        "job_id": 17464187212,
+        "status": "success",
+        "file_type": "sast",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "semgrep-sast",
+        "job_id": 17464187211,
+        "status": "success",
+        "file_type": "sast",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "gitlab-advanced-sast",
+        "job_id": 17464187210,
+        "status": "success",
+        "file_type": "sast",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "dependency-scanning",
+        "job_id": 17464187209,
+        "status": "success",
+        "file_type": "dependency_scanning",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "dependency-scanning-profile-2",
+        "job_id": 17464187199,
+        "status": "success",
+        "file_type": "dependency_scanning",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "project": "gitlab-org/security-products/analyzers/container-scanning",
+    "project_id": 24673064,
+    "pipeline_id": 2993335827,
+    "jobs": 5,
+    "retried_names": [],
+    "report_jobs": [
+      {
+        "job": "gitlab-advanced-sast",
+        "job_id": 17495754659,
+        "status": "success",
+        "file_type": "sast",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "dependency-scanning",
+        "job_id": 17495754658,
+        "status": "success",
+        "file_type": "dependency_scanning",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "dependency-scanning-profile-2",
+        "job_id": 17495754657,
+        "status": "success",
+        "file_type": "dependency_scanning",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "gitlab-advanced-sast-profile-1",
+        "job_id": 17495754656,
+        "status": "success",
+        "file_type": "sast",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "secret-detection-profile-0",
+        "job_id": 17495754655,
+        "status": "success",
+        "file_type": "secret_detection",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "project": "gitlab-org/cli",
+    "project_id": 34675721,
+    "pipeline_id": 2992978951,
+    "jobs": 22,
+    "retried_names": [
+      "snapcraft_release_edge"
+    ],
+    "report_jobs": [
+      {
+        "job": "dependency-scanning-profile-0",
+        "job_id": 17493048402,
+        "status": "success",
+        "file_type": "dependency_scanning",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "govulncheck",
+        "job_id": 17493048401,
+        "status": "success",
+        "file_type": "dependency_scanning",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "secret_detection",
+        "job_id": 17493048400,
+        "status": "success",
+        "file_type": "secret_detection",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "gitlab-advanced-sast",
+        "job_id": 17493048399,
+        "status": "success",
+        "file_type": "sast",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "project": "gitlab-org/gitlab-runner",
+    "project_id": 250833,
+    "pipeline_id": 2993020171,
+    "jobs": 95,
+    "retried_names": [
+      "integration kubernetes exec legacy"
+    ],
+    "report_jobs": [
+      {
+        "job": "gitlab-advanced-sast",
+        "job_id": 17493345357,
+        "status": "success",
+        "file_type": "sast",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "dependency-scanning",
+        "job_id": 17493345356,
+        "status": "success",
+        "file_type": "dependency_scanning",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      },
+      {
+        "job": "dependency-scanning-profile-0",
+        "job_id": 17493345344,
+        "status": "success",
+        "file_type": "dependency_scanning",
+        "has_archive": true,
+        "routes": {
+          "api_archive_path": {
+            "status": 403,
+            "content_type": "application/json",
+            "bytes": 0
+          },
+          "ui_file_type": {
+            "status": 404,
+            "content_type": "text/html; charset=utf-8",
+            "bytes": 0
+          }
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "project": "gitlab-org/gitlab-runner",
+    "pipeline": 2993125854,
+    "bridges": 2,
+    "children": [
+      {
+        "bridge": "trigger runner-incept tests",
+        "child": 2993206476,
+        "child_project": 24519238,
+        "same_project": false,
+        "same_sha": false,
+        "child_jobs": {
+          "_error": 403
+        }
+      },
+      {
+        "bridge": "trigger UBI images build",
+        "child": 2993406836,
+        "child_project": 17019611,
+        "same_project": false,
+        "same_sha": false,
+        "child_jobs": 5
+      }
+    ]
+  },
+  {
+    "project": "gitlab-org/gitaly",
+    "error": "no recent pipeline with child pipelines"
+  },
+  {
+    "project": "gitlab-org/gitlab",
+    "error": "no recent pipeline with child pipelines"
+  }
+]
