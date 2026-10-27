@@ -163,13 +163,13 @@
   {
     "project": "gitlab-org/security-products/analyzers/container-scanning",
     "project_id": 24673064,
-    "pipeline_id": 2993335827,
+    "pipeline_id": 2993445713,
     "jobs": 5,
     "retried_names": [],
     "report_jobs": [
       {
         "job": "gitlab-advanced-sast",
-        "job_id": 17495754659,
+        "job_id": 17496606203,
         "status": "success",
         "file_type": "sast",
         "has_archive": true,
@@ -188,7 +188,7 @@
       },
       {
         "job": "dependency-scanning",
-        "job_id": 17495754658,
+        "job_id": 17496606202,
         "status": "success",
         "file_type": "dependency_scanning",
         "has_archive": true,
@@ -207,7 +207,7 @@
       },
       {
         "job": "dependency-scanning-profile-2",
-        "job_id": 17495754657,
+        "job_id": 17496606201,
         "status": "success",
         "file_type": "dependency_scanning",
         "has_archive": true,
@@ -226,7 +226,7 @@
       },
       {
         "job": "gitlab-advanced-sast-profile-1",
-        "job_id": 17495754656,
+        "job_id": 17496606200,
         "status": "success",
         "file_type": "sast",
         "has_archive": true,
@@ -245,7 +245,7 @@
       },
       {
         "job": "secret-detection-profile-0",
-        "job_id": 17495754655,
+        "job_id": 17496606199,
         "status": "success",
         "file_type": "secret_detection",
         "has_archive": true,

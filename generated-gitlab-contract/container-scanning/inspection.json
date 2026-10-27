@@ -1,48 +1,48 @@
 {
   "schema_version": "scanproof.dev/inspection/v1alpha1",
   "scanproof_version": "0.1.0",
-  "generated_at": "2026-10-27T09:01:19.717791Z",
+  "generated_at": "2026-10-27T09:24:03.580508Z",
   "provider": "gitlab",
   "instance_url": "https://gitlab.com",
   "project": "gitlab-org/security-products/analyzers/container-scanning",
   "pipeline": {
-    "id": 2993335827,
+    "id": 2993445713,
     "project_id": 24673064,
     "run_attempt": null,
     "sha": "fa5e43f467885937d3d02c1a5c396468f90129c4",
     "ref": "master",
     "status": "success",
     "source": "schedule",
-    "created_at": "2026-10-27T08:33:37.517000Z",
-    "finished_at": "2026-10-27T08:36:15.654000Z",
-    "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/pipelines/2993335827"
+    "created_at": "2026-10-27T09:04:29.329000Z",
+    "finished_at": "2026-10-27T09:07:22.668000Z",
+    "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/pipelines/2993445713"
   },
   "jobs": [
     {
       "name": "dependency-scanning-profile-2",
       "stage": "application-security-testing",
       "latest": {
-        "id": 17495754657,
+        "id": 17496606201,
         "name": "dependency-scanning-profile-2",
         "stage": "application-security-testing",
         "status": "success",
         "raw_status": "success",
         "allow_failure": true,
         "commit_sha": "fa5e43f467885937d3d02c1a5c396468f90129c4",
-        "pipeline_id": 2993335827,
-        "created_at": "2026-10-27T08:33:37.652000Z",
-        "started_at": "2026-10-27T08:33:38.402000Z",
-        "finished_at": "2026-10-27T08:33:59.086000Z",
+        "pipeline_id": 2993445713,
+        "created_at": "2026-10-27T09:04:29.466000Z",
+        "started_at": "2026-10-27T09:04:30.445000Z",
+        "finished_at": "2026-10-27T09:04:50.385000Z",
         "artifacts": [
           {
             "file_type": "archive",
             "filename": "artifacts.zip",
-            "size": 6112
+            "size": 6110
           },
           {
             "file_type": "metadata",
             "filename": "metadata.gz",
-            "size": 245
+            "size": 243
           },
           {
             "file_type": "trace",
@@ -57,18 +57,18 @@
           {
             "file_type": "cyclonedx",
             "filename": "gl-sbom.cdx.json.gz",
-            "size": 3927
+            "size": 3924
           }
         ],
-        "artifacts_expire_at": "2026-11-26T08:33:58.052000Z",
-        "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/jobs/17495754657",
+        "artifacts_expire_at": "2026-11-26T09:04:49.433000Z",
+        "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/jobs/17496606201",
         "attempt": null,
         "project": null,
         "ref": null,
         "masking_checked": null
       },
       "attempt_ids": [
-        17495754657
+        17496606201
       ],
       "commit_matches_pipeline": true
     },
@@ -76,22 +76,22 @@
       "name": "gitlab-advanced-sast-profile-1",
       "stage": "application-security-testing",
       "latest": {
-        "id": 17495754656,
+        "id": 17496606200,
         "name": "gitlab-advanced-sast-profile-1",
         "stage": "application-security-testing",
         "status": "success",
         "raw_status": "success",
         "allow_failure": true,
         "commit_sha": "fa5e43f467885937d3d02c1a5c396468f90129c4",
-        "pipeline_id": 2993335827,
-        "created_at": "2026-10-27T08:33:37.652000Z",
-        "started_at": "2026-10-27T08:33:38.316000Z",
-        "finished_at": "2026-10-27T08:34:47.125000Z",
+        "pipeline_id": 2993445713,
+        "created_at": "2026-10-27T09:04:29.466000Z",
+        "started_at": "2026-10-27T09:04:30.273000Z",
+        "finished_at": "2026-10-27T09:05:33.187000Z",
         "artifacts": [
           {
             "file_type": "archive",
             "filename": "artifacts.zip",
-            "size": 2021
+            "size": 2025
           },
           {
             "file_type": "metadata",
@@ -109,15 +109,15 @@
             "size": 9201
           }
         ],
-        "artifacts_expire_at": "2026-11-26T08:34:46.097000Z",
-        "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/jobs/17495754656",
+        "artifacts_expire_at": "2026-11-26T09:05:32.203000Z",
+        "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/jobs/17496606200",
         "attempt": null,
         "project": null,
         "ref": null,
         "masking_checked": null
       },
       "attempt_ids": [
-        17495754656
+        17496606200
       ],
       "commit_matches_pipeline": true
     },
@@ -125,22 +125,22 @@
       "name": "secret-detection-profile-0",
       "stage": "application-security-testing",
       "latest": {
-        "id": 17495754655,
+        "id": 17496606199,
         "name": "secret-detection-profile-0",
         "stage": "application-security-testing",
         "status": "success",
         "raw_status": "success",
         "allow_failure": true,
         "commit_sha": "fa5e43f467885937d3d02c1a5c396468f90129c4",
-        "pipeline_id": 2993335827,
-        "created_at": "2026-10-27T08:33:37.652000Z",
-        "started_at": "2026-10-27T08:33:38.253000Z",
-        "finished_at": "2026-10-27T08:33:53.655000Z",
+        "pipeline_id": 2993445713,
+        "created_at": "2026-10-27T09:04:29.466000Z",
+        "started_at": "2026-10-27T09:04:30.524000Z",
+        "finished_at": "2026-10-27T09:04:44.304000Z",
         "artifacts": [
           {
             "file_type": "archive",
             "filename": "artifacts.zip",
-            "size": 712
+            "size": 711
           },
           {
             "file_type": "metadata",
@@ -158,15 +158,15 @@
             "size": 1286
           }
         ],
-        "artifacts_expire_at": "2026-11-26T08:33:52.245000Z",
-        "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/jobs/17495754655",
+        "artifacts_expire_at": "2026-11-26T09:04:43.323000Z",
+        "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/jobs/17496606199",
         "attempt": null,
         "project": null,
         "ref": null,
         "masking_checked": null
       },
       "attempt_ids": [
-        17495754655
+        17496606199
       ],
       "commit_matches_pipeline": true
     },
@@ -174,22 +174,22 @@
       "name": "dependency-scanning",
       "stage": "initial-test",
       "latest": {
-        "id": 17495754658,
+        "id": 17496606202,
         "name": "dependency-scanning",
         "stage": "initial-test",
         "status": "success",
         "raw_status": "success",
         "allow_failure": true,
         "commit_sha": "fa5e43f467885937d3d02c1a5c396468f90129c4",
-        "pipeline_id": 2993335827,
-        "created_at": "2026-10-27T08:33:37.652000Z",
-        "started_at": "2026-10-27T08:34:48.695000Z",
-        "finished_at": "2026-10-27T08:35:11.690000Z",
+        "pipeline_id": 2993445713,
+        "created_at": "2026-10-27T09:04:29.466000Z",
+        "started_at": "2026-10-27T09:05:34.744000Z",
+        "finished_at": "2026-10-27T09:05:46.345000Z",
         "artifacts": [
           {
             "file_type": "archive",
             "filename": "artifacts.zip",
-            "size": 10171
+            "size": 10167
           },
           {
             "file_type": "metadata",
@@ -199,7 +199,7 @@
           {
             "file_type": "trace",
             "filename": "job.log",
-            "size": 15892
+            "size": 15914
           },
           {
             "file_type": "dependency_scanning",
@@ -209,18 +209,18 @@
           {
             "file_type": "cyclonedx",
             "filename": "gl-sbom.cdx.json.gz",
-            "size": 7857
+            "size": 7853
           }
         ],
-        "artifacts_expire_at": "2026-11-26T08:35:10.711000Z",
-        "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/jobs/17495754658",
+        "artifacts_expire_at": "2026-11-26T09:05:45.421000Z",
+        "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/jobs/17496606202",
         "attempt": null,
         "project": null,
         "ref": null,
         "masking_checked": null
       },
       "attempt_ids": [
-        17495754658
+        17496606202
       ],
       "commit_matches_pipeline": true
     },
@@ -228,17 +228,17 @@
       "name": "gitlab-advanced-sast",
       "stage": "test",
       "latest": {
-        "id": 17495754659,
+        "id": 17496606203,
         "name": "gitlab-advanced-sast",
         "stage": "test",
         "status": "success",
         "raw_status": "success",
         "allow_failure": true,
         "commit_sha": "fa5e43f467885937d3d02c1a5c396468f90129c4",
-        "pipeline_id": 2993335827,
-        "created_at": "2026-10-27T08:33:37.652000Z",
-        "started_at": "2026-10-27T08:35:13.229000Z",
-        "finished_at": "2026-10-27T08:36:14.251000Z",
+        "pipeline_id": 2993445713,
+        "created_at": "2026-10-27T09:04:29.466000Z",
+        "started_at": "2026-10-27T09:05:47.804000Z",
+        "finished_at": "2026-10-27T09:07:16.654000Z",
         "artifacts": [
           {
             "file_type": "archive",
@@ -261,15 +261,15 @@
             "size": 9201
           }
         ],
-        "artifacts_expire_at": "2026-11-26T08:36:13.289000Z",
-        "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/jobs/17495754659",
+        "artifacts_expire_at": "2026-11-26T09:07:09.921000Z",
+        "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/jobs/17496606203",
         "attempt": null,
         "project": null,
         "ref": null,
         "masking_checked": null
       },
       "attempt_ids": [
-        17495754659
+        17496606203
       ],
       "commit_matches_pipeline": true
     }

@@ -1,12 +1,12 @@
 [
   {
     "project": "gitlab-org/gitlab-runner",
-    "pipeline": 2993125854,
+    "pipeline": 2993138596,
     "bridges": 2,
     "children": [
       {
         "bridge": "trigger runner-incept tests",
-        "child": 2993206476,
+        "child": 2993220180,
         "child_project": 24519238,
         "same_project": false,
         "same_sha": false,
@@ -16,7 +16,7 @@
       },
       {
         "bridge": "trigger UBI images build",
-        "child": 2993406836,
+        "child": 2993429025,
         "child_project": 17019611,
         "same_project": false,
         "same_sha": false,
@@ -30,6 +30,25 @@
   },
   {
     "project": "gitlab-org/gitlab",
-    "error": "no recent pipeline with child pipelines"
+    "pipeline": 2993412891,
+    "bridges": 2,
+    "children": [
+      {
+        "bridge": "rspec-ee:predictive:trigger",
+        "child": 2993425079,
+        "child_project": 278964,
+        "same_project": true,
+        "same_sha": true,
+        "child_jobs": 3
+      },
+      {
+        "bridge": "rspec:predictive:trigger",
+        "child": 2993425089,
+        "child_project": 278964,
+        "same_project": true,
+        "same_sha": true,
+        "child_jobs": 3
+      }
+    ]
   }
 ]
