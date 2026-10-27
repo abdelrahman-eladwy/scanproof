@@ -56,3 +56,18 @@ def test_valid_escaped_unicode_surrogate_pair_is_accepted():
     evidence = ADAPTERS["trivy"].parse(report)
     assert evidence.parseable
     evidence.model_dump_json()
+
+
+@pytest.mark.parametrize(
+    "report",
+    [
+        {"SchemaVersion": 2, "Results": [{chr(0xD800): "value"}]},
+        {"SchemaVersion": 2, "Results": [{"Target": ["ok", {"nested": chr(0xDFFF)}]}]},
+    ],
+)
+def test_nested_surrogates_and_invalid_object_keys_are_rejected(report):
+    raw = json.dumps(report, ensure_ascii=True).encode("ascii")
+    evidence = ADAPTERS["trivy"].parse(raw)
+    assert not evidence.parseable
+    assert "Unicode surrogate" in evidence.parse_error
+    evidence.model_dump_json()
