@@ -140,6 +140,34 @@ effective repository/ruleset settings.
 - [ ] A valid current-attempt, correctly scoped signed scan → **VERIFIED**
       (not a claim that the application has no vulnerabilities).
 
+## Live CI dependency contract (real jobs, no production deployment)
+
+The [`release-gate-contract` workflow](../.github/workflows/release-gate-contract.yml)
+runs only on `fixtures/gate/**` branches or manual dispatch. It creates two
+independent scan → gate → deploy dependency chains. Both scan-producing jobs
+finish green, but one publishes a Semgrep-shaped JSON report with **no scanned
+paths**.
+
+In [live run 40483491063](https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40483491063):
+
+| Chain | Gate | Dry-run deployment |
+|---|---|---|
+| Actual Semgrep scan, nonempty scope | `VERIFIED`, job SUCCESS | Job SUCCESS; marker artifact uploaded |
+| Valid JSON but missing scope | `SCAN_SCOPE_UNKNOWN`, `INDETERMINATE` (exit 2), job FAILURE | **SKIPPED** |
+
+The `assert-contract` job independently checked the GitHub Actions `needs`
+results, both machine-readable ScanProof reports, and the healthy deployment
+marker. It **passed**. The overall workflow was **red by design**, because the
+negative gate is a real failing job (no `continue-on-error` wrapper). Do not add
+this intentionally failing workflow as a repository's required merge check;
+production required checks must be dedicated to the **actual release gate**.
+
+This proves only that, with this unmodified workflow dependency graph,
+ScanProof's nonzero exit blocks its downstream job. It **does not prove** that
+a developer with workflow-edit privileges cannot remove the gate or change
+the policy. That independent platform-enforced protection remains an open
+item in [Issue #26](https://github.com/abdelrahman-eladwy/scanproof/issues/26).
+
 ## Validation evidence and current status
 
 - [GitHub real provider contract with scoped/empty reports](https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40477852618):
