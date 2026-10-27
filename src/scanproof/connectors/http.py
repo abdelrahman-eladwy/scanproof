@@ -202,25 +202,40 @@ class HttpConnector(CIConnector):
                 attempt += 1
 
     def _download_once(self, url: str, what: str | None) -> bytes:
-        response = self._send(url, stream=True)
+        return self._download_page(url, what)[0]
+
+    def _download_page(
+        self, url: str, what: str | None = None, params: dict[str, Any] | None = None
+    ) -> tuple[bytes, str | None]:
+        """Capped download that also returns the `Link: rel=next` URL (same API origin only)."""
+        response = self._send(url, params, stream=True)
         try:
-            self._raise_for_status(response, what or urlsplit(url).path)
-            declared = response.headers.get("Content-Length")
-            if declared and declared.isdigit() and int(declared) > self.max_artifact_bytes:
+            body = self._read_capped(response, what or urlsplit(url).path)
+            nxt = response.links.get("next", {}).get("url")
+            if nxt and origin_of(nxt) != self._origin:
                 raise ConnectorError(
-                    ErrorKind.LIMIT_EXCEEDED,
-                    f"Artifact is {int(declared)} bytes; limit is {self.max_artifact_bytes}",
+                    ErrorKind.UNSAFE_REDIRECT, "Pagination link left the API origin"
                 )
-            chunks: list[bytes] = []
-            total = 0
-            for chunk in response.iter_bytes():
-                total += len(chunk)
-                if total > self.max_artifact_bytes:
-                    raise ConnectorError(
-                        ErrorKind.LIMIT_EXCEEDED,
-                        f"Artifact exceeded {self.max_artifact_bytes} bytes while streaming",
-                    )
-                chunks.append(chunk)
-            return b"".join(chunks)
+            return body, nxt
         finally:
             response.close()
+
+    def _read_capped(self, response: httpx.Response, what: str) -> bytes:
+        self._raise_for_status(response, what)
+        declared = response.headers.get("Content-Length")
+        if declared and declared.isdigit() and int(declared) > self.max_artifact_bytes:
+            raise ConnectorError(
+                ErrorKind.LIMIT_EXCEEDED,
+                f"Artifact is {int(declared)} bytes; limit is {self.max_artifact_bytes}",
+            )
+        chunks: list[bytes] = []
+        total = 0
+        for chunk in response.iter_bytes():
+            total += len(chunk)
+            if total > self.max_artifact_bytes:
+                raise ConnectorError(
+                    ErrorKind.LIMIT_EXCEEDED,
+                    f"Artifact exceeded {self.max_artifact_bytes} bytes while streaming",
+                )
+            chunks.append(chunk)
+        return b"".join(chunks)
