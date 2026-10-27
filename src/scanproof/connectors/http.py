@@ -1,8 +1,10 @@
 """Shared, security-hardened HTTP layer for CI platform connectors.
 
 Every connector (GitLab, GitHub, ...) inherits these guarantees (see docs/security.md):
-  * The token is sent as `Authorization: Bearer`, only to the configured API origin, never in a
-    URL, never logged, never in `repr`.
+  * The token is sent in the `Authorization` header (Bearer, or Basic user:token where the
+    platform requires it: Jenkins, Azure DevOps PATs, Bitbucket API tokens), only to the
+    configured API origin, never in a URL, never logged, never in `repr`. Username and token
+    both come from environment variables.
   * Redirects are followed manually: credentials are dropped on cross-origin redirects (e.g. to
     object storage for artifacts) and any HTTPS -> HTTP downgrade is refused.
   * TLS verification cannot be disabled; private CAs are supported via a CA bundle.
@@ -12,15 +14,25 @@ Every connector (GitLab, GitHub, ...) inherits these guarantees (see docs/securi
 
 from __future__ import annotations
 
+import base64
+import io
+import json
 import time
+import zipfile
 from collections.abc import Callable
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Literal
 from urllib.parse import urljoin, urlsplit
 
 import httpx
 
 from scanproof import __version__
-from scanproof.connectors.base import AuthError, CIConnector, ConnectorError, ErrorKind
+from scanproof.connectors.base import (
+    AuthError,
+    CIConnector,
+    ConnectorError,
+    ErrorKind,
+    NotFoundError,
+)
 
 RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504})
 DEFAULT_MAX_ARTIFACT_BYTES = 50 * 1024 * 1024
@@ -45,6 +57,7 @@ class HttpConnector(CIConnector):
     label: ClassVar[str] = "CI platform"
     auth_hint: ClassVar[str] = "Set a read-only token."
     extra_headers: ClassVar[dict[str, str]] = {}
+    default_auth_scheme: ClassVar[Literal["bearer", "basic"]] = "bearer"
 
     def __init__(
         self,
@@ -60,6 +73,8 @@ class HttpConnector(CIConnector):
         max_artifact_bytes: int = DEFAULT_MAX_ARTIFACT_BYTES,
         transport: httpx.BaseTransport | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        username: str | None = None,
+        auth_scheme: Literal["bearer", "basic"] | None = None,
     ) -> None:
         # Anonymous access must be asked for explicitly, so a token that silently failed to
         # load can never degrade into unauthenticated requests.
@@ -78,6 +93,12 @@ class HttpConnector(CIConnector):
         self.api_url = api_url
         self._origin = origin_of(api_url)
         self._token = None if anonymous else token
+        self.auth_scheme = auth_scheme or self.default_auth_scheme
+        if self.auth_scheme not in ("bearer", "basic"):
+            raise AuthError(f"Unknown auth scheme {self.auth_scheme!r}")
+        if username is not None and (":" in username or not username.isprintable()):
+            raise AuthError("Username must be printable and must not contain ':'")
+        self._username = username
         self.anonymous = anonymous
         self.max_retries = max_retries
         self.backoff_seconds = backoff_seconds
@@ -104,9 +125,12 @@ class HttpConnector(CIConnector):
     # ------------------------------------------------------------------ requests
 
     def _auth_headers_for(self, url: str | httpx.URL) -> dict[str, str]:
-        if self._token and origin_of(url) == self._origin:
-            return {"Authorization": f"Bearer {self._token}"}
-        return {}
+        if not self._token or origin_of(url) != self._origin:
+            return {}
+        if self.auth_scheme == "basic":
+            pair = f"{self._username or ''}:{self._token}".encode()
+            return {"Authorization": f"Basic {base64.b64encode(pair).decode()}"}
+        return {"Authorization": f"Bearer {self._token}"}
 
     def _send(
         self, url: str, params: dict[str, Any] | None = None, *, stream: bool = False
@@ -173,6 +197,76 @@ class HttpConnector(CIConnector):
         if code < 400:
             return
         raise ConnectorError(ErrorKind.INVALID_RESPONSE, f"HTTP {code} fetching {what}", code)
+
+    def _extract(self, archive: bytes, report_path: str, artifact_name: str) -> bytes:
+        """Read one member of an artifact zip, size-capped, refusing '..' paths."""
+        wanted = report_path.strip().lstrip("/")
+        while wanted.startswith("./"):
+            wanted = wanted[2:]
+        if ".." in wanted.split("/"):
+            raise ConnectorError(ErrorKind.INVALID_RESPONSE, "Report path must not contain '..'")
+        try:
+            with zipfile.ZipFile(io.BytesIO(archive)) as zf:
+                names = zf.namelist()
+                if wanted not in names:
+                    sample = ", ".join(names[:10]) or "(empty)"
+                    raise NotFoundError(
+                        f"'{wanted}' not found in artifact '{artifact_name}' (contains: {sample})",
+                        None,
+                    )
+                info = zf.getinfo(wanted)
+                if info.file_size > self.max_artifact_bytes:
+                    raise ConnectorError(
+                        ErrorKind.LIMIT_EXCEEDED,
+                        f"'{wanted}' is {info.file_size} bytes; limit is {self.max_artifact_bytes}",
+                    )
+                out = bytearray()
+                with zf.open(info) as fh:
+                    while chunk := fh.read(65536):
+                        out += chunk
+                        # Defense in depth: CPython's zipfile already stops at the declared
+                        # size (a lying header fails its CRC check), so this cap should never
+                        # trigger; it guards against other zip implementations or regressions.
+                        if len(out) > self.max_artifact_bytes:
+                            raise ConnectorError(
+                                ErrorKind.LIMIT_EXCEEDED,
+                                f"'{wanted}' exceeded {self.max_artifact_bytes} bytes",
+                            )
+                return bytes(out)
+        except zipfile.BadZipFile as exc:
+            raise ConnectorError(
+                ErrorKind.INTEGRITY, f"Artifact '{artifact_name}' is not a valid zip: {exc}"
+            ) from None
+
+    def _raise_standard(self, response: httpx.Response, what: str, hint: str = "") -> None:
+        """Common status mapping for platforms without special cases: auth problems, missing
+        evidence and platform trouble are kept apart (each maps to a different outcome)."""
+        code = response.status_code
+        if code < 400:
+            return
+        if code in (401, 403):
+            raise AuthError(
+                f"{self.label} denied access to {what} (HTTP {code}). {hint}".strip(), code
+            )
+        if code in (404, 410):
+            raise NotFoundError(f"{what} not found (HTTP {code}).", code)
+        if code == 429:
+            raise ConnectorError(ErrorKind.RATE_LIMITED, f"Rate limited fetching {what}", code)
+        if code >= 500:
+            raise ConnectorError(
+                ErrorKind.SERVER, f"{self.label} server error fetching {what}", code
+            )
+        raise ConnectorError(ErrorKind.INVALID_RESPONSE, f"HTTP {code} fetching {what}", code)
+
+    def _get_json_capped(self, url: str, what: str) -> Any:
+        """GET JSON through the capped streaming path (for platforms with large documents)."""
+        body = self._download(url, what)
+        try:
+            return json.loads(body)
+        except (ValueError, RecursionError) as exc:
+            raise ConnectorError(
+                ErrorKind.INVALID_RESPONSE, f"Non-JSON response for {what}"
+            ) from exc
 
     def _get_json(self, path: str, params: dict[str, Any] | None = None) -> Any:
         response = self._send(f"{self.api_url}{path}", params)

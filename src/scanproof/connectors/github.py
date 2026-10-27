@@ -21,11 +21,9 @@ GitHub specifics, each handled explicitly:
 from __future__ import annotations
 
 import hashlib
-import io
 import json
 import re
 import time
-import zipfile
 from collections.abc import Callable, Iterator
 from typing import Any, ClassVar
 from urllib.parse import quote
@@ -294,45 +292,6 @@ class GitHubConnector(HttpConnector):
                 return None
             params = None  # the next link carries its own query
         return None  # too many pages to be sure: unknown, never "clean"
-
-    def _extract(self, archive: bytes, report_path: str, artifact_name: str) -> bytes:
-        wanted = report_path.strip().lstrip("/")
-        while wanted.startswith("./"):
-            wanted = wanted[2:]
-        if ".." in wanted.split("/"):
-            raise ConnectorError(ErrorKind.INVALID_RESPONSE, "Report path must not contain '..'")
-        try:
-            with zipfile.ZipFile(io.BytesIO(archive)) as zf:
-                names = zf.namelist()
-                if wanted not in names:
-                    sample = ", ".join(names[:10]) or "(empty)"
-                    raise NotFoundError(
-                        f"'{wanted}' not found in artifact '{artifact_name}' (contains: {sample})",
-                        None,
-                    )
-                info = zf.getinfo(wanted)
-                if info.file_size > self.max_artifact_bytes:
-                    raise ConnectorError(
-                        ErrorKind.LIMIT_EXCEEDED,
-                        f"'{wanted}' is {info.file_size} bytes; limit is {self.max_artifact_bytes}",
-                    )
-                out = bytearray()
-                with zf.open(info) as fh:
-                    while chunk := fh.read(65536):
-                        out += chunk
-                        # Defense in depth: CPython's zipfile already stops at the declared
-                        # size (a lying header fails its CRC check), so this cap should never
-                        # trigger; it guards against other zip implementations or regressions.
-                        if len(out) > self.max_artifact_bytes:
-                            raise ConnectorError(
-                                ErrorKind.LIMIT_EXCEEDED,
-                                f"'{wanted}' exceeded {self.max_artifact_bytes} bytes",
-                            )
-                return bytes(out)
-        except zipfile.BadZipFile as exc:
-            raise ConnectorError(
-                ErrorKind.INTEGRITY, f"Artifact '{artifact_name}' is not a valid zip: {exc}"
-            ) from None
 
     def _should_retry(self, response: httpx.Response) -> bool:
         if response.status_code == 403 and "retry-after" in response.headers:
