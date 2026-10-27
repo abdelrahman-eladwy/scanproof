@@ -20,6 +20,8 @@ GitLab rows replay real gitlab.com API responses saved in `tests/fixtures/gitlab
 | `parallel: matrix:` instance with no report | BLOCKED | `REPORT_MISSING` | test |
 | `parallel: matrix:` leg removed, `instances` declared | BLOCKED | `REQUIRED_INSTANCE_ABSENT` on `job_present [semgrep: [js]]` | `test_declared_instances.py` + real gitlab-runner names + live gitlab.com contract |
 | `parallel: matrix:` leg removed, no `instances` | VERIFIED (warning); INDETERMINATE under `production` | `INSTANCES_UNDECLARED` (production) | `test_declared_instances.py` |
+| Child pipeline (`svc-b > semgrep-sast`) removed, `copies` declared | BLOCKED | `REQUIRED_COPY_ABSENT` on `job_present [svc-b > semgrep-sast]` | `test_declared_copies.py` + real gitlab-org/gitlab names |
+| Child pipeline removed, no `copies` | VERIFIED (warning); INDETERMINATE under `production` | `COPIES_UNDECLARED` (production) | `test_declared_copies.py` |
 | Passing `semgrep-sast` next to a failing `semgrep-sast 1/2`, `: [py]` leg or child `trigger > semgrep-sast` | BLOCKED (every same-named job is evaluated) | `job_success [<instance>]` | test (`test_exact_name_instances.py`) |
 | Same, every job passing | VERIFIED, all listed as instances | | test (`test_exact_name_instances.py`) |
 | Gate runs before the scan finishes | INDETERMINATE | `REPORT_NOT_YET_AVAILABLE` | test |
@@ -39,6 +41,8 @@ GitLab rows replay real gitlab.com API responses saved in `tests/fixtures/gitlab
 | Matrix job, `go` instance masked by step `continue-on-error` | BLOCKED | `job_success [matrix-sast (go)]` | test + live |
 | Matrix leg removed, `instances` declared | BLOCKED | `REQUIRED_INSTANCE_ABSENT` on `job_present [leg-sast (js)]` | `test_declared_instances.py` + live |
 | Matrix leg removed, no `instances`, `profile: production` | INDETERMINATE | `INSTANCES_UNDECLARED` | `test_declared_instances.py` + live |
+| Reusable-workflow caller removed, `copies` declared | BLOCKED | `REQUIRED_COPY_ABSENT` on `job_present [web / sast]` | `test_declared_copies.py` |
+| Reusable-workflow caller removed, no `copies`, `profile: production` | INDETERMINATE | `COPIES_UNDECLARED` | `test_declared_copies.py` |
 | Masked failure after 150 warnings | BLOCKED | `FAILURE_MASKED_BY_ALLOW_FAILURE` | test + live |
 | Failure annotation only on a later page | BLOCKED | | test (see note) |
 | More annotation pages than ScanProof reads (20) | INDETERMINATE | `STEP_MASKING_UNKNOWN` | test |

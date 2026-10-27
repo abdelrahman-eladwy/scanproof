@@ -31,6 +31,10 @@ requirements:
 
 A stage is a "job". Nested, parallel and matrix stages are named by their path, e.g.
 `Scan / Matrix - LANG = 'go' / sast`; `job_name: sast` then means *every* matrix instance.
+Stage paths carry no total, so a removed axis value is invisible unless the requirement
+declares the paths that must run: `copies: ["Scan / Matrix - LANG = 'go'", "Scan / Matrix -
+LANG = 'python'"]` makes a missing one a FAIL (`REQUIRED_COPY_ABSENT`); `assurance.profile:
+production` requires the declaration ([#65](https://github.com/abdelrahman-eladwy/scanproof/issues/65)).
 Archived artifacts belong to the build, so `artifact_name` is not used. `same_commit` uses the
 build's git checkout; jobs without SCM need `same_commit: false`.
 

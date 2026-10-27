@@ -79,6 +79,7 @@ ScanProof checks its own run daily against `main`:
 | Matrix job, one instance masked | `sast (python)` success, `sast (go)` success + failure annotation | BLOCKED: `job_success [sast (go)]` |
 | Job in a reusable workflow | `caller / sast` | matched by `job_name: sast` |
 | Leg removed from the matrix, `instances: [py, js]` declared | only `sast (py)` ran | BLOCKED: `job_present [sast (js)]` `REQUIRED_INSTANCE_ABSENT` |
+| Reusable-workflow caller removed, `copies: [api, web]` declared | only `api / sast` ran | BLOCKED: `job_present [web / sast]` `REQUIRED_COPY_ABSENT` |
 | Workflow still running | job `in_progress` | INDETERMINATE: `JOB_NOT_FINISHED` |
 
 `job_name` matches the job exactly, its matrix instances (`name (...)`) and its name inside a
@@ -89,7 +90,10 @@ total, so declare the legs that must run, `instances: [py, go]`: a leg removed f
 `strategy.matrix` is then a FAIL (`REQUIRED_INSTANCE_ABSENT`), and `assurance.profile:
 production` requires the declaration
 ([#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60),
-[details](../advanced-policy.md#matrix-legs-declare-the-instances-that-must-run)). Legs are
+[details](../advanced-policy.md#matrix-legs-declare-the-instances-that-must-run)). Several
+callers of one reusable workflow (`api / sast`, `web / sast`) have no total either: declare
+them, `copies: [api, web]`, to make a removed caller a FAIL; `production` requires it
+([#65](https://github.com/abdelrahman-eladwy/scanproof/issues/65), [details](../advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run)). Legs are
 recognized by GitHub's default form, `sast (py, 3.12)`. A custom `name:` is a leg only if it
 has that form (`name: sast (${{ matrix.lang }})`); with any other form, such as
 `sast-${{ matrix.lang }}`, GitHub appends nothing and each leg is a job of its own name. All matrix

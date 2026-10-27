@@ -144,6 +144,12 @@ declaration whenever matrix legs are matched
 ([#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60),
 [details](../advanced-policy.md#matrix-legs-declare-the-instances-that-must-run)).
 
+Downstream copies have no total either: if two child pipelines run `semgrep` and the
+`svc-b` trigger is deleted, `svc-a > semgrep` still passes. Declare the pipelines that must run
+it, `copies: [svc-a, svc-b]` (`""` for the parent's own job): a missing one is a FAIL
+(`REQUIRED_COPY_ABSENT`), and `production` requires the declaration whenever a downstream copy
+is matched ([#65](https://github.com/abdelrahman-eladwy/scanproof/issues/65), [details](../advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run)).
+
 ScanProof follows downstream pipelines up to 3 levels and 50 pipelines. If a downstream pipeline
 can't be read (the token has no access to that project) and the required job isn't found
 elsewhere, the result is INDETERMINATE (`JOB_MAYBE_IN_UNREADABLE_PIPELINE`), not "job absent".

@@ -160,3 +160,50 @@ def test_removed_matrix_leg(style, instances, profile, decision):
     assert result.decision is decision
     if decision is Decision.VERIFIED:
         assert any("declares no `instances`" in w for w in result.warnings)
+
+
+def copy_inputs(pol: Policy, jobs: list[InspectedJob]) -> dict[str, RequirementInput]:
+    """What verification.py feeds the engine for a requirement with prefixed copies."""
+    req = pol.requirements[0]
+    m = match_jobs(jobs, req.job_name, req.instances, req.copies)
+    present = [(j.name, RequirementInput(job=j, evidence=report())) for j in m.jobs]
+    absent = [(n, RequirementInput(missing_copy=path)) for n, path in m.missing_copies]
+    return {
+        "SAST": RequirementInput(
+            instances=present + absent, undeclared_copies=m.undeclared_copies or None
+        )
+    }
+
+
+@pytest.mark.parametrize(
+    ("kept", "copies"),
+    [
+        ("svc-a > sast", ["svc-a", "svc-b"]),  # GitLab downstream: svc-b's trigger removed
+        ("api / sast", ["api", "web"]),  # GitHub reusable workflow: web caller removed
+        (
+            "Scan / Matrix - LANG = 'py' / sast",
+            ["Scan / Matrix - LANG = 'py'", "Scan / Matrix - LANG = 'go'"],
+        ),
+    ],
+    ids=["gitlab-downstream", "github-reusable", "jenkins-stage"],
+)
+@pytest.mark.parametrize(
+    ("declared", "profile", "decision"),
+    [
+        (True, "compatible", Decision.BLOCKED),
+        (True, "production", Decision.BLOCKED),
+        (False, "production", Decision.INDETERMINATE),
+        # The documented compatible gap (#65): without a declaration a removed copy is unseen.
+        (False, "compatible", Decision.VERIFIED),
+    ],
+)
+def test_removed_prefixed_copy(kept, copies, declared, profile, decision):
+    """#65: one of two prefixed copies was removed; only the passing one ran."""
+    body = policy(profile=profile).model_dump(mode="json", exclude_none=True)
+    if declared:
+        body["requirements"][0]["copies"] = copies
+    pol = Policy.model_validate(body)
+    result = evaluate(pol, PIPELINE, copy_inputs(pol, [named(kept)]), now=NOW)
+    assert result.decision is decision
+    if decision is Decision.VERIFIED:
+        assert any("declares no `copies`" in w for w in result.warnings)

@@ -307,8 +307,13 @@ def test_gitlab_same_run_is_a_note_not_a_rejection() -> None:
     }
     policy = Policy.model_validate(with_profile(body, "production"))
     notes = [o for o in assurance_opt_ins(policy) if o.production == "note"]
-    # INSTANCES_UNDECLARED (#60) is the other note: this requirement declares no instances.
-    assert [o.code for o in notes] == ["GITLAB_SAME_RUN_IS_PIPELINE_WIDE", "INSTANCES_UNDECLARED"]
+    # INSTANCES_UNDECLARED (#60) and COPIES_UNDECLARED (#65) are the other notes: this
+    # requirement declares neither instances nor copies.
+    assert [o.code for o in notes] == [
+        "GITLAB_SAME_RUN_IS_PIPELINE_WIDE",
+        "INSTANCES_UNDECLARED",
+        "COPIES_UNDECLARED",
+    ]
 
 
 # ---------------------------------------------------------------- one list for engine and profile
