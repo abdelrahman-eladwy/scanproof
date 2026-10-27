@@ -72,6 +72,63 @@ class Checks(_Strict):
         return digest
 
 
+SLSA_PROVENANCE_V1 = "https://slsa.dev/provenance/v1"
+
+
+class SignerPolicy(_Strict):
+    """Who must have signed the attestation, matched against the Fulcio certificate claims."""
+
+    issuer: str = Field(description="OIDC issuer, e.g. https://token.actions.githubusercontent.com")
+    repository: str | None = Field(
+        None, description="Source repository URI, exact (e.g. https://github.com/org/app)"
+    )
+    workflow: str | None = Field(
+        None,
+        description="Regex that must fully match the Build Signer URI, e.g. "
+        r"'https://github\.com/org/app/\.github/workflows/ci\.yml@refs/heads/main'",
+    )
+
+    @model_validator(mode="after")
+    def _pinned(self) -> SignerPolicy:
+        # An issuer alone accepts anyone with a GitHub (or GitLab) account.
+        if not self.repository and not self.workflow:
+            raise ValueError("signer must pin repository and/or workflow, not only the issuer")
+        if self.workflow:
+            try:
+                re.compile(self.workflow)
+            except re.error as exc:
+                raise ValueError(f"workflow is not a valid regex: {exc}") from None
+        return self
+
+
+class AttestationRequirement(_Strict):
+    """A signed in-toto attestation (Sigstore bundle) must exist for the report or the image."""
+
+    source: Literal["artifact", "platform"] = Field(
+        description="artifact: a bundle file next to the report; platform: the CI platform's "
+        "attestation store (GitHub attestations API)"
+    )
+    bundle_path: str | None = Field(None, description="artifact: path of the bundle file")
+    artifact_name: str | None = Field(
+        None, description="GitHub: run artifact holding bundle_path (default: the report's)"
+    )
+    subject: Literal["report", "image"] = Field(
+        "report", description="report: sha256 of the report file; image: image_digest_must_match"
+    )
+    predicate_type: str = SLSA_PROVENANCE_V1
+    signer: SignerPolicy
+    same_commit: bool = Field(True, description="Certificate source digest = pipeline commit")
+    same_run: bool = Field(True, description="Certificate run = the verified pipeline / run")
+
+    @model_validator(mode="after")
+    def _bundle_path(self) -> AttestationRequirement:
+        if self.source == "artifact" and not self.bundle_path:
+            raise ValueError("source: artifact needs bundle_path")
+        if self.source == "platform" and (self.bundle_path or self.artifact_name):
+            raise ValueError("bundle_path / artifact_name are only used with source: artifact")
+        return self
+
+
 class AppliesTo(_Strict):
     refs: list[str] = Field(description="Glob patterns for pipeline refs, e.g. main, release/*")
 
@@ -87,6 +144,17 @@ class Requirement(_Strict):
     )
     applies_to: AppliesTo | None = None
     checks: Checks = Field(default_factory=Checks)
+    attestation: AttestationRequirement | None = None
+
+    @model_validator(mode="after")
+    def _attestation_subject(self) -> Requirement:
+        if (
+            self.attestation
+            and self.attestation.subject == "image"
+            and not self.checks.image_digest_must_match
+        ):
+            raise ValueError("attestation subject: image needs checks.image_digest_must_match")
+        return self
 
 
 class ProjectRef(_Strict):
@@ -132,6 +200,15 @@ class Policy(_Strict):
                 raise ValueError(
                     f"requirement {req.id}: GitHub artifacts belong to the run, not a job; "
                     "set artifact_name"
+                )
+            if (
+                req.attestation
+                and req.attestation.source == "platform"
+                and self.project.provider != "github"
+            ):
+                raise ValueError(
+                    f"requirement {req.id}: {self.project.provider} has no attestation store; "
+                    "use attestation.source: artifact"
                 )
             if req.tool.lower() not in ADAPTERS:
                 raise ValueError(
