@@ -18,7 +18,12 @@ from pydantic import BaseModel, Field
 from scanproof.attestation.models import AttestationEvidence, AttestationStatus
 from scanproof.evidence.models import ScanEvidence
 from scanproof.models import InspectedJob, JobStatus, Pipeline
-from scanproof.policy.models import AttestationRequirement, Policy, Requirement
+from scanproof.policy.models import (
+    AttestationRequirement,
+    Policy,
+    Requirement,
+    normalize_scan_path,
+)
 
 _WARNING_LEVELS = {"warn", "warning", "info"}
 
@@ -192,8 +197,24 @@ def evaluate_requirement(
         )
 
     if req.applies_to is not None:
-        ref = pipeline.ref or ""
-        if not any(fnmatchcase(ref, pattern) for pattern in req.applies_to.refs):
+        ref = (pipeline.ref or "").strip()
+        if not ref and not any(fnmatchcase("", pattern) for pattern in req.applies_to.refs):
+            # Unknown is never pass: without a ref we cannot show the requirement is out of
+            # scope, and treating it as NOT_APPLICABLE would let the other requirements pass.
+            return result(
+                [
+                    CheckResult(
+                        check="applies_to",
+                        outcome=Outcome.UNKNOWN,
+                        code="REF_UNKNOWN",
+                        message=(
+                            f"Pipeline {pipeline.id} reports no ref; cannot tell whether "
+                            f"{req.applies_to.refs} applies"
+                        ),
+                    )
+                ]
+            )
+        if ref and not any(fnmatchcase(ref, pattern) for pattern in req.applies_to.refs):
             return result(
                 [
                     CheckResult(
@@ -663,11 +684,9 @@ def _min_files(ev: ScanEvidence, minimum: int) -> CheckResult:
     return _r(name, Outcome.PASS, "SCOPE_OK", f"{files} file(s) scanned")
 
 
-def _norm(path: str) -> str:
-    path = path.replace("\\", "/")
-    while path.startswith("./"):
-        path = path[2:]
-    return path
+def _covers(required: str, scanned: str) -> bool:
+    """`scanned` is the required file or directory, or lies inside it (whole path segments)."""
+    return scanned == required or scanned.startswith(required + "/")
 
 
 def _required_paths(ev: ScanEvidence, prefixes: list[str]) -> CheckResult:
@@ -675,8 +694,13 @@ def _required_paths(ev: ScanEvidence, prefixes: list[str]) -> CheckResult:
     scanned = ev.scope.scanned_paths if ev.scope else None
     if scanned is None:
         return _r(name, Outcome.UNKNOWN, "SCOPE_UNKNOWN", "Report does not list scanned paths")
-    normalized = [_norm(p) for p in scanned]
-    missing = [p for p in prefixes if not any(s.startswith(_norm(p)) for s in normalized)]
+    # Paths that are empty or escape the scan root ('src/../../x') prove nothing.
+    normalized = [n for p in scanned if isinstance(p, str) and (n := normalize_scan_path(p))]
+    missing = []
+    for prefix in prefixes:
+        want = normalize_scan_path(prefix)
+        if want is None or not any(_covers(want, s) for s in normalized):
+            missing.append(prefix)
     if missing:
         return _r(
             name,

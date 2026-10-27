@@ -7,6 +7,7 @@ error instead of a silently disabled control.
 from __future__ import annotations
 
 import os
+import posixpath
 import re
 from datetime import date
 from pathlib import Path
@@ -21,6 +22,22 @@ _ENV_REF = re.compile(r"^\$\{([A-Za-z_][A-Za-z0-9_]*)\}$")
 
 class PolicyError(Exception):
     """The policy file is missing, malformed or invalid. Maps to exit code 3."""
+
+
+def normalize_scan_path(path: str) -> str | None:
+    """Canonical form of a scanned or required path, or None if it names no usable location.
+
+    Backslashes become '/', '.' and '..' segments are resolved. A path that is empty, is the
+    root itself ('.') or climbs above it ('../x') returns None: it can neither prove a
+    directory was scanned nor serve as a requirement that is not satisfied by everything.
+    """
+    text = path.strip().replace("\\", "/")
+    if not text:
+        return None
+    norm = posixpath.normpath(text)
+    if norm in (".", "..") or norm.startswith("../"):
+        return None
+    return norm
 
 
 class _Strict(BaseModel):
@@ -71,6 +88,22 @@ class Checks(_Strict):
         description="DAST: URL (or ${ENV_VAR}) the scan must have targeted: same origin, and the "
         "scanned path inside this one",
     )
+
+    @field_validator("required_paths")
+    @classmethod
+    def _usable_paths(cls, value: list[str] | None) -> list[str] | None:
+        # [] would silently disable the control; '', '.', './' would match every scanned file.
+        if value is None:
+            return None
+        if not value:
+            raise ValueError("required_paths must list at least one path (omit it to disable)")
+        for entry in value:
+            if normalize_scan_path(entry) is None:
+                raise ValueError(
+                    f"required_paths entry {entry!r} names no directory or file inside the "
+                    "repository (empty, '.', or climbs out with '..')"
+                )
+        return value
 
     @field_validator("target_url_must_match")
     @classmethod

@@ -20,6 +20,8 @@ GitLab rows replay real gitlab.com API responses saved in `tests/fixtures/gitlab
 | Gate runs before the scan finishes | INDETERMINATE | `REPORT_NOT_YET_AVAILABLE` | test |
 | Six requirements, six different faults, one pipeline | BLOCKED, each fault reported separately | | test |
 | MR pipeline, every requirement `applies_to: main` | INDETERMINATE (or VERIFIED with `on_nothing_applicable: allow`) | | test |
+| Provider reports no ref; a requirement is `applies_to: main` | INDETERMINATE (even with `on_nothing_applicable: allow`) | `REF_UNKNOWN` | test (`test_false_verified_paths.py`) |
+| `required_paths: [src/main/java]`, only `src/main/javascript/` scanned | BLOCKED | `REQUIRED_PATH_NOT_SCANNED` | test (`test_false_verified_paths.py`) |
 | Artifact download drops mid-transfer once | retried, VERIFIED | | test |
 | Download keeps dropping | INDETERMINATE | `EVIDENCE_UNAVAILABLE` | test |
 | 429 during job pagination | retried after `Retry-After` | | test |

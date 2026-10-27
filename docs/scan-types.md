@@ -30,6 +30,12 @@ by default), so leave it out of the policy or choose a format that records it.
 `job_success`, `same_commit` and `report_required` work for every type: they come from the CI
 platform and the report's presence, not from the report contents.
 
+`required_paths` entries match whole path segments: `src/main/java` is satisfied by
+`src/main/java/App.java`, not by `src/main/javascript/app.js`; `package-lock.json` only by that
+file. `./`, `\` and `..` are normalized first, and a scanned path that climbs out of the scan
+root (`src/../../x`) never counts. An entry that names nothing (`""`, `.`, `./`, `../src`) or an
+empty list is a policy error (exit 3), because it would make the check always pass or do nothing.
+
 ## Recommended checks per type
 
 **SAST** — prove the code was actually analysed, not just that the job was green.
