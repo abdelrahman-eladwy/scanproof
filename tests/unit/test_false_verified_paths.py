@@ -6,6 +6,7 @@ decision itself rather than on any connector behavior.
 
 from __future__ import annotations
 
+import json
 from datetime import UTC, datetime
 
 import pytest
@@ -13,7 +14,7 @@ import pytest
 from scanproof.evidence.models import ScanScope
 from scanproof.models import InspectedJob, Job, JobStatus, Pipeline
 from scanproof.policy.engine import Decision, Outcome, RequirementInput, evaluate
-from scanproof.policy.models import Policy, PolicyError, load_policy
+from scanproof.policy.models import Policy, PolicyError, load_policy, normalize_scan_path
 from scanproof.scanners import get_adapter
 from tests.conftest import FIXTURES
 
@@ -141,6 +142,29 @@ def test_required_path_still_matches_files_under_it(required: str, scanned: str)
     assert decide([required], [scanned]) is Decision.VERIFIED
 
 
+def write_policy(tmp_path, required: list[str]):
+    path = tmp_path / "policy.yaml"
+    # JSON strings are valid YAML double-quoted scalars, so backslashes arrive exactly as given.
+    path.write_text(
+        "apiVersion: scanproof.dev/v1alpha1\n"
+        "kind: PipelineAssurancePolicy\n"
+        "project: {provider: gitlab, id: '1'}\n"
+        "requirements:\n"
+        "  - {id: SAST, tool: semgrep, job_name: sast, report_path: s.json,\n"
+        f"     checks: {{required_paths: {json.dumps(required)}}}}}\n",
+        encoding="utf-8",
+    )
+    return path
+
+
+def assert_rejected(required: list[str], tmp_path) -> None:
+    reqs = [{**BASE, "id": "SAST", "job_name": "sast", "checks": {"required_paths": required}}]
+    with pytest.raises(ValueError, match="required_paths"):
+        policy(reqs)
+    with pytest.raises(PolicyError, match="required_paths"):
+        load_policy(write_policy(tmp_path, required))
+
+
 @pytest.mark.parametrize(
     "required",
     [[""], ["./"], ["."], ["  "], ["src/", ""], ["../src"], ["src/../.."], []],
@@ -149,19 +173,72 @@ def test_required_paths_that_match_everything_or_nothing_are_load_errors(
     required: list[str], tmp_path
 ) -> None:
     """A control that cannot fail (or silently does nothing) must be a load error, exit 3."""
-    reqs = [{**BASE, "id": "SAST", "job_name": "sast", "checks": {"required_paths": required}}]
-    with pytest.raises(ValueError, match="required_paths"):
-        policy(reqs)
-    path = tmp_path / "policy.yaml"
-    entries = ", ".join(repr(p) for p in required)
-    path.write_text(
-        "apiVersion: scanproof.dev/v1alpha1\n"
-        "kind: PipelineAssurancePolicy\n"
-        "project: {provider: gitlab, id: '1'}\n"
-        "requirements:\n"
-        "  - {id: SAST, tool: semgrep, job_name: sast, report_path: s.json,\n"
-        f"     checks: {{required_paths: [{entries}]}}}}\n",
-        encoding="utf-8",
+    assert_rejected(required, tmp_path)
+
+
+# ------------------------------------------------- absolute paths are not repository paths
+
+POSIX_ROOTED = ["/repo/src", "/", "/src"]
+DRIVE_ROOTED = ["C:\\repo\\src", "C:/repo/src", "c:\\", "D:repo\\src"]  # incl. drive-relative
+UNC = ["\\\\server\\share\\src", "//server/share/src", "\\\\?\\C:\\repo\\src"]
+ABSOLUTE = POSIX_ROOTED + DRIVE_ROOTED + UNC
+
+
+@pytest.mark.parametrize("path", ABSOLUTE)
+def test_absolute_paths_do_not_normalize(path: str) -> None:
+    assert normalize_scan_path(path) is None
+
+
+@pytest.mark.parametrize("path", ABSOLUTE)
+def test_absolute_required_path_is_a_load_error(path: str, tmp_path) -> None:
+    """required_paths are repository-relative; an absolute one is exit 3, not a silent match."""
+    assert_rejected([path], tmp_path)
+    assert_rejected(["src/", path], tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("required", "scanned"),
+    [
+        ("/repo/src", "/repo/src/app.py"),
+        ("C:\\repo\\src", "C:\\repo\\src\\app.py"),
+        ("C:/repo/src", "c:/repo/src/app.py"),
+        ("\\\\server\\share\\src", "\\\\server\\share\\src\\app.py"),
+        ("//server/share/src", "//server/share/src/app.py"),
+    ],
+)
+def test_absolute_requirement_never_matches_absolute_evidence(required: str, scanned: str) -> None:
+    """Defense in depth: even a policy object that skipped validation cannot match."""
+    valid = policy(
+        [{**BASE, "id": "SAST", "job_name": "sast", "checks": {"required_paths": ["src"]}}]
     )
-    with pytest.raises(PolicyError, match="required_paths"):
-        load_policy(path)
+    req = valid.requirements[0]
+    bypassed = req.model_copy(
+        update={"checks": req.checks.model_copy(update={"required_paths": [required]})}
+    )
+    unchecked = valid.model_copy(update={"requirements": [bypassed]})
+    inputs = {"SAST": RequirementInput(job=job("sast"), evidence=clean_report([scanned]))}
+    result = evaluate(unchecked, pipeline("main"), inputs, now=NOW)
+    assert result.decision is Decision.BLOCKED
+    assert result.requirements[0].checks[-1].code == "REQUIRED_PATH_NOT_SCANNED"
+
+
+@pytest.mark.parametrize(
+    "scanned",
+    [
+        "/repo/src/app.py",
+        "/src/app.py",
+        "C:\\repo\\src\\app.py",
+        "C:src\\app.py",
+        "\\\\server\\share\\src\\app.py",
+        "//server/share/src/app.py",
+    ],
+)
+def test_absolute_scanned_paths_never_satisfy_a_relative_requirement(scanned: str) -> None:
+    assert decide(["src"], [scanned]) is Decision.BLOCKED
+
+
+def test_absolute_scanned_paths_are_ignored_not_fatal() -> None:
+    """A report mixing absolute and relative paths is judged on its relative ones."""
+    absolute = ["/repo/src/a.py", "C:\\repo\\src\\a.py", "\\\\srv\\share\\src\\a.py"]
+    assert decide(["src"], absolute) is Decision.BLOCKED
+    assert decide(["src"], [*absolute, "src/a.py"]) is Decision.VERIFIED

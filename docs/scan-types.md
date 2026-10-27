@@ -36,6 +36,12 @@ file. `./`, `\` and `..` are normalized first, and a scanned path that climbs ou
 root (`src/../../x`) never counts. An entry that names nothing (`""`, `.`, `./`, `../src`) or an
 empty list is a policy error (exit 3), because it would make the check always pass or do nothing.
 
+Paths are repository-relative on both sides. An absolute `required_paths` entry (`/repo/src`,
+`C:\repo\src`, `C:repo`, `\\server\share\src`) is a policy error, and absolute paths in a report
+are ignored for this check: they name a location on the runner, not in the repository, so a
+report that lists only absolute paths fails `required_paths`. Run the scanner from the
+repository root with relative targets (e.g. `semgrep scan src/`, `checkov -d .`).
+
 ## Recommended checks per type
 
 **SAST** — prove the code was actually analysed, not just that the job was green.

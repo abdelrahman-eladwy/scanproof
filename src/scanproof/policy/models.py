@@ -18,6 +18,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 _ENV_REF = re.compile(r"^\$\{([A-Za-z_][A-Za-z0-9_]*)\}$")
+_DRIVE = re.compile(r"^[A-Za-z]:")  # 'C:/x' (drive-absolute) and 'C:x' (drive-relative)
 
 
 class PolicyError(Exception):
@@ -27,12 +28,14 @@ class PolicyError(Exception):
 def normalize_scan_path(path: str) -> str | None:
     """Canonical form of a scanned or required path, or None if it names no usable location.
 
-    Backslashes become '/', '.' and '..' segments are resolved. A path that is empty, is the
-    root itself ('.') or climbs above it ('../x') returns None: it can neither prove a
-    directory was scanned nor serve as a requirement that is not satisfied by everything.
+    Paths are repository-relative. Backslashes become '/', '.' and '..' segments are resolved.
+    A path that is empty, is the root itself ('.'), climbs above it ('../x') or is absolute
+    (POSIX '/repo/src', Windows drive 'C:\\repo' or 'C:repo', UNC '\\\\server\\share')
+    returns None: it can neither prove a repository directory was scanned nor serve as a
+    requirement, and absolute paths would let host-specific locations match each other.
     """
     text = path.strip().replace("\\", "/")
-    if not text:
+    if not text or text.startswith("/") or _DRIVE.match(text):
         return None
     norm = posixpath.normpath(text)
     if norm in (".", "..") or norm.startswith("../"):
@@ -101,7 +104,8 @@ class Checks(_Strict):
             if normalize_scan_path(entry) is None:
                 raise ValueError(
                     f"required_paths entry {entry!r} names no directory or file inside the "
-                    "repository (empty, '.', or climbs out with '..')"
+                    "repository (empty, '.', absolute, or climbs out with '..'); "
+                    "use a repository-relative path"
                 )
         return value
 

@@ -694,7 +694,7 @@ def _required_paths(ev: ScanEvidence, prefixes: list[str]) -> CheckResult:
     scanned = ev.scope.scanned_paths if ev.scope else None
     if scanned is None:
         return _r(name, Outcome.UNKNOWN, "SCOPE_UNKNOWN", "Report does not list scanned paths")
-    # Paths that are empty or escape the scan root ('src/../../x') prove nothing.
+    # Empty, absolute or root-escaping paths (/repo/x, C:\x, src/../../x) prove nothing.
     normalized = [n for p in scanned if isinstance(p, str) and (n := normalize_scan_path(p))]
     missing = []
     for prefix in prefixes:
