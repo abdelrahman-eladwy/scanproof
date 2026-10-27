@@ -1,5 +1,10 @@
 # ScanProof
 
+[![CI](https://github.com/abdelrahman-eladwy/scanproof/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/abdelrahman-eladwy/scanproof/actions/workflows/ci.yml)
+[![Live demo](https://github.com/abdelrahman-eladwy/scanproof-e2e/actions/workflows/demo.yml/badge.svg?branch=main)](https://github.com/abdelrahman-eladwy/scanproof-e2e/actions/workflows/demo.yml)
+[![Python 3.12 | 3.13](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue)](pyproject.toml)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+
 > **Status: v0.1, pre-alpha.** Policy and report formats may still change in minor versions
 > before 1.0 (see [CHANGELOG](CHANGELOG.md)). See it work: **[demo](docs/demo.md)**.
 

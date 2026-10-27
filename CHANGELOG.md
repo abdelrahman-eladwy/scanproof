@@ -5,40 +5,7 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 
 ## [Unreleased]
 
-### Added
-- **Signed evidence.** `attestation:` on a requirement demands a Sigstore-signed in-toto
-  attestation for the report or the image: verified with sigstore-python (optional extra
-  `scanproof[attestations]`), then checked for subject digest, predicate type, signer
-  (issuer + repository and/or Build Signer URI regex), same commit and same run. Sources: a bundle
-  in the job/run artifacts, or the GitHub attestations API. SLSA provenance, cosign `vuln`
-  predicates and plain message signatures (`sigstore sign`, `cosign sign-blob`) are supported.
-  Tested against real bundles from this repository's own runs, forgeries made from them, and a
-  live self-verify run. See `docs/attestations.md`.
-- `scanproof attestation -b BUNDLE [-f FILE]` prints what a bundle proves.
-- **Azure DevOps, Jenkins and Bitbucket Pipelines** connectors (`--provider azure-devops |
-  jenkins | bitbucket`, `--url`, `--user-env`, `--auth-scheme`). Each sees through its own
-  masking: Azure `continueOnError` (`succeededWithIssues`), Jenkins `catchError` / `warnError` /
-  swallowed `try/catch` step failures (but not `retry`), Bitbucket `on-fail: ignore`. Azure
-  reports must come from an artifact the required job published itself. Bitbucket evidence is
-  Code Insights reports (new tool `bitbucket-code-insights`). Built on real API responses; the
-  Jenkins connector is verified live against a real Jenkins in CI.
-- Adapters for **Gitleaks** (native JSON), **Grype**, **OSV-Scanner**, **Snyk** (open source and
-  container), **Kubescape** and the DAST scanners **OWASP ZAP** and **Nuclei**, from real output
-  generated in CI (Snyk: DefectDojo samples). All fuzzed.
-- DAST checks: `target_url_must_match` (the scan hit the URL being released: same origin, path
-  at or below it) and `minimum_endpoints` (ZAP's endpoint count). New scan type `DAST`.
-- **Waivers** with reason, approver and expiry (`waivers:`, `enforcement.max_waiver_days`): a
-  matching failed / unknown check becomes `WAIVED` (new outcome) until it expires.
-- `max_age_hours` (scan freshness from the platform's job finish time) and `same_target_as`
-  (two requirements' scans must be about the same image digest or DAST origin).
-- `scanproof verify-release -R release.yaml`: one decision over several pipelines on any
-  platforms (`ReleaseAssurance` files).
-- HTTP Basic auth (Jenkins API tokens, Azure DevOps PATs, Bitbucket API tokens) with the same
-  guarantees as Bearer: secrets from env vars only, sent only to the API origin.
-- `--sigstore-trusted-root` (e.g. GitHub's instance for private repos) and `--sigstore-offline`.
-
-### Fixed
-- Docker smoke test could pass when `docker run` itself failed.
+Nothing yet beyond 0.1.0.
 
 ## [0.1.0] - unreleased
 
@@ -47,15 +14,24 @@ succeeded, produced a valid report for the right commit and image, and covered t
 
 ### Platforms
 - **GitLab CI**: pipelines, retried jobs, `allow_failure`, manual jobs, parent/child and
-  multi-project pipelines (via bridges), `parallel:` and `parallel: matrix:` jobs. Self-managed
-  instances with `--gitlab-url` and `--ca-bundle`; `--anonymous` for public projects.
+  multi-project pipelines (via bridges; downstream evidence is attributed to the project and
+  pipeline it came from), `parallel:` and `parallel: matrix:` jobs. Self-managed instances with
+  `--gitlab-url` and `--ca-bundle`; `--anonymous` for public projects.
 - **GitHub Actions**: workflow runs and re-run attempts, matrix and reusable-workflow jobs,
   masked failures from step- and job-level `continue-on-error` (via check-run annotations),
   run artifacts checked against GitHub's recorded sha256 digest.
+- **Azure DevOps, Jenkins and Bitbucket Pipelines** (`--provider azure-devops | jenkins |
+  bitbucket`, `--url`, `--user-env`, `--auth-scheme`). Each sees through its own masking: Azure
+  `continueOnError` (`succeededWithIssues`), Jenkins `catchError` / `warnError` / swallowed
+  `try/catch` step failures (but not `retry`), Bitbucket `on-fail: ignore`. Azure reports must
+  come from an artifact the required job published itself. Bitbucket evidence is Code Insights
+  reports (tool `bitbucket-code-insights`).
 
 ### Scanners and formats
 - Semgrep (JSON), Trivy (image and filesystem JSON), SARIF 2.1 (any producer), CycloneDX SBOMs,
   Checkov, GitLab security reports (SAST, container, dependency, secret detection).
+- Gitleaks (native JSON), Grype, OSV-Scanner, Snyk (open source and container), Kubescape, and
+  the DAST scanners OWASP ZAP and Nuclei.
 - Experimental: Fortify FPR, Sonatype IQ.
 
 ### Policy
@@ -63,22 +39,52 @@ succeeded, produced a valid report for the right commit and image, and covered t
 - Checks: `job_success`, `same_commit`, `report_required`, `scanner_errors_allowed`,
   `ignore_scanner_warnings`, `minimum_scanned_files`, `required_paths`, `image_digest_must_match`,
   `expected_scanner`, `minimum_components`, `minimum_resources`; `applies_to.refs`.
-- Outcomes PASS / FAIL / UNKNOWN / NOT_APPLICABLE; unknown never counts as pass.
+- DAST checks: `target_url_must_match` (the scan hit the URL being released: same origin, path
+  at or below it) and `minimum_endpoints` (ZAP's endpoint count). Scan type `DAST`.
+- `max_age_hours` (scan freshness from the platform's job finish time; implausibly future
+  timestamps are UNKNOWN) and `same_target_as` (two requirements' scans must be about the same
+  image digest or DAST origin).
+- **Waivers** with reason, approver and expiry (`waivers:`, `enforcement.max_waiver_days`): a
+  matching failed or unknown check becomes `WAIVED` until it expires.
+- **Opt-in reported-scope assurance** (`assurance.minimum_level: reported_scope`): the scanner's
+  own report must claim a nonempty scan scope. An explicitly empty scope fails, undeterminable
+  scope is UNKNOWN, and settings that would fail open (`on_unknown: warn`, ...) are rejected.
+- **Signed evidence.** `attestation:` on a requirement demands a Sigstore-signed in-toto
+  attestation for the report or the image, verified with sigstore-python (optional extra
+  `scanproof[attestations]`), then checked for subject digest, predicate type, signer (issuer
+  plus repository and/or Build Signer URI regex), same commit, same run and, on GitHub, the
+  current run attempt. Sources: a bundle in the job or run artifacts, or the GitHub
+  attestations API. SLSA provenance, cosign `vuln` predicates and plain message signatures
+  (`sigstore sign`, `cosign sign-blob`) are supported.
+- Outcomes PASS / FAIL / UNKNOWN / NOT_APPLICABLE / WAIVED; unknown never counts as pass.
   `enforcement.on_failure`, `on_unknown`, `on_nothing_applicable`.
 
 ### CLI
 - `inspect`, `evidence`, `validate`, `verify`; console report on stderr, JSON on stdout or `-o`.
+- `verify-release -R release.yaml`: one decision over several pipelines on any platforms
+  (`ReleaseAssurance` files).
+- `attestation -b BUNDLE [-f FILE]` prints what a bundle proves; `--sigstore-trusted-root`
+  (e.g. GitHub's instance for private repositories) and `--sigstore-offline`.
 - Exit codes: 0 verified, 1 blocked, 2 indeterminate, 3 usage or policy error.
 
 ### Security
-- Tokens only from environment variables, sent only to the configured API origin, never logged.
+- Tokens (and usernames, for HTTP Basic: Jenkins API tokens, Azure DevOps PATs, Bitbucket API
+  tokens) only from environment variables, sent only to the configured API origin, never logged.
 - TLS always verified; manual redirect handling (no HTTPS to HTTP); streamed, size-capped
   downloads; retries with `Retry-After`; untrusted XML parsed with defusedxml.
+- Fail-closed path handling: `required_paths` match whole path segments; absolute, empty, root
+  or escaping paths are rejected; a pipeline with no known ref is UNKNOWN, not "not applicable".
+- Scanner reports with unpaired Unicode surrogates are rejected rather than half-parsed.
 - Release artifacts (PyPI package, GHCR image) carry SLSA build-provenance attestations.
 
 ### Tested against
-- Real scanner output and real gitlab.com / GitHub API responses; live GitHub runs verify
-  ScanProof's own workflow; adapters fuzzed; complex scenarios in `docs/scenarios.md`; demo in
-  `docs/demo.md`. Lowest supported dependency versions tested on Python 3.12.
+- Real scanner output and real gitlab.com, GitHub, Azure DevOps, Bitbucket and Jenkins API
+  responses; every adapter fuzzed with corrupted real reports; an adversarial false-VERIFIED
+  decision matrix; lowest supported dependency versions on Python 3.12.
+- Live runs against real platforms in
+  [scanproof-e2e](https://github.com/abdelrahman-eladwy/scanproof-e2e), including ScanProof
+  verifying its own GitHub runs and attestations; scenarios in `docs/scenarios.md`, demo in
+  `docs/demo.md`.
 
+[Unreleased]: https://github.com/abdelrahman-eladwy/scanproof/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/abdelrahman-eladwy/scanproof/releases/tag/v0.1.0
