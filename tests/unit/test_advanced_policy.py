@@ -166,6 +166,11 @@ def test_waiver_within_max_days_is_accepted() -> None:
     [
         (NOW - timedelta(hours=2), Outcome.PASS, "SCAN_FRESH"),
         (NOW - timedelta(hours=30), Outcome.FAIL, "SCAN_TOO_OLD"),
+        (NOW + timedelta(minutes=3), Outcome.PASS, "SCAN_FRESH"),
+        (NOW + timedelta(minutes=5), Outcome.PASS, "SCAN_FRESH"),
+        (NOW + timedelta(minutes=5, seconds=1), Outcome.UNKNOWN, "SCAN_TIMESTAMP_IN_FUTURE"),
+        (NOW + timedelta(minutes=10), Outcome.UNKNOWN, "SCAN_TIMESTAMP_IN_FUTURE"),
+        (NOW + timedelta(days=100), Outcome.UNKNOWN, "SCAN_TIMESTAMP_IN_FUTURE"),
         (None, Outcome.UNKNOWN, "SCAN_AGE_UNKNOWN"),
         ((NOW - timedelta(hours=30)).replace(tzinfo=None), Outcome.FAIL, "SCAN_TOO_OLD"),
     ],
