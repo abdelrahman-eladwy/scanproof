@@ -15,7 +15,8 @@ LABEL org.opencontainers.image.source="https://github.com/abdelrahman-eladwy/sca
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 RUN useradd --create-home --uid 10001 scanproof
 COPY --from=build /dist/*.whl /tmp/
-RUN pip install --no-cache-dir /tmp/*.whl && rm /tmp/*.whl
+# With the attestations extra (sigstore-python), so `attestation:` policies work in the image.
+RUN pip install --no-cache-dir "$(ls /tmp/*.whl)[attestations]" && rm /tmp/*.whl
 USER 10001
 WORKDIR /work
 ENTRYPOINT ["scanproof"]

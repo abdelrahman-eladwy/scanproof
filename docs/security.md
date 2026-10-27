@@ -10,8 +10,12 @@ commit (and, for container scans, the image digest).
 ## What it does not claim
 
 - That the application is secure.
-- That evidence is tamper-proof. Anyone who can edit `.gitlab-ci.yml` or the runner can forge a
-  report. Cryptographic binding (attestations, SLSA provenance) is planned for v0.2+.
+- That evidence is tamper-proof, **unless the requirement has an `attestation:` block.** Without
+  one, anyone who can edit `.gitlab-ci.yml` or the runner can forge a report. With one, the
+  report (or image) must carry a Sigstore-signed attestation from a pinned workflow, at the
+  pipeline commit, in the verified run; edited, swapped, replayed or foreign-signed evidence
+  fails. It still cannot stop someone who can push to the ref the signing workflow runs from.
+  See [attestations.md](attestations.md).
 
 ## Where to run it
 
@@ -30,11 +34,12 @@ Keep policy files under code-owner protection.
 
 | Control | Implementation |
 |---|---|
-| Least privilege | GitLab: `read_api` (Developer role for security-report artifacts). GitHub: `actions: read` + `checks: read`. ScanProof never writes to the CI platform |
+| Least privilege | GitLab: `read_api` (Developer role for security-report artifacts). GitHub: `actions: read` + `checks: read` (+ `attestations: read` for `source: platform`). ScanProof never writes to the CI platform |
 | No token leakage | Env var only; `Authorization: Bearer`; excluded from `repr`, errors, logs |
 | Redirects | Followed manually; credentials only to the configured origin; HTTPS->HTTP refused; max 3 |
 | TLS | Always verified; private CAs via `--ca-bundle` |
 | Resource limits | Artifact downloads streamed and capped (50 MB default); zip members capped while reading (zip-bomb safe); pagination capped and must stay on the API origin |
 | Artifact integrity | GitHub: downloaded zip must match the sha256 digest GitHub recorded, otherwise BLOCKED |
 | Untrusted report content | Adapters never raise: malformed, wrong-typed, deeply nested or absurd input becomes "unparseable". Every adapter is fuzzed in CI with corrupted real reports; XML uses defusedxml |
+| Signed evidence | Sigstore verification by sigstore-python (chain, log/timestamp, DSSE); claims read only from a verified certificate; signer must pin repository or workflow; bundles fuzzed in CI; signed blob URLs never stored |
 | Failure semantics | Any error -> INDETERMINATE (exit 2), never pass |
