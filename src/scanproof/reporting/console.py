@@ -95,7 +95,7 @@ def print_verification_summary(report: VerificationReport) -> None:
         findings = f"  findings={req.findings['total']}" if req.findings else ""
         out(f"[{req.outcome.value:<4}] {req.id}  {req.tool} @ {req.job_name} ({job}){findings}")
         for check in req.checks:
-            if check.outcome.value in {"FAIL", "UNKNOWN"}:
+            if check.outcome.value in {"FAIL", "UNKNOWN", "WAIVED"}:
                 out(f"         {check.outcome.value}: {check.code}: {check.message}")
     if report.warnings:
         out()
@@ -105,8 +105,27 @@ def print_verification_summary(report: VerificationReport) -> None:
     out()
     failed = sum(r.outcome.value == "FAIL" for r in report.requirements)
     unknown = sum(r.outcome.value == "UNKNOWN" for r in report.requirements)
+    waived = sum(c.outcome.value == "WAIVED" for r in report.requirements for c in r.checks)
+    extra = f", {waived} waived" if waived else ""
     out(
         f"Decision: {report.decision.value}  "
-        f"({failed} failed, {unknown} unknown)  exit {report.exit_code}"
+        f"({failed} failed, {unknown} unknown{extra})  exit {report.exit_code}"
     )
     out("Note: ScanProof verifies scan evidence, not the absence of vulnerabilities.")
+
+
+def print_release_summary(report) -> None:
+    out = lambda line="": typer.echo(line, err=True)  # noqa: E731
+    out(f"ScanProof {report.scanproof_version} - verify-release {report.release}")
+    out()
+    for c in report.components:
+        where = f"{c.provider} {c.project} #{c.pipeline}"
+        out(f"[{c.decision.value:<13}] {c.name}  ({where})")
+        if c.error:
+            out(f"         UNKNOWN: {c.error}")
+        for req in c.report.requirements if c.report else []:
+            for check in req.checks:
+                if check.outcome.value in {"FAIL", "UNKNOWN", "WAIVED"}:
+                    out(f"         {req.id} {check.outcome.value}: {check.code}: {check.message}")
+    out()
+    out(f"Release decision: {report.decision.value}  exit {report.exit_code}")
