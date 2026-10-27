@@ -129,6 +129,7 @@ protection. See [`docs/security.md`](docs/security.md).
 
 Full index: **[docs/](docs/README.md)**. Example policies: [examples/](examples/README.md).
 Contributing: [CONTRIBUTING.md](CONTRIBUTING.md). Security reports: [SECURITY.md](SECURITY.md).
+Live end-to-end tests against real CI platforms: [scanproof-e2e](https://github.com/abdelrahman-eladwy/scanproof-e2e).
 
 ## Project status
 

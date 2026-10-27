@@ -7,7 +7,6 @@
 /.github/workflows/ @abdelrahman-eladwy
 /.github/CODEOWNERS @abdelrahman-eladwy
 /examples/policies/ @abdelrahman-eladwy
-/tests/contract/policies/ @abdelrahman-eladwy
 /src/scanproof/policy/ @abdelrahman-eladwy
 /src/scanproof/attestation/ @abdelrahman-eladwy
 /docs/security.md @abdelrahman-eladwy

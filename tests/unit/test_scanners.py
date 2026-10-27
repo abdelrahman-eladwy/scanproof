@@ -1,5 +1,5 @@
 """Adapter tests. Fixtures under tests/fixtures/{semgrep,trivy} are REAL reports produced by
-.github/workflows/fixtures.yml (Semgrep 1.181.1, Trivy 0.76.1); trivy-python.json is trimmed."""
+scanproof-e2e fixtures (Semgrep 1.181.1, Trivy 0.76.1); trivy-python.json is trimmed."""
 
 from __future__ import annotations
 

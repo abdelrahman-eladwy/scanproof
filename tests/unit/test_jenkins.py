@@ -1,5 +1,5 @@
 """Jenkins connector against the real responses of the contract Jenkins (tests/fixtures/
-jenkins-real/), mirroring the live self-verify run in platforms-contract.yml."""
+jenkins-real/), mirroring the live self-verify run in scanproof-e2e."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from tests.conftest import FIXTURES
 
 BASE = "https://jenkins.example.com"
 J = FIXTURES / "jenkins-real"
-POLICIES = FIXTURES.parent / "contract/policies/jenkins"
+POLICIES = FIXTURES / "jenkins-real/policies"
 REPORT = (FIXTURES / "semgrep/semgrep-findings.json").read_bytes()
 
 

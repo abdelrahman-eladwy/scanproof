@@ -18,10 +18,13 @@ Thanks for your interest. ScanProof is pre-alpha, so expect things to move.
 | `src/scanproof/` | The CLI and library (architecture overview in [`CLAUDE.md`](CLAUDE.md#architecture-modular-monolith--keep-the-boundaries)) |
 | `tests/unit/` | Offline unit tests (no network) |
 | `tests/fixtures/` | Real, sanitized scanner reports and CI API responses ([provenance](tests/fixtures/README.md)) |
-| `tests/contract/` | Inputs for the live contract workflows ([details](tests/contract/README.md)) |
-| `scripts/` | Fixture collection and trimming helpers used by those workflows |
+| `scripts/` | Helpers that trim large real reports before they become fixtures |
 | `examples/` | Policies and CI snippets for users ([index](examples/README.md)) |
 | `docs/` | User and maintainer documentation ([index](docs/README.md)) |
+
+Live end-to-end tests against real CI platforms and scanners live in a separate repository,
+[scanproof-e2e](https://github.com/abdelrahman-eladwy/scanproof-e2e). They install ScanProof from `main`, so they need no changes here; run one
+against your branch with **Run workflow** and its `scanproof_ref` input.
 
 ## Security issues
 

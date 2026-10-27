@@ -1,4 +1,4 @@
-# Live Jenkins contract (.github/workflows/platforms-contract.yml): job sast-retry, build #1.
+# Recorded live Jenkins contract (scanproof-e2e platforms-contract): job sast-retry, build #1.
 # Expected exit: 0
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy

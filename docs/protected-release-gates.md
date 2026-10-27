@@ -142,7 +142,7 @@ effective repository/ruleset settings.
 
 ## Live CI dependency contract (real jobs, no production deployment)
 
-The [`release-gate-contract` workflow](../.github/workflows/release-gate-contract.yml)
+The [`release-gate-contract` workflow](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/.github/workflows/release-gate-contract.yml) in scanproof-e2e
 runs only on `fixtures/gate/**` branches or manual dispatch. It creates two
 independent scan → gate → deploy dependency chains. Both scan-producing jobs
 finish green, but one publishes a Semgrep-shaped JSON report with **no scanned

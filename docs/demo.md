@@ -1,16 +1,17 @@
 # Demo: two green pipelines, two different answers
 
-`.github/workflows/demo.yml` runs two small release pipelines side by side in one workflow run.
+The [`demo` workflow](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/.github/workflows/demo.yml) in [scanproof-e2e](https://github.com/abdelrahman-eladwy/scanproof-e2e) runs two small release pipelines side by side in one workflow run.
 Every scan job in both is **green**. ScanProof then gates each with the same kind of policy:
 
 | Pipeline | What actually happened | Policy | ScanProof |
 |---|---|---|---|
-| healthy | Semgrep scanned the app; Trivy scanned the image being released (pinned digest) | [`release-ok.yaml`](../examples/demo/release-ok.yaml) | **VERIFIED**, exit 0 |
-| broken | Semgrep failed on a config typo, hidden by step `continue-on-error`, and uploaded no report; Trivy scanned `alpine:3.21`, not the released image | [`release-broken.yaml`](../examples/demo/release-broken.yaml) | **BLOCKED**, exit 1 |
+| healthy | Semgrep scanned the app; Trivy scanned the image being released (pinned digest) | [`release-ok.yaml`](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/policies/demo/release-ok.yaml) | **VERIFIED**, exit 0 |
+| broken | Semgrep failed on a config typo, hidden by step `continue-on-error`, and uploaded no report; Trivy scanned `alpine:3.21`, not the released image | [`release-broken.yaml`](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/policies/demo/release-broken.yaml) | **BLOCKED**, exit 1 |
 
-The workflow runs on every push to `main`. Open the latest run of **demo** in the Actions tab;
-each `gate` job's summary shows the report below. The output here is from
-[run 40398397491](https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40398397491), copied as-is.
+The workflow runs daily against ScanProof's `main` branch. Open the latest run of **demo** in
+[its Actions tab](https://github.com/abdelrahman-eladwy/scanproof-e2e/actions/workflows/demo.yml); each `gate` job's summary shows the report below.
+The output here is from [run 40398397491](https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40398397491),
+recorded before the live tests moved to their own repository, copied as-is.
 
 ## Healthy pipeline: VERIFIED
 

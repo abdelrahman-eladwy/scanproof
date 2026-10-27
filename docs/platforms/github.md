@@ -65,8 +65,8 @@ the workflow can remove the gate (same trust boundary as on GitLab, see docs/sec
 
 ## What ScanProof detects on GitHub
 
-Verified against real runs in `.github/workflows/github-contract.yml`, where ScanProof checks its
-own run on every change:
+Verified against real runs in the [`github-contract` workflow](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/.github/workflows/github-contract.yml), where
+ScanProof checks its own run daily against `main`:
 
 | Situation | What the GitHub API shows | ScanProof |
 |---|---|---|

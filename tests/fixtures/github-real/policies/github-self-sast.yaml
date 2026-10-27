@@ -1,4 +1,4 @@
-# ScanProof verifying its own GitHub Actions run (.github/workflows/github-contract.yml).
+# ScanProof verifying its own GitHub Actions run (github-contract workflow, recorded).
 # Expected: VERIFIED (exit 0).
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy
