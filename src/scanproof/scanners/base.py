@@ -66,9 +66,26 @@ class ScannerAdapter(ABC):
     def load(self, raw: bytes) -> Any:
         """Decode report bytes. JSON by default; non-JSON formats (e.g. Fortify FPR) override."""
         try:
-            return json.loads(raw)
+            data = json.loads(raw)
         except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as exc:
             raise ReportLoadError(f"{INVALID_JSON}: {exc}") from None
+
+        # Python's JSON decoder accepts escaped *lone* UTF-16 surrogates.
+        # These are not Unicode scalar values and crash Pydantic's JSON serializer
+        # if a scanner copies one into its normalized evidence. Reject the report
+        # before extraction, including malformed strings in nested keys/values.
+        pending = [data]
+        while pending:
+            item = pending.pop()
+            if isinstance(item, str):
+                if any(0xD800 <= ord(char) <= 0xDFFF for char in item):
+                    raise ReportLoadError("Report contains an invalid Unicode surrogate")
+            elif isinstance(item, dict):
+                pending.extend(item.keys())
+                pending.extend(item.values())
+            elif isinstance(item, list):
+                pending.extend(item)
+        return data
 
     @abstractmethod
     def shape_problem(self, data: Any) -> str | None:
