@@ -525,17 +525,23 @@ def _reported_scope(ev: ScanEvidence) -> CheckResult:
     if reported_counts and any(count < 0 for count in reported_counts):
         return _r(name, Outcome.FAIL, "SCAN_SCOPE_INVALID", "Negative scan scope count")
     if reported_counts and any(count == 0 for count in reported_counts):
-        # Mixed positive and zero counters are ambiguous; fail closed.
-        return _r(
-            name,
-            Outcome.UNKNOWN,
-            "SCAN_SCOPE_CONFLICT",
-            "One or more scanner-reported scope counts are zero",
-        )
+        if any(count > 0 for count in reported_counts) or valid_paths:
+            return _r(
+                name,
+                Outcome.UNKNOWN,
+                "SCAN_SCOPE_CONFLICT",
+                "Scanner-reported scope counts conflict (zero and nonzero)",
+            )
+        return _r(name, Outcome.FAIL, "SCAN_SCOPE_EMPTY", "Scanner reported no scanned targets")
     if paths is not None and not valid_paths:
-        return _r(
-            name, Outcome.FAIL, "SCAN_SCOPE_EMPTY", "Scanner reported no scanned targets"
-        )
+        if reported_counts:
+            return _r(
+                name,
+                Outcome.UNKNOWN,
+                "SCAN_SCOPE_CONFLICT",
+                "Scanner reports positive counts but no scanned paths",
+            )
+        return _r(name, Outcome.FAIL, "SCAN_SCOPE_EMPTY", "Scanner reported no scanned targets")
     if reported_counts or valid_paths:
         return _r(
             name,
