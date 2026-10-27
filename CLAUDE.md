@@ -16,6 +16,8 @@ connectors/   CI platform access. http.py = shared hardened HTTP (all security r
               here); gitlab.py, github.py add platform specifics. Return scanproof.models only.
 scanners/     one adapter per tool: raw report bytes -> ScanEvidence. Never raise on bad input.
 evidence/     unified evidence model + collector (fetch job report -> evidence).
+attestation/  Sigstore bundle verification (sigstore-python, optional extra). Claims are only
+              read from verified certificates; the policy engine compares them, no crypto there.
 policy/       YAML policy models (extra=forbid) + pure engine. No I/O, no connector imports.
 verification.py orchestrates verify: inspection + evidence -> engine -> report.
 reporting/    console (stderr) and JSON (stdout / file) output.

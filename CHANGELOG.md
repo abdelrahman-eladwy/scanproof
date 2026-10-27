@@ -3,6 +3,23 @@
 All notable changes to ScanProof. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break).
 
+## [Unreleased]
+
+### Added
+- **Signed evidence.** `attestation:` on a requirement demands a Sigstore-signed in-toto
+  attestation for the report or the image: verified with sigstore-python (optional extra
+  `scanproof[attestations]`), then checked for subject digest, predicate type, signer
+  (issuer + repository and/or Build Signer URI regex), same commit and same run. Sources: a bundle
+  in the job/run artifacts, or the GitHub attestations API. SLSA provenance, cosign `vuln`
+  predicates and plain message signatures (`sigstore sign`, `cosign sign-blob`) are supported.
+  Tested against real bundles from this repository's own runs, forgeries made from them, and a
+  live self-verify run. See `docs/attestations.md`.
+- `scanproof attestation -b BUNDLE [-f FILE]` prints what a bundle proves.
+- `--sigstore-trusted-root` (e.g. GitHub's instance for private repos) and `--sigstore-offline`.
+
+### Fixed
+- Docker smoke test could pass when `docker run` itself failed.
+
 ## [0.1.0] - unreleased
 
 First release. ScanProof verifies security-scan **evidence** in CI: that required scans ran,

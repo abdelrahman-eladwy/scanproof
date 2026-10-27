@@ -7,14 +7,16 @@ a machine-readable code and a human message for every check.
 
 from __future__ import annotations
 
+import re
 from enum import StrEnum
 from fnmatch import fnmatchcase
 
 from pydantic import BaseModel, Field
 
+from scanproof.attestation.models import AttestationEvidence, AttestationStatus
 from scanproof.evidence.models import ScanEvidence
 from scanproof.models import InspectedJob, JobStatus, Pipeline
-from scanproof.policy.models import Policy, Requirement
+from scanproof.policy.models import AttestationRequirement, Policy, Requirement
 
 _WARNING_LEVELS = {"warn", "warning", "info"}
 
@@ -58,6 +60,12 @@ class RequirementInput(BaseModel):
     instances: list[tuple[str, RequirementInput]] | None = Field(
         default=None,
         description="Parallel / matrix / downstream instances; every one must pass",
+    )
+    attestations: list[AttestationEvidence] | None = Field(
+        default=None, description="Every bundle found for the attestation subject"
+    )
+    attestation_error: str | None = Field(
+        default=None, description="Why attestations could not be fetched (auth, network...)"
     )
 
 
@@ -204,7 +212,11 @@ def evaluate_requirement(
             ]
         )
 
-    checks = [*_job_checks(req, data.job), *_evidence_checks(req, data)]
+    checks = [
+        *_job_checks(req, data.job),
+        *_evidence_checks(req, data),
+        *_attestation_checks(req, pipeline, data),
+    ]
     return result(checks)
 
 
@@ -563,6 +575,152 @@ def _min_resources(ev: ScanEvidence, minimum: int) -> CheckResult:
             f"{count} resource(s) evaluated, at least {minimum} required",
         )
     return _r(name, Outcome.PASS, "RESOURCES_OK", f"{count} resource(s) evaluated")
+
+
+# ---------------------------------------------------------------- attestations
+
+
+def _attestation_checks(
+    req: Requirement, pipeline: Pipeline, data: RequirementInput
+) -> list[CheckResult]:
+    """A signed attestation must bind the report (or image) to an accepted signer.
+
+    Several bundles may exist for one subject (re-runs, other workflows); one acceptable
+    bundle is enough. Claims come from bundles the attestation module already verified.
+    """
+    spec = req.attestation
+    if spec is None:
+        return []
+    if data.attestation_error is not None:
+        return [
+            _r("attestation", Outcome.UNKNOWN, "ATTESTATION_UNAVAILABLE", data.attestation_error)
+        ]
+    if spec.subject == "image":
+        expected = (req.checks.image_digest_must_match or "").removeprefix("sha256:")
+        what = f"image sha256:{expected}"
+    else:
+        ev = data.evidence
+        expected = ev.report_sha256 if ev and ev.present else None
+        what = f"{req.report_path} (sha256:{expected})"
+    if not expected:
+        return [
+            _r(
+                "attestation",
+                Outcome.UNKNOWN,
+                "ATTESTATION_NO_SUBJECT",
+                f"No report bytes to bind an attestation to ({req.report_path})",
+            )
+        ]
+    if data.attestations is None:
+        return [
+            _r(
+                "attestation",
+                Outcome.UNKNOWN,
+                "ATTESTATION_NOT_CHECKED",
+                f"Attestations for {what} were not looked up",
+            )
+        ]
+    bundles = data.attestations
+    if not bundles:
+        return [
+            _r("attestation", Outcome.FAIL, "ATTESTATION_MISSING", f"No attestation for {what}")
+        ]
+    judged = [_judge_attestation(spec, pipeline, att, expected.lower()) for att in bundles]
+    for res in judged:
+        if res.outcome is Outcome.PASS:
+            extra = f" (1 of {len(judged)} bundles)" if len(judged) > 1 else ""
+            return [res.model_copy(update={"message": res.message + extra})]
+    outcome = Outcome.FAIL if any(r.outcome is Outcome.FAIL for r in judged) else Outcome.UNKNOWN
+    first = next(r for r in judged if r.outcome is outcome)
+    if len(judged) == 1:
+        return [first]
+    detail = "; ".join(f"[{i + 1}] {r.code}: {r.message}" for i, r in enumerate(judged[:5]))
+    more = f" (+{len(judged) - 5} more)" if len(judged) > 5 else ""
+    return [
+        _r(
+            "attestation",
+            outcome,
+            first.code,
+            f"None of {len(judged)} bundles for {what} is acceptable: {detail}{more}",
+        )
+    ]
+
+
+def _judge_attestation(
+    spec: AttestationRequirement, pipeline: Pipeline, att: AttestationEvidence, expected: str
+) -> CheckResult:
+    def bad(code: str, message: str, outcome: Outcome = Outcome.FAIL) -> CheckResult:
+        return _r("attestation", outcome, code, message)
+
+    if att.status is AttestationStatus.UNVERIFIABLE:
+        return bad("ATTESTATION_UNVERIFIABLE", att.reason or "cannot verify", Outcome.UNKNOWN)
+    if att.status is not AttestationStatus.VERIFIED or att.signer is None:
+        return bad("ATTESTATION_INVALID", att.reason or "bundle did not verify")
+    if expected not in att.subject_digests():
+        got = ", ".join(sorted(att.subject_digests())) or "none"
+        return bad("ATTESTATION_SUBJECT_MISMATCH", f"Attests sha256 {got}, not {expected}")
+    if att.predicate_type != spec.predicate_type:
+        return bad(
+            "ATTESTATION_PREDICATE_MISMATCH",
+            f"Predicate is {att.predicate_type}, policy wants {spec.predicate_type}",
+        )
+
+    s, want = att.signer, spec.signer
+    if s.issuer != want.issuer:
+        return bad("ATTESTATION_SIGNER_MISMATCH", f"Issuer is {s.issuer}, not {want.issuer}")
+    if want.repository:
+        if s.source_repository_uri is None:
+            return bad(
+                "ATTESTATION_CLAIM_MISSING",
+                "Certificate has no source repository claim",
+                Outcome.UNKNOWN,
+            )
+        if s.source_repository_uri.rstrip("/").lower() != want.repository.rstrip("/").lower():
+            return bad(
+                "ATTESTATION_SIGNER_MISMATCH",
+                f"Signed from repository {s.source_repository_uri}, not {want.repository}",
+            )
+    if want.workflow:
+        if s.build_signer_uri is None:
+            return bad(
+                "ATTESTATION_CLAIM_MISSING", "Certificate has no Build Signer URI", Outcome.UNKNOWN
+            )
+        if not re.fullmatch(want.workflow, s.build_signer_uri):
+            return bad(
+                "ATTESTATION_SIGNER_MISMATCH",
+                f"Signed by {s.build_signer_uri}, which does not match {want.workflow!r}",
+            )
+    if spec.same_commit:
+        if s.source_repository_digest is None:
+            return bad(
+                "ATTESTATION_CLAIM_MISSING",
+                "Certificate has no source commit claim",
+                Outcome.UNKNOWN,
+            )
+        if s.source_repository_digest.lower() != (pipeline.sha or "").lower():
+            return bad(
+                "ATTESTATION_WRONG_COMMIT",
+                f"Signed at commit {s.source_repository_digest}, pipeline is {pipeline.sha}",
+            )
+    if spec.same_run:
+        if att.run_matches is None:
+            return bad(
+                "ATTESTATION_RUN_UNKNOWN",
+                f"Cannot tell whether {s.run_invocation_uri} is pipeline {pipeline.id}",
+                Outcome.UNKNOWN,
+            )
+        if not att.run_matches:
+            return bad(
+                "ATTESTATION_WRONG_RUN",
+                f"Signed in {s.run_invocation_uri}, not in pipeline {pipeline.id}",
+            )
+    return _r(
+        "attestation",
+        Outcome.PASS,
+        "ATTESTATION_VERIFIED",
+        f"{att.predicate_type} for sha256:{expected[:12]}... signed by "
+        f"{s.build_signer_uri or s.san} ({s.issuer})",
+    )
 
 
 def _how_it_was_masked(status: JobStatus, raw: str | None) -> str:

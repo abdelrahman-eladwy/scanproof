@@ -1,0 +1,16 @@
+# Expected: BLOCKED (exit 1), ATTESTATION_SIGNER_MISMATCH: the report was not signed by release.yml.
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: attest-self-wrong-signer}
+project: {provider: github, id: abdelrahman-eladwy/scanproof}
+requirements:
+  - id: SAST-PROVENANCE
+    tool: semgrep
+    job_name: sast
+    artifact_name: semgrep-report
+    report_path: semgrep.json
+    attestation:
+      source: platform
+      signer:
+        issuer: https://token.actions.githubusercontent.com
+        workflow: 'https://github\.com/abdelrahman-eladwy/scanproof/\.github/workflows/release\.yml@refs/tags/v.+'

@@ -22,7 +22,7 @@ and still find critical vulnerabilities. ScanProof checks the *scan*, not the *c
 | GitLab scan execution / pipeline execution policies | Enforce that scans or jobs *run* (Ultimate tier). Their docs don't describe checking that the *report* is valid, covers the code, or is bound to the shipped image digest. ScanProof complements them, and on Free/Premium it is the check you have. ([GitLab docs](https://docs.gitlab.com/user/application_security/policies/)) |
 | GitHub required status checks | Prove a job *concluded success*. A scan step that failed under `continue-on-error`, or a scan job skipped by `if:`, still lets the release through. ScanProof detects both (verified on live runs). |
 | Checking job status in a script | `success` + `allow_failure` + retries + missing jobs + empty reports = many silent false passes. |
-| Sigstore / in-toto attestations | The right long-term answer (ScanProof's v0.2+ direction), but most teams don't have it yet. ScanProof gives assurance today and a path there. |
+| `cosign verify-attestation` / `gh attestation verify` | Check one signature on one artifact. ScanProof checks that the signed attestation is for *this* report or image, from the pinned workflow, at this commit and in this run, alongside the job and report checks, in one policy. Without signatures it still gives operational assurance. |
 
 ## Quick start
 
@@ -118,6 +118,13 @@ Beyond the original plan (merged):
 - [x] Fortify FPR and Sonatype IQ (experimental)
 - [x] Complex pipelines: child / multi-project / parallel / matrix, re-runs ([scenarios](docs/scenarios.md))
 
+Next (v0.2, in progress):
+
+- [x] **Signed evidence:** Sigstore / in-toto / SLSA attestations ([attestations](docs/attestations.md))
+- [ ] More CI platforms: Azure DevOps, Jenkins, Bitbucket Pipelines
+- [ ] More scanners and DAST: Gitleaks, Grype, OSV-Scanner, Snyk, OWASP ZAP, Nuclei, Kubescape
+- [ ] Advanced policy: expiring waivers, scan freshness, SBOM-to-image binding, multi-repo releases
+
 See [`docs/issues/`](docs/issues/) for detailed acceptance criteria.
 
 ## Using it in CI
@@ -134,10 +141,12 @@ binding Trivy to the image digest you ship, and where to run the gate so it is h
 ## Security model
 
 v0.1 provides **operational assurance**: it detects missing, failed, skipped, stale or
-malformed scan evidence. It is **not** tamper-proof: someone who can edit the pipeline can
-forge a report. Run ScanProof from a protected context (protected deploy job or a separate
-audit project) and keep policy files under code-owner protection. Cryptographic evidence
-(attestations, SLSA provenance) is the v0.2+ direction. See [`docs/security.md`](docs/security.md).
+malformed scan evidence. On its own it is **not** tamper-proof: someone who can edit the
+pipeline can forge a report. Add an `attestation:` block and the report (or image) must also carry
+a Sigstore-signed attestation from a pinned workflow, at this commit, in this run
+([docs/attestations.md](docs/attestations.md)). Either way, run ScanProof from a protected context
+(protected deploy job or a separate audit project) and keep policy files under code-owner
+protection. See [`docs/security.md`](docs/security.md).
 
 ## License
 

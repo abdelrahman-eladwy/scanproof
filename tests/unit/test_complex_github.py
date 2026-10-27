@@ -4,12 +4,6 @@ Shapes follow the real API responses in tests/fixtures/github-real/."""
 
 from __future__ import annotations
 
-import hashlib
-import io
-import zipfile
-from dataclasses import dataclass, field
-
-import httpx
 import pytest
 
 from scanproof.connectors.github import MAX_ANNOTATION_PAGES, GitHubConnector
@@ -17,99 +11,9 @@ from scanproof.policy.engine import Decision, Outcome
 from scanproof.policy.models import Policy
 from scanproof.verification import verify_pipeline
 from tests.conftest import FIXTURES
+from tests.fake_github import API, EXIT1, REPO, RUN, FakeGitHub
 
-API = "https://api.github.com"
-REPO = "acme/app"
-RUN = 77
-SHA = "c" * 40
 SEMGREP = (FIXTURES / "semgrep/semgrep-findings.json").read_bytes()
-EXIT1 = {"annotation_level": "failure", "message": "Process completed with exit code 1."}
-
-
-def zip_of(files: dict[str, bytes]) -> bytes:
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w") as zf:
-        for name, data in files.items():
-            zf.writestr(name, data)
-    return buf.getvalue()
-
-
-@dataclass
-class FakeGitHub:
-    router: object
-    run_conclusion: str | None = "success"
-    jobs: list[dict] = field(default_factory=list)
-    annotations: dict[int, list] = field(default_factory=dict)  # job id -> pages of notes / status
-    artifacts: list[dict] = field(default_factory=list)
-    blobs: dict[int, bytes] = field(default_factory=dict)
-
-    def job(self, jid, name, conclusion="success", attempt=1, notes=None, status="completed"):
-        self.jobs.append(
-            {
-                "id": jid,
-                "run_id": RUN,
-                "run_attempt": attempt,
-                "head_sha": SHA,
-                "name": name,
-                "status": status,
-                "conclusion": conclusion,
-                "check_run_url": f"{API}/repos/{REPO}/check-runs/{jid}",
-            }
-        )
-        self.annotations[jid] = notes if notes is not None else [[]]
-
-    def artifact(self, aid, name, files, *, digest=True):
-        data = zip_of(files)
-        self.artifacts.append(
-            {
-                "id": aid,
-                "name": name,
-                "expired": False,
-                "size_in_bytes": len(data),
-                "digest": "sha256:" + hashlib.sha256(data).hexdigest() if digest else None,
-            }
-        )
-        self.blobs[aid] = data
-
-    def install(self):
-        r = self.router
-        r.get(f"{API}/repos/{REPO}/actions/runs/{RUN}").respond(
-            json={
-                "id": RUN,
-                "head_sha": SHA,
-                "head_branch": "main",
-                "event": "push",
-                "status": "completed" if self.run_conclusion else "in_progress",
-                "conclusion": self.run_conclusion,
-            }
-        )
-        r.get(f"{API}/repos/{REPO}/actions/runs/{RUN}/jobs").respond(json={"jobs": self.jobs})
-        r.get(f"{API}/repos/{REPO}/actions/runs/{RUN}/artifacts").respond(
-            json={"artifacts": self.artifacts}
-        )
-        for aid, data in self.blobs.items():
-            blob = f"https://blob.example.net/{aid}.zip"
-            r.get(f"{API}/repos/{REPO}/actions/artifacts/{aid}/zip").respond(
-                302, headers={"Location": blob}
-            )
-            r.get(blob).respond(content=data)
-
-        def annotations(request: httpx.Request) -> httpx.Response:
-            jid = int(request.url.path.split("/")[-2])
-            pages = self.annotations[jid]
-            n = int(request.url.params.get("page", "1"))
-            page = pages[n - 1]
-            if isinstance(page, int):
-                return httpx.Response(page)
-            headers = {}
-            if n < len(pages):
-                url = f"{API}/repos/{REPO}/check-runs/{jid}/annotations?per_page=100&page={n + 1}"
-                headers["Link"] = f'<{url}>; rel="next"'
-            return httpx.Response(200, json=page, headers=headers)
-
-        r.get(url__regex=rf"{API}/repos/{REPO}/check-runs/\d+/annotations").mock(
-            side_effect=annotations
-        )
 
 
 @pytest.fixture

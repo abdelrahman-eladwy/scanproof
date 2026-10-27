@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
 import re
 import time
 import zipfile
@@ -43,6 +44,9 @@ from scanproof.models import Job, JobStatus, Pipeline
 DEFAULT_GITHUB_API = "https://api.github.com"
 _REPO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 _EXIT_CODE = re.compile(r"Process completed with exit code [1-9]\d*")
+_RUN_URI = re.compile(
+    r"^(?P<host>https://[^/]+)/(?P<repo>[^/]+/[^/]+)/actions/runs/(?P<run>\d+)(?:/attempts/\d+)?/?$"
+)
 MAX_ANNOTATION_PAGES = 20  # 2,000 annotations; beyond that masking is reported as unknown
 
 _CONCLUSION = {
@@ -102,6 +106,56 @@ class GitHubConnector(HttpConnector):
         self._run_conclusion: dict[tuple[str, int], str | None] = {}
 
     # ------------------------------------------------------------------ public API
+
+    def fetch_attestations(self, project: str, subject_digest: str) -> bytes:
+        """GET /repos/{repo}/attestations/sha256:{hex}. Needs `attestations: read` for
+        GITHUB_TOKEN. Pages are size-capped like artifacts; only inline bundles are used
+        (bundle_url points at snappy-compressed blobs on another host)."""
+        digest = subject_digest.lower().removeprefix("sha256:")
+        if not re.fullmatch(r"[0-9a-f]{64}", digest):
+            raise ConnectorError(ErrorKind.INVALID_RESPONSE, f"not a sha256 digest: {digest!r}")
+        path = f"/repos/{_repo(project)}/attestations/sha256:{digest}"
+        url: str | None = f"{self.api_url}{path}"
+        params: dict[str, Any] | None = {"per_page": 100}
+        bundles: list[Any] = []
+        for _ in range(MAX_PAGES):
+            if url is None:
+                break
+            try:
+                body, url = self._download_page(url, path, params)
+            except NotFoundError:
+                break  # no attestations for this digest
+            params = None
+            try:
+                items = json.loads(body)["attestations"]
+                if not isinstance(items, list):
+                    raise TypeError("attestations is not a list")
+            except (ValueError, KeyError, TypeError) as exc:
+                raise ConnectorError(
+                    ErrorKind.INVALID_RESPONSE, f"Unexpected attestations page from {path}"
+                ) from exc
+            bundles += [i["bundle"] for i in items if isinstance(i, dict) and i.get("bundle")]
+        else:
+            raise ConnectorError(ErrorKind.LIMIT_EXCEEDED, f"More than {MAX_PAGES} pages")
+        return json.dumps({"attestations": [{"bundle": b} for b in bundles]}).encode()
+
+    def run_matches(
+        self, invocation_uri: str | None, pipeline: Pipeline, job_ids: set[int]
+    ) -> bool | None:
+        """https://<host>/<owner>/<repo>/actions/runs/<run_id>[/attempts/<n>]"""
+        if not invocation_uri:
+            return None
+        m = _RUN_URI.match(invocation_uri)
+        if not m:
+            return None
+        if pipeline.web_url:
+            run = _RUN_URI.match(pipeline.web_url)
+            if run and (run.group("host"), run.group("repo").lower()) != (
+                m.group("host"),
+                m.group("repo").lower(),
+            ):
+                return False
+        return int(m.group("run")) == pipeline.id
 
     def get_pipeline(self, project: str, pipeline_id: int) -> Pipeline:
         run = self._get_json(f"/repos/{_repo(project)}/actions/runs/{int(pipeline_id)}")

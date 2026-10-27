@@ -1,0 +1,36 @@
+# Release gate with signed evidence (GitHub Actions). See docs/attestations.md.
+# Needs: pip install "scanproof[attestations]"; gate job permissions:
+#   contents: read, actions: read, checks: read, attestations: read
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: attested-release}
+project: {provider: github, id: my-org/my-app}
+requirements:
+  - id: SAST
+    tool: semgrep
+    job_name: sast
+    artifact_name: semgrep-report
+    report_path: semgrep.json
+    checks: {scanner_errors_allowed: 0, minimum_scanned_files: 1}
+    attestation:
+      source: platform                 # actions/attest-build-provenance on semgrep.json
+      signer:
+        issuer: https://token.actions.githubusercontent.com
+        repository: https://github.com/my-org/my-app
+        workflow: 'https://github\.com/my-org/my-app/\.github/workflows/ci\.yml@refs/heads/main'
+
+  - id: CONTAINER
+    tool: trivy
+    job_name: container-scan
+    artifact_name: trivy-report
+    report_path: trivy.json
+    checks:
+      image_digest_must_match: ${RELEASE_IMAGE_DIGEST}
+    attestation:
+      source: platform                 # actions/attest, cosign vuln predicate, on the image digest
+      subject: image
+      predicate_type: https://cosign.sigstore.dev/attestation/vuln/v1
+      signer:
+        issuer: https://token.actions.githubusercontent.com
+        repository: https://github.com/my-org/my-app
+        workflow: 'https://github\.com/my-org/my-app/\.github/workflows/ci\.yml@refs/heads/main'

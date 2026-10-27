@@ -16,6 +16,7 @@ Security properties (see docs/security.md):
 
 from __future__ import annotations
 
+import re
 import time
 from collections.abc import Callable, Iterator
 from typing import Any
@@ -24,8 +25,15 @@ from urllib.parse import quote
 import httpx
 
 from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
-from scanproof.connectors.http import DEFAULT_MAX_ARTIFACT_BYTES, MAX_PAGES, HttpConnector
+from scanproof.connectors.http import (
+    DEFAULT_MAX_ARTIFACT_BYTES,
+    MAX_PAGES,
+    HttpConnector,
+    origin_of,
+)
 from scanproof.models import ArtifactFile, Downstream, Job, JobStatus, Pipeline
+
+_JOB_URI = re.compile(r"^(?P<origin>https://[^/]+)/(?P<path>.+)/-/jobs/(?P<job>\d+)/?$")
 
 
 class GitLabConnector(HttpConnector):
@@ -62,6 +70,20 @@ class GitLabConnector(HttpConnector):
         )
 
     # ------------------------------------------------------------------ public API
+
+    def run_matches(
+        self, invocation_uri: str | None, pipeline: Pipeline, job_ids: set[int]
+    ) -> bool | None:
+        """Fulcio's GitLab claims: https://<instance>/<project path>/-/jobs/<job id>. The job must
+        be one of this pipeline's jobs (child pipelines included); job ids are instance-wide."""
+        if not invocation_uri:
+            return None
+        m = _JOB_URI.match(invocation_uri)
+        if not m:
+            return None
+        if origin_of(m.group("origin")) != origin_of(self.base_url):
+            return False
+        return int(m.group("job")) in job_ids
 
     def get_pipeline(self, project: str, pipeline_id: int) -> Pipeline:
         data = self._get_json(f"/projects/{_project_ref(project)}/pipelines/{pipeline_id}")

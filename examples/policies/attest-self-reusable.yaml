@@ -1,0 +1,19 @@
+# The reusable workflow's bundle: its Build Signer URI is reusable-attest.yml.
+# Pinning the reusable workflow: VERIFIED (exit 0). See attest-self-reusable-caller.yaml.
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: attest-self-reusable}
+project: {provider: github, id: abdelrahman-eladwy/scanproof}
+requirements:
+  - id: SAST-REUSABLE
+    tool: semgrep
+    job_name: sast
+    artifact_name: semgrep-report
+    report_path: semgrep.json
+    attestation:
+      source: artifact
+      artifact_name: reusable-bundle
+      bundle_path: semgrep.json.reusable.sigstore.json
+      signer:
+        issuer: https://token.actions.githubusercontent.com
+        workflow: 'https://github\.com/abdelrahman-eladwy/scanproof/\.github/workflows/reusable-attest\.yml@refs/heads/.+'

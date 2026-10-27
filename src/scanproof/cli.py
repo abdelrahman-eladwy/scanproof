@@ -9,6 +9,7 @@ Exit codes (stable contract, see README):
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sys
@@ -18,6 +19,7 @@ from typing import Annotated
 import typer
 
 from scanproof import __version__
+from scanproof.attestation.verify import TrustConfig, verify_bundles
 from scanproof.connectors.base import CIConnector, ConnectorError
 from scanproof.connectors.github import DEFAULT_GITHUB_API, GitHubConnector
 from scanproof.connectors.gitlab import GitLabConnector
@@ -90,6 +92,25 @@ AnonymousOpt = Annotated[
     bool,
     typer.Option(
         "--anonymous", help="No token: read a PUBLIC project's pipelines without authenticating."
+    ),
+]
+
+TrustedRootOpt = Annotated[
+    list[Path] | None,
+    typer.Option(
+        "--sigstore-trusted-root",
+        exists=True,
+        dir_okay=False,
+        help="Sigstore trusted_root.json (or JSON lines, e.g. from `gh attestation trusted-root`)."
+        " Repeatable. Default: Sigstore public-good via TUF. Private GitHub repos sign with "
+        "GitHub's own instance and need this.",
+    ),
+]
+SigstoreOfflineOpt = Annotated[
+    bool,
+    typer.Option(
+        "--sigstore-offline",
+        help="Use the Sigstore trust root shipped with sigstore-python; no TUF refresh.",
     ),
 ]
 
@@ -272,6 +293,54 @@ def evidence(
     raise typer.Exit(EXIT_OK)
 
 
+@app.command()
+def attestation(
+    bundle: Annotated[
+        Path,
+        typer.Option(
+            "--bundle",
+            "-b",
+            exists=True,
+            dir_okay=False,
+            help="Sigstore bundle, JSON lines of bundles, or a GitHub /attestations/ reply.",
+        ),
+    ],
+    subject_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--subject-file",
+            "-f",
+            exists=True,
+            dir_okay=False,
+            help="The signed artifact (needed for message-signature bundles).",
+        ),
+    ] = None,
+    output: OutputOpt = None,
+    trusted_root: TrustedRootOpt = None,
+    sigstore_offline: SigstoreOfflineOpt = False,
+) -> None:
+    """Verify Sigstore bundles and print the claims ScanProof would judge. Describes only:
+    exits 0 even when a bundle is invalid (see `status`). Use `verify` with a policy to gate."""
+    digest = hashlib.sha256(subject_file.read_bytes()).hexdigest() if subject_file else None
+    results = verify_bundles(
+        bundle.read_bytes(),
+        TrustConfig(trusted_root, offline=sigstore_offline),
+        origin=str(bundle),
+        artifact_sha256=digest,
+    )
+    _emit(json.dumps([r.model_dump(mode="json") for r in results], indent=2), output)
+    for r in results:
+        line = f"{r.status.value.upper():<13}"
+        if r.signer:
+            line += f" {r.predicate_type}  signer={r.signer.build_signer_uri or r.signer.san}"
+            if digest and digest not in r.subject_digests():
+                line += "  (does NOT attest --subject-file)"
+        else:
+            line += f" {r.reason}"
+        typer.echo(line, err=True)
+    raise typer.Exit(EXIT_OK)
+
+
 PolicyOpt = Annotated[
     Path, typer.Option("--policy", "-P", exists=True, dir_okay=False, help="Policy YAML file.")
 ]
@@ -312,6 +381,8 @@ def verify(
     anonymous: AnonymousOpt = False,
     output: OutputOpt = None,
     quiet: QuietOpt = False,
+    trusted_root: TrustedRootOpt = None,
+    sigstore_offline: SigstoreOfflineOpt = False,
 ) -> None:
     """Verify a pipeline's security-scan evidence against a policy.
 
@@ -330,7 +401,12 @@ def verify(
     try:
         with _connector(provider, gitlab_url, github_url, token_env, ca_bundle, anonymous) as gl:
             report = verify_pipeline(
-                gl, loaded, instance_url=gl.base_url, project=target_project, pipeline_id=pipeline
+                gl,
+                loaded,
+                instance_url=gl.base_url,
+                project=target_project,
+                pipeline_id=pipeline,
+                trust=TrustConfig(trusted_root, offline=sigstore_offline),
             )
     except ConnectorError as exc:
         if output:
