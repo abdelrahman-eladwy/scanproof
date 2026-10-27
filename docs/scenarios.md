@@ -39,6 +39,8 @@ GitLab rows replay real gitlab.com API responses saved in `tests/fixtures/gitlab
 | Same artifact name uploaded twice | newest artifact used | | test |
 | Gate inside a still-running workflow | INDETERMINATE | `JOB_NOT_FINISHED` | test |
 | Artifact bytes don't match GitHub's digest | BLOCKED | digest mismatch | test + live |
+| Opt-in `reported_scope`: successful Semgrep job with valid JSON but **no scanned paths** | INDETERMINATE (exit 2) | `SCAN_SCOPE_UNKNOWN` | test + live (run 40477852618) |
+| Opt-in `reported_scope`: real Semgrep report with scanned paths, even with findings | VERIFIED (exit 0) | `REPORTED_SCOPE_PRESENT` | test + live (run 40477852618) |
 
 Note on annotations: in live run 40382339477 GitHub kept 10 of the 150 warnings one step
 produced; it caps annotations per step and per job. So on github.com today the failure annotation
