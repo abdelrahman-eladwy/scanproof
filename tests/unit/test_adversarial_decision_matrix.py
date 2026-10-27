@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from scanproof.evidence.collector import find_jobs
+from scanproof.evidence.collector import find_jobs, match_jobs
 from scanproof.models import InspectedJob, Job, JobStatus, Pipeline
 from scanproof.policy.engine import Decision, RequirementInput, evaluate
 from scanproof.policy.models import Policy
@@ -25,13 +25,15 @@ REQ = {
 }
 
 
-def policy(**enforcement):
+def policy(*, instances=None, profile="compatible", **enforcement):
+    req = REQ if instances is None else {**REQ, "instances": instances}
     return Policy.model_validate(
         {
             "apiVersion": "scanproof.dev/v1alpha1",
             "kind": "PipelineAssurancePolicy",
             "project": {"provider": "gitlab", "id": "1"},
-            "requirements": [REQ],
+            "assurance": {"profile": profile},
+            "requirements": [req],
             "enforcement": enforcement,
         }
     )
@@ -124,3 +126,37 @@ def test_exact_name_job_cannot_hide_a_failing_instance(instance):
         )
     }
     assert evaluate(policy(), PIPELINE, inputs, now=NOW).decision is Decision.BLOCKED
+
+
+def matrix_inputs(pol: Policy, jobs: list[InspectedJob]) -> dict[str, RequirementInput]:
+    """What verification.py feeds the engine for a matrix requirement."""
+    req = pol.requirements[0]
+    m = match_jobs(jobs, req.job_name, req.instances)
+    present = [(j.name, RequirementInput(job=j, evidence=report())) for j in m.jobs]
+    absent = [(n, RequirementInput(declared_instance=lab)) for n, lab in m.missing_declared]
+    absent += [(n, RequirementInput()) for n in m.missing]
+    return {
+        "SAST": RequirementInput(
+            instances=present + absent, undeclared_instances=m.undeclared_legs or None
+        )
+    }
+
+
+@pytest.mark.parametrize("style", ["sast: [{}]", "sast ({})"], ids=["gitlab", "github"])
+@pytest.mark.parametrize(
+    ("instances", "profile", "decision"),
+    [
+        (["py", "js"], "compatible", Decision.BLOCKED),
+        (["py", "js"], "production", Decision.BLOCKED),
+        (None, "production", Decision.INDETERMINATE),
+        # The documented compatible gap (#60): without a declaration a removed leg is unseen.
+        (None, "compatible", Decision.VERIFIED),
+    ],
+)
+def test_removed_matrix_leg(style, instances, profile, decision):
+    """#60: `js` was removed from the matrix; only the passing `py` leg ran."""
+    pol = policy(instances=instances, profile=profile)
+    result = evaluate(pol, PIPELINE, matrix_inputs(pol, [named(style.format("py"))]), now=NOW)
+    assert result.decision is decision
+    if decision is Decision.VERIFIED:
+        assert any("declares no `instances`" in w for w in result.warnings)

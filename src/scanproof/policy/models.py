@@ -17,6 +17,8 @@ from urllib.parse import urlsplit
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
+from scanproof.models import normalize_instance_label
+
 _ENV_REF = re.compile(r"^\$\{([A-Za-z_][A-Za-z0-9_]*)\}$")
 _DRIVE = re.compile(r"^[A-Za-z]:")  # 'C:/x' (drive-absolute) and 'C:x' (drive-relative)
 
@@ -233,8 +235,33 @@ class Requirement(_Strict):
         None, description="GitHub: name of the run artifact (zip) that contains report_path"
     )
     applies_to: AppliesTo | None = None
+    instances: list[str] | None = Field(
+        None,
+        description="Matrix legs that must all run, by label: [py, js] for GitLab "
+        "'sast: [py]' or GitHub 'sast (py)' legs (multi-variable legs: 'py, 3.12'). A declared "
+        "label with no leg is REQUIRED_INSTANCE_ABSENT. Undeclared extra legs are allowed and "
+        "still checked. Omit to keep the old behavior, where a removed leg is not detected",
+    )
     checks: Checks = Field(default_factory=Checks)
     attestation: AttestationRequirement | None = None
+
+    @field_validator("instances")
+    @classmethod
+    def _usable_instances(cls, value: list[str] | None) -> list[str] | None:
+        # [] would declare nothing while looking like a declaration.
+        if value is None:
+            return None
+        if not value:
+            raise ValueError("instances must list at least one label (omit it to disable)")
+        labels: list[str] = []
+        for entry in value:
+            label = normalize_instance_label(entry)
+            if not all(part.strip() for part in entry.split(",")):
+                raise ValueError(f"instances entry {entry!r} has an empty value")
+            if label in labels:
+                raise ValueError(f"instances lists {label!r} twice")
+            labels.append(label)
+        return labels
 
     @model_validator(mode="after")
     def _attestation_subject(self) -> Requirement:

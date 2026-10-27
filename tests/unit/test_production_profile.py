@@ -307,7 +307,8 @@ def test_gitlab_same_run_is_a_note_not_a_rejection() -> None:
     }
     policy = Policy.model_validate(with_profile(body, "production"))
     notes = [o for o in assurance_opt_ins(policy) if o.production == "note"]
-    assert [o.code for o in notes] == ["GITLAB_SAME_RUN_IS_PIPELINE_WIDE"]
+    # INSTANCES_UNDECLARED (#60) is the other note: this requirement declares no instances.
+    assert [o.code for o in notes] == ["GITLAB_SAME_RUN_IS_PIPELINE_WIDE", "INSTANCES_UNDECLARED"]
 
 
 # ---------------------------------------------------------------- one list for engine and profile
@@ -411,3 +412,36 @@ def test_validate_production_weak_policy_exits_usage(tmp_path) -> None:
         result = runner.invoke(app, args)
         assert result.exit_code == EXIT_USAGE
         assert "SAME_COMMIT_DISABLED" in result.stderr
+
+
+# ---------------------------------------------------------------- #60 matrix declarations
+
+
+def test_undeclared_instances_is_a_note_listing_requirements() -> None:
+    policy = Policy.model_validate(base())
+    notes = [o for o in assurance_opt_ins(policy) if o.code == "INSTANCES_UNDECLARED"]
+    assert len(notes) == 1 and notes[0].production == "note"
+    assert notes[0].location == f"requirements[{policy.requirements[0].id}].instances"
+
+
+def test_declared_instances_has_no_note() -> None:
+    body = base()
+    body["requirements"][0]["instances"] = ["py", "js"]
+    policy = Policy.model_validate(body)
+    assert "INSTANCES_UNDECLARED" not in {o.code for o in assurance_opt_ins(policy)}
+
+
+def test_production_rejects_waiving_instances_declared() -> None:
+    body = _bounded_waiver(check="instances_declared", code="INSTANCES_UNDECLARED")
+    assert "WAIVER_HIDES_UNDECLARED_INSTANCES" in codes(Policy.model_validate(body))
+    with pytest.raises(ValueError, match="WAIVER_HIDES_UNDECLARED_INSTANCES"):
+        Policy.model_validate(with_profile(body, "production"))
+
+
+def test_explain_states_a_removed_leg_cannot_be_detected(tmp_path) -> None:
+    path = tmp_path / "p.yaml"
+    path.write_text(yaml.safe_dump(base()), encoding="utf-8")
+    result = CliRunner().invoke(app, ["validate", "-P", str(path), "--explain"])
+    assert result.exit_code == 0
+    assert "note INSTANCES_UNDECLARED" in result.stderr
+    assert "a removed leg cannot be detected" in result.stderr

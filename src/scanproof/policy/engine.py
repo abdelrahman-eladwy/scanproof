@@ -69,6 +69,15 @@ class RequirementInput(BaseModel):
         default=None,
         description="Parallel / matrix / downstream instances; every one must pass",
     )
+    declared_instance: str | None = Field(
+        default=None,
+        description="This missing instance is a label the requirement declares in `instances`",
+    )
+    undeclared_instances: list[str] | None = Field(
+        default=None,
+        description="Matrix legs matched while the requirement declares no `instances`: a "
+        "removed leg would go unnoticed (#60)",
+    )
     attestations: list[AttestationEvidence] | None = Field(
         default=None, description="Every bundle found for the attestation subject"
     )
@@ -130,11 +139,13 @@ def evaluate(
             inputs.get(req.id, RequirementInput()),
             now=now,
             minimum_assurance=policy.assurance.minimum_level,
+            profile=policy.assurance.profile,
         )
         for req in policy.requirements
     ]
     _cross_requirement_checks(policy, inputs, results)
     warnings: list[str] = _apply_waivers(policy, results, now.date())
+    warnings += _undeclared_instance_warnings(policy, inputs, results)
     outcomes = [r.outcome for r in results]
 
     if all(o is Outcome.NOT_APPLICABLE for o in outcomes):
@@ -180,6 +191,7 @@ def evaluate_requirement(
     *,
     now: datetime | None = None,
     minimum_assurance: str = "report",
+    profile: str = "compatible",
 ) -> RequirementResult:
     def result(checks: list[CheckResult]) -> RequirementResult:
         ev = data.evidence
@@ -226,9 +238,30 @@ def evaluate_requirement(
                 ]
             )
 
+    declaration = _instance_declaration_checks(req, data, profile)
     if data.instances:
-        return _evaluate_instances(
+        combined = _evaluate_instances(
             req, pipeline, data.instances, now, minimum_assurance=minimum_assurance
+        )
+        checks = [*combined.checks, *declaration]
+        return combined.model_copy(
+            update={"checks": checks, "outcome": combine([c.outcome for c in checks])}
+        )
+
+    if data.job is None and data.declared_instance:
+        return result(
+            [
+                CheckResult(
+                    check="job_present",
+                    outcome=Outcome.FAIL,
+                    code="REQUIRED_INSTANCE_ABSENT",
+                    message=(
+                        f"Declared instance '{data.declared_instance}' of '{req.job_name}' has "
+                        f"no job in pipeline {pipeline.id}. The matrix leg may have been "
+                        "removed or excluded by rules."
+                    ),
+                )
+            ]
         )
 
     if data.job is None and data.absence_unknown:
@@ -263,8 +296,53 @@ def evaluate_requirement(
         *_freshness_checks(req, data.job, now),
         *_evidence_checks(req, data, minimum_assurance=minimum_assurance),
         *_attestation_checks(req, pipeline, data),
+        *declaration,
     ]
     return result(checks)
+
+
+def _instance_declaration_checks(
+    req: Requirement, data: RequirementInput, profile: str
+) -> list[CheckResult]:
+    """Under `assurance.profile: production`, matrix legs need a declared `instances` set.
+
+    Matrix job names carry no total, so without the declaration a removed leg is invisible
+    and the remaining legs would pass (#60). Whether a job runs as a matrix is only known
+    from the pipeline, so this is checked here rather than when the policy is loaded.
+    """
+    if profile != "production" or req.instances or not data.undeclared_instances:
+        return []
+    legs = ", ".join(f"'{n}'" for n in data.undeclared_instances)
+    return [
+        CheckResult(
+            check="instances_declared",
+            outcome=Outcome.UNKNOWN,
+            code="INSTANCES_UNDECLARED",
+            message=(
+                f"'{req.job_name}' ran as matrix legs ({legs}) but the requirement declares no "
+                "`instances`, so a removed leg cannot be detected. assurance.profile: "
+                "production requires the declaration, e.g. instances: [py, js]"
+            ),
+        )
+    ]
+
+
+def _undeclared_instance_warnings(
+    policy: Policy, inputs: dict[str, RequirementInput], results: list[RequirementResult]
+) -> list[str]:
+    """Compatible profile: say, without changing the decision, that a removed leg is unseen."""
+    if policy.assurance.profile == "production":
+        return []  # an INSTANCES_UNDECLARED check already reports it
+    out = []
+    for req, res in zip(policy.requirements, results, strict=True):
+        legs = inputs.get(req.id, RequirementInput()).undeclared_instances
+        if legs and not req.instances and res.outcome is not Outcome.NOT_APPLICABLE:
+            out.append(
+                f"{req.id}: '{req.job_name}' ran as {len(legs)} matrix leg(s) and declares no "
+                "`instances`; a removed leg would not be detected. Declare the required "
+                "labels (instances: [...]) to fail on a missing leg."
+            )
+    return out
 
 
 def _evaluate_instances(
@@ -287,7 +365,7 @@ def _evaluate_instances(
             now=now,
             minimum_assurance=minimum_assurance,
         )
-        if data.job is None:
+        if data.job is None and not data.declared_instance:
             sub.checks = [
                 c.model_copy(update={"message": f"Expected instance '{name}' is missing"})
                 for c in sub.checks

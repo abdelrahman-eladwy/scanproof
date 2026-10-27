@@ -161,3 +161,13 @@ class InspectionReport(BaseModel):
         "absent may be in one of them, so absence is unknown rather than a failure",
     )
     warnings: list[str] = Field(default_factory=list)
+
+
+def normalize_instance_label(label: str) -> str:
+    """Canonical form of a matrix instance label, for comparing a policy with job names.
+
+    GitLab names a `parallel: matrix:` leg 'sast: [py, 3.12]' and GitHub a `strategy.matrix`
+    leg 'sast (py, 3.12)': both join the leg's values with ', '. Whitespace around each value
+    is dropped; whitespace inside a value ('a b') and letter case are kept.
+    """
+    return ", ".join(part.strip() for part in label.split(","))

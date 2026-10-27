@@ -6,7 +6,7 @@ another commit, a replayable signature, an unbounded waiver, ...). `assurance.pr
 production` turns them into load-time errors (exit 3); `scanproof validate --explain` lists
 them for any profile. Both read the same list, so what is reported is what is rejected.
 
-Pure: no I/O, no engine import. See issue #52 and docs/advanced-policy.md.
+Pure: no I/O, no engine import. See issues #52, #60 and docs/advanced-policy.md.
 """
 
 from __future__ import annotations
@@ -85,7 +85,31 @@ def assurance_opt_ins(policy: Policy) -> list[OptIn]:
                 "permanent",
             )
         )
+    undeclared = [req.id for req in policy.requirements if not req.instances]
+    if undeclared:
+        out.append(
+            OptIn(
+                "INSTANCES_UNDECLARED",
+                f"requirements[{', '.join(undeclared)}].instances",
+                "no declared matrix legs: if the job runs as a GitLab parallel: matrix or GitHub "
+                "strategy.matrix, a removed leg cannot be detected from job names (only "
+                "'parallel: N' names carry a total). Declare the labels, e.g. instances: "
+                "[py, js]; under profile production, verify reports undeclared matrix legs as "
+                "UNKNOWN. Copies told apart only by a prefix (downstream 'trigger > job', "
+                "reusable 'caller / job', Jenkins matrix stages) are not covered by instances",
+                production="note",
+            )
+        )
     for i, w in enumerate(policy.waivers):
+        if w.check == "instances_declared":
+            out.append(
+                OptIn(
+                    "WAIVER_HIDES_UNDECLARED_INSTANCES",
+                    f"waivers[{i}] ({w.requirement}/{w.check})",
+                    "waiving instances_declared accepts matrix legs whose removal cannot be "
+                    "detected; declare instances instead",
+                )
+            )
         if w.check == "job_present" or w.check.startswith("job_present ["):
             out.append(
                 OptIn(
