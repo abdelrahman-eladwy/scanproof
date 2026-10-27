@@ -195,11 +195,19 @@ def test_matrix_instance_with_missing_report(connector, gl) -> None:
     assert codes(report, "IMG") == {"report [trivy: [arm64]]": "REPORT_MISSING"}
 
 
-def test_exact_name_wins_over_instances(connector, gl) -> None:
+def test_exact_name_does_not_hide_failing_instances(connector, gl) -> None:
+    """#59: this used to be VERIFIED ('exact name wins'), and the parallel job was assumed to
+    be unrelated. ScanProof can't tell an unrelated 'semgrep-sast 1/2' from a hidden leg, so
+    every job the name covers is evaluated. More cases: test_exact_name_instances.py."""
     gl.job(1, "semgrep-sast", files={"semgrep.json": SEMGREP})
-    gl.job(2, "semgrep-sast 1/2", status="failed")  # unrelated parallel job, not required
+    gl.job(2, "semgrep-sast 1/2", status="failed")
     report = verify(connector, gl, policy(sast()))
-    assert report.decision is Decision.VERIFIED
+    assert report.decision is Decision.BLOCKED
+    assert codes(report) == {
+        "job_success [semgrep-sast 1/2]": "JOB_NOT_SUCCESS",
+        "report [semgrep-sast 1/2]": "REPORT_MISSING",
+        "job_present [semgrep-sast 2/2]": "REQUIRED_JOB_ABSENT",
+    }
 
 
 # ---------------------------------------------------------------- retries

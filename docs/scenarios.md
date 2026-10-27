@@ -18,6 +18,8 @@ GitLab rows replay real gitlab.com API responses saved in `tests/fixtures/gitlab
 | `parallel: 3` with instance `2/3` missing | BLOCKED | `REQUIRED_JOB_ABSENT` on `job_present [semgrep 2/3]` | test |
 | `parallel:` with one instance retried | latest try judged per instance | | test |
 | `parallel: matrix:` instance with no report | BLOCKED | `REPORT_MISSING` | test |
+| Passing `semgrep-sast` next to a failing `semgrep-sast 1/2`, `: [py]` leg or child `trigger > semgrep-sast` | BLOCKED (every same-named job is evaluated) | `job_success [<instance>]` | test (`test_exact_name_instances.py`) |
+| Same, every job passing | VERIFIED, all listed as instances | | test (`test_exact_name_instances.py`) |
 | Gate runs before the scan finishes | INDETERMINATE | `REPORT_NOT_YET_AVAILABLE` | test |
 | Six requirements, six different faults, one pipeline | BLOCKED, each fault reported separately | | test |
 | MR pipeline, every requirement `applies_to: main` | INDETERMINATE (or VERIFIED with `on_nothing_applicable: allow`) | | test |
@@ -38,6 +40,7 @@ GitLab rows replay real gitlab.com API responses saved in `tests/fixtures/gitlab
 | More annotation pages than ScanProof reads (20) | INDETERMINATE | `STEP_MASKING_UNKNOWN` | test |
 | Annotations page 2 returns 403 | INDETERMINATE | | test |
 | Job inside a reusable workflow (`caller / callee-sast`) | VERIFIED via `job_name: callee-sast` | | test + live |
+| Passing `sast` next to a failing `sast (py)` or `security / sast` | BLOCKED | `job_success [<instance>]` | test (`test_exact_name_instances.py`) |
 | Re-run: attempt 1 failed, attempt 2 passed | VERIFIED, attempt 2 judged | | test |
 | Same artifact name uploaded twice | newest artifact used | | test |
 | Gate inside a still-running workflow | INDETERMINATE | `JOB_NOT_FINISHED` | test |

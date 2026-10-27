@@ -5,7 +5,17 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 
 ## [Unreleased]
 
-Nothing yet beyond 0.1.0.
+### Fixed
+- **False VERIFIED:** a job named exactly like a requirement's `job_name` hid that name's
+  matrix, parallel, downstream and reusable-workflow instances, so a passing `sast` could stand
+  in for a failing `sast (py)`, `sast 1/2` or `trigger > sast`
+  ([#59](https://github.com/abdelrahman-eladwy/scanproof/issues/59)). Now every job the name
+  covers is evaluated and all must pass.
+
+### Compatibility
+- A pipeline that has both an exact-name job and same-named instances now needs every one of
+  them to pass, where before only the exact job counted. If such a job really is unrelated,
+  rename it. Pipelines with only an exact job or only instances are unchanged.
 
 ## [0.1.0] - unreleased
 

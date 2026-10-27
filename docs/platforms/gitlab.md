@@ -128,8 +128,13 @@ and `strategy: depend` if deploys should wait for it.
 | multi-project (`trigger: project:`) | `semgrep` in the other project | same, artifacts read from that project |
 
 When several instances match, **every one must pass**; each check is reported per instance
-(`job_success [semgrep 2/3]`). A job with exactly the name in the policy always wins over
-instances. To pin one child job, name it fully: `job_name: "security-child > semgrep"`.
+(`job_success [semgrep 2/3]`). A job named exactly like `job_name` counts as one more
+instance; it does **not** stand in for the others. A passing `semgrep` next to a failing
+`semgrep 1/2` or `trigger > semgrep` is BLOCKED
+([#59](https://github.com/abdelrahman-eladwy/scanproof/issues/59)). If a same-named job really
+is unrelated, rename it. To pin one child job, name it fully:
+`job_name: "security-child > semgrep"`. A qualified name matches only that job, not its
+parallel or matrix instances ([#62](https://github.com/abdelrahman-eladwy/scanproof/issues/62)).
 
 ScanProof follows downstream pipelines up to 3 levels and 50 pipelines. If a downstream pipeline
 can't be read (the token has no access to that project) and the required job isn't found
