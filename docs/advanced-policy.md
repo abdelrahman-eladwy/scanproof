@@ -30,8 +30,11 @@ checks:
 ```
 
 Age is measured from the CI platform's own finish time for the job (not a timestamp inside the
-report, which the job controls). No finish time (e.g. a job still running) is UNKNOWN. Use it
-when an old pipeline's evidence could be replayed for a new deployment.
+report, which the job controls). No finish time (e.g. a job still running) is UNKNOWN.
+A finish time more than five minutes **in the future** is also UNKNOWN: an implausible
+timestamp is not evidence of freshness. Up to five minutes of positive clock skew is
+tolerated and explicitly described in the check result. Use this check when an old
+pipeline's evidence could be replayed for a new deployment.
 
 ## Same target across requirements
 
