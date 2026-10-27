@@ -1,46 +1,46 @@
 [
   {
-    "id": 17494144852,
+    "id": 17494258557,
     "name": "trigger runner-incept tests",
     "stage": "postrelease",
     "status": "success",
     "allow_failure": false,
     "downstream_pipeline": {
-      "finished_at": null,
-      "status": "running",
-      "source": "pipeline",
-      "ref": "main",
-      "created_at": "2026-10-27T07:55:25.782Z",
-      "project_id": 24519238,
-      "iid": 17837,
-      "id": 2993206476,
       "sha": "db1cc9a9f172a9e405ca70235b11e678d8cdcf42",
-      "web_url": "https://gitlab.com/gitlab-org/ci-cd/tests/runner-incept/-/pipelines/2993206476"
+      "web_url": "https://gitlab.com/gitlab-org/ci-cd/tests/runner-incept/-/pipelines/2993220180",
+      "project_id": 24519238,
+      "created_at": "2026-10-27T08:00:39.552Z",
+      "status": "running",
+      "finished_at": null,
+      "id": 2993220180,
+      "source": "pipeline",
+      "iid": 17839,
+      "ref": "main"
     },
     "commit": {
-      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+      "id": "5faff4621b1e38a618f6a8d173a3322c97f3c681"
     }
   },
   {
-    "id": 17494144851,
+    "id": 17494258556,
     "name": "trigger UBI images build",
     "stage": "postrelease",
     "status": "success",
     "allow_failure": false,
     "downstream_pipeline": {
-      "finished_at": null,
-      "status": "success",
-      "source": "pipeline",
-      "ref": "master",
-      "created_at": "2026-10-27T08:54:03.486Z",
-      "project_id": 17019611,
-      "iid": 6858,
-      "id": 2993406836,
       "sha": "07e737e0cbe551b36fb8060d4d2cc03cd0939091",
-      "web_url": "https://gitlab.com/gitlab-org/ci-cd/gitlab-runner-ubi-images/-/pipelines/2993406836"
+      "web_url": "https://gitlab.com/gitlab-org/ci-cd/gitlab-runner-ubi-images/-/pipelines/2993429025",
+      "project_id": 17019611,
+      "created_at": "2026-10-27T09:00:31.397Z",
+      "status": "success",
+      "finished_at": null,
+      "id": 2993429025,
+      "source": "pipeline",
+      "iid": 6860,
+      "ref": "master"
     },
     "commit": {
-      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+      "id": "5faff4621b1e38a618f6a8d173a3322c97f3c681"
     }
   }
 ]

@@ -1,7 +1,7 @@
 {
   "schema_version": "scanproof.dev/inspection/v1alpha1",
   "scanproof_version": "0.1.0",
-  "generated_at": "2026-10-27T09:01:25.784071Z",
+  "generated_at": "2026-10-27T09:24:09.122759Z",
   "provider": "gitlab",
   "instance_url": "https://gitlab.com",
   "project": "gitlab-org/gitlab-runner",

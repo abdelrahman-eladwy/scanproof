@@ -16,6 +16,13 @@ on:
 permissions:
   contents: read
 
+# Fixture branches publish generated files. Two simultaneous runs on the same
+# branch previously produced add/add conflicts during "git pull --rebase".
+# Only the latest contract run for a ref should update that branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   contract:
     runs-on: ubuntu-latest
