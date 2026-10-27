@@ -59,7 +59,7 @@ def verify_pipeline(
         connector, instance_url=instance_url, project=project, pipeline_id=pipeline_id
     )
     inputs: dict[str, RequirementInput] = {}
-    cache: dict[tuple[int, str, str, str | None], ScanEvidence] = {}
+    cache: dict[tuple[str, int, int, str, str, str | None], ScanEvidence] = {}
     bundle_cache: dict[tuple[str, ...], list[AttestationEvidence]] = {}
     job_ids = {i for j in inspection.jobs for i in j.attempt_ids}
     trust = trust or TrustConfig()
@@ -75,20 +75,28 @@ def verify_pipeline(
             digest = ev.report_sha256 if ev is not None and ev.present else None
         if not digest:
             return item  # the engine reports there is nothing to bind to
+        source_project = job.latest.project or project
         if spec.source == "platform":
-            key: tuple[str, ...] = ("platform", digest)
+            key: tuple[str, ...] = ("platform", source_project, digest)
             origin = f"{connector.provider} attestations for sha256:{digest[:12]}"
         else:
             bundle_artifact = spec.artifact_name or req.artifact_name
-            key = ("artifact", str(job.latest.id), spec.bundle_path or "", bundle_artifact or "")
+            key = (
+                "artifact",
+                source_project,
+                str(job.latest.pipeline_id or inspection.pipeline.id),
+                str(job.latest.id),
+                spec.bundle_path or "",
+                bundle_artifact or "",
+            )
             origin = spec.bundle_path
         try:
             if key not in bundle_cache:
                 if spec.source == "platform":
-                    raw = connector.fetch_attestations(project, f"sha256:{digest}")
+                    raw = connector.fetch_attestations(source_project, f"sha256:{digest}")
                 else:
                     raw = connector.fetch_report(
-                        project, job.latest, spec.bundle_path or "", bundle_artifact
+                        source_project, job.latest, spec.bundle_path or "", bundle_artifact
                     )
                 bundle_cache[key] = verify_bundles(
                     raw, trust, origin=origin, artifact_sha256=digest
@@ -112,7 +120,14 @@ def verify_pipeline(
     unreadable = inspection.unreadable_downstream
 
     def collect(req, job) -> RequirementInput:
-        key = (job.latest.id, req.report_path, req.tool.lower(), req.artifact_name)
+        key = (
+            job.latest.project or project,
+            job.latest.pipeline_id or inspection.pipeline.id,
+            job.latest.id,
+            req.report_path,
+            req.tool.lower(),
+            req.artifact_name,
+        )
         try:
             if key not in cache:
                 cache[key] = collect_evidence(

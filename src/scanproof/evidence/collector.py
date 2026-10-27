@@ -31,11 +31,19 @@ def collect_evidence(
     adapter: ScannerAdapter,
     artifact_name: str | None = None,
 ) -> ScanEvidence:
+    # A downstream job's artifacts belong to its own project/pipeline, not to the
+    # parent pipeline passed to verify_pipeline(). The job metadata was populated
+    # while walking the downstream graph in inspect_pipeline().
+    source_project = job.latest.project or project
+    source_pipeline_id = (
+        job.latest.pipeline_id if job.latest.pipeline_id is not None else pipeline.id
+    )
+    source_sha = job.latest.commit_sha if job.latest.project else pipeline.sha
     source = EvidenceSource(
         provider=connector.provider,
-        project=project,
-        pipeline_id=pipeline.id,
-        pipeline_sha=pipeline.sha,
+        project=source_project,
+        pipeline_id=source_pipeline_id,
+        pipeline_sha=source_sha,
         job_id=job.latest.id,
         job_name=job.name,
         job_commit_sha=job.latest.commit_sha,
@@ -43,7 +51,7 @@ def collect_evidence(
     )
 
     try:
-        raw = connector.fetch_report(project, job.latest, report_path, artifact_name)
+        raw = connector.fetch_report(source_project, job.latest, report_path, artifact_name)
     except NotFoundError as exc:
         evidence = adapter.parse(None)
         evidence.parse_error = exc.message
