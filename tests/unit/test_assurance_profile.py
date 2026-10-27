@@ -37,12 +37,17 @@ def policy(*, strict: bool = True, tool: str = "semgrep", **extra) -> Policy:
 
 def result(ev, *, strict: bool = True, tool: str = "semgrep"):
     job = Job(
-        id=99, name="scanner", status=JobStatus.SUCCESS,
+        id=99,
+        name="scanner",
+        status=JobStatus.SUCCESS,
         commit_sha=SHA,
     )
     inspected = InspectedJob(
-        name="scanner", stage="security", latest=job,
-        attempt_ids=[99], commit_matches_pipeline=True,
+        name="scanner",
+        stage="security",
+        latest=job,
+        attempt_ids=[99],
+        commit_matches_pipeline=True,
     )
     return evaluate(
         policy(strict=strict, tool=tool),
@@ -65,7 +70,8 @@ def test_semgrep_scope_free_json_is_not_verified() -> None:
     out = result(ev)
     assert out.decision is Decision.INDETERMINATE
     assert (scope_check(out).outcome, scope_check(out).code) == (
-        Outcome.UNKNOWN, "SCAN_SCOPE_UNKNOWN",
+        Outcome.UNKNOWN,
+        "SCAN_SCOPE_UNKNOWN",
     )
 
 
@@ -77,9 +83,7 @@ def test_semgrep_empty_scanned_paths_are_not_verified() -> None:
 
 
 def test_semgrep_scanned_file_with_zero_findings_passes() -> None:
-    ev = SemgrepAdapter().parse(
-        b'{"results":[],"errors":[],"paths":{"scanned":["src/main.py"]}}'
-    )
+    ev = SemgrepAdapter().parse(b'{"results":[],"errors":[],"paths":{"scanned":["src/main.py"]}}')
     out = result(ev)
     assert out.decision is Decision.VERIFIED
     assert scope_check(out).code == "REPORTED_SCOPE_PRESENT"
@@ -90,23 +94,20 @@ def test_trivy_missing_results_section_is_not_verified() -> None:
     out = result(ev, tool="trivy")
     assert out.decision is Decision.BLOCKED
     assert (scope_check(out).outcome, scope_check(out).code) == (
-        Outcome.FAIL, "SCAN_RESULTS_MISSING",
+        Outcome.FAIL,
+        "SCAN_RESULTS_MISSING",
     )
 
 
 def test_trivy_empty_results_are_not_verified() -> None:
-    ev = TrivyAdapter().parse(
-        b'{"SchemaVersion":2,"ArtifactName":"example","Results":[]}'
-    )
+    ev = TrivyAdapter().parse(b'{"SchemaVersion":2,"ArtifactName":"example","Results":[]}')
     out = result(ev, tool="trivy")
     assert out.decision is Decision.BLOCKED
     assert scope_check(out).code == "SCAN_SCOPE_EMPTY"
 
 
 def test_trivy_result_without_a_target_is_not_verified() -> None:
-    ev = TrivyAdapter().parse(
-        b'{"SchemaVersion":2,"ArtifactName":"example","Results":[{}]}'
-    )
+    ev = TrivyAdapter().parse(b'{"SchemaVersion":2,"ArtifactName":"example","Results":[{}]}')
     out = result(ev, tool="trivy")
     assert out.decision is Decision.BLOCKED
     assert scope_check(out).code == "SCAN_SCOPE_INVALID"
@@ -126,10 +127,17 @@ def test_trivy_reported_target_with_zero_findings_passes() -> None:
     [
         {"enforcement": {"on_unknown": "warn"}},
         {"enforcement": {"on_nothing_applicable": "allow"}},
-        {"requirements": [
-            {"id":"SCAN","tool":"semgrep","job_name":"scanner","report_path":"report.json",
-             "checks":{"report_required":False}}
-        ]},
+        {
+            "requirements": [
+                {
+                    "id": "SCAN",
+                    "tool": "semgrep",
+                    "job_name": "scanner",
+                    "report_path": "report.json",
+                    "checks": {"report_required": False},
+                }
+            ]
+        },
     ],
 )
 def test_strict_assurance_refuses_fail_open_configuration(override) -> None:
@@ -143,23 +151,30 @@ def test_invalid_profile_name_rejected() -> None:
 
 
 def test_parallel_instances_respect_required_scope() -> None:
-    good = SemgrepAdapter().parse(
-        b'{"results":[],"errors":[],"paths":{"scanned":["src/main.py"]}}'
-    )
+    good = SemgrepAdapter().parse(b'{"results":[],"errors":[],"paths":{"scanned":["src/main.py"]}}')
     unknown = SemgrepAdapter().parse(b'{"results":[],"errors":[]}')
     job = Job(id=99, name="scanner", status=JobStatus.SUCCESS, commit_sha=SHA)
     inspected = InspectedJob(
-        name="scanner", stage="security", latest=job,
-        attempt_ids=[99], commit_matches_pipeline=True,
+        name="scanner",
+        stage="security",
+        latest=job,
+        attempt_ids=[99],
+        commit_matches_pipeline=True,
     )
     out = evaluate(
         policy(),
         PIPELINE,
-        {"SCAN": RequirementInput(instances=[
-            ("part1", RequirementInput(job=inspected, evidence=good)),
-            ("part2", RequirementInput(job=inspected, evidence=unknown)),
-        ])},
+        {
+            "SCAN": RequirementInput(
+                instances=[
+                    ("part1", RequirementInput(job=inspected, evidence=good)),
+                    ("part2", RequirementInput(job=inspected, evidence=unknown)),
+                ]
+            )
+        },
     )
     assert out.decision is Decision.INDETERMINATE
-    assert any(c.check == "reported_scope [part2]" and c.outcome is Outcome.UNKNOWN
-               for c in out.requirements[0].checks)
+    assert any(
+        c.check == "reported_scope [part2]" and c.outcome is Outcome.UNKNOWN
+        for c in out.requirements[0].checks
+    )
