@@ -123,7 +123,7 @@ and `strategy: depend` if deploys should wait for it.
 | Pipeline shape | Job names GitLab reports | `job_name: semgrep` matches |
 |---|---|---|
 | `parallel: 3` | `semgrep 1/3`, `semgrep 2/3`, `semgrep 3/3` | all three; a missing index (e.g. no `2/3`) is a FAIL |
-| `parallel: matrix:` | `semgrep: [python]`, `semgrep: [go]` | every matrix instance |
+| `parallel: matrix:` | `semgrep: [python]`, `semgrep: [go]` | every matrix instance; a removed one is a FAIL only with `instances: [python, go]` |
 | child pipeline (`trigger: include:`) | `semgrep` in the child | `<trigger job> > semgrep` |
 | multi-project (`trigger: project:`) | `semgrep` in the other project | same, artifacts read from that project |
 
@@ -135,6 +135,14 @@ instance; it does **not** stand in for the others. A passing `semgrep` next to a
 is unrelated, rename it. To pin one child job, name it fully:
 `job_name: "security-child > semgrep"`. A qualified name matches only that job, not its
 parallel or matrix instances ([#62](https://github.com/abdelrahman-eladwy/scanproof/issues/62)).
+
+Matrix names carry no total, so a leg dropped from `parallel: matrix:` is invisible unless the
+requirement declares its legs: `instances: [python, go]` makes a missing `semgrep: [go]` a FAIL
+(`REQUIRED_INSTANCE_ABSENT`). Multi-variable legs are labelled as GitLab names them,
+`semgrep: [python, 3.12]` → `"python, 3.12"`. `assurance.profile: production` requires the
+declaration whenever matrix legs are matched
+([#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60),
+[details](../advanced-policy.md#matrix-legs-declare-the-instances-that-must-run)).
 
 ScanProof follows downstream pipelines up to 3 levels and 50 pipelines. If a downstream pipeline
 can't be read (the token has no access to that project) and the required job isn't found

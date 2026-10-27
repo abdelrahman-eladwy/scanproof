@@ -14,6 +14,10 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 - `scanproof validate --explain`: shows the policy's minimum assurance level and lists every
   assurance-weakening setting, which ones `production` would reject, and platform limitations
   that no setting removes.
+- `instances` on a requirement ([#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60)):
+  the matrix legs that must run, by label (`instances: [py, js]` for GitLab `sast: [py]` or
+  GitHub `sast (py)` legs). A declared leg with no job is a FAIL, `REQUIRED_INSTANCE_ABSENT`.
+  See [docs/advanced-policy.md](docs/advanced-policy.md#matrix-legs-declare-the-instances-that-must-run).
 
 ### Fixed
 - **False VERIFIED:** a job named exactly like a requirement's `job_name` hid that name's
@@ -21,10 +25,20 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   in for a failing `sast (py)`, `sast 1/2` or `trigger > sast`
   ([#59](https://github.com/abdelrahman-eladwy/scanproof/issues/59)). Now every job the name
   covers is evaluated and all must pass.
+- **False VERIFIED:** a leg removed from a GitLab `parallel: matrix:` or GitHub
+  `strategy.matrix` went unnoticed, because matrix names carry no total
+  ([#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60)). Declare `instances` to
+  detect it; `assurance.profile: production` requires the declaration when matrix legs are
+  matched (`INSTANCES_UNDECLARED`, UNKNOWN). Copies told apart only by a prefix (downstream,
+  reusable-workflow callers, Jenkins matrix stages) are still not covered.
 
 ### Compatibility
 - The default profile, `compatible`, accepts every policy that loaded before. No evaluation
-  changes for any profile.
+  changes under `compatible`. Under `production`, a requirement whose job runs as matrix legs
+  and declares no `instances` is now UNKNOWN (exit 2) instead of evaluating only the legs that
+  ran; under `compatible` it gets a warning.
+- Requirements without `instances` behave as before. `find_jobs` keeps its signature;
+  `match_jobs` is the richer form.
 - A pipeline that has both an exact-name job and same-named instances now needs every one of
   them to pass, where before only the exact job counted. If such a job really is unrelated,
   rename it. Pipelines with only an exact job or only instances are unchanged.

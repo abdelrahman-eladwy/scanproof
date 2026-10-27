@@ -8,6 +8,7 @@ ConnectorError so callers can treat it as UNKNOWN rather than as a missing repor
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass, field
 
 from scanproof.connectors.base import (
     AuthError,
@@ -17,7 +18,7 @@ from scanproof.connectors.base import (
     NotFoundError,
 )
 from scanproof.evidence.models import EvidenceSource, ScanEvidence
-from scanproof.models import InspectedJob, Pipeline
+from scanproof.models import InspectedJob, Pipeline, normalize_instance_label
 from scanproof.scanners.base import ScannerAdapter
 
 
@@ -89,24 +90,70 @@ def _tail(job_name: str) -> tuple[str, str]:
     return job_name[:cut], job_name[cut:]
 
 
+def _matrix_label(tail: str, name: str) -> tuple[str, str] | None:
+    """(style, label) if `tail` is a matrix leg of `name`: GitLab 'name: [label]' or GitHub
+    'name (label)'. Unlike 'name i/N', these names carry no total."""
+    if tail.startswith(f"{name}: [") and tail.endswith("]"):
+        return "gitlab", tail[len(name) + 3 : -1]
+    if tail.startswith(f"{name} (") and tail.endswith(")"):
+        return "github", tail[len(name) + 2 : -1]
+    return None
+
+
 def _is_instance(tail: str, name: str) -> bool:
     if tail == name:
         return True
     m = _PARALLEL.match(tail)
     if m and m.group("base") == name:
         return True
-    return (tail.startswith(f"{name}: [") and tail.endswith("]")) or (
-        tail.startswith(f"{name} (") and tail.endswith(")")
-    )
+    return _matrix_label(tail, name) is not None
+
+
+def _leg_name(prefix: str, name: str, label: str, style: str | None) -> str:
+    if style == "gitlab":
+        return f"{prefix}{name}: [{label}]"
+    if style == "github":
+        return f"{prefix}{name} ({label})"
+    return f"{prefix}{name} [{label}]"  # no leg of the matrix ran at all: style unknown
+
+
+@dataclass
+class JobMatch:
+    """What a requirement's job_name covers in an inspected pipeline (see match_jobs)."""
+
+    jobs: list[InspectedJob] = field(default_factory=list)
+    # 'name i/N' indices absent although other legs report the total N.
+    missing: list[str] = field(default_factory=list)
+    # (job name the leg would have, label): declared `instances` with no matching leg.
+    missing_declared: list[tuple[str, str]] = field(default_factory=list)
+    # Matrix legs matched while the requirement declares no `instances`: their set has no
+    # known size, so a removed leg cannot be detected (#60).
+    undeclared_legs: list[str] = field(default_factory=list)
 
 
 def find_jobs(jobs: list[InspectedJob], name: str) -> tuple[list[InspectedJob], list[str]]:
+    """All jobs a requirement's job_name covers, and missing 'name i/N' instances.
+
+    Kept for callers that only need the jobs; see match_jobs.
+    """
+    match = match_jobs(jobs, name)
+    return match.jobs, match.missing
+
+
+def match_jobs(jobs: list[InspectedJob], name: str, instances: list[str] | None = None) -> JobMatch:
     """All jobs a requirement's job_name covers, and expected instances that are missing.
 
     Every job the name covers counts and every one must pass: the exact name itself, parallel
     ('sast 2/3'), GitLab matrix ('sast: [py]'), GitHub matrix ('sast (py)'), downstream
     ('trigger > sast') and GitHub reusable workflow ('caller / sast') jobs. GitLab parallel
     names carry the total, so missing indices are reported.
+
+    Matrix names carry no total, so a removed leg is invisible from the names alone (#60).
+    `instances` (the requirement's declared labels, normalized) closes that gap: within every
+    prefix ('' or 'trigger > ') that ran matrix legs, each declared label must have a leg; if
+    no matrix leg ran at all, every declared label is missing. Extra, undeclared legs are
+    allowed (they are still evaluated). Without a declaration, matched matrix legs are
+    reported in `undeclared_legs`.
 
     An exact match does not hide instances (#59). ScanProof cannot tell a deliberate,
     unrelated 'sast 1/2' from a leg of 'sast', and letting a passing 'sast' stand in for a
@@ -115,11 +162,18 @@ def find_jobs(jobs: list[InspectedJob], name: str) -> tuple[list[InspectedJob], 
     """
     matches = [j for j in jobs if j.name == name or _is_instance(_tail(j.name)[1], name)]
     present: dict[tuple[str, int], set[int]] = {}
+    legs: dict[str, tuple[set[str], str]] = {}  # prefix -> (labels present, naming style)
+    undeclared: list[str] = []
     for j in matches:
         prefix, tail = _tail(j.name)
         m = _PARALLEL.match(tail)
         if m and m.group("base") == name:
             present.setdefault((prefix, int(m.group("total"))), set()).add(int(m.group("index")))
+        leg = _matrix_label(tail, name)
+        if leg is not None:
+            style, label = leg
+            legs.setdefault(prefix, (set(), style))[0].add(normalize_instance_label(label))
+            undeclared.append(j.name)
     missing = [
         f"{prefix}{name} {i}/{total}"
         for (prefix, total), indices in sorted(present.items())
@@ -127,4 +181,15 @@ def find_jobs(jobs: list[InspectedJob], name: str) -> tuple[list[InspectedJob], 
         for i in range(1, total + 1)
         if i not in indices
     ]
-    return matches, missing
+    if not instances:
+        return JobMatch(jobs=matches, missing=missing, undeclared_legs=undeclared)
+    if matches and not legs:
+        # The job runs, but not as a matrix: every declared leg is gone.
+        legs = {prefix: (set(), "") for prefix in sorted({_tail(j.name)[0] for j in matches})}
+    missing_declared = [
+        (_leg_name(prefix, name, label, style or None), label)
+        for prefix, (labels, style) in sorted(legs.items())
+        for label in instances
+        if label not in labels
+    ]
+    return JobMatch(jobs=matches, missing=missing, missing_declared=missing_declared)

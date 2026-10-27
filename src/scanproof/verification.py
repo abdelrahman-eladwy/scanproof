@@ -16,7 +16,7 @@ from scanproof import __version__
 from scanproof.attestation.models import AttestationEvidence
 from scanproof.attestation.verify import TrustConfig, verify_bundles
 from scanproof.connectors.base import CIConnector, ConnectorError, NotFoundError
-from scanproof.evidence.collector import collect_evidence, find_jobs
+from scanproof.evidence.collector import collect_evidence, match_jobs
 from scanproof.evidence.models import ScanEvidence
 from scanproof.inspection import inspect_pipeline
 from scanproof.models import InspectedJob, Pipeline
@@ -150,7 +150,9 @@ def verify_pipeline(
             return attest(req, job, failed)  # an image attestation doesn't need the report
 
     for req in policy.requirements:
-        matches, missing = find_jobs(inspection.jobs, req.job_name)
+        match = match_jobs(inspection.jobs, req.job_name, req.instances)
+        matches, missing = match.jobs, match.missing
+        undeclared = match.undeclared_legs or None
         if not matches:
             inputs[req.id] = RequirementInput(
                 absence_unknown=(
@@ -159,12 +161,17 @@ def verify_pipeline(
                     else None
                 )
             )
-        elif len(matches) == 1 and not missing:
-            inputs[req.id] = collect(req, matches[0])
+        elif len(matches) == 1 and not missing and not match.missing_declared:
+            single = collect(req, matches[0])
+            inputs[req.id] = single.model_copy(update={"undeclared_instances": undeclared})
         else:
             instances = [(job.name, collect(req, job)) for job in matches]
             instances += [(name, RequirementInput()) for name in missing]
-            inputs[req.id] = RequirementInput(instances=instances)
+            instances += [
+                (name, RequirementInput(declared_instance=label))
+                for name, label in match.missing_declared
+            ]
+            inputs[req.id] = RequirementInput(instances=instances, undeclared_instances=undeclared)
 
     generated_at = datetime.now(UTC)
     evaluation = evaluate(policy, inspection.pipeline, inputs, now=generated_at)
