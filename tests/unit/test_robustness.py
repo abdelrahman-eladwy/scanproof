@@ -32,7 +32,7 @@ SAMPLES = {
     "zap": ["zap/zap-baseline.json"],
     "nuclei": ["nuclei/nuclei-export.json"],
 }
-WEIRD = [None, 0, -1, 1.5, "", "x", [], {}, [None], {"a": None}, True, "9" * 30, 10**30]
+WEIRD = [None, 0, -1, 1.5, "", "x", [], {}, [None], {"a": None}, True, "9" * 30, 10**30, chr(0xD800)]
 
 
 def _paths(obj, prefix=()):
