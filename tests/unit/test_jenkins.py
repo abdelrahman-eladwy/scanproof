@@ -17,7 +17,7 @@ from tests.conftest import FIXTURES
 
 BASE = "https://jenkins.example.com"
 J = FIXTURES / "jenkins-real"
-POLICIES = FIXTURES.parent.parent / "examples/policies/jenkins-self"
+POLICIES = FIXTURES.parent / "contract/policies/jenkins"
 REPORT = (FIXTURES / "semgrep/semgrep-findings.json").read_bytes()
 
 

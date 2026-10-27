@@ -1,4 +1,4 @@
-# Release on a version tag (vX.Y.Z). See docs/releasing.md for the one-time setup.
+# Release on a version tag (vX.Y.Z). See docs/development/releasing.md for the one-time setup.
 #
 # No long-lived secrets: PyPI uses trusted publishing (OIDC), GHCR uses GITHUB_TOKEN.
 # Every artifact gets a signed SLSA build-provenance attestation, which users can check with

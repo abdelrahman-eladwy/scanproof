@@ -2,7 +2,7 @@
 #
 #   azure      anonymous reads of public Azure DevOps projects
 #   bitbucket  anonymous reads of public Bitbucket repositories with Pipelines
-#   jenkins    a throwaway Jenkins (ci/jenkins/) running one pipeline per masking pattern
+#   jenkins    a throwaway Jenkins (tests/contract/jenkins/) running one pipeline per masking pattern
 # On fixtures/platforms/** branches, `publish` commits the sanitized responses back.
 name: platforms-contract
 
@@ -61,7 +61,7 @@ jobs:
           pw=$(openssl rand -hex 24)
           echo "::add-mask::$pw"
           echo "SCANPROOF_JENKINS_PASSWORD=$pw" >> "$GITHUB_ENV"
-          docker build -q -t contract-jenkins ci/jenkins
+          docker build -q -t contract-jenkins tests/contract/jenkins
           docker run -d --name jenkins -p 8080:8080 -e SCANPROOF_JENKINS_PASSWORD="$pw" \
             -v "$PWD:/fixtures:ro" contract-jenkins
       - run: python scripts/collect_jenkins.py out/jenkins
@@ -77,7 +77,7 @@ jobs:
           pip install -q .
           export JENKINS_TOKEN="$SCANPROOF_JENKINS_PASSWORD"
           failed=0
-          for policy in examples/policies/jenkins-self/*.yaml; do
+          for policy in tests/contract/policies/jenkins/*.yaml; do
             expect=$(sed -n 's/^# Expected exit: //p' "$policy")
             set +e
             scanproof verify --provider jenkins -P "$policy" --pipeline 1 -o /dev/null 2> console.txt

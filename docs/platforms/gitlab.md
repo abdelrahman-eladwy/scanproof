@@ -18,14 +18,14 @@ Store it as a **masked, protected** CI/CD variable, e.g. `SCANPROOF_GITLAB_TOKEN
 
 ## 2. Write a policy
 
-Start from [`examples/policies/scanproof.yaml`](../examples/policies/scanproof.yaml) and check it
+Start from [`examples/policies/scanproof.yaml`](../../examples/policies/scanproof.yaml) and check it
 locally with `scanproof validate -P policy.yaml`. Keep the policy file under CODEOWNERS review: a
 policy the application team can edit is a policy they can weaken.
 
 ### Using GitLab's own SAST / Container Scanning templates?
 
 Use the `gitlab-sast` and `gitlab-container-scanning` tools, which read GitLab's security report
-format. Start from [`examples/policies/gitlab-templates.yaml`](../examples/policies/gitlab-templates.yaml).
+format. Start from [`examples/policies/gitlab-templates.yaml`](../../examples/policies/gitlab-templates.yaml).
 That format has no list of scanned files, so scope checks are not available, and the container
 report only carries a digest if you scan by digest:
 
