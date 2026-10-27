@@ -1,0 +1,58 @@
+# ScanProof verifying its own signed run (.github/workflows/attestation-contract.yml).
+# Expected: VERIFIED (exit 0).
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: attest-self-ok}
+project: {provider: github, id: abdelrahman-eladwy/scanproof}
+requirements:
+  - id: SAST-PROVENANCE          # SLSA provenance bundle uploaded next to the report
+    tool: semgrep
+    job_name: sast
+    artifact_name: semgrep-report
+    report_path: semgrep.json
+    attestation:
+      source: artifact
+      bundle_path: semgrep.json.provenance.sigstore.json
+      signer:
+        issuer: https://token.actions.githubusercontent.com
+        repository: https://github.com/abdelrahman-eladwy/scanproof
+        workflow: 'https://github\.com/abdelrahman-eladwy/scanproof/\.github/workflows/attestation-contract\.yml@refs/heads/.+'
+  - id: SAST-ATTESTATIONS-API    # same report, looked up in GitHub's attestation store
+    tool: semgrep
+    job_name: sast
+    artifact_name: semgrep-report
+    report_path: semgrep.json
+    attestation:
+      source: platform
+      signer:
+        issuer: https://token.actions.githubusercontent.com
+        repository: https://github.com/abdelrahman-eladwy/scanproof
+        workflow: 'https://github\.com/abdelrahman-eladwy/scanproof/\.github/workflows/attestation-contract\.yml@refs/heads/.+'
+  - id: SAST-SIGNED-BLOB         # `sigstore sign` message signature over the report bytes
+    tool: semgrep
+    job_name: sast
+    artifact_name: semgrep-report
+    report_path: semgrep.json
+    attestation:
+      source: artifact
+      artifact_name: signed-blob
+      bundle_path: semgrep.json.sigstore.json
+      predicate_type: https://scanproof.dev/sigstore/message-signature
+      signer:
+        issuer: https://token.actions.githubusercontent.com
+        workflow: 'https://github\.com/abdelrahman-eladwy/scanproof/\.github/workflows/attestation-contract\.yml@.+'
+  - id: IMAGE-VULN               # cosign vuln attestation on the scanned image digest
+    tool: trivy
+    job_name: container
+    artifact_name: trivy-report
+    report_path: trivy.json
+    checks:
+      image_digest_must_match: ${RELEASE_IMAGE_DIGEST}
+    attestation:
+      source: platform
+      subject: image
+      predicate_type: https://cosign.sigstore.dev/attestation/vuln/v1
+      signer:
+        issuer: https://token.actions.githubusercontent.com
+        repository: https://github.com/abdelrahman-eladwy/scanproof
+        workflow: 'https://github\.com/abdelrahman-eladwy/scanproof/\.github/workflows/attestation-contract\.yml@refs/heads/.+'
