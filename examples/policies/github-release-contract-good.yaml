@@ -1,0 +1,16 @@
+# LIVE fixture: successful scan evidence authorizes a dry-run deployment.
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+metadata: {name: github-release-contract-good}
+project: {provider: github, id: abdelrahman-eladwy/scanproof}
+assurance: {minimum_level: reported_scope}
+requirements:
+  - id: SAST
+    tool: semgrep
+    job_name: scan-good
+    artifact_name: contract-semgrep-good
+    report_path: semgrep.json
+    checks:
+      scanner_errors_allowed: 0
+      minimum_scanned_files: 1
+enforcement: {on_unknown: block, on_nothing_applicable: block}
