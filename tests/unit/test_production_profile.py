@@ -147,6 +147,19 @@ OPT_INS = [
         {"WAIVER_REMOVES_REQUIREMENT"},
     ),
     (
+        "max_waiver_days_over_ceiling",
+        {**base(), "enforcement": {"max_waiver_days": 91}},
+        {"WAIVER_LIMIT_TOO_LONG"},
+    ),
+    (
+        "bounded_waiver_with_huge_limit",
+        {
+            **_waiver(created="2026-01-01", expires="2026-12-31"),
+            "enforcement": {"max_waiver_days": 3650},
+        },
+        {"WAIVER_LIMIT_TOO_LONG"},
+    ),
+    (
         "waiver_on_job_present_instance",
         _bounded_waiver(check="job_present [py]"),
         {"WAIVER_REMOVES_REQUIREMENT"},
@@ -222,8 +235,17 @@ def test_production_rejects_opt_in(case, body, expected) -> None:
         _bounded_waiver(),
         _checks(max_age_hours=24, minimum_scanned_files=1),
         with_profile(base(), None, minimum_level="reported_scope"),
+        {**base(), "enforcement": {"max_waiver_days": 90}},
     ],
-    ids=["minimal", "github", "attested", "bounded-waiver", "extra-checks", "reported-scope"],
+    ids=[
+        "minimal",
+        "github",
+        "attested",
+        "bounded-waiver",
+        "extra-checks",
+        "reported-scope",
+        "waiver-ceiling-exactly-90",
+    ],
 )
 def test_production_accepts_policy_without_opt_ins(body) -> None:
     assurance = dict(body.get("assurance", {}))
@@ -342,7 +364,20 @@ def test_explain_clean_policy(tmp_path) -> None:
     result = runner.invoke(app, ["validate", "--explain", "-P", _write(tmp_path, base())])
     assert result.exit_code == EXIT_OK
     assert "profile: compatible" in result.stderr
-    assert "No assurance-weakening opt-ins." in result.stderr
+    assert "minimum assurance: report" in result.stderr
+    # A clean report-level policy must not read as proof that scans covered anything.
+    assert "No assurance-weakening opt-ins. This is not evidence of scan coverage." in (
+        result.stderr
+    )
+
+
+def test_explain_shows_reported_scope_level(tmp_path) -> None:
+    body = with_profile(base(), "production", minimum_level="reported_scope")
+    result = runner.invoke(app, ["validate", "--explain", "-P", _write(tmp_path, body)])
+    assert result.exit_code == EXIT_OK, result.stderr
+    assert "minimum assurance: reported_scope" in result.stderr
+    assert "not independent proof of coverage" in result.stderr
+    assert "not evidence of scan coverage" not in result.stderr
 
 
 @pytest.mark.parametrize(("case", "body", "expected"), OPT_INS, ids=OPT_IN_IDS)

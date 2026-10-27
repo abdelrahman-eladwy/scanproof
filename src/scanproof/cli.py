@@ -478,11 +478,28 @@ def validate(
 def _explain(loaded: Policy) -> None:
     opt_ins = assurance_opt_ins(loaded)
     profile = loaded.assurance.profile
+    level = loaded.assurance.minimum_level
     typer.echo(f"profile: {profile}", err=True)
+    if level == "reported_scope":
+        typer.echo(
+            "minimum assurance: reported_scope (each report must claim a nonempty scan scope; "
+            "that is the scanner's own claim, not independent proof of coverage)",
+            err=True,
+        )
+    else:
+        typer.echo(
+            "minimum assurance: report (a parseable report is enough; reports are NOT required "
+            "to claim they scanned anything; set assurance.minimum_level: reported_scope)",
+            err=True,
+        )
     rejected = [o for o in opt_ins if o.production == "reject"]
     notes = [o for o in opt_ins if o.production == "note"]
     if not rejected:
-        typer.echo("No assurance-weakening opt-ins.", err=True)
+        typer.echo(
+            "No assurance-weakening opt-ins."
+            + (" This is not evidence of scan coverage." if level == "report" else ""),
+            err=True,
+        )
     else:
         typer.echo(
             f"{len(rejected)} assurance-weakening opt-in(s), "

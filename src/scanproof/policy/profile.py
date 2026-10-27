@@ -18,6 +18,10 @@ if TYPE_CHECKING:
     from scanproof.policy.models import Policy, Requirement
 
 PRODUCTION = "production"
+# Longest enforcement.max_waiver_days the production profile accepts. A policy choice, not a
+# platform limit: long enough for a quarterly remediation cycle, short enough that a waiver
+# must be re-approved.
+PRODUCTION_MAX_WAIVER_DAYS = 90
 
 
 @dataclass(frozen=True)
@@ -69,6 +73,16 @@ def assurance_opt_ins(policy: Policy) -> list[OptIn]:
                 "enforcement.max_waiver_days",
                 f"{len(policy.waivers)} waiver(s) with no max_waiver_days: 'expires' can be "
                 "any date (e.g. 9999-12-31)",
+            )
+        )
+    if enf.max_waiver_days is not None and enf.max_waiver_days > PRODUCTION_MAX_WAIVER_DAYS:
+        out.append(
+            OptIn(
+                "WAIVER_LIMIT_TOO_LONG",
+                "enforcement.max_waiver_days",
+                f"{enf.max_waiver_days} days exceeds the production ceiling of "
+                f"{PRODUCTION_MAX_WAIVER_DAYS}; a very large limit makes waivers effectively "
+                "permanent",
             )
         )
     for i, w in enumerate(policy.waivers):
