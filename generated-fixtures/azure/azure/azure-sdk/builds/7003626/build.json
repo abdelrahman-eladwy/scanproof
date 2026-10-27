@@ -1,0 +1,27 @@
+{
+ "retainedByRelease": false,
+ "sourceBranch": "refs/pull/12312/merge",
+ "startTime": "2026-10-27T06:42:22.1641386Z",
+ "buildNumber": "20261026.68",
+ "status": "completed",
+ "finishTime": "2026-10-27T06:59:21.1416292Z",
+ "result": "failed",
+ "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/Builds/7003626",
+ "id": 7003626,
+ "sourceVersion": "bfa928122c61d05173f1277339525c94a8b4a791",
+ "reason": "pullRequest",
+ "queueTime": "2026-10-27T06:41:56.8772092Z",
+ "definition": {
+  "id": 5525,
+  "name": "typespec - ci"
+ },
+ "project": {
+  "id": "29ec6040-b234-4e31-b139-33dc4287b756",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_build/results?buildId=7003626"
+  }
+ }
+}

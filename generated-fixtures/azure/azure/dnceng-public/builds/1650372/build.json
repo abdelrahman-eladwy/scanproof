@@ -1,0 +1,27 @@
+{
+ "sourceVersion": "c2132c8009af6200a19f93b504e0f75f87bc18a6",
+ "finishTime": "2026-10-27T07:00:06.4836502Z",
+ "queueTime": "2026-10-27T05:54:37.8497906Z",
+ "result": "failed",
+ "startTime": "2026-10-27T05:54:54.0040345Z",
+ "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/Builds/1650372",
+ "status": "completed",
+ "reason": "pullRequest",
+ "retainedByRelease": false,
+ "sourceBranch": "refs/pull/70043/merge",
+ "id": 1650372,
+ "buildNumber": "20261026.40",
+ "definition": {
+  "id": 87,
+  "name": "aspnetcore-components-e2e"
+ },
+ "project": {
+  "id": "cbb18261-c48f-4abb-8651-8cdcb5474649",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_build/results?buildId=1650372"
+  }
+ }
+}

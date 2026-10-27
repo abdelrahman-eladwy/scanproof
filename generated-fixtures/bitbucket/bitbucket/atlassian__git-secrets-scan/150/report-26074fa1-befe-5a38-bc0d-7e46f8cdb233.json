@@ -1,0 +1,16 @@
+{
+ "uuid": "{26074fa1-befe-5a38-bc0d-7e46f8cdb233}",
+ "title": "Security Assistant Results",
+ "details": "Security Assistant is an internal service that runs several static analysis tools against all of Atlassian\u2019s code repositories and provides feedback to developers to help them improve the security of their applications.",
+ "external_id": "com.atlassian.securityassistant",
+ "created_by": {
+  "type": "user",
+  "uuid": "{02b941e3-cfaa-40f9-9a58-cec53e20bdc3}"
+ },
+ "report_type": "SECURITY",
+ "remote_link_enabled": false,
+ "data": [],
+ "created_on": "2025-02-14T12:21:15.177958364Z",
+ "updated_on": "2025-02-14T12:21:15.177958364Z",
+ "type": "report"
+}

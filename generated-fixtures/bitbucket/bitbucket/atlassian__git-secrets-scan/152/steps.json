@@ -1,0 +1,100 @@
+{
+ "values": [
+  {
+   "uuid": "{84a7eec1-7bfd-4628-b0d1-942eaa609efd}",
+   "name": "Test",
+   "started_on": "2025-06-16T06:35:32.484227363Z",
+   "completed_on": "2025-06-16T06:36:18.487947582Z",
+   "duration_in_seconds": 46,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_step_state_completed_successful"
+    }
+   },
+   "image": {
+    "name": "python:3.10"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 46,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  },
+  {
+   "uuid": "{f93e8a0e-2e67-495f-ab20-292377fe214b}",
+   "name": "Lint the Dockerfile",
+   "started_on": "2025-06-16T06:35:30.130608318Z",
+   "completed_on": "2025-06-16T06:35:36.584441365Z",
+   "duration_in_seconds": 6,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_step_state_completed_successful"
+    }
+   },
+   "image": {
+    "name": "hadolint/hadolint:latest-debian"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 6,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  },
+  {
+   "uuid": "{e1b578c0-0be5-4f2f-bc6d-ae3ffcd56a4b}",
+   "name": "Push and Tag",
+   "started_on": "2025-06-16T06:36:31.444972067Z",
+   "completed_on": "2025-06-16T06:39:03.879397063Z",
+   "duration_in_seconds": 152,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_step_state_completed_successful"
+    }
+   },
+   "image": {
+    "name": "python:3.10"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 152,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  }
+ ]
+}

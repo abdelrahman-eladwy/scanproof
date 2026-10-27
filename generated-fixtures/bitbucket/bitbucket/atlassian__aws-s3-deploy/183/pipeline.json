@@ -1,0 +1,29 @@
+{
+ "uuid": "{9b04e165-81e8-4346-b6a5-4c7a7a5c2cc5}",
+ "build_number": 183,
+ "state": {
+  "name": "COMPLETED",
+  "type": "pipeline_state_completed",
+  "result": {
+   "name": "FAILED",
+   "type": "pipeline_state_completed_failed"
+  }
+ },
+ "created_on": "2025-01-31T12:21:20.771561769Z",
+ "completed_on": "2025-01-31T12:23:56.269800429Z",
+ "duration_in_seconds": 123,
+ "target": {
+  "type": "pipeline_ref_target",
+  "ref_type": "branch",
+  "ref_name": "feature/PIPES-1713",
+  "commit": {
+   "hash": "17cd869eaff1b98c737c41c52fe5bb0af367beee"
+  },
+  "selector": {
+   "type": "default"
+  }
+ },
+ "trigger": {
+  "type": "pipeline_trigger_push"
+ }
+}

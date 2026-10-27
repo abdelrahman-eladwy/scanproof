@@ -1,0 +1,61 @@
+{
+ "count": 4,
+ "value": [
+  {
+   "id": 50496926,
+   "name": "Linux_Quarantined_Test_Logs",
+   "source": "716f19c4-d2e3-58b0-1706-7999a9b178f6",
+   "resource": {
+    "type": "Container",
+    "data": "#/57692994/Linux_Quarantined_Test_Logs",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650345/artifacts?artifactName=Linux_Quarantined_Test_Logs&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650345/artifacts?artifactName=Linux_Quarantined_Test_Logs&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "322180"
+    }
+   }
+  },
+  {
+   "id": 50496927,
+   "name": "Linux_Quarantined_Test_Results",
+   "source": "716f19c4-d2e3-58b0-1706-7999a9b178f6",
+   "resource": {
+    "type": "Container",
+    "data": "#/57692994/Linux_Quarantined_Test_Results",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650345/artifacts?artifactName=Linux_Quarantined_Test_Results&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650345/artifacts?artifactName=Linux_Quarantined_Test_Results&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "340265"
+    }
+   }
+  },
+  {
+   "id": 50497223,
+   "name": "Windows_Quarantined_Test_Logs",
+   "source": "6d5af08c-e114-5ffe-77df-bfb882f83762",
+   "resource": {
+    "type": "Container",
+    "data": "#/57692994/Windows_Quarantined_Test_Logs",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650345/artifacts?artifactName=Windows_Quarantined_Test_Logs&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650345/artifacts?artifactName=Windows_Quarantined_Test_Logs&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "26645516"
+    }
+   }
+  },
+  {
+   "id": 50497224,
+   "name": "Windows_Quarantined_Test_Results",
+   "source": "6d5af08c-e114-5ffe-77df-bfb882f83762",
+   "resource": {
+    "type": "Container",
+    "data": "#/57692994/Windows_Quarantined_Test_Results",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650345/artifacts?artifactName=Windows_Quarantined_Test_Results&api-version=7.1",
+    "downloadUrl": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650345/artifacts?artifactName=Windows_Quarantined_Test_Results&api-version=7.1&%24format=zip",
+    "properties": {
+     "artifactsize": "19809840"
+    }
+   }
+  }
+ ]
+}

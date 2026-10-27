@@ -1,0 +1,103 @@
+{
+ "values": [
+  {
+   "uuid": "{6b931985-6215-4ee5-92ec-94e752e21352}",
+   "name": "Test",
+   "started_on": "2025-06-15T23:40:41.248318715Z",
+   "completed_on": "2025-06-15T23:41:27.617488478Z",
+   "duration_in_seconds": 46,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_step_state_completed_successful"
+    }
+   },
+   "image": {
+    "name": "python:3.10"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 46,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  },
+  {
+   "uuid": "{a70ebbd2-afb7-4b8d-8761-674741e4f08e}",
+   "name": "Lint the Dockerfile",
+   "started_on": "2025-06-15T23:40:41.610532719Z",
+   "completed_on": "2025-06-15T23:40:48.902765414Z",
+   "duration_in_seconds": 7,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_step_state_completed_successful"
+    }
+   },
+   "image": {
+    "name": "hadolint/hadolint:latest-debian"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 7,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  },
+  {
+   "uuid": "{33810fc7-b824-4699-a53c-03f5d44971f9}",
+   "name": "Release development version",
+   "started_on": null,
+   "completed_on": null,
+   "duration_in_seconds": null,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_manual",
+    "triggerer": {
+     "type": "user"
+    }
+   },
+   "teardown": null,
+   "state": {
+    "name": "PENDING",
+    "type": "pipeline_step_state_pending",
+    "stage": {
+     "name": "PAUSED",
+     "type": "pipeline_step_state_pending_paused"
+    }
+   },
+   "image": {
+    "name": "python:3.10"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 0,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  }
+ ]
+}

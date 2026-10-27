@@ -1,0 +1,194 @@
+{
+ "org": "dnceng-public",
+ "project": "public",
+ "record_results": {
+  "Checkpoint:succeeded": 127,
+  "Job:canceled": 50,
+  "Job:failed": 162,
+  "Job:succeeded": 587,
+  "Job:succeededWithIssues": 43,
+  "Phase:canceled": 49,
+  "Phase:failed": 155,
+  "Phase:skipped": 224,
+  "Phase:succeeded": 436,
+  "Phase:succeededWithIssues": 50,
+  "Stage:canceled": 22,
+  "Stage:failed": 16,
+  "Stage:skipped": 12,
+  "Stage:succeeded": 74,
+  "Stage:succeededWithIssues": 15,
+  "Task:abandoned": 9,
+  "Task:canceled": 17,
+  "Task:failed": 163,
+  "Task:skipped": 2016,
+  "Task:succeeded": 14511,
+  "Task:succeededWithIssues": 54
+ },
+ "masked": [
+  {
+   "build": 1650385,
+   "result": "partiallySucceeded",
+   "tasks": [
+    {
+     "task": "Cleanup Docker Images",
+     "task_result": "succeededWithIssues",
+     "job": "Windows2022_amd64 10.0-nanoserver-ltsc2022-runtime",
+     "job_result": "succeededWithIssues"
+    },
+    {
+     "task": "Cleanup Docker Images",
+     "task_result": "succeededWithIssues",
+     "job": "Windows1809_amd64 8.0-nanoserver-1809-runtime",
+     "job_result": "succeededWithIssues"
+    }
+   ]
+  },
+  {
+   "build": 1650345,
+   "result": "partiallySucceeded",
+   "tasks": [
+    {
+     "task": "Run build.cmd helix target",
+     "task_result": "succeededWithIssues",
+     "job": "Tests: Helix",
+     "job_result": "succeededWithIssues"
+    },
+    {
+     "task": "Run Quarantined Tests",
+     "task_result": "succeededWithIssues",
+     "job": "Tests: Ubuntu x64",
+     "job_result": "succeededWithIssues"
+    },
+    {
+     "task": "Run Quarantined Tests",
+     "task_result": "succeededWithIssues",
+     "job": "Tests: Windows x64",
+     "job_result": "succeededWithIssues"
+    }
+   ]
+  },
+  {
+   "build": 1650372,
+   "result": "failed",
+   "tasks": [
+    {
+     "task": "Run Quarantined E2E tests (Mono server)",
+     "task_result": "succeededWithIssues",
+     "job": "Test: Blazor E2E tests on Linux (Mono server)",
+     "job_result": "succeededWithIssues"
+    },
+    {
+     "task": "Run E2E tests (Mono client and WebAssembly)",
+     "task_result": "failed",
+     "job": "Test: Blazor E2E tests on Linux (Mono client and WebAssembly)",
+     "job_result": "failed"
+    }
+   ]
+  },
+  {
+   "build": 1650379,
+   "result": "failed",
+   "tasks": [
+    {
+     "task": "Build product",
+     "task_result": "failed",
+     "job": "windows-arm64 release  ",
+     "job_result": "failed"
+    },
+    {
+     "task": "Build product",
+     "task_result": "failed",
+     "job": "windows-x64 release  ",
+     "job_result": "failed"
+    },
+    {
+     "task": "Monitor Helix Jobs",
+     "task_result": "failed",
+     "job": "Monitor Helix Jobs",
+     "job_result": "failed"
+    },
+    {
+     "task": "Build product",
+     "task_result": "failed",
+     "job": "linux_musl-arm64 release  ",
+     "job_result": "failed"
+    },
+    {
+     "task": "Build product",
+     "task_result": "failed",
+     "job": "linux_musl-arm release  ",
+     "job_result": "failed"
+    },
+    {
+     "task": "Build product",
+     "task_result": "failed",
+     "job": "linux-arm64 release  ",
+     "job_result": "failed"
+    },
+    {
+     "task": "Build product",
+     "task_result": "failed",
+     "job": "linux_musl-x64 release  ",
+     "job_result": "failed"
+    },
+    {
+     "task": "Build product",
+     "task_result": "failed",
+     "job": "windows-x86 release  ",
+     "job_result": "failed"
+    },
+    {
+     "task": "Build product",
+     "task_result": "failed",
+     "job": "osx-x64 release  ",
+     "job_result": "failed"
+    },
+    {
+     "task": "Build product",
+     "task_result": "failed",
+     "job": "linux-x64 release  ",
+     "job_result": "failed"
+    }
+   ]
+  }
+ ],
+ "notes": [
+  "timeline 1649420: JSONDecodeError",
+  "timeline 1648663: JSONDecodeError"
+ ],
+ "api_zip": [
+  {
+   "artifact": "windows-1809amd648.0-nanoserver-1809-runtime-image-info-1",
+   "status": 302,
+   "redirect_host": "artprodcus3.artifacts.visualstudio.com",
+   "redirect_query_keys": [
+    "format"
+   ]
+  },
+  {
+   "artifact": "windows-ltsc2022amd6410.0-nanoserver-ltsc2022-runtime-image-info-1",
+   "status": 302,
+   "redirect_host": "artprodcus3.artifacts.visualstudio.com",
+   "redirect_query_keys": [
+    "format"
+   ]
+  }
+ ],
+ "downloads": [
+  {
+   "artifact": "windows-1809amd648.0-nanoserver-1809-runtime-image-info-1",
+   "status": 200,
+   "content_type": "application/zip; api-version=7.2-preview.1",
+   "length": null,
+   "zip": true
+  },
+  {
+   "artifact": "windows-ltsc2022amd6410.0-nanoserver-ltsc2022-runtime-image-info-1",
+   "status": 200,
+   "content_type": "application/zip; api-version=7.2-preview.1",
+   "length": null,
+   "zip": true
+  }
+ ],
+ "saved_builds": 8
+}

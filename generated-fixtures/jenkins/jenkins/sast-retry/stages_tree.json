@@ -1,0 +1,1 @@
+{"status":"ok","data":{"stages":[{"id":"6","name":"Scan","children":[],"state":"success","type":"STAGE","title":"Scan","isSequential":false,"synthetic":false,"placeholder":false,"pauseDurationMillis":0,"totalDurationMillis":1040,"startTimeMillis":1793084642422,"agent":"built-in","url":"/job/sast-retry/1/stages/?selected-node=6"}],"complete":true}}

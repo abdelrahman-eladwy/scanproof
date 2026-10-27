@@ -1,0 +1,55 @@
+{
+ "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+ "actions": [
+  {
+   "_class": "hudson.model.CauseAction",
+   "causes": [
+    {
+     "_class": "hudson.model.Cause$UserIdCause",
+     "shortDescription": "Started by user scanproof",
+     "userId": "scanproof",
+     "userName": "scanproof"
+    }
+   ]
+  },
+  {
+   "_class": "org.jenkinsci.plugins.workflow.libs.LibrariesAction"
+  },
+  {},
+  {},
+  {},
+  {},
+  {
+   "_class": "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+  },
+  {
+   "_class": "org.jenkinsci.plugins.pipeline.modeldefinition.actions.RestartDeclarativePipelineAction"
+  },
+  {},
+  {
+   "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+  },
+  {},
+  {}
+ ],
+ "artifacts": [],
+ "building": false,
+ "description": null,
+ "displayName": "#1",
+ "duration": 3516,
+ "estimatedDuration": 3516,
+ "executor": null,
+ "fullDisplayName": "sast-failed #1",
+ "id": "1",
+ "keepLog": false,
+ "number": 1,
+ "queueId": 5,
+ "result": "FAILURE",
+ "timestamp": 1793084638688,
+ "url": "http://localhost:8080/job/sast-failed/1/",
+ "changeSets": [],
+ "culprits": [],
+ "inProgress": false,
+ "nextBuild": null,
+ "previousBuild": null
+}

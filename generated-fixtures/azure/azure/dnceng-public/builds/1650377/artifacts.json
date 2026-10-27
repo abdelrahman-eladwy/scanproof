@@ -1,0 +1,53 @@
+{
+ "count": 3,
+ "value": [
+  {
+   "id": 50498301,
+   "name": "Logs_Build_Attempt1_browser_wasm_linux_release_Runtime_Release",
+   "source": "7b499086-9930-5591-220e-2ec7c40eb990",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "9754DABE5282495F1581510FDDA32D400A453710D9A3D2E9FF7B0747D5EFB18801",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650377/artifacts?artifactName=Logs_Build_Attempt1_browser_wasm_linux_release_Runtime_Release&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzNzcvYXJ0aWZhY3ROYW1lL0xvZ3NfQnVpbGRfQXR0ZW1wdDFfYnJvd3Nlcl93YXNtX2xpbnV4X3JlbGVhc2VfUnVudGltZV9SZWxlYXNl0/content?format=zip",
+    "properties": {
+     "RootId": "881917F535FE4B6C36F44FE1190B6531BE4F28C49D9E6F8D03E3D9B45D695ACF02",
+     "artifactsize": "79662001",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498842,
+   "name": "Logs_Build_Attempt1_linux__x64_release_Runtime_Release",
+   "source": "ff0f4165-94fa-565b-d5ea-6d06d02692b1",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "CAD9633A43D7DCEC18C359B15A7941CC08B9F1EF7CC20CBEB828950D9926D2C801",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650377/artifacts?artifactName=Logs_Build_Attempt1_linux__x64_release_Runtime_Release&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzNzcvYXJ0aWZhY3ROYW1lL0xvZ3NfQnVpbGRfQXR0ZW1wdDFfbGludXhfX3g2NF9yZWxlYXNlX1J1bnRpbWVfUmVsZWFzZQ2/content?format=zip",
+    "properties": {
+     "RootId": "B988DB541407C4E5DB47C3A6C4BFD8CC5DD6537DE687D256F3F6CC241827B5CE02",
+     "artifactsize": "27132445",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498945,
+   "name": "Logs_Build_Attempt1_windows__x64_release_Runtime_Release",
+   "source": "a1e5d03d-3f6b-54a5-7792-bf65a0588cb6",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "8107AE541EF142D4BCFEA20D9410628E10B03CAE6C9D70193FFD38FA298E213C01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650377/artifacts?artifactName=Logs_Build_Attempt1_windows__x64_release_Runtime_Release&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzNzcvYXJ0aWZhY3ROYW1lL0xvZ3NfQnVpbGRfQXR0ZW1wdDFfd2luZG93c19feDY0X3JlbGVhc2VfUnVudGltZV9SZWxlYXNl0/content?format=zip",
+    "properties": {
+     "RootId": "B7A2D7D7A1A0A016B655F560999DDBECA1083C0318ABD9C1D71B1C2E7C7FC04102",
+     "artifactsize": "27666984",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  }
+ ]
+}

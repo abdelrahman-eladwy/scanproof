@@ -1,0 +1,1077 @@
+{
+ "count": 67,
+ "value": [
+  {
+   "id": 50497854,
+   "name": "windows-1809amd648.0-nanoserver-1809-runtime-image-info-1",
+   "source": "91b26311-6486-5794-a17b-4b6d2c23aaa2",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "5C4A545712A625E51ED266CC88B8ED73B06DC2045AEC3246A2B0BA247CAF156601",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-1809amd648.0-nanoserver-1809-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtMTgwOWFtZDY0OC4wLW5hbm9zZXJ2ZXItMTgwOS1ydW50aW1lLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "E7C4666B29CEC098F7EF5249D7585E017E813CC7591D81DAB73776CEFE2ABD9302",
+     "artifactsize": "8427",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497862,
+   "name": "windows-ltsc2022amd6410.0-nanoserver-ltsc2022-runtime-image-info-1",
+   "source": "758d7417-7473-52bb-e4e7-358533cf3cc7",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "4C21EF01737EA5EF9DA8FB881887A1169EAC2CA17F29B2D698C5E57E05BA255E01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2022amd6410.0-nanoserver-ltsc2022-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjJhbWQ2NDEwLjAtbmFub3NlcnZlci1sdHNjMjAyMi1ydW50aW1lLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "69717D9765F6F297A3CFEAEF603A534F510F2CF3E2FEA1F15E858EB95AEE69C802",
+     "artifactsize": "8503",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497865,
+   "name": "linuxarm3210.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "1bd276f8-9fb5-54c7-5be2-bbe0faefcec6",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "3E25BECBA77F35EC00DBCE374C405D9DD2F1E91998C5996FC7AA0920C6075A0201",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm3210.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzIxMC4wLWFscGluZTMuMjQtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "C58963BF9727B6B41537406DA8CEAB1CE13D6D58BF603C534D4EB68A3955A0BC02",
+     "artifactsize": "18866",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497940,
+   "name": "linuxamd648.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "71ca39a0-2c7e-58b4-9877-096349b3bbc4",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "E6D7FA814213C9CD4552C17B3C6E8E2BB475A8158BDEE18796D67AD4A5E10FC701",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd648.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQ4LjAtYWxwaW5lMy4yNC1ydW50aW1lLWRlcHMtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "78F4606A77071F9E21B0BFFBBC03FC8CED6E165F75476B1ACD956CB69434AA6A02",
+     "artifactsize": "19228",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497944,
+   "name": "linuxamd6410.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "fc59f0f2-c1bd-58ae-b870-833d1e8a924c",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "A8C790E2AD9636A7E046A8DDB63FB889E905B3249E50EE15E02F8BBC1BE11BAD01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd6410.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQxMC4wLWFscGluZTMuMjQtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "8BB7C7C6F43E0E5FA1117EB58C562E52757E0159B8A94DACAAFEA8A6D1D776B202",
+     "artifactsize": "22369",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497945,
+   "name": "linuxamd648.0-bookworm-runtime-deps-image-info-1",
+   "source": "183c33de-d3d4-59b6-cbb3-3327dc76fa3d",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "8099867A4C85BD035285EA448488B2ECA6DE83172855CBE8DDCBE53141CA72A801",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd648.0-bookworm-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQ4LjAtYm9va3dvcm0tcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "516E59A276A9EA2ABA21D5445F5666A3F09C350418FC8A318C022BF370E7094802",
+     "artifactsize": "9166",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497947,
+   "name": "linuxamd648.0-azurelinux3.0-runtime-deps-image-info-1",
+   "source": "9451fe7a-3b19-5e32-5ae2-ab8409ac889d",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "41B5F6D9FFDDD65EC90D2AD4DB084736751CC76874D8537EC69DC69EC4E14C5A01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd648.0-azurelinux3.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQ4LjAtYXp1cmVsaW51eDMuMC1ydW50aW1lLWRlcHMtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "42A104475D269F5F9FED3A2DA5D4DF9D81972DD494DDF18951443167AA1EFA2902",
+     "artifactsize": "31336",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497949,
+   "name": "linuxamd649.0-bookworm-runtime-deps-image-info-1",
+   "source": "edd22d22-c099-5806-e9e3-0a3334d9bc8d",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "5D3117B71D44E0CB801FF7A995A2C951D2705901B5FDB85BCD8864844DF2BF1401",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd649.0-bookworm-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQ5LjAtYm9va3dvcm0tcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "06862945BD5F4E609586CA283D5F08F1D4DFB97042779122ADDF39CF284C425602",
+     "artifactsize": "9166",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497950,
+   "name": "linuxamd649.0-azurelinux3.0-runtime-deps-image-info-1",
+   "source": "ee411168-4a32-58dd-45be-1f53b3004bb5",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "629D000A0BE1364F1E176EB1E75283F038784EB2AE6419DA03C3405B8A1AE9A201",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd649.0-azurelinux3.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQ5LjAtYXp1cmVsaW51eDMuMC1ydW50aW1lLWRlcHMtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "7668C136C26356A63AE5D068A6F9603D065694BDB95F4C2F1FEAABC1F683348202",
+     "artifactsize": "33053",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497951,
+   "name": "linuxamd649.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "a919b55b-b838-53c8-f9c5-c03be6d46275",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "5DC4163082F30EC9DA9DAEB968F89B1B1BED01BBFA77EDC0182D5AE2F8C1ADE701",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd649.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQ5LjAtYWxwaW5lMy4yNC1ydW50aW1lLWRlcHMtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "E6386E9E7F5B8C792B69217B0551ACA76C11BB6D0AA9CE9D9C4C0A9D04A330FD02",
+     "artifactsize": "19295",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497952,
+   "name": "linuxamd649.0-noble-runtime-deps-image-info-1",
+   "source": "ac37fb63-589e-53d9-d3a2-4d33e38ae7da",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "ADEB2A974267D6895CA00CD13182CD27B1BAD4E8A3FCE4527EFF4375D6EFD3C501",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd649.0-noble-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQ5LjAtbm9ibGUtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "572E65BC7FE308751A430D7496B5AB919F2B9E0A807899FF0137087545FF82C002",
+     "artifactsize": "22801",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497956,
+   "name": "linuxarm329.0-bookworm-runtime-deps-image-info-1",
+   "source": "bd199eb0-50e9-5ce4-184f-fffdfec41943",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "63EAE5FD6ADFC768F57891820519FE28F64FA87027764B7E8D6C6EC91D486CF901",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm329.0-bookworm-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzI5LjAtYm9va3dvcm0tcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "A856FBA3193C1A33DA5E390CAC5F80DA79ECF61B428C9A97474A8F7D85B5EE5802",
+     "artifactsize": "9199",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497957,
+   "name": "linuxamd648.0-noble-runtime-deps-image-info-1",
+   "source": "a191bd69-4e4e-5e40-5a8f-42213f1e401c",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "D2B7F97ED53369EACC8E8869F11444B7D0EC817298E3BC1C47154D0E85C2C19301",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd648.0-noble-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQ4LjAtbm9ibGUtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "C1FFF48E4B1C96DF59EAC0A93CD15A76C542D8550606DC3080FA9CF1F6C162B502",
+     "artifactsize": "22797",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497958,
+   "name": "linuxamd6410.0-noble-runtime-deps-image-info-1",
+   "source": "d76ba96f-fb0b-5ca5-17e1-8a08cdb4af9f",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "DCDEC5114AF08A7BA041FF28C054F73D5B98BAABAFD7DEFE8CC77DDEDC3AD6A301",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd6410.0-noble-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQxMC4wLW5vYmxlLXJ1bnRpbWUtZGVwcy1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "11D2271DC9E2046D0B6C62E35A4C8A495D987C318D2E50417C1D027305129DF102",
+     "artifactsize": "26076",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497959,
+   "name": "linuxarm328.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "925a7b11-4e2c-573f-65f2-ec866e9f0bd1",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "86CD7437CFC8E54214A0F86D2724D5BD95F603C2790569D38E40FB7F63D8690701",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm328.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzI4LjAtYWxwaW5lMy4yNC1ydW50aW1lLWRlcHMtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "815566BE62AEA8B672E241DEF93B7CC0B0B2430A919876FD7DCD745E119BF01402",
+     "artifactsize": "18969",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497960,
+   "name": "linuxarm648.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "7d4d967a-b3f4-5b16-d1cc-3f5a43496ae4",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "2679FD38782941A7AEDD7F449300646135F36E8D1D5BADF4D8A3A673DAD58A6C01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm648.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQ4LjAtYWxwaW5lMy4yNC1ydW50aW1lLWRlcHMtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "8B15726A39B1C7C6740C65791FD895A0FA9617A113A1AECF1F9D9388A5CD746402",
+     "artifactsize": "18975",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497961,
+   "name": "linuxamd648.0-jammy-runtime-deps-image-info-1",
+   "source": "a95e4578-4aa7-573a-6c67-8eb6060f8e97",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "7BBB2B3E0E41EE47F29D4947D53586C1185F312E558D3477154E641C9D84BA9D01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd648.0-jammy-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQ4LjAtamFtbXktcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "C71FCA4F0CD97EF2A8DB0DBA1CEDA115503749835213332779A85105B097AFEB02",
+     "artifactsize": "28020",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497962,
+   "name": "linuxarm328.0-bookworm-runtime-deps-image-info-1",
+   "source": "e23d4c1f-2b27-5c71-cb0b-a59038394ed9",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "47CB297B0D1D3346E58F3C0A43878F687A7E8957BB23C65FB954371E228F37F401",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm328.0-bookworm-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzI4LjAtYm9va3dvcm0tcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "E56DBA51B519A6D9A179FEDD0C2F64B97EF0BBC99086FB883FA3382013ABF84D02",
+     "artifactsize": "9200",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497964,
+   "name": "linuxarm648.0-bookworm-runtime-deps-image-info-1",
+   "source": "8ec7f4dc-4928-53ce-eb24-0f4c78d2983f",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "F2F603F49F9E6CB33BA3342168F58889C18FF4BA8D3B6C3561F2F5C693338AD701",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm648.0-bookworm-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQ4LjAtYm9va3dvcm0tcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "C6307C80C05B785B23A595C82FAC7350F3C6221E86B50472AB000B13CC6AE74B02",
+     "artifactsize": "9200",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497966,
+   "name": "linuxamd6411.0-azurelinux4.0-runtime-deps-image-info-1",
+   "source": "1bc45e3f-6287-5a42-b140-ca49e7cdf8b7",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "A22EEBF1E12A6EBFF23DF463A34E395699C33B3C889440C3D3AE1987A4587D0201",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd6411.0-azurelinux4.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQxMS4wLWF6dXJlbGludXg0LjAtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "9D845B8CC3AB432CF37312151BA17F22F0BAD50DE9A9FE877C913270007D980902",
+     "artifactsize": "28539",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497967,
+   "name": "linuxarm329.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "70fce605-cc69-5c52-b9e3-8fac1f118dbe",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "A35B351F1749991CB355C755287182C4B8208F0A6D7DFE65993F64D1B29596C501",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm329.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzI5LjAtYWxwaW5lMy4yNC1ydW50aW1lLWRlcHMtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "8EC124B86A4B843587228A4A19BB8F9C07729E814CD4A1F1141DA9A4C0957EAB02",
+     "artifactsize": "19034",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497968,
+   "name": "linuxamd6411.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "89424110-4656-5e6e-83be-f8cf1ddf2101",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "259256EFA740E8DD36ECEE5D2F085D8224D61C852FDE9A2E54D554444F50C44D01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd6411.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQxMS4wLWFscGluZTMuMjQtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "78C56639C8CFED0A4FA6C4F7902134DE364332D745D77C65F4DA2E21C2A770AE02",
+     "artifactsize": "22680",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497969,
+   "name": "linuxarm3210.0-resolute-runtime-deps-image-info-1",
+   "source": "b76cfc17-e6fe-53fc-20c8-f24825178c6a",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "AC7A79F02AB1A987BC8096B1A341F55B493FA0B12B92F3BC9F0165894EC0F48401",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm3210.0-resolute-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzIxMC4wLXJlc29sdXRlLXJ1bnRpbWUtZGVwcy1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "2131BFE5BA3C6E2FDD7C647FA12F049E06AC8FC7378B4BC503EA35DD3803DD1902",
+     "artifactsize": "23729",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497970,
+   "name": "linuxarm649.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "579dac3d-b53e-569f-a5b3-6706b6e292e6",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "879E4DFA4C7E55061399A1C4FC14D5CB5399CC1C1B530A3FD256037D0585805E01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm649.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQ5LjAtYWxwaW5lMy4yNC1ydW50aW1lLWRlcHMtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "8F28C3990C781631FB497542757DA172A884D583EB446F06F189E5E4E148640E02",
+     "artifactsize": "19038",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497971,
+   "name": "linuxarm3210.0-noble-runtime-deps-image-info-1",
+   "source": "aa66670d-bfd3-5cd5-43f3-99dd3412a13d",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "4D562EEB3CF67D2FA8895B2490260139DE33C3AFCBEAB122EB936B2BAF52E01401",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm3210.0-noble-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzIxMC4wLW5vYmxlLXJ1bnRpbWUtZGVwcy1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "F89E4961FC761045EC61715C2A9F5B249DCBFD8CE793A11BA9818AD23126D06102",
+     "artifactsize": "22984",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497972,
+   "name": "linuxarm329.0-noble-runtime-deps-image-info-1",
+   "source": "25cba231-a633-5959-9f40-2e2db6c44198",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "6529CDF4E6F4A9C5051462F46EA5DB0EBA704EE43D4E2D9CC11CDC932BA8EC9401",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm329.0-noble-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzI5LjAtbm9ibGUtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "F22A399C27E9B258B74CFC41DCFDC37B0471CD8852FDC385A23D45D481C48DDB02",
+     "artifactsize": "22898",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497973,
+   "name": "linuxarm328.0-jammy-runtime-deps-image-info-1",
+   "source": "8d20a778-ed6c-5674-894d-9b18b8e5c6ae",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "3D1FBA3F5CFF2580EEE23F2C3A46B3C24CEEF7D24E3C0A63AB641945C14B3B7301",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm328.0-jammy-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzI4LjAtamFtbXktcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "C75872D85D457818B1CF08762F47F77B2F5C32CFE688956FB612E4B2E622A53702",
+     "artifactsize": "22901",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497974,
+   "name": "linuxarm649.0-bookworm-runtime-deps-image-info-1",
+   "source": "fb4f61a3-eea9-521e-e5cf-0f70e805a5ad",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "38408A192026B846EABBE40BF0D381DAD8AB1EB63788A5212AA4BADDFDE66F0B01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm649.0-bookworm-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQ5LjAtYm9va3dvcm0tcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "8F7E4363F9602BDB62FEEFFAD030A2DBA4702EC08ECE7D456C4E2E9C5602212802",
+     "artifactsize": "9200",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497975,
+   "name": "linuxamd6410.0-resolute-runtime-deps-image-info-1",
+   "source": "09672b09-d26b-526f-af2e-5749ac23daf2",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "8B5C873AC7E5B8AA0285082705E047EA64CFC5C2C11AD2E3F59A3484C59D680501",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd6410.0-resolute-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQxMC4wLXJlc29sdXRlLXJ1bnRpbWUtZGVwcy1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "2F573BF9F0E2A3584BB20D4269410A327D940B3BE05FEEE01AE1AB4CC328F74302",
+     "artifactsize": "26955",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497976,
+   "name": "linuxarm3211.0-resolute-runtime-deps-image-info-1",
+   "source": "c404c0f5-cf53-5a94-fca8-43020c873b9d",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "9CF3DCD084B1413D51E712CE59863CF2919A032687FAF453921EC9377F490B7601",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm3211.0-resolute-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzIxMS4wLXJlc29sdXRlLXJ1bnRpbWUtZGVwcy1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "D6EBD1BE9FF23DA412C6433534C7BFD0C919B75C8888B3A351EE2AB739F5153902",
+     "artifactsize": "24177",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497978,
+   "name": "linuxarm648.0-jammy-runtime-deps-image-info-1",
+   "source": "c977949b-2bac-537a-607c-ccfd6201d486",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "CFC3D6168015E8595E3E84564612997459FD1813E48BC0072E919498FFAB2F1A01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm648.0-jammy-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQ4LjAtamFtbXktcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "ACE4F69904BF4AC7EEAD9E840A9F1E1D8FA10DDDBDD43026BB986BC425CD596402",
+     "artifactsize": "28133",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497979,
+   "name": "linuxarm3211.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "14371ec4-046e-5cec-5c56-02511f31bb60",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "3FB7F13B6DC790C430DE917776CA1B0F40E3D5FDD172E193E39F1BD2B48C072F01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm3211.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtMzIxMS4wLWFscGluZTMuMjQtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "E2615B2810BFA7726FD0FDED92E324550C0367D9E2C2D0D8F84BBF4490B91D9802",
+     "artifactsize": "19166",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497980,
+   "name": "linuxarm648.0-noble-runtime-deps-image-info-1",
+   "source": "ad1a43c2-32dc-56cd-b012-09ec4a40c3bc",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "7D7D818541CEFF2AB8BCEB3BBC3AAC9FE432C447096B4889E7077018CBA7674301",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm648.0-noble-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQ4LjAtbm9ibGUtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "0DA39F6D48C11EAE1EEC3A631DF7C7C404A6B1B2DB81F5E4513DADC46A43CB5202",
+     "artifactsize": "22899",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497983,
+   "name": "linuxarm649.0-noble-runtime-deps-image-info-1",
+   "source": "31ac3270-d6cb-55d7-980a-0538d8b31235",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "AAD65F1B6AF0A06BC32B11B07380D0ABFA1651641559AECAAB3ADF53DB0E442201",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm649.0-noble-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQ5LjAtbm9ibGUtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "9DA39C0654564DF854EAD7918BDCD8CF1E68590CC21465E444C26257E56D826702",
+     "artifactsize": "22899",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497984,
+   "name": "linuxarm648.0-azurelinux3.0-runtime-deps-image-info-1",
+   "source": "dd8712c6-8a1e-50f1-fa86-6250d6555872",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "DB608EC9733D297ECD32F636D4D7C81CB2C5379B3257F5BC26257A6D3197F46301",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm648.0-azurelinux3.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQ4LjAtYXp1cmVsaW51eDMuMC1ydW50aW1lLWRlcHMtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "7931D3795E6AD7F3359838EA11CDCBE5BFA7D6C4F1D0E0FC1040029DCB925CC802",
+     "artifactsize": "31454",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497985,
+   "name": "linuxarm6410.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "efb274cb-82e8-595f-8d22-6f4b39df6a80",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "B647B7E7AE340E2C9390BD0A17561B488D0AFBE30EF57AC04DE523E502C97F4F01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm6410.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQxMC4wLWFscGluZTMuMjQtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "C65C59C43F2425943E118764EFCF45E0FEA7D165834748F647D4C6DE6B43AA4902",
+     "artifactsize": "21770",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497987,
+   "name": "linuxamd6410.0-azurelinux4.0-runtime-deps-image-info-1",
+   "source": "5451b624-d93a-5e9f-b2ab-9f4f54898441",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "0D8467598B1D1ACA1F232E14FDE1297EDBBD1DDC509BB64CE8AAD15479A7FC7901",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd6410.0-azurelinux4.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQxMC4wLWF6dXJlbGludXg0LjAtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "4AB186A11D808B34C46095AFB3C9A8E8CDD09EE47A1F67251662D9A517C9EF5002",
+     "artifactsize": "28372",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497988,
+   "name": "linuxamd6411.0-azurelinux3.0-runtime-deps-image-info-1",
+   "source": "122e9d27-e507-5abe-8693-a1b4223451d1",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "5FBF85768044F4CE36FAC4B030C814A625C94840F83618EC5731F4C0DEA0B3BE01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd6411.0-azurelinux3.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQxMS4wLWF6dXJlbGludXgzLjAtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "368B4DDAB2E821F49E0B788F5EA0702B6DF5AE8C43AE82BD25E4A0E3754DC33902",
+     "artifactsize": "30604",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497989,
+   "name": "linuxarm649.0-azurelinux3.0-runtime-deps-image-info-1",
+   "source": "b19fc8d4-de39-5e42-96c7-b11b67329912",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "AE318B132BE93D3FC249F69954C4D3B492EC67ABABBE0B6500B6ACCDDACCEA0901",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm649.0-azurelinux3.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQ5LjAtYXp1cmVsaW51eDMuMC1ydW50aW1lLWRlcHMtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "850F8D50991604F167C61B5ACE0F30FFAD29A8CD2C8F49C16D5EC6CCBCC8877A02",
+     "artifactsize": "33172",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497993,
+   "name": "linuxamd6411.0-resolute-runtime-deps-image-info-1",
+   "source": "1d479f6e-00fb-54f4-f285-4935b8ef6d6f",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "DE5ABC9729DB83A2A9A6C2B4626960858BA957C457A6D7ED811CE55BA5D3D26401",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd6411.0-resolute-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQxMS4wLXJlc29sdXRlLXJ1bnRpbWUtZGVwcy1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "D99FCAF8FAF09171FBFF2D70193CD6C5DE18F7456FF8BEC9F13F9DCEE883242102",
+     "artifactsize": "27480",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497994,
+   "name": "linuxarm6411.0-alpine3.24-runtime-deps-image-info-1",
+   "source": "5e8a216f-208e-5f25-daac-ba5cedb89a59",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "51B220C01410F82756EA598A2206C1BFF8D1809464A89ABC5585AB1229E2FAF101",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm6411.0-alpine3.24-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQxMS4wLWFscGluZTMuMjQtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "45F8B3B1789275DCFCB04FC7220A7E4384274BA39A48366E36B05610A394E65102",
+     "artifactsize": "22082",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497998,
+   "name": "windows-1809amd649.0-nanoserver-1809-runtime-image-info-1",
+   "source": "427c9af4-d0d5-58d6-0d45-fc7385b71864",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "2D6E16C00EE8ED17A35E7C05DB15521278991BF399B480CE2834413456E96C1301",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-1809amd649.0-nanoserver-1809-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtMTgwOWFtZDY0OS4wLW5hbm9zZXJ2ZXItMTgwOS1ydW50aW1lLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "F9BA40C5EC071EE85DD2065C7FF277667C000B7D2A8D28C069FF38384610BF8E02",
+     "artifactsize": "8427",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50497999,
+   "name": "linuxarm6410.0-noble-runtime-deps-image-info-1",
+   "source": "c754c2f2-8e71-5902-346d-7e86a059ea03",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "592B3A546C64F518897B4D67D977EC21C2E3F678333FC22F7B5C99AD0669D8F401",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm6410.0-noble-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQxMC4wLW5vYmxlLXJ1bnRpbWUtZGVwcy1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "086EBCBAA5C3E85C699EBC3DF06791550DB78A37AEDF578A6DBEFCCBA3811CCF02",
+     "artifactsize": "26182",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498000,
+   "name": "linuxarm6410.0-azurelinux4.0-runtime-deps-image-info-1",
+   "source": "e27bb03b-8ee4-51d2-159a-afc23d6ec395",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "173ABFF1004450E8D6AB369C0E14242D071FFBC5EDB174B749162BF16C90C74A01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm6410.0-azurelinux4.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQxMC4wLWF6dXJlbGludXg0LjAtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "50361C924B1BC33850A193ED249AEE8337B1AC6D77B8BC14AC3C2CD1B1AF846302",
+     "artifactsize": "28478",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498001,
+   "name": "linuxarm6410.0-resolute-runtime-deps-image-info-1",
+   "source": "e8244f87-b03a-5597-ac95-f63aea18c362",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "617B7B5A9C915AF29C41A36BB58E342576B245F233B5395147EC914C7991876701",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm6410.0-resolute-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQxMC4wLXJlc29sdXRlLXJ1bnRpbWUtZGVwcy1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "77979D0389705178FC32BEA6725EA992DA437AB9D84D8491A6109F378F67460002",
+     "artifactsize": "27058",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498002,
+   "name": "linuxarm6411.0-azurelinux4.0-runtime-deps-image-info-1",
+   "source": "587f617b-2bb0-5938-1a3f-0d7048af1705",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "80CA9504FE59F6D1275274A52AF9C5166C4A879C8C3516ADCDB1CBC581811B7C01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm6411.0-azurelinux4.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQxMS4wLWF6dXJlbGludXg0LjAtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "8D1F07D6B55994504625215A19850B06DA097C8315874E2CE272A72B6AF9921002",
+     "artifactsize": "28643",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498003,
+   "name": "linuxarm6411.0-azurelinux3.0-runtime-deps-image-info-1",
+   "source": "cd018722-3237-5609-beab-d1f0b30084c7",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "E969B712B9071EEF2A3DF037B9F625AF4618B19646FD3A819307B8FE12634FC801",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm6411.0-azurelinux3.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQxMS4wLWF6dXJlbGludXgzLjAtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "D09443DFE18933A6BD7A657FA04520E82A276C53D0A3D3864FAD66166BBF946C02",
+     "artifactsize": "30715",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498005,
+   "name": "linuxarm6411.0-resolute-runtime-deps-image-info-1",
+   "source": "9a529983-ad11-5085-5b2c-dceae3582620",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "9A4D56152B7E090074CC7FD36C16296471D499EDA3CC9C3610A4DB443EECD55A01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm6411.0-resolute-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQxMS4wLXJlc29sdXRlLXJ1bnRpbWUtZGVwcy1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "A4BBC251D0A6C70B0E74BC9C1745D3CB7D20AA8B8BD3AA8F32B413208CA9DDA902",
+     "artifactsize": "27586",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498007,
+   "name": "linuxamd6410.0-azurelinux3.0-runtime-deps-image-info-1",
+   "source": "9aada89a-2e24-5acb-2807-6900158b9cce",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "84211AA2F69B0D54F8753D1DA4DC21CFCD21FC93351BF598EBBA8F7B59F05F4B01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxamd6410.0-azurelinux3.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YW1kNjQxMC4wLWF6dXJlbGludXgzLjAtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "DA043F05BB205BCB66BA40779A3203D49F3FD1E5836F8D9711BFA41352B9601402",
+     "artifactsize": "30376",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498012,
+   "name": "linuxarm6410.0-azurelinux3.0-runtime-deps-image-info-1",
+   "source": "1e831885-872d-5776-de5c-f21040121ec9",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "39A87C794268C5389B4D66D0E773CCD32A7170BECABEC80ED994EC427D84D4AE01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=linuxarm6410.0-azurelinux3.0-runtime-deps-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2xpbnV4YXJtNjQxMC4wLWF6dXJlbGludXgzLjAtcnVudGltZS1kZXBzLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "92CA06005CD466CD8F8C29796DE971B33B70774A01BE036A0C1D5AEC4882B2B302",
+     "artifactsize": "30492",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498013,
+   "name": "windows-1809amd648.0-windowsservercore-ltsc2019-runtime-image-info-1",
+   "source": "21fd71b9-1e98-5dc0-e4e7-594ff50d4588",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "BF59D07719FFF97DD043723983F7F2B447B5C21ADDD9B42C03D51E29E45A795001",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-1809amd648.0-windowsservercore-ltsc2019-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtMTgwOWFtZDY0OC4wLXdpbmRvd3NzZXJ2ZXJjb3JlLWx0c2MyMDE5LXJ1bnRpbWUtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "99BF6B261D560444AB61E3DA499781EEB03DE52CD2B7F2DFF525A92511BF006202",
+     "artifactsize": "7740",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498014,
+   "name": "windows-1809amd649.0-windowsservercore-ltsc2019-runtime-image-info-1",
+   "source": "94f97350-68bd-55e9-9c13-da2e572743ef",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "5EE6FEEACF166A554FF83BED6A5AAB4B4FC9CBF7B8A507A0EE6DC3799E4F20AF01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-1809amd649.0-windowsservercore-ltsc2019-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtMTgwOWFtZDY0OS4wLXdpbmRvd3NzZXJ2ZXJjb3JlLWx0c2MyMDE5LXJ1bnRpbWUtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "CFD00B85E3DB751139542956DE82C48F8C1766919B49047B989804FA073C07A002",
+     "artifactsize": "7739",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498304,
+   "name": "windows-ltsc2022amd649.0-windowsservercore-ltsc2022-runtime-image-info-1",
+   "source": "2a673847-5787-5e8b-50b8-0c6900a77863",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "9E176FEB4AED31BC3DA37E4B4B94CC3218DC0DEAA38EB98F86F0996B90056B8A01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2022amd649.0-windowsservercore-ltsc2022-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjJhbWQ2NDkuMC13aW5kb3dzc2VydmVyY29yZS1sdHNjMjAyMi1ydW50aW1lLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "A2C088ACE941534EFF2B6A9DDC06AE6D9ABD2A43F30FC0453C46A1D6E28DDC2A02",
+     "artifactsize": "7740",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498305,
+   "name": "windows-ltsc2022amd6410.0-windowsservercore-ltsc2022-runtime-image-info-1",
+   "source": "c3ffee17-cc4f-51b2-8573-28f282b12e90",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "873CB90D221BD12645D99C6204C799A5759EB5E9D0565D1F554BCADF2917704901",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2022amd6410.0-windowsservercore-ltsc2022-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjJhbWQ2NDEwLjAtd2luZG93c3NlcnZlcmNvcmUtbHRzYzIwMjItcnVudGltZS1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "ECF08C3E7D29ADE6B3985A2F9664371BC7FC2EDBCC24B1339CB7DBD1D88C7F8902",
+     "artifactsize": "7755",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498309,
+   "name": "windows-ltsc2022amd649.0-nanoserver-ltsc2022-runtime-image-info-1",
+   "source": "2b5c728b-4125-5def-e5c2-7e794057f230",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "7DD2B9F90ED4031A0F32055127EC31E38793FD80CB5A4F55D23D2B31796C386501",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2022amd649.0-nanoserver-ltsc2022-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjJhbWQ2NDkuMC1uYW5vc2VydmVyLWx0c2MyMDIyLXJ1bnRpbWUtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "632B3F8A3D60A1F478602EE0EF9310B84C51865834BDECA5B699FAADF35D5DD302",
+     "artifactsize": "8488",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498316,
+   "name": "windows-ltsc2022amd648.0-windowsservercore-ltsc2022-runtime-image-info-1",
+   "source": "269ec576-be97-5dba-cd6e-ef7c8ed9d0f0",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "9CECC61A0D3654EC698EEE2E6F6B5672CCDD2F3902FEC3E1B1E1388AA5C93F9601",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2022amd648.0-windowsservercore-ltsc2022-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjJhbWQ2NDguMC13aW5kb3dzc2VydmVyY29yZS1sdHNjMjAyMi1ydW50aW1lLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "0A7F647B3DF0531E3906AF5EBD5D63E44DDDB221E4551A61AA6D9998855E7C4A02",
+     "artifactsize": "7740",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498320,
+   "name": "windows-ltsc2022amd648.0-nanoserver-ltsc2022-runtime-image-info-1",
+   "source": "4ff2a3ec-4574-5a9c-59c5-378c5e296bb6",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "33A7537E48ADCA4A27E2C7B3ECC1657173B1119EACCA86F1E5C1437BE1C89C4701",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2022amd648.0-nanoserver-ltsc2022-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjJhbWQ2NDguMC1uYW5vc2VydmVyLWx0c2MyMDIyLXJ1bnRpbWUtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "B2D115C2135504B86A8BE0DE229ED2AEAD476ACBD0DCDF8F982351C99EAC149702",
+     "artifactsize": "8488",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498697,
+   "name": "windows-ltsc2025amd6410.0-windowsservercore-ltsc2025-runtime-image-info-1",
+   "source": "8ab0fe29-a49b-590b-7988-879a0fea3c62",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "504254DCE74C197DF59A6311F8496A54E35C88AD8E43071E698F69850BC49B7301",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2025amd6410.0-windowsservercore-ltsc2025-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjVhbWQ2NDEwLjAtd2luZG93c3NlcnZlcmNvcmUtbHRzYzIwMjUtcnVudGltZS1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "2EA05572B8B4C2ABFE6DF769DA748E1EE15C987D8D39CD8964D10DE2AF22769402",
+     "artifactsize": "7755",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498705,
+   "name": "windows-ltsc2025amd6411.0-windowsservercore-ltsc2025-runtime-image-info-1",
+   "source": "4c3b5f0b-0360-5cbd-8a85-0496e074312b",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "2A091E367966066D16F5E6DD3968B27260E4F8DE0D298B58F186004A683D22A901",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2025amd6411.0-windowsservercore-ltsc2025-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjVhbWQ2NDExLjAtd2luZG93c3NlcnZlcmNvcmUtbHRzYzIwMjUtcnVudGltZS1pbWFnZS1pbmZvLTE1/content?format=zip",
+    "properties": {
+     "RootId": "A34285B0AEE9F846EC8AA7A5F25D7920DE4593F2E5A5E8ED48D2C9EF3D48A13902",
+     "artifactsize": "7781",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498706,
+   "name": "windows-ltsc2025amd648.0-windowsservercore-ltsc2025-runtime-image-info-1",
+   "source": "49580ba8-a999-551e-59f6-4c461f5b33c3",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "462D32ABD0703899F4FDBEB3A283CF39176A56EB8E8EE008B92768100193F81101",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2025amd648.0-windowsservercore-ltsc2025-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjVhbWQ2NDguMC13aW5kb3dzc2VydmVyY29yZS1sdHNjMjAyNS1ydW50aW1lLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "A1D7EC492F9831194B6F529EF0A20F73DFFAD0F59241B98819735075C38C6A2802",
+     "artifactsize": "7740",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498708,
+   "name": "windows-ltsc2025amd6411.0-nanoserver-ltsc2025-runtime-image-info-1",
+   "source": "0558259d-5b90-5484-32dd-efda7024566e",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "CA2D3184B86D3A5FA3B161AC3F5BD8575C72E90C4F790155A8AB41142ED6083501",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2025amd6411.0-nanoserver-ltsc2025-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjVhbWQ2NDExLjAtbmFub3NlcnZlci1sdHNjMjAyNS1ydW50aW1lLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "2C53D208FC830C46BF47878604910DF157CF9E2F683549AB44C28C55E0AD594202",
+     "artifactsize": "8529",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498709,
+   "name": "windows-ltsc2025amd648.0-nanoserver-ltsc2025-runtime-image-info-1",
+   "source": "351edaf4-40d2-5ece-fc6b-9cabe08322f0",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "FD3D85CB6FF1A321F0073CFB7244A521444008AAF534A0B5A8A2CE38B5DC37CC01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2025amd648.0-nanoserver-ltsc2025-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjVhbWQ2NDguMC1uYW5vc2VydmVyLWx0c2MyMDI1LXJ1bnRpbWUtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "BDCFCD79072D328F242E3FFA615DFA7B23A4245210EAE504014CA2B3E9DD726702",
+     "artifactsize": "8487",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498716,
+   "name": "windows-ltsc2025amd649.0-windowsservercore-ltsc2025-runtime-image-info-1",
+   "source": "02651f3d-78b9-5f2c-c692-c6d5d32f530c",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "C8FFA2BBADC0306051386F8EEFF3A230CFC7EB27EC176558A69D85D928FCCD8301",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2025amd649.0-windowsservercore-ltsc2025-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjVhbWQ2NDkuMC13aW5kb3dzc2VydmVyY29yZS1sdHNjMjAyNS1ydW50aW1lLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "F879263310E75682FA5EB8A61110D76F7215CF6A5C0EF0E8AFB898651E9290FD02",
+     "artifactsize": "7740",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498719,
+   "name": "windows-ltsc2025amd6410.0-nanoserver-ltsc2025-runtime-image-info-1",
+   "source": "11434e3e-4fd8-538e-73a7-1fa357b5715e",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "4E5FD5289B3A6539DA55DC33C959681F6AFEEF33BAC0569AE90C2F536686087A01",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2025amd6410.0-nanoserver-ltsc2025-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjVhbWQ2NDEwLjAtbmFub3NlcnZlci1sdHNjMjAyNS1ydW50aW1lLWltYWdlLWluZm8tMQ2/content?format=zip",
+    "properties": {
+     "RootId": "BA081999511C8487E535E80659265BA0C94571C6C80D2473FF36981BFBFAD37902",
+     "artifactsize": "8502",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498722,
+   "name": "windows-ltsc2025amd649.0-nanoserver-ltsc2025-runtime-image-info-1",
+   "source": "436aae7c-a1ee-5a3a-fa5f-3e7d4efe2991",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "CFA817EE856E2354C74E755AA3508E4ED843CAA244420BFDCF3E4239A83E18A301",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=windows-ltsc2025amd649.0-nanoserver-ltsc2025-runtime-image-info-1&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3dpbmRvd3MtbHRzYzIwMjVhbWQ2NDkuMC1uYW5vc2VydmVyLWx0c2MyMDI1LXJ1bnRpbWUtaW1hZ2UtaW5mby0x0/content?format=zip",
+    "properties": {
+     "RootId": "CA8F05902BB78D554028323C7DE605BD63F4133C19778034F6C3326C3C7CF36202",
+     "artifactsize": "8488",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498934,
+   "name": "sboms",
+   "source": "d0655b31-4114-5ece-d5b2-aae266c14734",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "B52D983C641AD70E6622EDA19918E27E4C0B27F3C0C705A101FA3B6D9CE1A45001",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=sboms&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL3Nib21z0/content?format=zip",
+    "properties": {
+     "RootId": "6F99FA7CFEEFBF2982B0285FCD47966DDFCB47970EF0E223E9B82C3B57BFE73302",
+     "artifactsize": "0",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  },
+  {
+   "id": 50498936,
+   "name": "image-info",
+   "source": "d0655b31-4114-5ece-d5b2-aae266c14734",
+   "resource": {
+    "type": "PipelineArtifact",
+    "data": "89AEAE554243E556F1F78C19DE2D36E58B9F2DB75E8A8ADD15727D9ABF3CE4A101",
+    "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/builds/1650385/artifacts?artifactName=image-info&api-version=7.1",
+    "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A6fcc92e5-73a7-4f88-8d13-d9045b45fb27/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2RuY2VuZy1wdWJsaWMvcHJvamVjdElkL2NiYjE4MjYxLWM0OGYtNGFiYi04NjUxLThjZGNiNTQ3NDY0OS9idWlsZElkLzE2NTAzODUvYXJ0aWZhY3ROYW1lL2ltYWdlLWluZm81/content?format=zip",
+    "properties": {
+     "RootId": "07E01B98E9B9A10360CFD9A217BDE6DB287AFDE3412D4AA4DFC654716BB9B21802",
+     "artifactsize": "1121665",
+     "HashType": "DEDUPNODEORCHUNK"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,27 @@
+{
+ "retainedByRelease": false,
+ "sourceBranch": "refs/pull/40338/merge",
+ "startTime": "2026-10-27T06:38:18.623946Z",
+ "buildNumber": "20261026.65",
+ "status": "completed",
+ "finishTime": "2026-10-27T07:02:13.5832039Z",
+ "result": "failed",
+ "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/Builds/7003611",
+ "id": 7003611,
+ "sourceVersion": "67050605fd2aa8b44943c4ab88bdd954f9830b2c",
+ "reason": "pullRequest",
+ "queueTime": "2026-10-27T06:37:49.2307608Z",
+ "definition": {
+  "id": 7140,
+  "name": "js - pullrequest"
+ },
+ "project": {
+  "id": "29ec6040-b234-4e31-b139-33dc4287b756",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_build/results?buildId=7003611"
+  }
+ }
+}
