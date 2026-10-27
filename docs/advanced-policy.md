@@ -236,6 +236,10 @@ ends `verify` with exit 2 and, with `-o`, an error report (`decision: INDETERMIN
 - at least one unreadable pipeline → INDETERMINATE, `JOB_MAYBE_IN_UNREADABLE_PIPELINE`; the
   message lists the unreadable pipelines and why.
 
+A job that **was** found can still have unseen copies in an unreadable pipeline. Under
+`production`, without `copies`, that is INDETERMINATE too (`COPIES_UNBOUNDED`, [#71](https://github.com/abdelrahman-eladwy/scanproof/issues/71),
+[above](#matrix-legs-under-production)).
+
 Matrix legs and `parallel: N` indices are the exception: they are only ever reported missing
 inside a pipeline that was read and runs the same job, so they are always proven.
 
@@ -281,6 +285,7 @@ weakening settings loads under either profile and returns the same decision. Eve
 | `WAIVER_REMOVES_REQUIREMENT` | a waiver on `job_present` (any code, any instance) | accepts a pipeline without the required job |
 | `WAIVER_HIDES_UNDECLARED_INSTANCES` | a waiver on `instances_declared` | accepts matrix legs whose removal can't be detected |
 | `WAIVER_HIDES_UNDECLARED_COPIES` | a waiver on `copies_declared` | accepts prefixed copies whose removal can't be detected |
+| `WAIVER_HIDES_UNBOUNDED_COPIES` | a waiver on `copies_bounded` | accepts copies in unreadable pipelines that were never judged |
 
 ### Matrix legs under production
 
@@ -297,6 +302,15 @@ Jenkins stage path) but declares no `copies` is UNKNOWN: check `copies_declared`
 `COPIES_UNDECLARED`, exit 2 ([#65](https://github.com/abdelrahman-eladwy/scanproof/issues/65)). A job matched only by its exact, unprefixed name needs no
 declaration. **Upgrading:** production policies for pipelines with downstream jobs, reusable
 workflows or nested Jenkins stages must add `copies` (or use qualified job names).
+
+Copies can also be **hidden**: a downstream pipeline that can't be read (or hasn't started)
+may run the job too, and that copy must pass like the others. Under `profile: production`, a
+requirement with an unqualified `job_name` and no `copies`, whose job was found while such a
+pipeline exists, is UNKNOWN: check `copies_bounded`, code `COPIES_UNBOUNDED`, exit 2 ([#71](https://github.com/abdelrahman-eladwy/scanproof/issues/71)).
+Declaring `copies` bounds the set: `copies: [""]` says only the pipeline's own job is required,
+so a copy in the unreadable pipeline is not. A qualified `job_name` (`svc-a > sast`) can't
+match a hidden copy and is unaffected. Under `compatible`, the visible copies decide, with a
+warning.
 
 All violations are listed at once. To see them for any policy, without changing its profile:
 

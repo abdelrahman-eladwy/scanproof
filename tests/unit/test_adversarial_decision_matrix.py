@@ -207,3 +207,32 @@ def test_removed_prefixed_copy(kept, copies, declared, profile, decision):
     assert result.decision is decision
     if decision is Decision.VERIFIED:
         assert any("declares no `copies`" in w for w in result.warnings)
+
+
+@pytest.mark.parametrize(
+    ("copies", "profile", "decision"),
+    [
+        (None, "production", Decision.INDETERMINATE),
+        ([""], "production", Decision.VERIFIED),  # declared: only this pipeline's own job
+        # The documented compatible behavior: judged on what is visible, with a warning.
+        (None, "compatible", Decision.VERIFIED),
+    ],
+)
+def test_copy_hidden_in_unreadable_pipeline(copies, profile, decision):
+    """#71: 'sast' passes; an unreadable downstream pipeline may hold a failing copy."""
+    body = policy(profile=profile).model_dump(mode="json", exclude_none=True)
+    if copies is not None:
+        body["requirements"][0]["copies"] = copies
+    pol = Policy.model_validate(body)
+    unread = "these pipelines could not be read: svc-private (auth)"
+    inputs = {
+        "SAST": RequirementInput(
+            job=named("sast"),
+            evidence=report(),
+            copies_unbounded=None if copies else unread,
+        )
+    }
+    result = evaluate(pol, PIPELINE, inputs, now=NOW)
+    assert result.decision is decision
+    if profile == "compatible":
+        assert any("could not be read and were not judged" in w for w in result.warnings)
