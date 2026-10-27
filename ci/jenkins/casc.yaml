@@ -1,0 +1,20 @@
+# Jenkins configuration as code: one local user (password from the environment, random per run)
+# and one pipeline per masking pattern ScanProof must see through.
+jenkins:
+  systemMessage: "ScanProof Jenkins contract (throwaway)"
+  numExecutors: 4
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: scanproof
+          password: "${SCANPROOF_JENKINS_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+unclassified:
+  location:
+    url: "http://localhost:8080/"
+jobs:
+  # A file, not inline: JCasC would substitute ${...} inside an inline script.
+  - file: /var/jenkins_home/jobs.groovy
