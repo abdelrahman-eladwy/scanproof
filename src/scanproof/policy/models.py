@@ -92,6 +92,25 @@ class Checks(_Strict):
         "scanned path inside this one",
     )
 
+    def evidence_checks(self) -> list[str]:
+        """Names of the configured checks that read the scanner report.
+
+        The single list the engine uses to decide whether a report is needed at all, and the
+        production profile uses to spot checks that `report_required: false` would drop.
+        """
+        configured = {
+            "scanner_errors_allowed": self.scanner_errors_allowed is not None,
+            "minimum_scanned_files": self.minimum_scanned_files is not None,
+            "required_paths": bool(self.required_paths),
+            "image_digest_must_match": bool(self.image_digest_must_match),
+            "expected_scanner": bool(self.expected_scanner),
+            "minimum_components": self.minimum_components is not None,
+            "minimum_resources": self.minimum_resources is not None,
+            "target_url_must_match": bool(self.target_url_must_match),
+            "minimum_endpoints": self.minimum_endpoints is not None,
+        }
+        return [name for name, on in configured.items() if on]
+
     @field_validator("required_paths")
     @classmethod
     def _usable_paths(cls, value: list[str] | None) -> list[str] | None:
@@ -274,6 +293,12 @@ class Assurance(_Strict):
     """
 
     minimum_level: Literal["report", "reported_scope"] = "report"
+    profile: Literal["compatible", "production"] = Field(
+        "compatible",
+        description="compatible: every v1alpha1 setting is accepted (the behavior before "
+        "profiles existed). production: settings that let a weaker pipeline reach VERIFIED "
+        "are load errors (scanproof validate --explain lists them)",
+    )
 
 
 class Policy(_Strict):
@@ -350,6 +375,16 @@ class Policy(_Strict):
                     )
             if w.created is not None and w.created > w.expires:
                 raise ValueError(f"waiver {w.requirement}/{w.check} expires before it starts")
+        if self.assurance.profile == "production":
+            from scanproof.policy.profile import production_violations
+
+            violations = production_violations(self)
+            if violations:
+                raise ValueError(
+                    f"assurance.profile: production rejects {len(violations)} setting(s) that "
+                    "weaken assurance:\n"
+                    + "\n".join(f"      {v.location}: {v.message} [{v.code}]" for v in violations)
+                )
         return self
 
     @property

@@ -5,6 +5,16 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 
 ## [Unreleased]
 
+### Added
+- `assurance.profile: production` ([#52](https://github.com/abdelrahman-eladwy/scanproof/issues/52)):
+  settings that let a weaker pipeline reach VERIFIED are load errors (exit 3), all listed at
+  once with a stable code (`JOB_SUCCESS_DISABLED`, `WAIVER_UNBOUNDED`,
+  `SIGNER_REPOSITORY_UNPINNED`, ...), and `enforcement.max_waiver_days` may not exceed 90. See
+  [docs/advanced-policy.md](docs/advanced-policy.md#production-profile-reject-assurance-weakening-settings).
+- `scanproof validate --explain`: shows the policy's minimum assurance level and lists every
+  assurance-weakening setting, which ones `production` would reject, and platform limitations
+  that no setting removes.
+
 ### Fixed
 - **False VERIFIED:** a job named exactly like a requirement's `job_name` hid that name's
   matrix, parallel, downstream and reusable-workflow instances, so a passing `sast` could stand
@@ -13,6 +23,8 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   covers is evaluated and all must pass.
 
 ### Compatibility
+- The default profile, `compatible`, accepts every policy that loaded before. No evaluation
+  changes for any profile.
 - A pipeline that has both an exact-name job and same-named instances now needs every one of
   them to pass, where before only the exact job counted. If such a job really is unrelated,
   rename it. Pipelines with only an exact job or only instances are unchanged.

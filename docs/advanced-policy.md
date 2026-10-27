@@ -127,3 +127,68 @@ still override a failed check and is shown in the audit output.
 Legacy `minimum_level: report` policies keep their current behavior.
 Migration is opt-in; update policy files after verifying that your selected
 scanner adapter emits meaningful scanned paths or scope counts.
+
+## Production profile: reject assurance-weakening settings
+
+Every `v1alpha1` setting is valid and evaluated exactly as documented, but some of them let a
+weaker pipeline reach VERIFIED. `assurance.profile: production` makes each of them a load
+error (exit 3, before any CI platform is contacted). The default, `profile: compatible`,
+accepts everything, as before profiles existed.
+
+```yaml
+assurance:
+  profile: production
+  minimum_level: reported_scope   # independent; recommended alongside production
+```
+
+`profile` only changes which policies load. It never changes how a loaded policy is
+evaluated. A policy with no weakening settings loads under either profile and returns the
+same decision. Every shipped example in [`examples/policies/`](../examples/policies/) passes
+`production`.
+
+| Code | Setting | Why it weakens assurance |
+|---|---|---|
+| `ON_UNKNOWN_WARN` | `enforcement.on_unknown: warn` | evidence that can't be proven passes with a warning |
+| `NOTHING_APPLICABLE_ALLOW` | `enforcement.on_nothing_applicable: allow` | VERIFIED when nothing was verified |
+| `JOB_SUCCESS_DISABLED` | `checks.job_success: false` | a failed or cancelled scan job's report counts |
+| `SAME_COMMIT_DISABLED` | `checks.same_commit: false` | evidence from another commit counts |
+| `REPORT_OPTIONAL` | `checks.report_required: false` | a missing report is accepted |
+| `REPORT_OPTIONAL_DROPS_CHECKS` | `report_required: false` plus evidence checks | with no report, `image_digest_must_match`, `minimum_scanned_files`, etc. silently don't run |
+| `ALL_CHECKS_DISABLED` | a requirement with every check off | outcome is always NOT_APPLICABLE; it can never block |
+| `ATTESTATION_SAME_COMMIT_DISABLED` | `attestation.same_commit: false` | signatures replayable across commits |
+| `ATTESTATION_SAME_RUN_DISABLED` | `attestation.same_run: false` | signatures replayable across runs |
+| `SIGNER_REPOSITORY_UNPINNED` | `signer.workflow` without `signer.repository` | a loose regex accepts any repository under the issuer |
+| `WAIVER_UNBOUNDED` | waivers without `enforcement.max_waiver_days` | `expires` can be any date |
+| `WAIVER_LIMIT_TOO_LONG` | `enforcement.max_waiver_days` above 90 | a huge limit makes waivers effectively permanent |
+| `WAIVER_REMOVES_REQUIREMENT` | a waiver on `job_present` (any code, any instance) | accepts a pipeline without the required job |
+
+All violations are listed at once. To see them for any policy, without changing its profile:
+
+```console
+$ scanproof validate --explain -P policy.yaml
+OK: policy 'app-release' with 2 requirement(s): SAST, IMAGE
+profile: compatible
+minimum assurance: report (a parseable report is enough; reports are NOT required to claim they scanned anything; set assurance.minimum_level: reported_scope)
+1 assurance-weakening opt-in(s), each rejected by assurance.profile: production:
+  - SAME_COMMIT_DISABLED at requirements[SAST].checks.same_commit: evidence from a job that ran on another commit counts
+```
+
+`--explain` always states the policy's `minimum_level`. Under `report`, a policy with no
+weakening opt-ins still does not require reports to claim they scanned anything, so the
+output says so explicitly.
+
+The 90-day ceiling is a policy choice, not a platform limit: long enough for a quarterly
+remediation cycle, short enough that a waiver must be re-approved. It applies whether or
+not the policy has waivers today.
+
+`--explain` also prints **notes**, which are limitations that no setting removes and that the
+profile therefore doesn't reject. Today there is one, `GITLAB_SAME_RUN_IS_PIPELINE_WIDE`.
+GitLab's Fulcio identity names the pipeline, not the job, so any job in the verified pipeline
+can produce an accepted signature ([attestations](attestations.md)). Protect who can edit the
+pipeline.
+
+**Not covered by the profile:** two job-matching gaps that need detection changes, not
+policy validation. A job named exactly like the requirement hides its matrix or parallel
+instances ([#59](https://github.com/abdelrahman-eladwy/scanproof/issues/59)). A removed matrix
+leg whose name carries no total can't be detected
+([#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60)).
