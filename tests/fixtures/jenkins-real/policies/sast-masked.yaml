@@ -1,9 +1,9 @@
-# Live Jenkins contract (.github/workflows/platforms-contract.yml): job sast-trycatch, build #1.
+# Recorded live Jenkins contract (scanproof-e2e platforms-contract): job sast-masked, build #1.
 # Expected exit: 1
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy
-metadata: {name: jenkins-self-sast-trycatch}
-project: {provider: jenkins, id: sast-trycatch}
+metadata: {name: jenkins-self-sast-masked}
+project: {provider: jenkins, id: sast-masked}
 requirements:
   - id: SAST
     tool: semgrep

@@ -1,4 +1,4 @@
-# Live Jenkins contract (.github/workflows/platforms-contract.yml): job sast-matrix, build #1.
+# Recorded live Jenkins contract (scanproof-e2e platforms-contract): job sast-matrix, build #1.
 # Expected exit: 1
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy

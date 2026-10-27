@@ -46,6 +46,8 @@ scanners are leaves. A new scanner or CI provider must not require changes to `p
 
 - One issue = one branch = one PR. Historical milestone specifications in `docs/development/milestones/`
   retain acceptance criteria; satisfy them and say which test covers each.
+- Live tests against real CI platforms live in `abdelrahman-eladwy/scanproof-e2e`, not here; this
+  repository's tests stay offline.
 - Tests first for parsers and the policy engine. Use `respx` to mock GitLab; put real
   (sanitized) reports in `tests/fixtures/`. No network in unit tests.
 - Before opening a PR run: `ruff check . && ruff format --check . && pytest`.

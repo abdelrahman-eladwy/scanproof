@@ -270,7 +270,7 @@ def test_github_headers_and_bearer(gh, mock_api) -> None:
 # ---------------------------------------------------------------- end to end: verify
 
 
-POLICIES = FIXTURES.parent / "contract/policies"
+POLICIES = FIXTURES / "github-real/policies"
 
 
 @pytest.mark.parametrize(

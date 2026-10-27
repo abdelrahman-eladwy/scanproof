@@ -72,7 +72,7 @@ requirements:
 
 ## Producing attestations
 
-**GitHub Actions** (what `.github/workflows/attestation-contract.yml` runs live):
+**GitHub Actions** (what the [`attestation-contract` workflow](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/.github/workflows/attestation-contract.yml) runs live):
 
 ```yaml
 permissions: {contents: read, id-token: write, attestations: write}

@@ -1,7 +1,7 @@
 # Using ScanProof with Jenkins
 
 Jenkins Pipelines (declarative and scripted). Verified live against a real Jenkins (2.580.1) that
-runs one pipeline per masking pattern (`tests/contract/jenkins/`, `.github/workflows/platforms-contract.yml`).
+runs one pipeline per masking pattern ([`platforms-contract`](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/.github/workflows/platforms-contract.yml) in scanproof-e2e).
 
 ## Access
 

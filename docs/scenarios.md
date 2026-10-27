@@ -1,7 +1,8 @@
 # Complex scenarios: what ScanProof does, and how we know
 
 Each row is an automated test. "Live" rows are also checked against real platform behaviour:
-GitHub rows run in `.github/workflows/github-contract.yml` (ScanProof verifies its own run), and
+GitHub rows run in the [`github-contract` workflow](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/.github/workflows/github-contract.yml) of scanproof-e2e (ScanProof
+verifies its own run), and
 GitLab rows replay real gitlab.com API responses saved in `tests/fixtures/gitlab-real/`.
 
 ## GitLab (`tests/unit/test_complex_gitlab.py`)

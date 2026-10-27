@@ -40,5 +40,5 @@ For contributors and maintainers. See also [CONTRIBUTING.md](../CONTRIBUTING.md)
 - [Releasing](development/releasing.md)
 - [Milestone records (M1–M4)](development/milestones/): historical specifications and acceptance
   criteria.
-- [Live contract tests](../tests/contract/README.md): policies and harnesses the CI contract
-  workflows run against real platforms.
+- [Live end-to-end tests](https://github.com/abdelrahman-eladwy/scanproof-e2e): the separate `scanproof-e2e` repository runs ScanProof against
+  real CI platforms and scanners, and generates the fixtures in `tests/fixtures/`.

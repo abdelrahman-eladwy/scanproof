@@ -1,5 +1,5 @@
 """Jenkins Pipeline connector (read-only). Built against a real Jenkins (2.580.1) running one
-pipeline per masking pattern (tests/contract/jenkins/, tests/fixtures/jenkins-real/).
+pipeline per masking pattern (scanproof-e2e repository, recorded in tests/fixtures/jenkins-real/).
 
 Mapping:
   project  = job path, e.g. "team/app/main" (folders and multibranch: /job/team/job/app/job/main)

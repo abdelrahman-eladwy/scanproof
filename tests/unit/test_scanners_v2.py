@@ -1,5 +1,5 @@
 """Gitleaks, Grype, OSV-Scanner, Snyk, Kubescape, ZAP and Nuclei adapters against real output
-(generated in .github/workflows/fixtures.yml; Snyk from DefectDojo's test data), and the DAST
+(generated in scanproof-e2e fixtures; Snyk from DefectDojo's test data), and the DAST
 checks target_url_must_match / minimum_endpoints."""
 
 from __future__ import annotations

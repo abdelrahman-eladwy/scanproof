@@ -5,8 +5,6 @@
 | [`policies/`](policies/) | Policies to start from, one per use case (see below). |
 | [`release.yaml`](release.yaml) | One release built from several pipelines (`scanproof verify-release`, see [advanced policy](../docs/advanced-policy.md#one-release-several-pipelines)). |
 | [`gitlab-ci/`](gitlab-ci/) | A demo GitLab project and a copy-paste release gate job. |
-| [`demo/`](demo/) | Policies for the [two-pipeline demo](../docs/demo.md). |
-| [`sample-projects/`](sample-projects/) | Deliberately vulnerable inputs used to generate real scanner fixtures. Never deploy them. |
 
 ## Policies
 

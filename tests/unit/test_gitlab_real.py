@@ -1,5 +1,5 @@
 """Contract tests on REAL gitlab.com API responses (public projects, collected anonymously by
-.github/workflows/gitlab-contract.yml and sanitized: no user, author or runner data)."""
+scanproof-e2e gitlab-contract and sanitized: no user, author or runner data)."""
 
 from __future__ import annotations
 

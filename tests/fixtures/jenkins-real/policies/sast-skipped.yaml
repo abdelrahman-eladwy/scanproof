@@ -1,9 +1,9 @@
-# Live Jenkins contract (.github/workflows/platforms-contract.yml): job sast-failed, build #1.
+# Recorded live Jenkins contract (scanproof-e2e platforms-contract): job sast-skipped, build #1.
 # Expected exit: 1
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy
-metadata: {name: jenkins-self-sast-failed}
-project: {provider: jenkins, id: sast-failed}
+metadata: {name: jenkins-self-sast-skipped}
+project: {provider: jenkins, id: sast-skipped}
 requirements:
   - id: SAST
     tool: semgrep
