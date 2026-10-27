@@ -1,0 +1,13 @@
+# ScanProof release gate / policy enforcement ownership.
+# Important: this file requests review only. It is NOT enforced until the
+# repository owner enables "Require review from Code Owners" in the main
+# branch ruleset or branch-protection rule.
+#
+# Security-critical changes require review by the repository maintainer.
+/.github/workflows/ @abdelrahman-eladwy
+/.github/CODEOWNERS @abdelrahman-eladwy
+/examples/policies/ @abdelrahman-eladwy
+/src/scanproof/policy/ @abdelrahman-eladwy
+/src/scanproof/attestation/ @abdelrahman-eladwy
+/docs/security.md @abdelrahman-eladwy
+/docs/protected-release-gates.md @abdelrahman-eladwy

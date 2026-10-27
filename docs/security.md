@@ -28,7 +28,9 @@ workflow files. Prefer one of:
 2. A **separate audit project** that inspects pipelines with a read-only token
    (scheduled, or triggered before release).
 
-Keep policy files under code-owner protection.
+Keep policy files under code-owner protection. See the [protected release gate guide](protected-release-gates.md)
+for platform-enforced status checks, CODEOWNERS setup, and adversarial validation steps.
+A CODEOWNERS file by itself does not enforce approval.
 
 ## Handling of credentials and network
 
