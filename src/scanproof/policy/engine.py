@@ -119,7 +119,13 @@ def evaluate(
     it decides scan freshness and waiver expiry."""
     now = now or datetime.now(UTC)
     results = [
-        evaluate_requirement(req, pipeline, inputs.get(req.id, RequirementInput()), now=now)
+        evaluate_requirement(
+            req,
+            pipeline,
+            inputs.get(req.id, RequirementInput()),
+            now=now,
+            minimum_assurance=policy.assurance.minimum_level,
+        )
         for req in policy.requirements
     ]
     _cross_requirement_checks(policy, inputs, results)
@@ -168,6 +174,7 @@ def evaluate_requirement(
     data: RequirementInput,
     *,
     now: datetime | None = None,
+    minimum_assurance: str = "report",
 ) -> RequirementResult:
     def result(checks: list[CheckResult]) -> RequirementResult:
         ev = data.evidence
@@ -199,7 +206,9 @@ def evaluate_requirement(
             )
 
     if data.instances:
-        return _evaluate_instances(req, pipeline, data.instances, now)
+        return _evaluate_instances(
+            req, pipeline, data.instances, now, minimum_assurance=minimum_assurance
+        )
 
     if data.job is None and data.absence_unknown:
         return result(
@@ -231,7 +240,7 @@ def evaluate_requirement(
     checks = [
         *_job_checks(req, data.job),
         *_freshness_checks(req, data.job, now),
-        *_evidence_checks(req, data),
+        *_evidence_checks(req, data, minimum_assurance=minimum_assurance),
         *_attestation_checks(req, pipeline, data),
     ]
     return result(checks)
@@ -242,6 +251,8 @@ def _evaluate_instances(
     pipeline: Pipeline,
     instances: list[tuple[str, RequirementInput]],
     now: datetime | None = None,
+    *,
+    minimum_assurance: str = "report",
 ) -> RequirementResult:
     """Evaluate every instance as its own job; the requirement holds only if all of them do."""
     single = req.model_copy(update={"applies_to": None})
@@ -249,7 +260,11 @@ def _evaluate_instances(
     findings: dict[str, int] = {}
     for name, data in instances:
         sub = evaluate_requirement(
-            single, pipeline, data.model_copy(update={"instances": None}), now=now
+            single,
+            pipeline,
+            data.model_copy(update={"instances": None}),
+            now=now,
+            minimum_assurance=minimum_assurance,
         )
         if data.job is None:
             sub.checks = [
@@ -362,11 +377,14 @@ def _job_checks(req: Requirement, job: InspectedJob) -> list[CheckResult]:
     return out
 
 
-def _evidence_checks(req: Requirement, data: RequirementInput) -> list[CheckResult]:
+def _evidence_checks(
+    req: Requirement, data: RequirementInput, *, minimum_assurance: str = "report"
+) -> list[CheckResult]:
     c = req.checks
     wants_evidence = any(
         [
             c.report_required,
+            minimum_assurance == "reported_scope",
             c.scanner_errors_allowed is not None,
             c.minimum_scanned_files is not None,
             c.required_paths,
@@ -432,6 +450,8 @@ def _evidence_checks(req: Requirement, data: RequirementInput) -> list[CheckResu
         )
     ]
 
+    if minimum_assurance == "reported_scope":
+        out.append(_reported_scope(ev))
     if c.scanner_errors_allowed is not None:
         out.append(_scanner_errors(ev, c.scanner_errors_allowed, c.ignore_scanner_warnings))
     if c.minimum_scanned_files is not None:
@@ -454,6 +474,87 @@ def _evidence_checks(req: Requirement, data: RequirementInput) -> list[CheckResu
 
 
 # ---------------------------------------------------------------- individual checks
+
+
+def _reported_scope(ev: ScanEvidence) -> CheckResult:
+    """Require nonempty *scanner-reported* scan scope, not merely well-formed JSON.
+
+    This evaluates claims in the report, not independently attested execution.
+    Empty, missing, or internally inconsistent scopes cannot satisfy a release
+    policy that explicitly opts into this assurance level.
+    """
+    name = "reported_scope"
+    if ev.results_reported is False:
+        return _r(
+            name,
+            Outcome.FAIL,
+            "SCAN_RESULTS_MISSING",
+            "Scanner report has no results section; scan coverage is not demonstrated",
+        )
+
+    scope = ev.scope
+    if scope is None:
+        return _r(
+            name,
+            Outcome.UNKNOWN,
+            "SCAN_SCOPE_UNKNOWN",
+            "Scanner report does not identify examined files, targets or resources",
+        )
+
+    counters = {
+        "files": scope.files_scanned,
+        "components": scope.components,
+        "resources": scope.resources,
+        "endpoints": scope.endpoints,
+    }
+    reported_counts = [value for value in counters.values() if value is not None]
+    # Strings such as 'None' must not count as a scanned target.
+    paths = scope.scanned_paths
+    valid_paths = (
+        [p for p in paths if isinstance(p, str) and p.strip() and p.strip().lower() != "none"]
+        if paths is not None
+        else None
+    )
+    if paths is not None and len(valid_paths or []) != len(paths):
+        return _r(
+            name,
+            Outcome.FAIL,
+            "SCAN_SCOPE_INVALID",
+            "Scanner lists an empty or invalid scanned target",
+        )
+    if reported_counts and any(count < 0 for count in reported_counts):
+        return _r(name, Outcome.FAIL, "SCAN_SCOPE_INVALID", "Negative scan scope count")
+    if reported_counts and any(count == 0 for count in reported_counts):
+        if any(count > 0 for count in reported_counts) or valid_paths:
+            return _r(
+                name,
+                Outcome.UNKNOWN,
+                "SCAN_SCOPE_CONFLICT",
+                "Scanner-reported scope counts conflict (zero and nonzero)",
+            )
+        return _r(name, Outcome.FAIL, "SCAN_SCOPE_EMPTY", "Scanner reported no scanned targets")
+    if paths is not None and not valid_paths:
+        if reported_counts:
+            return _r(
+                name,
+                Outcome.UNKNOWN,
+                "SCAN_SCOPE_CONFLICT",
+                "Scanner reports positive counts but no scanned paths",
+            )
+        return _r(name, Outcome.FAIL, "SCAN_SCOPE_EMPTY", "Scanner reported no scanned targets")
+    if reported_counts or valid_paths:
+        return _r(
+            name,
+            Outcome.PASS,
+            "REPORTED_SCOPE_PRESENT",
+            "Scanner report claims nonempty examined scope (not independently verified)",
+        )
+    return _r(
+        name,
+        Outcome.UNKNOWN,
+        "SCAN_SCOPE_UNKNOWN",
+        "Scanner report does not provide verifiable scan scope metadata",
+    )
 
 
 def _origin_and_path(url: str) -> tuple[tuple[str, str, int], str] | None:

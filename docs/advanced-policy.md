@@ -1,3 +1,53 @@
+## Opt-in scanner-reported scope assurance
+
+A parseable report is **not proof** that a scanner examined any files or targets.
+Existing `v1alpha1` policies default to `assurance.minimum_level: report` for
+backward compatibility. For a release gate that must see the scanner's own claim of
+nonempty scan scope, opt in:
+
+```yaml
+apiVersion: scanproof.dev/v1alpha1
+kind: PipelineAssurancePolicy
+project: {provider: gitlab, id: group/app}
+assurance:
+  minimum_level: reported_scope
+requirements:
+  - id: SAST
+    tool: semgrep
+    job_name: semgrep-sast
+    report_path: semgrep.json
+    checks: {scanner_errors_allowed: 0}
+  - id: IMAGE
+    tool: trivy
+    job_name: trivy-image
+    report_path: trivy.json
+enforcement:
+  on_unknown: block
+  on_nothing_applicable: block
+```
+
+This profile adds a `reported_scope` check to **every applicable job instance**.
+It rejects a missing results section, an explicitly empty scope, or invalid
+scanned-target entries; when scope cannot be determined it reports `UNKNOWN`
+and blocks by default. A report with *zero vulnerabilities* and a nonempty
+scanned scope can still pass. To avoid accidental fail-open release policies,
+`reported_scope` rejects `on_unknown: warn`, `on_nothing_applicable: allow`,
+or an optional report.
+
+**Limit of the guarantee:** these values are assertions made by the scanner
+report itself. ScanProof cannot independently prove that scanner execution
+completed, that every relevant file was scanned, or that the CI workflow
+could not forge its own report. Where relevant, combine this level with
+`required_paths`, `minimum_scanned_files`, `image_digest_must_match`,
+protected policies and signed attestations. An explicit policy waiver can
+still override a failed check and is shown in the audit output.
+
+Legacy `minimum_level: report` policies keep their current behavior.
+Migration is opt-in; update policy files after verifying that your selected
+scanner adapter emits meaningful scanned paths or scope counts.
+
+---
+
 # Advanced policy: waivers, freshness, shared targets, releases
 
 ## Waivers (accepted risk, with an expiry date)
