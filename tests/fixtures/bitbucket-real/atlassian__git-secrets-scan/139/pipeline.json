@@ -1,0 +1,29 @@
+{
+ "uuid": "{2eafd52c-a752-4db8-9444-724ecf78f243}",
+ "build_number": 139,
+ "state": {
+  "name": "COMPLETED",
+  "type": "pipeline_state_completed",
+  "result": {
+   "name": "FAILED",
+   "type": "pipeline_state_completed_failed"
+  }
+ },
+ "created_on": "2024-10-29T10:03:07.280675473Z",
+ "completed_on": "2024-10-29T10:03:34.871839676Z",
+ "duration_in_seconds": 17,
+ "target": {
+  "type": "pipeline_ref_target",
+  "ref_type": "branch",
+  "ref_name": "feature/PIPES-1643",
+  "commit": {
+   "hash": "efbee4a07aa0ad5b1ec4fc718c01b7ecf4a16fc2"
+  },
+  "selector": {
+   "type": "default"
+  }
+ },
+ "trigger": {
+  "type": "pipeline_trigger_push"
+ }
+}

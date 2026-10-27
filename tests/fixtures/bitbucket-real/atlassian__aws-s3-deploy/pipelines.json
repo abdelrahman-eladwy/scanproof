@@ -1,0 +1,885 @@
+{
+ "values": [
+  {
+   "uuid": "{e9c00de3-4936-4396-ab30-6bb1e43c14cb}",
+   "build_number": 189,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2025-06-16T23:40:48.188487518Z",
+   "completed_on": "2025-06-16T23:45:47.87339354Z",
+   "duration_in_seconds": 260,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "fdd0efb820730333c541a6828dcf06a944d9ae6f"
+    },
+    "selector": {
+     "type": "branches",
+     "pattern": "master"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{4a5416e4-0f3a-4730-9d6c-aa4b31829be8}",
+   "build_number": 188,
+   "state": {
+    "name": "IN_PROGRESS",
+    "type": "pipeline_state_in_progress",
+    "stage": {
+     "name": "PAUSED",
+     "type": "pipeline_state_in_progress_paused"
+    }
+   },
+   "created_on": "2025-06-16T06:20:58.94450345Z",
+   "completed_on": null,
+   "duration_in_seconds": 202,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/BCAT-5931",
+    "commit": {
+     "hash": "113ce9372ea0e7558fc7134f1588d440e0a4b645"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{5bdff105-0424-4c15-8572-58f2fa08a3c8}",
+   "build_number": 187,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2025-03-06T08:21:03.162096322Z",
+   "completed_on": "2025-03-06T08:25:27.199028295Z",
+   "duration_in_seconds": 214,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "a0d4b0f3a0bc72a1f6e5d49179021bac04bd9212"
+    },
+    "selector": {
+     "type": "branches",
+     "pattern": "master"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{4ad42f60-e5a2-43af-9498-eb611cc188e9}",
+   "build_number": 186,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2025-03-05T10:28:21.492746804Z",
+   "completed_on": "2025-03-05T10:45:02.209153514Z",
+   "duration_in_seconds": 222,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/PIPES-1746",
+    "commit": {
+     "hash": "6aa44388668aee72576dbbc8517d6bb12e9c8007"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{25de22cd-e403-4a16-9d1b-b8ba817562fe}",
+   "build_number": 185,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2025-02-03T13:27:29.579085685Z",
+   "completed_on": "2025-02-03T13:32:23.732611137Z",
+   "duration_in_seconds": 235,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "e43876e24a383a8aa865967004f5882faafa6caf"
+    },
+    "selector": {
+     "type": "branches",
+     "pattern": "master"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{6b3ba249-35ab-4636-adba-b3cd43b6d7a0}",
+   "build_number": 184,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2025-01-31T12:27:36.926580798Z",
+   "completed_on": "2025-02-03T07:43:51.81011412Z",
+   "duration_in_seconds": 212,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/PIPES-1713",
+    "commit": {
+     "hash": "aee1b1f34f35f8faee84f2b1b25916ba15166347"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{9b04e165-81e8-4346-b6a5-4c7a7a5c2cc5}",
+   "build_number": 183,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "FAILED",
+     "type": "pipeline_state_completed_failed"
+    }
+   },
+   "created_on": "2025-01-31T12:21:20.771561769Z",
+   "completed_on": "2025-01-31T12:23:56.269800429Z",
+   "duration_in_seconds": 123,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/PIPES-1713",
+    "commit": {
+     "hash": "17cd869eaff1b98c737c41c52fe5bb0af367beee"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{2f9b25a0-eaaf-4c66-8ac3-5c1f72015aad}",
+   "build_number": 182,
+   "state": {
+    "name": "IN_PROGRESS",
+    "type": "pipeline_state_in_progress",
+    "stage": {
+     "name": "PAUSED",
+     "type": "pipeline_state_in_progress_paused"
+    }
+   },
+   "created_on": "2025-01-31T12:10:31.875465031Z",
+   "completed_on": null,
+   "duration_in_seconds": 115,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/PIPES-1713",
+    "commit": {
+     "hash": "3ae3059a1c2d3930846821e5319e93089412036d"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{9ebd3d03-fac1-413c-a8fe-652a4885c563}",
+   "build_number": 181,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2024-12-24T08:47:09.921745919Z",
+   "completed_on": "2024-12-24T08:51:15.92589877Z",
+   "duration_in_seconds": 200,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "2bfeb6d7380e2556166d64afa7d531d1cbbb2923"
+    },
+    "selector": {
+     "type": "branches",
+     "pattern": "master"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{c014f0bd-73af-4f03-bbfd-ca39915c1bdf}",
+   "build_number": 180,
+   "state": {
+    "name": "IN_PROGRESS",
+    "type": "pipeline_state_in_progress",
+    "stage": {
+     "name": "PAUSED",
+     "type": "pipeline_state_in_progress_paused"
+    }
+   },
+   "created_on": "2024-12-23T14:15:07.01156389Z",
+   "completed_on": null,
+   "duration_in_seconds": 109,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/PIPES-1696",
+    "commit": {
+     "hash": "3556f830fe1a83df740548be84cb0dc0efff2bcd"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_manual"
+   }
+  },
+  {
+   "uuid": "{d00a9b14-304d-4e18-8d4d-6bdbbe3d4d71}",
+   "build_number": 179,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "FAILED",
+     "type": "pipeline_state_completed_failed"
+    }
+   },
+   "created_on": "2024-12-23T14:03:45.567685528Z",
+   "completed_on": "2024-12-23T14:06:03.869769304Z",
+   "duration_in_seconds": 109,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/PIPES-1696",
+    "commit": {
+     "hash": "3556f830fe1a83df740548be84cb0dc0efff2bcd"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{183c3442-15b7-4548-9830-155b963980b7}",
+   "build_number": 178,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2024-08-08T16:46:13.649445276Z",
+   "completed_on": "2024-08-08T16:51:00.49779845Z",
+   "duration_in_seconds": 253,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "d4ac6b2eb1090008c9a5ecd230a3e65cfcabdb19"
+    },
+    "selector": {
+     "type": "branches",
+     "pattern": "master"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{058bc0f1-64d4-4ace-87e5-7dac8c9a52a9}",
+   "build_number": 177,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2024-08-08T16:05:53.399265114Z",
+   "completed_on": "2024-08-08T16:33:39.963387726Z",
+   "duration_in_seconds": 308,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/PIPES-1569",
+    "commit": {
+     "hash": "169cb6c3acbb3379d99fe2d5d4166c0939e29725"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{f65808c1-e808-450c-99e0-d9f53008d4ee}",
+   "build_number": 176,
+   "state": {
+    "name": "IN_PROGRESS",
+    "type": "pipeline_state_in_progress",
+    "stage": {
+     "name": "PAUSED",
+     "type": "pipeline_state_in_progress_paused"
+    }
+   },
+   "created_on": "2024-02-15T16:31:45.286271Z",
+   "completed_on": null,
+   "duration_in_seconds": 226,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "cb5dbb5e830fa8cd7772c997836eea1869d313bd"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_manual"
+   }
+  },
+  {
+   "uuid": "{ce4fa5cf-78f9-486d-8050-1eb1b3cf73ab}",
+   "build_number": 175,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2024-01-15T14:28:53.180226Z",
+   "completed_on": "2024-01-15T14:33:48.451687Z",
+   "duration_in_seconds": 244,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "11ad30ba0664dc3e28db4323f9e5d68c7d8e29cf"
+    },
+    "selector": {
+     "type": "branches",
+     "pattern": "master"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{3eb54fa6-a0af-439c-8356-5d523690312b}",
+   "build_number": 174,
+   "state": {
+    "name": "IN_PROGRESS",
+    "type": "pipeline_state_in_progress",
+    "stage": {
+     "name": "PAUSED",
+     "type": "pipeline_state_in_progress_paused"
+    }
+   },
+   "created_on": "2024-01-15T10:02:23.887183Z",
+   "completed_on": null,
+   "duration_in_seconds": 157,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/PIPES-1390",
+    "commit": {
+     "hash": "04879e83d723c6f6ecd26e82bbd1944c18d0579b"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{a00d36a6-84f1-4b09-b7ef-5cefc43cef45}",
+   "build_number": 173,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "FAILED",
+     "type": "pipeline_state_completed_failed"
+    }
+   },
+   "created_on": "2024-01-15T09:37:16.04307Z",
+   "completed_on": "2024-01-15T09:39:56.741246Z",
+   "duration_in_seconds": 137,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/PIPES-1390",
+    "commit": {
+     "hash": "fba0baed6cda0f7a7068a3fa2504b4d9cd4d6090"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{54c7b534-d788-470b-b99e-028866991989}",
+   "build_number": 172,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2023-11-21T13:37:41.584853Z",
+   "completed_on": "2023-11-21T13:41:40.772109Z",
+   "duration_in_seconds": 204,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "b6487f59287175f09c1d31110a37df4e1d08310e"
+    },
+    "selector": {
+     "type": "branches",
+     "pattern": "master"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{ac9241fd-c5d1-4f7e-bd21-8e1605e76515}",
+   "build_number": 171,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2023-11-14T08:51:54.270678Z",
+   "completed_on": "2023-11-14T08:54:52.789294Z",
+   "duration_in_seconds": 145,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "87c8c4c4d9080ec27c889952763e960e45ca33a2"
+    },
+    "selector": {
+     "type": "branches",
+     "pattern": "master"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{d89328ff-fbaf-48ad-b258-df5f63028917}",
+   "build_number": 170,
+   "state": {
+    "name": "IN_PROGRESS",
+    "type": "pipeline_state_in_progress",
+    "stage": {
+     "name": "PAUSED",
+     "type": "pipeline_state_in_progress_paused"
+    }
+   },
+   "created_on": "2023-11-13T20:10:50.235149Z",
+   "completed_on": null,
+   "duration_in_seconds": 99,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "PIPES-1339-Update-readme",
+    "commit": {
+     "hash": "c91fa388eb6919630e273bf5ca99251719a5f98a"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{9b8dce4b-fa77-4b3c-801f-fd7176eb19a9}",
+   "build_number": 169,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2023-09-13T13:44:23.404088Z",
+   "completed_on": "2023-09-13T13:47:31.404045Z",
+   "duration_in_seconds": 148,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "74fd7ec893451599eb4cec4575a47815a62201fa"
+    },
+    "selector": {
+     "type": "branches",
+     "pattern": "master"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{f6b439a3-0e3d-4324-b40b-9ec026e9dbec}",
+   "build_number": 168,
+   "state": {
+    "name": "IN_PROGRESS",
+    "type": "pipeline_state_in_progress",
+    "stage": {
+     "name": "PAUSED",
+     "type": "pipeline_state_in_progress_paused"
+    }
+   },
+   "created_on": "2023-09-13T12:16:01.022711Z",
+   "completed_on": null,
+   "duration_in_seconds": 104,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "feature/PIPES-1294",
+    "commit": {
+     "hash": "88622ce1543d2a60f9a74f47e18d94da74b7d732"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{b31113fa-5af8-4347-8d37-c3b7522dd675}",
+   "build_number": 167,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_state_completed_successful"
+    }
+   },
+   "created_on": "2023-09-06T12:55:00.227879Z",
+   "completed_on": "2023-09-06T12:58:10.870984Z",
+   "duration_in_seconds": 152,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "master",
+    "commit": {
+     "hash": "773f7cca0ba16d821d3c5ecc563fc33952541250"
+    },
+    "selector": {
+     "type": "branches",
+     "pattern": "master"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{e2e62df0-2841-414a-82a1-6ca185dc1701}",
+   "build_number": 166,
+   "state": {
+    "name": "IN_PROGRESS",
+    "type": "pipeline_state_in_progress",
+    "stage": {
+     "name": "PAUSED",
+     "type": "pipeline_state_in_progress_paused"
+    }
+   },
+   "created_on": "2023-09-06T12:38:40.628572Z",
+   "completed_on": null,
+   "duration_in_seconds": 101,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "PIPES-1283-bump-bitbucket-pipes-toolkit",
+    "commit": {
+     "hash": "ebc9285d81c2194fd2c2e53985fb047850ffe027"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{b542d9ac-52d1-4dbe-acb3-c728beb8febd}",
+   "build_number": 165,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "FAILED",
+     "type": "pipeline_state_completed_failed"
+    }
+   },
+   "created_on": "2023-09-06T11:46:49.764745Z",
+   "completed_on": "2023-09-06T11:48:59.655001Z",
+   "duration_in_seconds": 106,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "PIPES-1283-bump-bitbucket-pipes-toolkit",
+    "commit": {
+     "hash": "2b01690a61bffdc7e7478a04e9fbe01ec65c0bbf"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_manual"
+   }
+  },
+  {
+   "uuid": "{6c9178c0-b1ec-4753-a6f4-7c3700aecea8}",
+   "build_number": 164,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "FAILED",
+     "type": "pipeline_state_completed_failed"
+    }
+   },
+   "created_on": "2023-09-06T11:33:59.835071Z",
+   "completed_on": "2023-09-06T11:36:10.066376Z",
+   "duration_in_seconds": 106,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "PIPES-1283-bump-bitbucket-pipes-toolkit",
+    "commit": {
+     "hash": "2b01690a61bffdc7e7478a04e9fbe01ec65c0bbf"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_manual"
+   }
+  },
+  {
+   "uuid": "{d5f6dea0-c2e8-4f1c-8f2e-4babf183961b}",
+   "build_number": 163,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "FAILED",
+     "type": "pipeline_state_completed_failed"
+    }
+   },
+   "created_on": "2023-09-06T10:07:46.293843Z",
+   "completed_on": "2023-09-06T10:17:20.6867Z",
+   "duration_in_seconds": 109,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "PIPES-1283-bump-bitbucket-pipes-toolkit",
+    "commit": {
+     "hash": "2b01690a61bffdc7e7478a04e9fbe01ec65c0bbf"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{2f62623d-5685-4e64-ae4b-5fc8e40ea189}",
+   "build_number": 162,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "FAILED",
+     "type": "pipeline_state_completed_failed"
+    }
+   },
+   "created_on": "2023-09-06T09:53:53.626703Z",
+   "completed_on": "2023-09-06T09:55:03.226617Z",
+   "duration_in_seconds": 57,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "PIPES-1283-bump-bitbucket-pipes-toolkit",
+    "commit": {
+     "hash": "69ce0a8b82b474cf92053fce3cbd893164d5ea19"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{d3917f81-6f03-44c8-87c0-87f2e213d250}",
+   "build_number": 161,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "FAILED",
+     "type": "pipeline_state_completed_failed"
+    }
+   },
+   "created_on": "2023-09-06T09:47:05.271784Z",
+   "completed_on": "2023-09-06T09:48:22.285113Z",
+   "duration_in_seconds": 64,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "PIPES-1283-bump-bitbucket-pipes-toolkit",
+    "commit": {
+     "hash": "b28b81ec6439ef32efb999d2a29455c3fff57cf9"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  },
+  {
+   "uuid": "{4a70493b-75da-4332-a6ee-9e718f0a3431}",
+   "build_number": 160,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_state_completed",
+    "result": {
+     "name": "FAILED",
+     "type": "pipeline_state_completed_failed"
+    }
+   },
+   "created_on": "2023-09-05T16:08:03.618699Z",
+   "completed_on": "2023-09-05T16:10:13.142751Z",
+   "duration_in_seconds": 104,
+   "target": {
+    "type": "pipeline_ref_target",
+    "ref_type": "branch",
+    "ref_name": "PIPES-1283-bump-bitbucket-pipes-toolkit",
+    "commit": {
+     "hash": "e48c20be0c05e53bb69e1059989830bbeb01d31e"
+    },
+    "selector": {
+     "type": "default"
+    }
+   },
+   "trigger": {
+    "type": "pipeline_trigger_push"
+   }
+  }
+ ],
+ "size": 189
+}

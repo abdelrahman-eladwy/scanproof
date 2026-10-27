@@ -1,0 +1,90 @@
+{
+ "_links": {
+  "self": {
+   "href": "/job/sast-matrix/1/wfapi/describe"
+  },
+  "artifacts": {
+   "href": "/job/sast-matrix/1/wfapi/artifacts"
+  }
+ },
+ "id": "1",
+ "name": "#1",
+ "status": "SUCCESS",
+ "startTimeMillis": 1793083771275,
+ "endTimeMillis": 1793083776163,
+ "durationMillis": 4888,
+ "queueDurationMillis": 6,
+ "pauseDurationMillis": 0,
+ "stages": [
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-matrix/1/execution/node/6/wfapi/describe"
+    }
+   },
+   "id": "6",
+   "name": "Scan",
+   "execNode": "",
+   "status": "SUCCESS",
+   "startTimeMillis": 1793083774924,
+   "durationMillis": 118,
+   "pauseDurationMillis": 0
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-matrix/1/execution/node/12/wfapi/describe"
+    }
+   },
+   "id": "12",
+   "name": "Matrix - LANG = 'python'",
+   "execNode": "",
+   "status": "SUCCESS",
+   "startTimeMillis": 1793083775042,
+   "durationMillis": 150,
+   "pauseDurationMillis": 0
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-matrix/1/execution/node/14/wfapi/describe"
+    }
+   },
+   "id": "14",
+   "name": "Matrix - LANG = 'go'",
+   "execNode": "",
+   "status": "SUCCESS",
+   "startTimeMillis": 1793083775058,
+   "durationMillis": 150,
+   "pauseDurationMillis": 0
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-matrix/1/execution/node/20/wfapi/describe"
+    }
+   },
+   "id": "20",
+   "name": "sast",
+   "execNode": "",
+   "status": "SUCCESS",
+   "startTimeMillis": 1793083775192,
+   "durationMillis": 543,
+   "pauseDurationMillis": 0
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-matrix/1/execution/node/22/wfapi/describe"
+    }
+   },
+   "id": "22",
+   "name": "sast",
+   "execNode": "",
+   "status": "FAILED",
+   "startTimeMillis": 1793083775208,
+   "durationMillis": 786,
+   "pauseDurationMillis": 0
+  }
+ ]
+}

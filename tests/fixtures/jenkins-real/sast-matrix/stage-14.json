@@ -1,0 +1,1 @@
+{"_links":{"self":{"href":"/job/sast-matrix/1/execution/node/14/wfapi/describe"}},"id":"14","name":"Matrix - LANG = 'go'","execNode":"","status":"SUCCESS","startTimeMillis":1793083775058,"durationMillis":150,"pauseDurationMillis":0,"stageFlowNodes":[]}

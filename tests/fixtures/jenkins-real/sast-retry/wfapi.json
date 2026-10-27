@@ -1,0 +1,34 @@
+{
+ "_links": {
+  "self": {
+   "href": "/job/sast-retry/1/wfapi/describe"
+  },
+  "artifacts": {
+   "href": "/job/sast-retry/1/wfapi/artifacts"
+  }
+ },
+ "id": "1",
+ "name": "#1",
+ "status": "SUCCESS",
+ "startTimeMillis": 1793083771275,
+ "endTimeMillis": 1793083776166,
+ "durationMillis": 4891,
+ "queueDurationMillis": 5,
+ "pauseDurationMillis": 0,
+ "stages": [
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-retry/1/execution/node/6/wfapi/describe"
+    }
+   },
+   "id": "6",
+   "name": "Scan",
+   "execNode": "",
+   "status": "SUCCESS",
+   "startTimeMillis": 1793083775102,
+   "durationMillis": 1005,
+   "pauseDurationMillis": 0
+  }
+ ]
+}

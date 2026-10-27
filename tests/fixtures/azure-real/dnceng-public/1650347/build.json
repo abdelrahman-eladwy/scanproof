@@ -1,0 +1,27 @@
+{
+ "sourceVersion": "56449ca84d112401b8bcf7e4f3b846703f0fc822",
+ "id": 1650347,
+ "startTime": "2026-10-27T05:24:20.9323096Z",
+ "queueTime": "2026-10-27T05:20:59.1510142Z",
+ "status": "completed",
+ "buildNumber": "20261026.38",
+ "finishTime": "2026-10-27T06:36:09.6203176Z",
+ "sourceBranch": "refs/pull/70060/merge",
+ "url": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_apis/build/Builds/1650347",
+ "retainedByRelease": false,
+ "result": "succeeded",
+ "reason": "pullRequest",
+ "definition": {
+  "id": 318,
+  "name": "aspnetcore-template-tests-pr"
+ },
+ "project": {
+  "id": "cbb18261-c48f-4abb-8651-8cdcb5474649",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/dnceng-public/cbb18261-c48f-4abb-8651-8cdcb5474649/_build/results?buildId=1650347"
+  }
+ }
+}

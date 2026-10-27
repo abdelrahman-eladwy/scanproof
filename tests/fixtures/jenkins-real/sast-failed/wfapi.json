@@ -1,0 +1,35 @@
+{
+ "_links": {
+  "self": {
+   "href": "/job/sast-failed/1/wfapi/describe"
+  }
+ },
+ "id": "1",
+ "name": "#1",
+ "status": "FAILED",
+ "startTimeMillis": 1793083771275,
+ "endTimeMillis": 1793083775565,
+ "durationMillis": 4290,
+ "queueDurationMillis": 14,
+ "pauseDurationMillis": 0,
+ "stages": [
+  {
+   "_links": {
+    "self": {
+     "href": "/job/sast-failed/1/execution/node/6/wfapi/describe"
+    }
+   },
+   "id": "6",
+   "name": "Scan",
+   "execNode": "",
+   "status": "FAILED",
+   "error": {
+    "message": "script returned exit code 1",
+    "type": "hudson.AbortException"
+   },
+   "startTimeMillis": 1793083775114,
+   "durationMillis": 390,
+   "pauseDurationMillis": 0
+  }
+ ]
+}

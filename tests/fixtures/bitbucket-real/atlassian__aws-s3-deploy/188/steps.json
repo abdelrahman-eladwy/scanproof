@@ -1,0 +1,167 @@
+{
+ "values": [
+  {
+   "uuid": "{e95a153a-f6de-4361-ad2c-d3ee12157eb5}",
+   "name": "Setup testing resources",
+   "started_on": "2025-06-16T06:21:14.971686284Z",
+   "completed_on": "2025-06-16T06:22:02.548273765Z",
+   "duration_in_seconds": 48,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_step_state_completed_successful"
+    }
+   },
+   "image": {
+    "name": "python:3.11"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 47,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  },
+  {
+   "uuid": "{96f2aeb5-b787-4e19-9568-1f1360e451b9}",
+   "name": "Test",
+   "started_on": "2025-06-16T06:23:28.172406244Z",
+   "completed_on": "2025-06-16T06:26:03.038965361Z",
+   "duration_in_seconds": 155,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_step_state_completed_successful"
+    }
+   },
+   "image": {
+    "name": "python:3.11"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 154,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  },
+  {
+   "uuid": "{23b35dda-3012-4e2e-a668-4b319d8601df}",
+   "name": "Lint the Dockerfile",
+   "started_on": "2025-06-16T06:23:12.032316403Z",
+   "completed_on": "2025-06-16T06:24:27.763072382Z",
+   "duration_in_seconds": 76,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_step_state_completed_successful"
+    }
+   },
+   "image": {
+    "name": "hadolint/hadolint:latest-debian"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 75,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  },
+  {
+   "uuid": "{b2874668-2c63-423a-b655-337295b0dac5}",
+   "name": "Security Scan",
+   "started_on": "2025-06-16T06:23:08.501768747Z",
+   "completed_on": "2025-06-16T06:24:46.749286865Z",
+   "duration_in_seconds": 98,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_automatic"
+   },
+   "teardown": null,
+   "state": {
+    "name": "COMPLETED",
+    "type": "pipeline_step_state_completed",
+    "result": {
+     "name": "SUCCESSFUL",
+     "type": "pipeline_step_state_completed_successful"
+    }
+   },
+   "image": {
+    "name": "python:3.11"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 98,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  },
+  {
+   "uuid": "{89d719e8-d1e4-48bc-904b-eeab98e38e69}",
+   "name": "Release development version",
+   "started_on": null,
+   "completed_on": null,
+   "duration_in_seconds": null,
+   "run_number": 1,
+   "max_time": null,
+   "trigger": {
+    "type": "pipeline_step_trigger_manual",
+    "triggerer": {
+     "type": "user"
+    }
+   },
+   "teardown": null,
+   "state": {
+    "name": "PENDING",
+    "type": "pipeline_step_state_pending",
+    "stage": {
+     "name": "PAUSED",
+     "type": "pipeline_step_state_pending_paused"
+    }
+   },
+   "image": {
+    "name": "python:3.10"
+   },
+   "other_keys": [
+    "build_seconds_used",
+    "maxTime",
+    "type"
+   ],
+   "build_seconds_used": 0,
+   "maxTime": 120,
+   "type": "pipeline_step"
+  }
+ ]
+}

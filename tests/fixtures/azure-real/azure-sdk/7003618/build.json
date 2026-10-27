@@ -1,0 +1,27 @@
+{
+ "result": "succeeded",
+ "finishTime": "2026-10-27T06:47:56.8310071Z",
+ "sourceBranch": "refs/pull/46853/merge",
+ "reason": "pullRequest",
+ "id": 7003618,
+ "sourceVersion": "7556230f438c9f1598c72fa6971d67bc417d2267",
+ "url": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_apis/build/Builds/7003618",
+ "status": "completed",
+ "buildNumber": "20261026.128",
+ "queueTime": "2026-10-27T06:38:54.7831321Z",
+ "retainedByRelease": false,
+ "startTime": "2026-10-27T06:41:33.4781682Z",
+ "definition": {
+  "id": 7517,
+  "name": "SDK Validation - Go"
+ },
+ "project": {
+  "id": "29ec6040-b234-4e31-b139-33dc4287b756",
+  "name": "public"
+ },
+ "_links": {
+  "web": {
+   "href": "https://dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_build/results?buildId=7003618"
+  }
+ }
+}
