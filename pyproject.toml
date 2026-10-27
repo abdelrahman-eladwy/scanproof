@@ -31,6 +31,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/abdelrahman-eladwy/scanproof"
+Source = "https://github.com/abdelrahman-eladwy/scanproof"
 Documentation = "https://github.com/abdelrahman-eladwy/scanproof/tree/main/docs"
 Issues = "https://github.com/abdelrahman-eladwy/scanproof/issues"
 Changelog = "https://github.com/abdelrahman-eladwy/scanproof/blob/main/CHANGELOG.md"

@@ -21,7 +21,8 @@ No API tokens or passwords are stored anywhere.
 ## Each release
 
 1. PR that sets the version in **both** `pyproject.toml` and `src/scanproof/__init__.py`
-   (the workflow refuses a tag that doesn't match), and updates the README roadmap.
+   (the workflow refuses a tag that doesn't match), and moves the `CHANGELOG.md` entries under
+   the new version with today's date.
 2. Merge, then on `main`:
    ```bash
    git pull
