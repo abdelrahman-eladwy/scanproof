@@ -128,6 +128,11 @@ def test_multi_project_downstream_uses_child_project_and_checks_commit(connector
     report = verify(connector, gl, policy(sast()))
     assert report.decision is Decision.BLOCKED
     assert codes(report) == {"same_commit": "COMMIT_MISMATCH"}
+    source = report.evidence["SAST"].source
+    assert source is not None
+    assert source.project == "777"
+    assert source.pipeline_id == 5000
+    assert source.pipeline_sha == OTHER_SHA
     assert any(
         c.request.url.path == "/api/v4/projects/777/jobs/6000/artifacts/semgrep.json"
         for c in mock_api.calls
@@ -136,6 +141,30 @@ def test_multi_project_downstream_uses_child_project_and_checks_commit(connector
     report = verify(connector, gl, policy(sast(same_commit=False)))
     assert report.decision is Decision.VERIFIED
 
+
+
+
+def test_multi_project_attestation_bundle_fetched_from_child(connector, gl, mock_api, monkeypatch):
+    """A bundled attestation must come from the same project as its scan report."""
+    child = gl.child("scan:other-repo", project="777", pipeline_id=5000)
+    child.job(
+        6000, "semgrep-sast",
+        files={"semgrep.json": SEMGREP, "semgrep.sigstore.json": b"{}"},
+    )
+    monkeypatch.setattr("scanproof.verification.verify_bundles", lambda *args, **kwargs: [])
+    requirement = sast()
+    requirement["attestation"] = {
+        "source": "artifact",
+        "bundle_path": "semgrep.sigstore.json",
+        "signer": {
+            "issuer": "https://gitlab.com",
+            "repository": "https://gitlab.example.com/777",
+        },
+    }
+    verify(connector, gl, policy(requirement))
+    fetched = [str(call.request.url.path) for call in mock_api.calls]
+    assert "/api/v4/projects/777/jobs/6000/artifacts/semgrep.sigstore.json" in fetched
+    assert "/api/v4/projects/123/jobs/6000/artifacts/semgrep.sigstore.json" not in fetched
 
 # ---------------------------------------------------------------- parallel / matrix
 
