@@ -21,6 +21,7 @@ class ScanType(StrEnum):
     SECRETS = "SECRETS"
     IAC = "IAC"
     SBOM = "SBOM"
+    DAST = "DAST"  # dynamic scans of a running application (ZAP, Nuclei)
     OTHER = "OTHER"  # generic formats (e.g. SARIF) whose producer decides the type
 
 
@@ -43,6 +44,9 @@ class ScanScope(BaseModel):
     skipped_paths: list[str] | None = None
     components: int | None = Field(default=None, description="SBOM component count")
     resources: int | None = Field(default=None, description="IaC resources evaluated")
+    endpoints: int | None = Field(
+        default=None, description="DAST: endpoints the scanner discovered and tested"
+    )
 
 
 class FindingsSummary(BaseModel):
@@ -61,6 +65,9 @@ class ScanTarget(BaseModel):
     image_id: str | None = None
     repo_digests: list[str] | None = None
     repo_tags: list[str] | None = None
+    urls: list[str] | None = Field(
+        default=None, description="DAST: the target URLs the scanner says it scanned"
+    )
 
     def digests(self) -> set[str]:
         """Bare `sha256:...` digests from `repo@sha256:...` entries."""

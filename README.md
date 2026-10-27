@@ -125,7 +125,7 @@ Next (v0.2, in progress):
 
 - [x] **Signed evidence:** Sigstore / in-toto / SLSA attestations ([attestations](docs/attestations.md))
 - [x] More CI platforms: Azure DevOps, Jenkins (verified live), Bitbucket Pipelines
-- [ ] More scanners and DAST: Gitleaks, Grype, OSV-Scanner, Snyk, OWASP ZAP, Nuclei, Kubescape
+- [x] More scanners and DAST: Gitleaks, Grype, OSV-Scanner, Snyk, Kubescape, OWASP ZAP and Nuclei ([scan types](docs/scan-types.md))
 - [ ] Advanced policy: expiring waivers, scan freshness, SBOM-to-image binding, multi-repo releases
 
 See [`docs/issues/`](docs/issues/) for detailed acceptance criteria.

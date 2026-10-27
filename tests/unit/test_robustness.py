@@ -24,6 +24,13 @@ SAMPLES = {
     "checkov": ["checkov/checkov.json"],
     "sonatype-iq": ["sonatype/many_vulns.json"],
     "bitbucket-code-insights": ["bitbucket-real/code-insights-git-secrets.json"],
+    "gitleaks": ["gitleaks/gitleaks-leak.json"],
+    "grype": ["grype/grype-alpine.json"],
+    "osv-scanner": ["osv/osv-node.json"],
+    "snyk": ["snyk/single_project_one_vuln.json", "snyk/all-projects_many_vulns.json"],
+    "kubescape": ["kubescape/kubescape.json"],
+    "zap": ["zap/zap-baseline.json"],
+    "nuclei": ["nuclei/nuclei-export.json"],
 }
 WEIRD = [None, 0, -1, 1.5, "", "x", [], {}, [None], {"a": None}, True, "9" * 30, 10**30]
 
