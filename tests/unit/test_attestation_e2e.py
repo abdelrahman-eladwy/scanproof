@@ -263,8 +263,8 @@ def test_store_request_never_sends_the_token_elsewhere(conn, gh, mock_api) -> No
     ("uri", "expected"),
     [
         ("https://github.com/acme/app/actions/runs/7/attempts/2", True),
-        ("https://github.com/acme/app/actions/runs/7", True),
-        ("https://github.com/ACME/App/actions/runs/7/attempts/1", True),
+        ("https://github.com/acme/app/actions/runs/7", None),
+        ("https://github.com/ACME/App/actions/runs/7/attempts/1", False),
         ("https://github.com/acme/app/actions/runs/8/attempts/1", False),
         ("https://github.com/evil/app/actions/runs/7/attempts/1", False),
         ("https://ghes.example.com/acme/app/actions/runs/7/attempts/1", False),
@@ -274,10 +274,25 @@ def test_store_request_never_sends_the_token_elsewhere(conn, gh, mock_api) -> No
 )
 def test_github_run_matches(uri, expected) -> None:
     pipe = Pipeline(
-        id=7, sha="a", status="success", web_url="https://github.com/acme/app/actions/runs/7"
+        id=7,
+        sha="a",
+        status="success",
+        run_attempt=2,
+        web_url="https://github.com/acme/app/actions/runs/7",
     )
     with GitHubConnector(API, "t") as c:
         assert c.run_matches(uri, pipe, set()) is expected
+
+
+def test_github_run_attempt_missing_is_unknown() -> None:
+    pipe = Pipeline(
+        id=7, sha="a", status="success",
+        web_url="https://github.com/acme/app/actions/runs/7",
+    )
+    with GitHubConnector(API, "t") as c:
+        assert c.run_matches(
+            "https://github.com/acme/app/actions/runs/7/attempts/1", pipe, set()
+        ) is None
 
 
 @pytest.mark.parametrize(
