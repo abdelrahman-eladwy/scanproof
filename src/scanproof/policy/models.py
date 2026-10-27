@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 import re
+from datetime import date
 from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
@@ -53,6 +54,14 @@ class Checks(_Strict):
     minimum_components: int | None = Field(None, ge=0, description="SBOM: minimum components")
     minimum_resources: int | None = Field(
         None, ge=0, description="IaC: minimum resources the scanner evaluated"
+    )
+    max_age_hours: float | None = Field(
+        None, gt=0, description="The scan job must have finished at most this many hours ago"
+    )
+    same_target_as: str | None = Field(
+        None,
+        description="Requirement id whose scan must be about the same target (image digest or "
+        "DAST origin), e.g. an SBOM and the container scan of one image",
     )
     minimum_endpoints: int | None = Field(
         None, ge=0, description="DAST: minimum endpoints the scanner discovered and tested"
@@ -192,12 +201,28 @@ class ProjectRef(_Strict):
         return str(value) if isinstance(value, int) else value
 
 
+class Waiver(_Strict):
+    """An accepted, time-boxed exception. It turns a matching FAIL / UNKNOWN check into WAIVED,
+    visibly, until `expires`; after that it does nothing (and the report says so)."""
+
+    requirement: str = Field(description="Requirement id")
+    check: str = Field(description="Check name, e.g. scanner_errors; covers its instances too")
+    code: str | None = Field(None, description="Only this result code, e.g. SCANNER_ERRORS")
+    reason: str = Field(min_length=10, description="Why the risk is accepted (ticket, context)")
+    approved_by: str = Field(min_length=1)
+    expires: date = Field(description="Last day the waiver applies (UTC)")
+    created: date | None = Field(None, description="Required when max_waiver_days is set")
+
+
 class Enforcement(_Strict):
     on_failure: Literal["block"] = "block"
     on_unknown: Literal["block", "warn"] = "block"
     # When applies_to excludes every requirement nothing was verified. A release gate must not
     # read that as VERIFIED unless the policy says so explicitly.
     on_nothing_applicable: Literal["block", "allow"] = "block"
+    max_waiver_days: int | None = Field(
+        None, ge=1, description="Longest a waiver may run (expires - created)"
+    )
 
 
 class Metadata(_Strict):
@@ -211,6 +236,7 @@ class Policy(_Strict):
     project: ProjectRef
     requirements: list[Requirement] = Field(min_length=1)
     enforcement: Enforcement = Field(default_factory=Enforcement)
+    waivers: list[Waiver] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _unique_ids_and_known_tools(self) -> Policy:
@@ -240,6 +266,29 @@ class Policy(_Strict):
                     f"requirement {req.id}: unsupported tool {req.tool!r} "
                     f"(supported: {', '.join(sorted(ADAPTERS))})"
                 )
+        for req in self.requirements:
+            other = req.checks.same_target_as
+            if other is not None and (other == req.id or other not in seen):
+                raise ValueError(
+                    f"requirement {req.id}: same_target_as must name another requirement"
+                )
+        limit = self.enforcement.max_waiver_days
+        for w in self.waivers:
+            if w.requirement not in seen:
+                raise ValueError(f"waiver for unknown requirement {w.requirement!r}")
+            if limit is not None:
+                if w.created is None:
+                    raise ValueError(
+                        f"waiver {w.requirement}/{w.check}: 'created' is required when "
+                        "enforcement.max_waiver_days is set"
+                    )
+                if (w.expires - w.created).days > limit:
+                    raise ValueError(
+                        f"waiver {w.requirement}/{w.check} runs "
+                        f"{(w.expires - w.created).days} days; max_waiver_days is {limit}"
+                    )
+            if w.created is not None and w.created > w.expires:
+                raise ValueError(f"waiver {w.requirement}/{w.check} expires before it starts")
         return self
 
     @property

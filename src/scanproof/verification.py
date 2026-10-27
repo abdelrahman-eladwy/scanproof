@@ -151,7 +151,8 @@ def verify_pipeline(
             instances += [(name, RequirementInput()) for name in missing]
             inputs[req.id] = RequirementInput(instances=instances)
 
-    evaluation = evaluate(policy, inspection.pipeline, inputs)
+    generated_at = datetime.now(UTC)
+    evaluation = evaluate(policy, inspection.pipeline, inputs, now=generated_at)
     evidence: dict[str, ScanEvidence] = {}
     attestations: dict[str, list[AttestationEvidence]] = {}
     for rid, item in inputs.items():
@@ -162,7 +163,7 @@ def verify_pipeline(
                 attestations[key] = one.attestations
     return VerificationReport(
         scanproof_version=__version__,
-        generated_at=datetime.now(UTC),
+        generated_at=generated_at,
         policy=policy.name,
         provider=connector.provider,
         instance_url=instance_url,

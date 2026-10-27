@@ -24,6 +24,7 @@ from __future__ import annotations
 import re
 import time
 from collections.abc import Callable
+from datetime import UTC, datetime
 from typing import Any
 from urllib.parse import quote
 
@@ -132,7 +133,7 @@ class JenkinsConnector(HttpConnector):
             raise ConnectorError(ErrorKind.INVALID_RESPONSE, "Unexpected stage graph") from exc
 
         jobs = []
-        for node_id, name, state in nodes:
+        for node_id, name, state, finished in nodes:
             status = _STATE.get(str(state).lower(), JobStatus.UNKNOWN)
             raw = str(state).lower()
             allow_failure = False
@@ -157,6 +158,7 @@ class JenkinsConnector(HttpConnector):
                     masking_checked=masking_checked,
                     commit_sha=sha,
                     pipeline_id=int(pipeline_id),
+                    finished_at=finished if status.is_terminal else None,
                 )
             )
         return sorted(jobs, key=lambda j: j.id)
@@ -215,18 +217,26 @@ class JenkinsConnector(HttpConnector):
         except (ConnectorError, KeyError, TypeError):
             return None
 
-    def _wfapi_nodes(self, base: str) -> list[tuple[str, str, str]]:
+    def _wfapi_nodes(self, base: str) -> list[Node]:
         """Stage View fallback: no hierarchy, so nested stages keep their own names."""
         body = self._get_json_capped(f"{self.api_url}{base}/wfapi/describe", "stages (wfapi)")
         try:
-            return [(str(s["id"]), str(s["name"]), str(s["status"])) for s in body["stages"]]
+            return [
+                (
+                    str(s["id"]),
+                    str(s["name"]),
+                    str(s["status"]),
+                    _finished_at(s.get("startTimeMillis"), s.get("durationMillis")),
+                )
+                for s in body["stages"]
+            ]
         except (KeyError, TypeError) as exc:
             raise ConnectorError(ErrorKind.INVALID_RESPONSE, "Unexpected wfapi stages") from exc
 
     def _wfapi_steps(self, base: str) -> dict[str, list[tuple[str, str]]] | None:
         try:
             out: dict[str, list[tuple[str, str]]] = {}
-            for node_id, _, _ in self._wfapi_nodes(base):
+            for node_id, _, _, _ in self._wfapi_nodes(base):
                 url = f"{self.api_url}{base}/execution/node/{quote(node_id)}/wfapi/describe"
                 stage = self._get_json_capped(url, "stage nodes (wfapi)")
                 out[node_id] = [
@@ -241,13 +251,24 @@ class JenkinsConnector(HttpConnector):
             return None
 
 
-def _flatten(stages: list[dict[str, Any]], prefix: str = "") -> list[tuple[str, str, str]]:
-    out = []
+Node = tuple[str, str, str, datetime | None]  # id, qualified name, state, finished at
+
+
+def _flatten(stages: list[dict[str, Any]], prefix: str = "") -> list[Node]:
+    out: list[Node] = []
     for node in stages:
         name = f"{prefix}{node['name']}"
-        out.append((str(node["id"]), name, str(node.get("state"))))
+        finished = _finished_at(node.get("startTimeMillis"), node.get("totalDurationMillis"))
+        out.append((str(node["id"]), name, str(node.get("state")), finished))
         out += _flatten(node.get("children") or [], f"{name}{STAGE_SEPARATOR}")
     return out
+
+
+def _finished_at(start: Any, duration: Any) -> datetime | None:
+    """Stage end from start + duration (ms); None unless both are sane integers."""
+    if isinstance(start, int) and isinstance(duration, int) and start > 0 and duration >= 0:
+        return datetime.fromtimestamp((start + duration) / 1000, UTC)
+    return None
 
 
 def _swallowed_failure(steps: list[tuple[str, str]]) -> str | None:
