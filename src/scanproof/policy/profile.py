@@ -6,7 +6,7 @@ another commit, a replayable signature, an unbounded waiver, ...). `assurance.pr
 production` turns them into load-time errors (exit 3); `scanproof validate --explain` lists
 them for any profile. Both read the same list, so what is reported is what is rejected.
 
-Pure: no I/O, no engine import. See issues #52, #60 and docs/advanced-policy.md.
+Pure: no I/O, no engine import. See issues #52, #60, #65 and docs/advanced-policy.md.
 """
 
 from __future__ import annotations
@@ -95,8 +95,22 @@ def assurance_opt_ins(policy: Policy) -> list[OptIn]:
                 "strategy.matrix, a removed leg cannot be detected from job names (only "
                 "'parallel: N' names carry a total). Declare the labels, e.g. instances: "
                 "[py, js]; under profile production, verify reports undeclared matrix legs as "
-                "UNKNOWN. Copies told apart only by a prefix (downstream 'trigger > job', "
-                "reusable 'caller / job', Jenkins matrix stages) are not covered by instances",
+                "UNKNOWN. Copies told apart only by a prefix are covered by copies, not "
+                "instances",
+                production="note",
+            )
+        )
+    no_copies = [req.id for req in policy.requirements if not req.copies]
+    if no_copies:
+        out.append(
+            OptIn(
+                "COPIES_UNDECLARED",
+                f"requirements[{', '.join(no_copies)}].copies",
+                "no declared copies: if the job runs in several downstream pipelines "
+                "('svc-a > job'), reusable-workflow callers ('caller / job') or Jenkins stage "
+                "paths, a removed copy cannot be detected from job names. Declare the paths, "
+                "e.g. copies: [svc-a, svc-b]; under profile production, verify reports "
+                "undeclared prefixed copies as UNKNOWN",
                 production="note",
             )
         )
@@ -108,6 +122,15 @@ def assurance_opt_ins(policy: Policy) -> list[OptIn]:
                     f"waivers[{i}] ({w.requirement}/{w.check})",
                     "waiving instances_declared accepts matrix legs whose removal cannot be "
                     "detected; declare instances instead",
+                )
+            )
+        if w.check == "copies_declared":
+            out.append(
+                OptIn(
+                    "WAIVER_HIDES_UNDECLARED_COPIES",
+                    f"waivers[{i}] ({w.requirement}/{w.check})",
+                    "waiving copies_declared accepts prefixed copies whose removal cannot be "
+                    "detected; declare copies instead",
                 )
             )
         if w.check == "job_present" or w.check.startswith("job_present ["):

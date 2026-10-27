@@ -129,6 +129,11 @@ class JobMatch:
     # Matrix legs matched while the requirement declares no `instances`: their set has no
     # known size, so a removed leg cannot be detected (#60).
     undeclared_legs: list[str] = field(default_factory=list)
+    # (job name the copy would have, copy path): declared `copies` with no matching job.
+    missing_copies: list[tuple[str, str]] = field(default_factory=list)
+    # Prefixed copies matched while the requirement declares no `copies`: their set has no
+    # known size, so a removed copy cannot be detected (#65).
+    undeclared_copies: list[str] = field(default_factory=list)
 
 
 def find_jobs(jobs: list[InspectedJob], name: str) -> tuple[list[InspectedJob], list[str]]:
@@ -140,7 +145,32 @@ def find_jobs(jobs: list[InspectedJob], name: str) -> tuple[list[InspectedJob], 
     return match.jobs, match.missing
 
 
-def match_jobs(jobs: list[InspectedJob], name: str, instances: list[str] | None = None) -> JobMatch:
+def _copy_path(job_name: str, name: str) -> str:
+    """The path that qualifies a matched job: '' for the named job itself, 'svc-a' for
+    'svc-a > sast', 'Scan / Matrix - X / sast' -> 'Scan / Matrix - X'."""
+    if job_name == name:
+        return ""
+    prefix = _tail(job_name)[0]
+    for sep in _TAIL_SEPARATORS:
+        if prefix.endswith(sep):
+            return prefix[: -len(sep)]
+    return prefix  # pragma: no cover - a prefix always ends with a separator
+
+
+def _copy_name(path: str, name: str, matches: list[InspectedJob]) -> str:
+    """The job name a missing copy would have, using the separator the other copies use."""
+    if not path:
+        return name
+    seps = [s for j in matches for s in _TAIL_SEPARATORS if _tail(j.name)[0].endswith(s)]
+    return f"{path}{seps[0] if seps else ' > '}{name}"
+
+
+def match_jobs(
+    jobs: list[InspectedJob],
+    name: str,
+    instances: list[str] | None = None,
+    copies: list[str] | None = None,
+) -> JobMatch:
     """All jobs a requirement's job_name covers, and expected instances that are missing.
 
     Every job the name covers counts and every one must pass: the exact name itself, parallel
@@ -154,6 +184,12 @@ def match_jobs(jobs: list[InspectedJob], name: str, instances: list[str] | None 
     no matrix leg ran at all, every declared label is missing. Extra, undeclared legs are
     allowed (they are still evaluated). Without a declaration, matched matrix legs are
     reported in `undeclared_legs`.
+
+    Copies told apart only by a prefix (several downstream pipelines, reusable-workflow
+    callers, Jenkins stage paths) carry no total either (#65). `copies` (the declared
+    qualifying paths, '' for the unprefixed job) must each have a matching job; extra copies
+    are allowed. With `instances` as well, every declared copy that ran must run every
+    declared leg. Without a declaration, prefixed copies are reported in `undeclared_copies`.
 
     An exact match does not hide instances (#59). ScanProof cannot tell a deliberate,
     unrelated 'sast 1/2' from a leg of 'sast', and letting a passing 'sast' stand in for a
@@ -181,15 +217,38 @@ def match_jobs(jobs: list[InspectedJob], name: str, instances: list[str] | None 
         for i in range(1, total + 1)
         if i not in indices
     ]
+    present_copies: dict[str, str] = {}  # copy path -> its name prefix
+    for j in matches:
+        present_copies.setdefault(_copy_path(j.name, name), _tail(j.name)[0])
+    missing_copies = [
+        (_copy_name(c, name, matches), c) for c in copies or [] if c not in present_copies
+    ]
+    undeclared_copies = [] if copies else [j.name for j in matches if _copy_path(j.name, name)]
     if not instances:
-        return JobMatch(jobs=matches, missing=missing, undeclared_legs=undeclared)
+        return JobMatch(
+            jobs=matches,
+            missing=missing,
+            undeclared_legs=undeclared,
+            missing_copies=missing_copies,
+            undeclared_copies=undeclared_copies,
+        )
     if matches and not legs:
         # The job runs, but not as a matrix: every declared leg is gone.
         legs = {prefix: (set(), "") for prefix in sorted({_tail(j.name)[0] for j in matches})}
+    leg_style = next(iter(legs.values()))[1] if legs else ""
+    for path in copies or []:
+        if path in present_copies:  # a declared copy that ran must run every declared leg
+            legs.setdefault(present_copies[path], (set(), leg_style))
     missing_declared = [
         (_leg_name(prefix, name, label, style or None), label)
         for prefix, (labels, style) in sorted(legs.items())
         for label in instances
         if label not in labels
     ]
-    return JobMatch(jobs=matches, missing=missing, missing_declared=missing_declared)
+    return JobMatch(
+        jobs=matches,
+        missing=missing,
+        missing_declared=missing_declared,
+        missing_copies=missing_copies,
+        undeclared_copies=undeclared_copies,
+    )

@@ -160,11 +160,44 @@ requirements:
 - Without `instances`, behavior is unchanged: the legs that ran are evaluated, a removed leg is
   not detected, and `verify` adds a warning saying so.
 
-**Not covered:** copies of a job that differ only by a prefix and carry no label: several
-downstream pipelines each running `sast` (`a > sast`, `b > sast`), several callers of a
-reusable workflow, and Jenkins matrix stages (`Scan / Matrix - LANG = 'go' / sast`). Removing
-one of those copies is still not detected. Write one requirement per copy with a qualified
-`job_name` if each must exist.
+Copies told apart only by a prefix carry no label; declare them with
+[`copies`](#prefixed-copies-declare-the-copies-that-must-run).
+
+## Prefixed copies: declare the copies that must run
+
+`job_name: sast` also matches copies of the job that differ only by a prefix: several
+downstream pipelines (`svc-a > sast`, `svc-b > sast`), several callers of a reusable workflow
+(`api / sast`, `web / sast`) and Jenkins matrix stages (`Scan / Matrix - LANG = 'go' / sast`).
+Like matrix legs, these names carry no total: if someone deletes the `svc-b` trigger job, the
+`web` caller or the `go` axis value, the remaining copies pass and nothing shows a copy is gone
+([#65](https://github.com/abdelrahman-eladwy/scanproof/issues/65)).
+
+Declare the copies the requirement needs, by the path in front of the job name, without the
+trailing separator:
+
+```yaml
+requirements:
+  - id: SAST
+    tool: semgrep
+    job_name: sast
+    report_path: semgrep.json
+    copies: ["", svc-a, svc-b]     # "" = the pipeline's own 'sast'; then 'svc-a > sast', ...
+```
+
+- A declared copy with no job is a FAIL, `REQUIRED_COPY_ABSENT` on `job_present [svc-b > sast]`.
+  If the missing copy may be in a downstream pipeline the token couldn't read, it is UNKNOWN
+  (`JOB_MAYBE_IN_UNREADABLE_PIPELINE`) instead. If no copy ran at all, the job itself is absent
+  (`REQUIRED_JOB_ABSENT`).
+- Paths are written as the platform names them: `deploy > svc-a` for a nested GitLab child,
+  `security` for GitHub's `security / sast`, `"Scan / Matrix - LANG = 'go'"` for Jenkins.
+  `svc-a >` (trailing separator) is a load error.
+- Extra, undeclared copies are allowed. They are still evaluated and must pass.
+- With [`instances`](#matrix-legs-declare-the-instances-that-must-run) as well, every declared
+  copy that ran must run every declared leg, even if it no longer runs as a matrix.
+- Without `copies`, behavior is unchanged: the copies that ran are evaluated, a removed copy
+  is not detected, and `verify` adds a warning saying so.
+- A qualified `job_name` (`svc-a > sast`) matches only that job and needs no `copies`. One
+  requirement per qualified name is an alternative when the copies need different checks.
 
 ## Production profile: reject assurance-weakening settings
 
@@ -179,8 +212,8 @@ assurance:
   minimum_level: reported_scope   # independent; recommended alongside production
 ```
 
-`profile` changes which policies load, plus one verify-time rule that can't be decided at
-load time (below, [matrix legs](#matrix-legs-under-production)). Otherwise a policy with no
+`profile` changes which policies load, plus two verify-time rules that can't be decided at
+load time (below, [matrix legs and prefixed copies](#matrix-legs-under-production)). Otherwise a policy with no
 weakening settings loads under either profile and returns the same decision. Every shipped example in [`examples/policies/`](../examples/policies/) passes
 `production`.
 
@@ -200,6 +233,7 @@ weakening settings loads under either profile and returns the same decision. Eve
 | `WAIVER_LIMIT_TOO_LONG` | `enforcement.max_waiver_days` above 90 | a huge limit makes waivers effectively permanent |
 | `WAIVER_REMOVES_REQUIREMENT` | a waiver on `job_present` (any code, any instance) | accepts a pipeline without the required job |
 | `WAIVER_HIDES_UNDECLARED_INSTANCES` | a waiver on `instances_declared` | accepts matrix legs whose removal can't be detected |
+| `WAIVER_HIDES_UNDECLARED_COPIES` | a waiver on `copies_declared` | accepts prefixed copies whose removal can't be detected |
 
 ### Matrix legs under production
 
@@ -209,6 +243,13 @@ matrix legs (`sast: [py]`, `sast (py)`) but declares no [`instances`](#matrix-le
 is UNKNOWN: check `instances_declared`, code `INSTANCES_UNDECLARED`, decision INDETERMINATE
 (exit 2). A plain job, or `parallel: N` legs, need no declaration. Under `compatible` the same
 situation is only a warning.
+
+The same holds for [prefixed copies](#prefixed-copies-declare-the-copies-that-must-run): a
+requirement whose bare `job_name` matched any prefixed copy (`svc-a > sast`, `api / sast`, a
+Jenkins stage path) but declares no `copies` is UNKNOWN: check `copies_declared`, code
+`COPIES_UNDECLARED`, exit 2 ([#65](https://github.com/abdelrahman-eladwy/scanproof/issues/65)). A job matched only by its exact, unprefixed name needs no
+declaration. **Upgrading:** production policies for pipelines with downstream jobs, reusable
+workflows or nested Jenkins stages must add `copies` (or use qualified job names).
 
 All violations are listed at once. To see them for any policy, without changing its profile:
 
@@ -239,3 +280,6 @@ not the policy has waivers today.
 - `INSTANCES_UNDECLARED`: lists the requirements without `instances`. If their job runs as a
   matrix, a removed leg can't be detected; under `production`, `verify` reports such legs as
   UNKNOWN ([above](#matrix-legs-under-production)). Declaring `instances` removes the note.
+- `COPIES_UNDECLARED`: lists the requirements without `copies`. If their job runs as prefixed
+  copies, a removed copy can't be detected; under `production`, `verify` reports such copies
+  as UNKNOWN. Declaring `copies` removes the note.

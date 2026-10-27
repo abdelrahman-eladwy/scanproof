@@ -242,8 +242,36 @@ class Requirement(_Strict):
         "label with no leg is REQUIRED_INSTANCE_ABSENT. Undeclared extra legs are allowed and "
         "still checked. Omit to keep the old behavior, where a removed leg is not detected",
     )
+    copies: list[str] | None = Field(
+        None,
+        description="Copies of the job that must all run, by the path that qualifies their "
+        "names, without the trailing separator: [svc-a, svc-b] for GitLab downstream jobs "
+        "'svc-a > sast', [api, web] for GitHub reusable-workflow callers 'api / sast', "
+        '"Scan / Matrix - LANG = \'go\'" for a Jenkins stage path. "" is the pipeline\'s own, '
+        "unprefixed job. A declared copy with no job is REQUIRED_COPY_ABSENT. Undeclared extra "
+        "copies are allowed and still checked. Omit to keep the old behavior, where a removed "
+        "copy is not detected",
+    )
     checks: Checks = Field(default_factory=Checks)
     attestation: AttestationRequirement | None = None
+
+    @field_validator("copies")
+    @classmethod
+    def _usable_copies(cls, value: list[str] | None) -> list[str] | None:
+        if value is None:
+            return None
+        if not value:
+            raise ValueError("copies must list at least one path (omit it to disable)")
+        paths: list[str] = []
+        for entry in value:
+            path = entry.strip()
+            if path.endswith((">", "/")):
+                bare = path.rstrip(" >/")
+                raise ValueError(f"copies entry {entry!r} ends with a separator; write {bare!r}")
+            if path in paths:
+                raise ValueError(f"copies lists {path!r} twice")
+            paths.append(path)
+        return paths
 
     @field_validator("instances")
     @classmethod

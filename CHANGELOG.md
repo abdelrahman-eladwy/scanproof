@@ -18,6 +18,11 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   the matrix legs that must run, by label (`instances: [py, js]` for GitLab `sast: [py]` or
   GitHub `sast (py)` legs). A declared leg with no job is a FAIL, `REQUIRED_INSTANCE_ABSENT`.
   See [docs/advanced-policy.md](docs/advanced-policy.md#matrix-legs-declare-the-instances-that-must-run).
+- `copies` on a requirement ([#65](https://github.com/abdelrahman-eladwy/scanproof/issues/65)): the prefixed copies that must run, by path
+  (`copies: [svc-a, svc-b]` for GitLab `svc-a > sast`, `[api, web]` for GitHub `api / sast`,
+  Jenkins stage paths; `""` for the unprefixed job). A declared copy with no job is a FAIL,
+  `REQUIRED_COPY_ABSENT`. See
+  [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
 - **False VERIFIED:** a job named exactly like a requirement's `job_name` hid that name's
@@ -29,14 +34,22 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   `strategy.matrix` went unnoticed, because matrix names carry no total
   ([#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60)). Declare `instances` to
   detect it; `assurance.profile: production` requires the declaration when matrix legs are
-  matched (`INSTANCES_UNDECLARED`, UNKNOWN). Copies told apart only by a prefix (downstream,
-  reusable-workflow callers, Jenkins matrix stages) are still not covered.
+  matched (`INSTANCES_UNDECLARED`, UNKNOWN).
+- **False VERIFIED:** removing one of several copies told apart only by a prefix (a GitLab
+  downstream pipeline, a GitHub reusable-workflow caller, a Jenkins matrix stage) went
+  unnoticed, also under `assurance.profile: production` ([#65](https://github.com/abdelrahman-eladwy/scanproof/issues/65)). Declare `copies` to detect it;
+  `production` requires the declaration when a prefixed copy is matched (`COPIES_UNDECLARED`,
+  UNKNOWN), and rejects a waiver on `copies_declared` (`WAIVER_HIDES_UNDECLARED_COPIES`).
 
 ### Compatibility
 - The default profile, `compatible`, accepts every policy that loaded before. No evaluation
   changes under `compatible`. Under `production`, a requirement whose job runs as matrix legs
   and declares no `instances` is now UNKNOWN (exit 2) instead of evaluating only the legs that
   ran; under `compatible` it gets a warning.
+- **Breaking under `production` only:** a requirement whose bare `job_name` matches a
+  downstream (`svc-a > sast`), reusable-workflow (`api / sast`) or nested Jenkins stage copy
+  and declares no `copies` is now UNKNOWN (exit 2). Add `copies`, or pin each copy with a
+  qualified `job_name`. Under `compatible` it gets a warning; decisions are unchanged.
 - Requirements without `instances` behave as before. `find_jobs` keeps its signature;
   `match_jobs` is the richer form.
 - A pipeline that has both an exact-name job and same-named instances now needs every one of

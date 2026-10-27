@@ -150,20 +150,25 @@ def verify_pipeline(
             return attest(req, job, failed)  # an image attestation doesn't need the report
 
     for req in policy.requirements:
-        match = match_jobs(inspection.jobs, req.job_name, req.instances)
+        match = match_jobs(inspection.jobs, req.job_name, req.instances, req.copies)
         matches, missing = match.jobs, match.missing
-        undeclared = match.undeclared_legs or None
+        undeclared = {
+            "undeclared_instances": match.undeclared_legs or None,
+            "undeclared_copies": match.undeclared_copies or None,
+        }
+        unread = (
+            f"these pipelines could not be read: {', '.join(unreadable)}" if unreadable else None
+        )
         if not matches:
-            inputs[req.id] = RequirementInput(
-                absence_unknown=(
-                    f"these pipelines could not be read: {', '.join(unreadable)}"
-                    if unreadable
-                    else None
-                )
-            )
-        elif len(matches) == 1 and not missing and not match.missing_declared:
+            inputs[req.id] = RequirementInput(absence_unknown=unread)
+        elif (
+            len(matches) == 1
+            and not missing
+            and not match.missing_declared
+            and not match.missing_copies
+        ):
             single = collect(req, matches[0])
-            inputs[req.id] = single.model_copy(update={"undeclared_instances": undeclared})
+            inputs[req.id] = single.model_copy(update=undeclared)
         else:
             instances = [(job.name, collect(req, job)) for job in matches]
             instances += [(name, RequirementInput()) for name in missing]
@@ -171,7 +176,11 @@ def verify_pipeline(
                 (name, RequirementInput(declared_instance=label))
                 for name, label in match.missing_declared
             ]
-            inputs[req.id] = RequirementInput(instances=instances, undeclared_instances=undeclared)
+            instances += [
+                (name, RequirementInput(missing_copy=path, absence_unknown=unread))
+                for name, path in match.missing_copies
+            ]
+            inputs[req.id] = RequirementInput(instances=instances, **undeclared)
 
     generated_at = datetime.now(UTC)
     evaluation = evaluate(policy, inspection.pipeline, inputs, now=generated_at)

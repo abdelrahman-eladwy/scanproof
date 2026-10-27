@@ -78,6 +78,15 @@ class RequirementInput(BaseModel):
         description="Matrix legs matched while the requirement declares no `instances`: a "
         "removed leg would go unnoticed (#60)",
     )
+    missing_copy: str | None = Field(
+        default=None,
+        description="This missing instance is a path the requirement declares in `copies`",
+    )
+    undeclared_copies: list[str] | None = Field(
+        default=None,
+        description="Prefixed copies matched while the requirement declares no `copies`: a "
+        "removed copy would go unnoticed (#65)",
+    )
     attestations: list[AttestationEvidence] | None = Field(
         default=None, description="Every bundle found for the attestation subject"
     )
@@ -146,6 +155,7 @@ def evaluate(
     _cross_requirement_checks(policy, inputs, results)
     warnings: list[str] = _apply_waivers(policy, results, now.date())
     warnings += _undeclared_instance_warnings(policy, inputs, results)
+    warnings += _undeclared_copy_warnings(policy, inputs, results)
     outcomes = [r.outcome for r in results]
 
     if all(o is Outcome.NOT_APPLICABLE for o in outcomes):
@@ -238,7 +248,10 @@ def evaluate_requirement(
                 ]
             )
 
-    declaration = _instance_declaration_checks(req, data, profile)
+    declaration = [
+        *_instance_declaration_checks(req, data, profile),
+        *_copy_declaration_checks(req, data, profile),
+    ]
     if data.instances:
         combined = _evaluate_instances(
             req, pipeline, data.instances, now, minimum_assurance=minimum_assurance
@@ -246,6 +259,37 @@ def evaluate_requirement(
         checks = [*combined.checks, *declaration]
         return combined.model_copy(
             update={"checks": checks, "outcome": combine([c.outcome for c in checks])}
+        )
+
+    if data.job is None and data.missing_copy is not None:
+        where = f"'{data.missing_copy}'" if data.missing_copy else "the pipeline itself"
+        if data.absence_unknown:
+            return result(
+                [
+                    CheckResult(
+                        check="job_present",
+                        outcome=Outcome.UNKNOWN,
+                        code="JOB_MAYBE_IN_UNREADABLE_PIPELINE",
+                        message=(
+                            f"Declared copy {where} of '{req.job_name}' was not found, but "
+                            f"{data.absence_unknown}"
+                        ),
+                    )
+                ]
+            )
+        return result(
+            [
+                CheckResult(
+                    check="job_present",
+                    outcome=Outcome.FAIL,
+                    code="REQUIRED_COPY_ABSENT",
+                    message=(
+                        f"Declared copy {where} of '{req.job_name}' has no job in pipeline "
+                        f"{pipeline.id}. The downstream pipeline, calling workflow or stage may "
+                        "have been removed or excluded by rules."
+                    ),
+                )
+            ]
         )
 
     if data.job is None and data.declared_instance:
@@ -327,6 +371,50 @@ def _instance_declaration_checks(
     ]
 
 
+def _copy_declaration_checks(
+    req: Requirement, data: RequirementInput, profile: str
+) -> list[CheckResult]:
+    """Under `assurance.profile: production`, prefixed copies need a declared `copies` set.
+
+    Copies told apart only by a prefix ('svc-a > sast', 'api / sast') carry no total, so
+    without the declaration a removed copy is invisible and the rest would pass (#65).
+    """
+    if profile != "production" or req.copies or not data.undeclared_copies:
+        return []
+    names = ", ".join(f"'{n}'" for n in data.undeclared_copies)
+    return [
+        CheckResult(
+            check="copies_declared",
+            outcome=Outcome.UNKNOWN,
+            code="COPIES_UNDECLARED",
+            message=(
+                f"'{req.job_name}' ran as prefixed copies ({names}) but the requirement declares "
+                "no `copies`, so a removed copy cannot be detected. assurance.profile: "
+                "production requires the declaration, e.g. copies: [svc-a, svc-b] "
+                '("" for the unprefixed job)'
+            ),
+        )
+    ]
+
+
+def _undeclared_copy_warnings(
+    policy: Policy, inputs: dict[str, RequirementInput], results: list[RequirementResult]
+) -> list[str]:
+    """Compatible profile: say, without changing the decision, that a removed copy is unseen."""
+    if policy.assurance.profile == "production":
+        return []  # a COPIES_UNDECLARED check already reports it
+    out = []
+    for req, res in zip(policy.requirements, results, strict=True):
+        names = inputs.get(req.id, RequirementInput()).undeclared_copies
+        if names and not req.copies and res.outcome is not Outcome.NOT_APPLICABLE:
+            out.append(
+                f"{req.id}: '{req.job_name}' ran as {len(names)} prefixed cop(ies) and declares "
+                "no `copies`; a removed downstream pipeline, caller or stage would not be "
+                "detected. Declare the required paths (copies: [...]) to fail on a missing copy."
+            )
+    return out
+
+
 def _undeclared_instance_warnings(
     policy: Policy, inputs: dict[str, RequirementInput], results: list[RequirementResult]
 ) -> list[str]:
@@ -365,7 +453,7 @@ def _evaluate_instances(
             now=now,
             minimum_assurance=minimum_assurance,
         )
-        if data.job is None and not data.declared_instance:
+        if data.job is None and not data.declared_instance and data.missing_copy is None:
             sub.checks = [
                 c.model_copy(update={"message": f"Expected instance '{name}' is missing"})
                 for c in sub.checks
