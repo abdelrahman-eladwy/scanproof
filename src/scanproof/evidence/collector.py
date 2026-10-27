@@ -103,15 +103,17 @@ def _is_instance(tail: str, name: str) -> bool:
 def find_jobs(jobs: list[InspectedJob], name: str) -> tuple[list[InspectedJob], list[str]]:
     """All jobs a requirement's job_name covers, and expected instances that are missing.
 
-    An exact name match wins. Otherwise every instance counts and every instance must pass:
-    parallel ('sast 2/3'), GitLab matrix ('sast: [py]'), GitHub matrix ('sast (py)'),
-    downstream ('trigger > sast') and GitHub reusable workflow ('caller / sast') jobs.
-    GitLab parallel names carry the total, so missing indices are reported.
+    Every job the name covers counts and every one must pass: the exact name itself, parallel
+    ('sast 2/3'), GitLab matrix ('sast: [py]'), GitHub matrix ('sast (py)'), downstream
+    ('trigger > sast') and GitHub reusable workflow ('caller / sast') jobs. GitLab parallel
+    names carry the total, so missing indices are reported.
+
+    An exact match does not hide instances (#59). ScanProof cannot tell a deliberate,
+    unrelated 'sast 1/2' from a leg of 'sast', and letting a passing 'sast' stand in for a
+    failing leg would be a false VERIFIED. A qualified name ('child > sast') still matches
+    only itself, because the instance patterns apply to the last segment.
     """
-    exact = [j for j in jobs if j.name == name]
-    if exact:
-        return exact, []
-    matches = [j for j in jobs if _is_instance(_tail(j.name)[1], name)]
+    matches = [j for j in jobs if j.name == name or _is_instance(_tail(j.name)[1], name)]
     present: dict[tuple[str, int], set[int]] = {}
     for j in matches:
         prefix, tail = _tail(j.name)

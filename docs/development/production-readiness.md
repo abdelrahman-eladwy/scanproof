@@ -99,7 +99,7 @@ No open P0 security bug is accepted into a release candidate.
 
 | Item | Covered | Gap |
 |---|---|---|
-| Adversarial decisions | `test_adversarial_decision_matrix.py`, `test_false_verified_paths.py`, `test_complex_gitlab.py` / `test_complex_github.py` (retries, masking, matrix, downstream) | **#59** exact-name job hides failing instances; **#60** removed matrix leg undetectable. Both are open false-VERIFIED paths |
+| Adversarial decisions | `test_adversarial_decision_matrix.py`, `test_false_verified_paths.py`, `test_complex_gitlab.py` / `test_complex_github.py` (retries, masking, matrix, downstream) | **#59:** code fix merged in PR #63; live GitHub contract pending. **#60:** removed matrix leg remains an open false-VERIFIED path |
 | Attestation negatives | tampered/forged bundles, foreign signer, wrong commit, wrong run and GitHub attempt, missing tlog entries (`test_attestation_verify.py`, `test_attestation_policy.py`, `test_attestation_e2e.py`) | expired/invalid trust root, cross-project replay |
 | Hostile providers | 401/403/429/5xx on report fetch (`test_provider_error_matrix.py`), redirect loops and downgrades, size limits, zip traversal (connector tests) | pagination cycles, connector-level timeouts, partial downloads beyond GitLab |
 | Fuzz/property | seeded adapter fuzz (`test_robustness.py`), Unicode stress | compression bombs; property tests of evidence/decision serialization |
