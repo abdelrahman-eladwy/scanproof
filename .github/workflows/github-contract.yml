@@ -77,8 +77,20 @@ jobs:
   reusable-call:
     uses: ./.github/workflows/reusable-scan.yml
 
+  scope-free:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Produce syntactically valid but scope-free Semgrep-shaped report
+        run: |
+          mkdir -p reports
+          printf '%s\n' '{"results":[],"errors":[]}' > reports/semgrep.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: scope-free-report
+          path: reports/semgrep.json
+
   self-verify:
-    needs: [sast, masked-step, masked-job, skipped-scan, matrix-sast, noisy-masked, reusable-call]
+    needs: [sast, masked-step, masked-job, skipped-scan, matrix-sast, noisy-masked, reusable-call, scope-free]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     permissions:
@@ -114,4 +126,37 @@ jobs:
           check examples/policies/github-self-matrix.yaml 1
           check examples/policies/github-self-noisy.yaml 1
           check examples/policies/github-self-reusable.yaml 0
+
+          # Extra real-provider tests for the opt-in reported_scope assurance.
+          cat > /tmp/scanproof-scoped-ok.yaml <<'POLICY'
+          apiVersion: scanproof.dev/v1alpha1
+          kind: PipelineAssurancePolicy
+          metadata: {name: scoped-ok}
+          project: {provider: github, id: abdelrahman-eladwy/scanproof}
+          assurance: {minimum_level: reported_scope}
+          requirements:
+            - id: SAST
+              tool: semgrep
+              job_name: sast
+              artifact_name: semgrep-report
+              report_path: semgrep.json
+              checks: {scanner_errors_allowed: 0}
+          enforcement: {on_unknown: block, on_nothing_applicable: block}
+          POLICY
+          cat > /tmp/scanproof-scoped-missing.yaml <<'POLICY'
+          apiVersion: scanproof.dev/v1alpha1
+          kind: PipelineAssurancePolicy
+          metadata: {name: scoped-missing}
+          project: {provider: github, id: abdelrahman-eladwy/scanproof}
+          assurance: {minimum_level: reported_scope}
+          requirements:
+            - id: SAST
+              tool: semgrep
+              job_name: scope-free
+              artifact_name: scope-free-report
+              report_path: semgrep.json
+          enforcement: {on_unknown: block, on_nothing_applicable: block}
+          POLICY
+          check /tmp/scanproof-scoped-ok.yaml 0
+          check /tmp/scanproof-scoped-missing.yaml 2
           exit $failed
