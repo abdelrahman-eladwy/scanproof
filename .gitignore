@@ -20,3 +20,4 @@ report*.json
 # Raw output of the fixture-collection workflows. They commit it (git add -f) only to
 # fixtures/** branches; reviewed copies live in tests/fixtures/.
 generated-fixtures/
+generated-gitlab-contract/
