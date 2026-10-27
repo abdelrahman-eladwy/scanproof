@@ -255,13 +255,10 @@ class Policy(_Strict):
 
         if self.assurance.minimum_level == "reported_scope":
             if self.enforcement.on_unknown != "block":
-                raise ValueError(
-                    "reported_scope assurance requires enforcement.on_unknown: block"
-                )
+                raise ValueError("reported_scope assurance requires enforcement.on_unknown: block")
             if self.enforcement.on_nothing_applicable != "block":
                 raise ValueError(
-                    "reported_scope assurance requires "
-                    "enforcement.on_nothing_applicable: block"
+                    "reported_scope assurance requires enforcement.on_nothing_applicable: block"
                 )
             if any(not req.checks.report_required for req in self.requirements):
                 raise ValueError(
