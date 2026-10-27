@@ -47,6 +47,23 @@ produced; it caps annotations per step and per job. So on github.com today the f
 fits on the first page. ScanProof still reads every page, and treats an unfinished read as UNKNOWN,
 in case GHES or future limits differ.
 
+## GitHub Actions: live release/deployment dependency graph
+
+[Live `release-gate-contract` run 40483491063](https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40483491063)
+executed two real scan → ScanProof gate → dry-run deploy chains:
+
+- Healthy Semgrep report with scope: gate `VERIFIED` and dry-run deploy ran.
+- Semgrep-shaped JSON lacking scanned paths: gate `INDETERMINATE`
+  (`SCAN_SCOPE_UNKNOWN`, exit 2) and downstream deploy was **skipped**.
+- `assert-contract` passed after comparing actual GitHub job results,
+  ScanProof report JSON and the healthy deployment artifact.
+- The overall workflow **failed intentionally** because the negative gate
+  genuinely failed. No real deployment was made.
+
+This tests workflow dependency semantics, **not** branch protection, CODEOWNERS
+enforcement, or tamper-proof workflow definitions. See
+[protected release gates](protected-release-gates.md).
+
 ## Jenkins, live (`platforms-contract.yml`, `tests/unit/test_jenkins.py`)
 
 A real Jenkins 2.580.1 runs each pipeline; ScanProof then verifies it over the REST API.
