@@ -1,0 +1,15 @@
+{
+  "id": 2993335827,
+  "iid": 52362,
+  "project_id": 24673064,
+  "sha": "fa5e43f467885937d3d02c1a5c396468f90129c4",
+  "ref": "master",
+  "status": "success",
+  "source": "schedule",
+  "created_at": "2026-10-27T08:33:37.517Z",
+  "updated_at": "2026-10-27T08:36:15.665Z",
+  "web_url": "https://gitlab.com/gitlab-org/security-products/analyzers/container-scanning/-/pipelines/2993335827",
+  "tag": false,
+  "started_at": "2026-10-27T08:33:38.514Z",
+  "finished_at": "2026-10-27T08:36:15.654Z"
+}

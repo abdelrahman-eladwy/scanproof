@@ -1,0 +1,15 @@
+{
+  "id": 2993020171,
+  "iid": 54108,
+  "project_id": 250833,
+  "sha": "c132c2fdde379c2830b51157010a7cd0b955e166",
+  "ref": "main",
+  "status": "success",
+  "source": "push",
+  "created_at": "2026-10-27T06:46:37.652Z",
+  "updated_at": "2026-10-27T08:34:45.301Z",
+  "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/pipelines/2993020171",
+  "tag": false,
+  "started_at": "2026-10-27T06:46:40.045Z",
+  "finished_at": "2026-10-27T08:34:45.277Z"
+}

@@ -1,0 +1,3311 @@
+[
+  {
+    "id": 17494144853,
+    "status": "success",
+    "stage": "postrelease",
+    "name": "verify development resources",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:58.560Z",
+    "finished_at": "2026-10-27T07:49:19.265Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144853",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 23690,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144850,
+    "status": "success",
+    "stage": "test kubernetes integration",
+    "name": "destroy integration kubernetes",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:51:53.953Z",
+    "finished_at": "2026-10-27T07:52:59.767Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144850",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 9426,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144849,
+    "status": "success",
+    "stage": "test kubernetes integration",
+    "name": "integration kubernetes",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:50.822Z",
+    "finished_at": "2026-10-27T07:51:47.802Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144849",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2580,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 178,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 33203,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 2443,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144848,
+    "status": "success",
+    "stage": "test kubernetes integration",
+    "name": "integration kubernetes concrete",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:50.131Z",
+    "finished_at": "2026-10-27T07:50:18.801Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144848",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 4533,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 177,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 54048,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 4396,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144847,
+    "status": "success",
+    "stage": "test kubernetes integration",
+    "name": "integration kubernetes attach",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:49.539Z",
+    "finished_at": "2026-10-27T07:51:15.709Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144847",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 3814,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 178,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 58394,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 3677,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144846,
+    "status": "success",
+    "stage": "test kubernetes integration",
+    "name": "integration kubernetes exec legacy",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:48.886Z",
+    "finished_at": "2026-10-27T07:50:11.428Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144846",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 5654,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 178,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 71618,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5518,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144845,
+    "status": "success",
+    "stage": "test kubernetes integration",
+    "name": "provision integration kubernetes",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:33.679Z",
+    "finished_at": "2026-10-27T07:26:18.790Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144845",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 7231,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144844,
+    "status": "success",
+    "stage": "release",
+    "name": "development docker images",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:40:45.762Z",
+    "finished_at": "2026-10-27T07:45:43.976Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144844",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1383,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 280,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 48081,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144843,
+    "status": "success",
+    "stage": "release",
+    "name": "development S3",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T08:47:47.590Z",
+    "finished_at": "2026-10-27T08:54:00.367Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144843",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 99970,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144842,
+    "status": "success",
+    "stage": "package",
+    "name": "package-helpers",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:46.349Z",
+    "finished_at": "2026-10-27T08:01:39.767Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144842",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1100999674,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 258,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 28634,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144841,
+    "status": "success",
+    "stage": "package",
+    "name": "package-rpm: [rpmLoong64]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:43.468Z",
+    "finished_at": "2026-10-27T07:58:46.238Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144841",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 31481530,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 219,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 20628,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144840,
+    "status": "success",
+    "stage": "package",
+    "name": "package-rpm: [rpmFips]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:39.594Z",
+    "finished_at": "2026-10-27T07:58:52.032Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144840",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 88201091,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 213,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 21112,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144839,
+    "status": "success",
+    "stage": "package",
+    "name": "package-rpm: [rpmRiscv64]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:32.257Z",
+    "finished_at": "2026-10-27T07:58:38.480Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144839",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 32941754,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 212,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 20590,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144838,
+    "status": "success",
+    "stage": "package",
+    "name": "package-rpm: [rpmIbm]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:27.967Z",
+    "finished_at": "2026-10-27T07:58:36.885Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144838",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 62151632,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 252,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 29619,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144837,
+    "status": "success",
+    "stage": "package",
+    "name": "package-rpm: [rpmArm32]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:17.459Z",
+    "finished_at": "2026-10-27T07:58:11.447Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144837",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 31805257,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 210,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 20456,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144836,
+    "status": "success",
+    "stage": "package",
+    "name": "package-rpm: [rpm32]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:15.476Z",
+    "finished_at": "2026-10-27T07:58:10.126Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144836",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 31435213,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 209,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 20492,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144835,
+    "status": "success",
+    "stage": "package",
+    "name": "package-rpm: [rpmArm64]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:12.442Z",
+    "finished_at": "2026-10-27T07:58:09.812Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144835",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 30184799,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 211,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 20554,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144834,
+    "status": "success",
+    "stage": "package",
+    "name": "package-rpm: [rpm64]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:12.378Z",
+    "finished_at": "2026-10-27T07:58:07.596Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144834",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 33727905,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 211,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 20544,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144833,
+    "status": "success",
+    "stage": "package",
+    "name": "package-deb: [debLoong64]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:09.829Z",
+    "finished_at": "2026-10-27T07:58:05.597Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144833",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 31483383,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 211,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 16779,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144832,
+    "status": "success",
+    "stage": "package",
+    "name": "package-deb: [debRiscv64]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:06.568Z",
+    "finished_at": "2026-10-27T07:58:04.646Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144832",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 32952552,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 211,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 16781,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144831,
+    "status": "success",
+    "stage": "package",
+    "name": "package-deb: [debIbm]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:06.549Z",
+    "finished_at": "2026-10-27T07:58:14.547Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144831",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 62169045,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 247,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 22016,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144830,
+    "status": "success",
+    "stage": "package",
+    "name": "package-deb: [debArm32]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:56:02.778Z",
+    "finished_at": "2026-10-27T07:57:58.040Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144830",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 31804277,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 207,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 16703,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144829,
+    "status": "success",
+    "stage": "package",
+    "name": "package-deb: [deb32]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:53.492Z",
+    "finished_at": "2026-10-27T07:57:49.423Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144829",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 31447624,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 208,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 16703,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144828,
+    "status": "success",
+    "stage": "package",
+    "name": "package-deb: [debArm64]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:50.026Z",
+    "finished_at": "2026-10-27T07:57:42.761Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144828",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 30181333,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 208,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 16741,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144827,
+    "status": "success",
+    "stage": "package",
+    "name": "package-deb: [deb64]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:50.022Z",
+    "finished_at": "2026-10-27T07:57:44.191Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144827",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 33719699,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 209,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 16741,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144826,
+    "status": "success",
+    "stage": "coverage",
+    "name": "test coverage report",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T08:45:28.738Z",
+    "finished_at": "2026-10-27T08:47:45.496Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144826",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 85907634,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 259,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 21930,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "cobertura",
+        "size": 1123172,
+        "filename": "cobertura-coverage.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144825,
+    "status": "success",
+    "stage": "test",
+    "name": "logging-field-validator",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T08:00:14.220Z",
+    "finished_at": "2026-10-27T08:01:13.871Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144825",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 7785,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144824,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 21H2 integration tests 4/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:07.659Z",
+    "finished_at": "2026-10-27T08:39:37.062Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144824",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1465272,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 248,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 93503,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5869,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144823,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 21H2 integration tests 3/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:07.320Z",
+    "finished_at": "2026-10-27T08:40:12.906Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144823",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1161828,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 248,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 86086,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5717,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144822,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 21H2 integration tests 2/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:07.130Z",
+    "finished_at": "2026-10-27T08:45:26.331Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144822",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 847123,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 244,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 97941,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 6917,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144821,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 21H2 integration tests 1/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:06.205Z",
+    "finished_at": "2026-10-27T08:40:41.258Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144821",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1455581,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 248,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 91124,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5658,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144820,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 1809 integration tests 4/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:48.178Z",
+    "finished_at": "2026-10-27T08:27:02.243Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144820",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1465104,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 249,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 92995,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5943,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144819,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 1809 integration tests 3/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:47.632Z",
+    "finished_at": "2026-10-27T08:32:51.786Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144819",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1161785,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 250,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 86565,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5679,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144818,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 1809 integration tests 2/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:47.427Z",
+    "finished_at": "2026-10-27T08:35:24.251Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144818",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 847036,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 244,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 98371,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 6819,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144817,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 1809 integration tests 1/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:45:46.786Z",
+    "finished_at": "2026-10-27T08:31:09.182Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144817",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1455523,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 249,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 91473,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5687,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144816,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 21H2 unit tests 2/2",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:21.891Z",
+    "finished_at": "2026-10-27T07:38:42.533Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144816",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 36038507,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 250,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 1014833,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 56596,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144815,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 21H2 unit tests 1/2",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:21.425Z",
+    "finished_at": "2026-10-27T07:38:44.328Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144815",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 26775276,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 251,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 936418,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 51040,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144814,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 1809 unit tests 2/2",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:21.375Z",
+    "finished_at": "2026-10-27T07:38:01.868Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144814",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 36037197,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 250,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 1014834,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 56686,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144813,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 1809 unit tests 1/2",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:21.022Z",
+    "finished_at": "2026-10-27T07:37:57.918Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144813",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 26776180,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 252,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 936414,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 50931,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144812,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 21H2 compile tests",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:20.867Z",
+    "finished_at": "2026-10-27T07:38:17.907Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144812",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 153258,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144811,
+    "status": "success",
+    "stage": "test",
+    "name": "windows 1809 compile tests",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:20.286Z",
+    "finished_at": "2026-10-27T07:37:44.077Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144811",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 153256,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144810,
+    "status": "success",
+    "stage": "test",
+    "name": "fuzz variable mask",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T08:00:14.157Z",
+    "finished_at": "2026-10-27T08:06:54.736Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144810",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 55222,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 7405,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 347286,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "coverage_fuzzing",
+        "size": 836,
+        "filename": "gl-coverage-fuzzing.json",
+        "file_format": "raw"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144809,
+    "status": "success",
+    "stage": "test",
+    "name": "integration test with race 4/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:46.771Z",
+    "finished_at": "2026-10-27T08:05:14.867Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144809",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 860458,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 230,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 68080,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 4646,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144808,
+    "status": "success",
+    "stage": "test",
+    "name": "integration test with race 3/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:42.390Z",
+    "finished_at": "2026-10-27T08:09:28.640Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144808",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1160623,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 229,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 82043,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5431,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144807,
+    "status": "success",
+    "stage": "test",
+    "name": "integration test with race 2/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:39.666Z",
+    "finished_at": "2026-10-27T08:09:18.070Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144807",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 843169,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 230,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 78980,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5536,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144806,
+    "status": "success",
+    "stage": "test",
+    "name": "integration test with race 1/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:32.438Z",
+    "finished_at": "2026-10-27T08:07:33.943Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144806",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2040703,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 230,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 108873,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 6988,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144805,
+    "status": "success",
+    "stage": "test",
+    "name": "integration test (docker, network-faults) 1/1",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": true,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:29.489Z",
+    "finished_at": "2026-10-27T07:57:42.040Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144805",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 105010,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 245,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 19510,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 379,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144804,
+    "status": "manual",
+    "stage": "test",
+    "name": "integration test (docker, podman) 1/1",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": true,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": null,
+    "finished_at": null,
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144804",
+    "artifacts": [],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144803,
+    "status": "manual",
+    "stage": "test",
+    "name": "integration test (docker, concrete, steps) 1/1",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": true,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": null,
+    "finished_at": null,
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144803",
+    "artifacts": [],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144802,
+    "status": "manual",
+    "stage": "test",
+    "name": "integration test (docker, steps) 1/1",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": true,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": null,
+    "finished_at": null,
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144802",
+    "artifacts": [],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144801,
+    "status": "success",
+    "stage": "test",
+    "name": "integration test 4/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:26.449Z",
+    "finished_at": "2026-10-27T08:04:37.385Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144801",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 860616,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 231,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 69995,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 4638,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144800,
+    "status": "success",
+    "stage": "test",
+    "name": "integration test 3/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:26.318Z",
+    "finished_at": "2026-10-27T08:09:45.011Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144800",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1163646,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 231,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 83969,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5327,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144799,
+    "status": "success",
+    "stage": "test",
+    "name": "integration test 2/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:25.624Z",
+    "finished_at": "2026-10-27T08:10:53.374Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144799",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 846868,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 229,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 82092,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 5519,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144798,
+    "status": "success",
+    "stage": "test",
+    "name": "integration test 1/4",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:24.475Z",
+    "finished_at": "2026-10-27T08:08:42.769Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144798",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2044067,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 231,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 112452,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 7053,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144797,
+    "status": "success",
+    "stage": "test",
+    "name": "unit test",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:27:31.368Z",
+    "finished_at": "2026-10-27T07:33:15.761Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144797",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 15794692,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 236,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 1456070,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "junit",
+        "size": 99191,
+        "filename": "junit.xml.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144796,
+    "status": "success",
+    "stage": "test",
+    "name": "gitlab-advanced-sast",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": true,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T08:00:11.239Z",
+    "finished_at": "2026-10-27T08:08:25.742Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144796",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 15630,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 181,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 52496,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "sast",
+        "size": 156772,
+        "filename": "gl-sast-report.json",
+        "file_format": "raw"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144795,
+    "status": "success",
+    "stage": "test",
+    "name": "dependency-scanning",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T08:00:08.293Z",
+    "finished_at": "2026-10-27T08:04:52.163Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144795",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 23798,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 342,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 25667,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "dependency_scanning",
+        "size": 18710,
+        "filename": "gl-dependency-scanning-report.json",
+        "file_format": "raw"
+      },
+      {
+        "file_type": "cyclonedx",
+        "size": 23074,
+        "filename": "gl-sbom.cdx.json.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144794,
+    "status": "success",
+    "stage": "qa",
+    "name": "yaml:lint",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:26:55.326Z",
+    "finished_at": "2026-10-27T07:27:29.317Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144794",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 6335,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144793,
+    "status": "success",
+    "stage": "qa",
+    "name": "check Go version consistency",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:26:50.118Z",
+    "finished_at": "2026-10-27T07:27:48.128Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144793",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 6818,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144792,
+    "status": "success",
+    "stage": "qa",
+    "name": "docs:check feature flags",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:26:49.142Z",
+    "finished_at": "2026-10-27T07:28:02.391Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144792",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 7768,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144791,
+    "status": "success",
+    "stage": "qa",
+    "name": "build script tests",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:26:35.115Z",
+    "finished_at": "2026-10-27T07:27:57.751Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144791",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 49675,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144790,
+    "status": "success",
+    "stage": "qa",
+    "name": "shell:lint",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:53.419Z",
+    "finished_at": "2026-10-27T07:26:44.937Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144790",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 222,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 181,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 7978,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "codequality",
+        "size": 3,
+        "filename": "gl-code-quality-report.json",
+        "file_format": "raw"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144789,
+    "status": "success",
+    "stage": "qa",
+    "name": "go:lint",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:27.592Z",
+    "finished_at": "2026-10-27T07:27:49.948Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144789",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 228,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 184,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 9724,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "codequality",
+        "size": 3,
+        "filename": "gl-code-quality-report.json",
+        "file_format": "raw"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144788,
+    "status": "success",
+    "stage": "qa",
+    "name": "check test directives",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:47.088Z",
+    "finished_at": "2026-10-27T07:27:01.599Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144788",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 7123,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144787,
+    "status": "success",
+    "stage": "qa",
+    "name": "check magefiles",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:44.380Z",
+    "finished_at": "2026-10-27T07:26:53.021Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144787",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 6828,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144786,
+    "status": "success",
+    "stage": "qa",
+    "name": "check generated files",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:41.062Z",
+    "finished_at": "2026-10-27T07:29:45.336Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144786",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 284720,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144785,
+    "status": "success",
+    "stage": "qa",
+    "name": "check modules",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:35.373Z",
+    "finished_at": "2026-10-27T07:27:00.952Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144785",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 37032,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144784,
+    "status": "success",
+    "stage": "qa",
+    "name": "check version definition",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:23.084Z",
+    "finished_at": "2026-10-27T07:26:19.169Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144784",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 6776,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144783,
+    "status": "success",
+    "stage": "application-security-testing",
+    "name": "dependency-scanning-profile-0",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": true,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:55:23.459Z",
+    "finished_at": "2026-10-27T08:00:06.313Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144783",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 15485,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 291,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 47272,
+        "filename": "job.log",
+        "file_format": null
+      },
+      {
+        "file_type": "dependency_scanning",
+        "size": 17735,
+        "filename": "gl-dependency-scanning-report.json",
+        "file_format": "raw"
+      },
+      {
+        "file_type": "cyclonedx",
+        "size": 10982,
+        "filename": "gl-sbom.cdx.json.gz",
+        "file_format": "gzip"
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144782,
+    "status": "success",
+    "stage": "build",
+    "name": "prepare done",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:21.792Z",
+    "finished_at": "2026-10-27T07:25:28.972Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144782",
+    "artifacts": [
+      {
+        "file_type": "trace",
+        "size": 5491,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144781,
+    "status": "success",
+    "stage": "build",
+    "name": "rpm verify fips",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:39:01.700Z",
+    "finished_at": "2026-10-27T07:40:21.492Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144781",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1642,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 211,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 19328,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144780,
+    "status": "success",
+    "stage": "build",
+    "name": "clone test repo",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:20.971Z",
+    "finished_at": "2026-10-27T07:25:30.389Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144780",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 34676,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 1136,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 8221,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144779,
+    "status": "success",
+    "stage": "build",
+    "name": "binaries",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:25:20.174Z",
+    "finished_at": "2026-10-27T07:34:09.517Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144779",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 838278980,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 988,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 24153,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144778,
+    "status": "success",
+    "stage": "build",
+    "name": "runner images",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:34:22.738Z",
+    "finished_at": "2026-10-27T07:38:04.508Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144778",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1249375676,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 322,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 74458,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144777,
+    "status": "success",
+    "stage": "build",
+    "name": "prebuilt helper images windows 2025 arm64",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:40:44.985Z",
+    "finished_at": "2026-10-27T07:47:12.369Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144777",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2852808533,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 272,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 15793,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144776,
+    "status": "success",
+    "stage": "build",
+    "name": "prebuilt helper images windows 2025",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:40:00.883Z",
+    "finished_at": "2026-10-27T07:45:51.844Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144776",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2469397574,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 273,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 15701,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144775,
+    "status": "success",
+    "stage": "build",
+    "name": "prebuilt helper images windows 2022",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:39:59.297Z",
+    "finished_at": "2026-10-27T07:45:03.791Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144775",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2288611204,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 277,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 15700,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144774,
+    "status": "success",
+    "stage": "build",
+    "name": "prebuilt helper images windows 2019",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:40:00.175Z",
+    "finished_at": "2026-10-27T07:45:44.094Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144774",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2488610739,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 279,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 15880,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144773,
+    "status": "success",
+    "stage": "build",
+    "name": "prebuilt helper images",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:38:59.201Z",
+    "finished_at": "2026-10-27T07:55:19.027Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144773",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 1635693190,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 1197,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 94346,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144772,
+    "status": "success",
+    "stage": "build",
+    "name": "helper images: [windows-nanoserver-ltsc2025-arm64 windows-servercore-ltsc2025-arm64]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:34:17.913Z",
+    "finished_at": "2026-10-27T07:40:40.350Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144772",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 3383073479,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 275,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 33565,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144771,
+    "status": "success",
+    "stage": "build",
+    "name": "helper images: [windows-nanoserver-ltsc2025 windows-servercore-ltsc2025]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:34:17.280Z",
+    "finished_at": "2026-10-27T07:39:58.846Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144771",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2881757314,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 274,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 30059,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144770,
+    "status": "success",
+    "stage": "build",
+    "name": "helper images: [windows-nanoserver-ltsc2022 windows-servercore-ltsc2022]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:34:17.235Z",
+    "finished_at": "2026-10-27T07:39:57.057Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144770",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2645335791,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 273,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 30526,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144769,
+    "status": "success",
+    "stage": "build",
+    "name": "helper images: [windows-nanoserver-ltsc2019 windows-servercore-ltsc2019]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:34:16.575Z",
+    "finished_at": "2026-10-27T07:39:57.809Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144769",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2839678697,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 276,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 29899,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  },
+  {
+    "id": 17494144768,
+    "status": "success",
+    "stage": "build",
+    "name": "helper images: [alpine alpine-pwsh ubuntu ubuntu-pwsh ubi-fips concrete]",
+    "ref": "refs/merge-requests/7717/train",
+    "allow_failure": false,
+    "created_at": "2026-10-27T07:25:18.056Z",
+    "started_at": "2026-10-27T07:34:15.758Z",
+    "finished_at": "2026-10-27T07:38:53.421Z",
+    "web_url": "https://gitlab.com/gitlab-org/gitlab-runner/-/jobs/17494144768",
+    "artifacts": [
+      {
+        "file_type": "archive",
+        "size": 2460731775,
+        "filename": "artifacts.zip",
+        "file_format": "zip"
+      },
+      {
+        "file_type": "metadata",
+        "size": 1152,
+        "filename": "metadata.gz",
+        "file_format": "gzip"
+      },
+      {
+        "file_type": "trace",
+        "size": 178249,
+        "filename": "job.log",
+        "file_format": null
+      }
+    ],
+    "commit": {
+      "id": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    },
+    "pipeline": {
+      "id": 2993125854,
+      "project_id": 250833,
+      "sha": "65926b1c490e59dcaa083e3c17ec46f12b0187a5"
+    }
+  }
+]
