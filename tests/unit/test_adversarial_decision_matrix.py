@@ -54,8 +54,14 @@ def report(path="semgrep/semgrep-clean.json"):
         (RequirementInput(), Decision.BLOCKED),
         (RequirementInput(absence_unknown="downstream API returned 403"), Decision.INDETERMINATE),
         (RequirementInput(job=job(), evidence_error="API 403"), Decision.INDETERMINATE),
-        (RequirementInput(job=job(), evidence=get_adapter("semgrep").parse(None)), Decision.BLOCKED),
-        (RequirementInput(job=job(), evidence=get_adapter("semgrep").parse(b"{}")), Decision.BLOCKED),
+        (
+            RequirementInput(job=job(), evidence=get_adapter("semgrep").parse(None)),
+            Decision.BLOCKED,
+        ),
+        (
+            RequirementInput(job=job(), evidence=get_adapter("semgrep").parse(b"{}")),
+            Decision.BLOCKED,
+        ),
         (RequirementInput(job=job(status=JobStatus.FAILED), evidence=report()), Decision.BLOCKED),
         (RequirementInput(job=job(sha="b" * 40), evidence=report()), Decision.BLOCKED),
         (RequirementInput(job=job(), evidence=report()), Decision.VERIFIED),
