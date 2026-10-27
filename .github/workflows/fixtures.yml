@@ -242,10 +242,13 @@ jobs:
           docker run --rm --network dast -v "$PWD/out/v2:/zap/wrk:rw" ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py -t http://target -J zap-baseline.json -I || true
           docker run --rm ghcr.io/zaproxy/zaproxy:stable zap.sh -cmd -version > out/v2/zap-version.txt 2>&1 || true
-          N="docker run --rm --network dast -v $PWD/out/v2:/out projectdiscovery/nuclei:latest"
+          mkdir -p /tmp/nuclei-cfg && chmod a+rwx /tmp/nuclei-cfg
+          N="docker run --rm --network dast -v $PWD/out/v2:/out -v /tmp/nuclei-cfg:/root projectdiscovery/nuclei:latest"
           $N -version > out/v2/nuclei-version.txt 2>&1 || true
-          $N -u http://target -t http/technologies/ -jsonl -o /out/nuclei.jsonl -je /out/nuclei-export.json -silent -duc || true
-          $N -u http://target -t http/cves/2099/ -jsonl -o /out/nuclei-empty.jsonl -je /out/nuclei-empty-export.json -silent -duc || true
+          $N -ut -silent || true   # install templates
+          $N -u http://target -tags tech,misconfig -jsonl -o /out/nuclei.jsonl -je /out/nuclei-export.json -silent || true
+          # a filter that matches nothing on nginx: what does "no findings" look like?
+          $N -u http://target -tags cve -severity critical -jsonl -o /out/nuclei-empty.jsonl -je /out/nuclei-empty-export.json -silent || true
           ls -la out/v2
           echo "::notice title=dast::zap $(wc -c < out/v2/zap-baseline.json 2>/dev/null) nuclei $(wc -l < out/v2/nuclei.jsonl 2>/dev/null) empty-export $(cat out/v2/nuclei-empty-export.json 2>/dev/null | head -c 100)"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
