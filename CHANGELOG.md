@@ -41,6 +41,11 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   `production` requires the declaration when a prefixed copy is matched (`COPIES_UNDECLARED`,
   UNKNOWN), and rejects a waiver on `copies_declared` (`WAIVER_HIDES_UNDECLARED_COPIES`).
 
+- **Overclaimed VERIFIED under `production`:** a job found in the pipeline was VERIFIED even
+  when a downstream pipeline that could not be read (or had not started) might hold another
+  copy of it, which must pass too ([#71](https://github.com/abdelrahman-eladwy/scanproof/issues/71)). It is now UNKNOWN (`COPIES_UNBOUNDED`) unless the
+  requirement declares `copies` (`[""]` for the pipeline's own job only); a waiver on
+  `copies_bounded` is rejected (`WAIVER_HIDES_UNBOUNDED_COPIES`). `compatible`: a warning.
 - **Incorrect BLOCKED:** a GitLab trigger that had not started its downstream pipeline yet
   (created, pending, waiting, running, or an unrecognized status) made every job and declared
   copy in that pipeline `REQUIRED_JOB_ABSENT` / `REQUIRED_COPY_ABSENT`
@@ -58,6 +63,9 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   downstream (`svc-a > sast`), reusable-workflow (`api / sast`) or nested Jenkins stage copy
   and declares no `copies` is now UNKNOWN (exit 2). Add `copies`, or pin each copy with a
   qualified `job_name`. Under `compatible` it gets a warning; decisions are unchanged.
+- **Breaking under `production` only:** a requirement with an unqualified `job_name` and no
+  `copies` is UNKNOWN (exit 2) when a GitLab downstream pipeline can't be read or hasn't
+  started. Add `copies` (`[""]` if only the pipeline's own job is required).
 - Requirements without `instances` behave as before. `find_jobs` keeps its signature;
   `match_jobs` is the richer form.
 - A pipeline that has both an exact-name job and same-named instances now needs every one of

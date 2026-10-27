@@ -22,6 +22,7 @@ GitLab rows replay real gitlab.com API responses saved in `tests/fixtures/gitlab
 | `parallel: matrix:` leg removed, no `instances` | VERIFIED (warning); INDETERMINATE under `production` | `INSTANCES_UNDECLARED` (production) | `test_declared_instances.py` |
 | Child pipeline (`svc-b > semgrep-sast`) removed, `copies` declared | BLOCKED | `REQUIRED_COPY_ABSENT` on `job_present [svc-b > semgrep-sast]` | `test_declared_copies.py` + real gitlab-org/gitlab names |
 | Child pipeline removed, no `copies` | VERIFIED (warning); INDETERMINATE under `production` | `COPIES_UNDECLARED` (production) | `test_declared_copies.py` |
+| Root `semgrep-sast` passes; a private child may run another copy | VERIFIED (warning); INDETERMINATE under `production` unless `copies` declared | `COPIES_UNBOUNDED` (production) | `test_unbounded_copies.py` |
 | Passing `semgrep-sast` next to a failing `semgrep-sast 1/2`, `: [py]` leg or child `trigger > semgrep-sast` | BLOCKED (every same-named job is evaluated) | `job_success [<instance>]` | test (`test_exact_name_instances.py`) |
 | Same, every job passing | VERIFIED, all listed as instances | | test (`test_exact_name_instances.py`) |
 | Gate runs before the scan finishes | INDETERMINATE | `REPORT_NOT_YET_AVAILABLE` | test |

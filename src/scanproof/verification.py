@@ -16,7 +16,7 @@ from scanproof import __version__
 from scanproof.attestation.models import AttestationEvidence
 from scanproof.attestation.verify import TrustConfig, verify_bundles
 from scanproof.connectors.base import CIConnector, ConnectorError, NotFoundError
-from scanproof.evidence.collector import collect_evidence, match_jobs
+from scanproof.evidence.collector import collect_evidence, is_qualified, match_jobs
 from scanproof.evidence.models import ScanEvidence
 from scanproof.inspection import inspect_pipeline
 from scanproof.models import InspectedJob, Pipeline
@@ -159,6 +159,8 @@ def verify_pipeline(
         unread = (
             f"these pipelines could not be read: {', '.join(unreadable)}" if unreadable else None
         )
+        if unread and matches and not req.copies and not is_qualified(req.job_name):
+            undeclared["copies_unbounded"] = unread
         if not matches:
             inputs[req.id] = RequirementInput(absence_unknown=unread)
         elif (

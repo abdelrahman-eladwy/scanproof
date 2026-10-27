@@ -145,6 +145,12 @@ def find_jobs(jobs: list[InspectedJob], name: str) -> tuple[list[InspectedJob], 
     return match.jobs, match.missing
 
 
+def is_qualified(name: str) -> bool:
+    """A job_name with a path ('svc-a > sast', 'caller / sast') matches only itself, so it has
+    no copies elsewhere, in a readable pipeline or not (#71)."""
+    return any(sep in name for sep in _TAIL_SEPARATORS)
+
+
 def _copy_path(job_name: str, name: str) -> str:
     """The path that qualifies a matched job: '' for the named job itself, 'svc-a' for
     'svc-a > sast', 'Scan / Matrix - X / sast' -> 'Scan / Matrix - X'."""

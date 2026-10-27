@@ -87,6 +87,11 @@ class RequirementInput(BaseModel):
         description="Prefixed copies matched while the requirement declares no `copies`: a "
         "removed copy would go unnoticed (#65)",
     )
+    copies_unbounded: str | None = Field(
+        default=None,
+        description="The job was found, but pipelines that could not be read may hold more "
+        "copies of it, and the requirement declares no `copies` (#71)",
+    )
     attestations: list[AttestationEvidence] | None = Field(
         default=None, description="Every bundle found for the attestation subject"
     )
@@ -379,8 +384,24 @@ def _copy_declaration_checks(
     Copies told apart only by a prefix ('svc-a > sast', 'api / sast') carry no total, so
     without the declaration a removed copy is invisible and the rest would pass (#65).
     """
-    if profile != "production" or req.copies or not data.undeclared_copies:
+    if profile != "production" or req.copies:
         return []
+    if not data.undeclared_copies:
+        if not data.copies_unbounded:
+            return []
+        return [
+            CheckResult(
+                check="copies_bounded",
+                outcome=Outcome.UNKNOWN,
+                code="COPIES_UNBOUNDED",
+                message=(
+                    f"'{req.job_name}' was found, but {data.copies_unbounded}, and they may hold "
+                    "more copies of it that must also pass. assurance.profile: production "
+                    'requires declaring the copies that must run: copies: [""] for only this '
+                    'pipeline\'s own job, or e.g. copies: ["", svc-a]'
+                ),
+            )
+        ]
     names = ", ".join(f"'{n}'" for n in data.undeclared_copies)
     return [
         CheckResult(
@@ -405,7 +426,19 @@ def _undeclared_copy_warnings(
         return []  # a COPIES_UNDECLARED check already reports it
     out = []
     for req, res in zip(policy.requirements, results, strict=True):
-        names = inputs.get(req.id, RequirementInput()).undeclared_copies
+        data = inputs.get(req.id, RequirementInput())
+        names = data.undeclared_copies
+        if (
+            data.copies_unbounded
+            and not names
+            and not req.copies
+            and res.outcome is not Outcome.NOT_APPLICABLE
+        ):
+            out.append(
+                f"{req.id}: '{req.job_name}' may have copies in pipelines that could not be read "
+                'and were not judged. Declare the required copies (copies: [...]; "" for this '
+                "pipeline's own job) to make that explicit."
+            )
         if names and not req.copies and res.outcome is not Outcome.NOT_APPLICABLE:
             out.append(
                 f"{req.id}: '{req.job_name}' ran as {len(names)} prefixed cop(ies) and declares "

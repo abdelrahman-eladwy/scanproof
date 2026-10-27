@@ -110,7 +110,8 @@ def assurance_opt_ins(policy: Policy) -> list[OptIn]:
                 "('svc-a > job'), reusable-workflow callers ('caller / job') or Jenkins stage "
                 "paths, a removed copy cannot be detected from job names. Declare the paths, "
                 "e.g. copies: [svc-a, svc-b]; under profile production, verify reports "
-                "undeclared prefixed copies as UNKNOWN",
+                "undeclared prefixed copies as UNKNOWN, and so it does when a downstream "
+                "pipeline that could hold one can't be read",
                 production="note",
             )
         )
@@ -122,6 +123,15 @@ def assurance_opt_ins(policy: Policy) -> list[OptIn]:
                     f"waivers[{i}] ({w.requirement}/{w.check})",
                     "waiving instances_declared accepts matrix legs whose removal cannot be "
                     "detected; declare instances instead",
+                )
+            )
+        if w.check == "copies_bounded":
+            out.append(
+                OptIn(
+                    "WAIVER_HIDES_UNBOUNDED_COPIES",
+                    f"waivers[{i}] ({w.requirement}/{w.check})",
+                    "waiving copies_bounded accepts copies in unreadable pipelines that were "
+                    "never judged; declare copies instead",
                 )
             )
         if w.check == "copies_declared":
