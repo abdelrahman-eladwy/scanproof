@@ -72,8 +72,8 @@ def test_semgrep_scope_free_json_is_not_verified() -> None:
 def test_semgrep_empty_scanned_paths_are_not_verified() -> None:
     ev = SemgrepAdapter().parse(b'{"results":[],"errors":[],"paths":{"scanned":[]}}')
     out = result(ev)
-    assert out.decision is Decision.INDETERMINATE
-    assert scope_check(out).code == "SCAN_SCOPE_CONFLICT"
+    assert out.decision is Decision.BLOCKED
+    assert scope_check(out).code == "SCAN_SCOPE_EMPTY"
 
 
 def test_semgrep_scanned_file_with_zero_findings_passes() -> None:
@@ -99,7 +99,7 @@ def test_trivy_empty_results_are_not_verified() -> None:
         b'{"SchemaVersion":2,"ArtifactName":"example","Results":[]}'
     )
     out = result(ev, tool="trivy")
-    assert out.decision is Decision.INDETERMINATE
+    assert out.decision is Decision.BLOCKED
     assert scope_check(out).code == "SCAN_SCOPE_EMPTY"
 
 
