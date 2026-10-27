@@ -20,9 +20,12 @@ import typer
 
 from scanproof import __version__
 from scanproof.attestation.verify import TrustConfig, verify_bundles
+from scanproof.connectors.azure_devops import DEFAULT_AZURE_URL, AzureDevOpsConnector
 from scanproof.connectors.base import CIConnector, ConnectorError
+from scanproof.connectors.bitbucket import DEFAULT_BITBUCKET_API, BitbucketConnector
 from scanproof.connectors.github import DEFAULT_GITHUB_API, GitHubConnector
 from scanproof.connectors.gitlab import GitLabConnector
+from scanproof.connectors.jenkins import JenkinsConnector
 from scanproof.evidence.collector import collect_evidence, find_job
 from scanproof.evidence.models import EvidenceSource
 from scanproof.inspection import inspect_pipeline
@@ -72,7 +75,35 @@ GitHubUrlOpt = Annotated[
 ]
 ProviderOpt = Annotated[
     str | None,
-    typer.Option("--provider", help="gitlab (default) or github. verify defaults to the policy's."),
+    typer.Option(
+        "--provider",
+        help="gitlab (default), github, azure-devops, jenkins or bitbucket. "
+        "verify defaults to the policy's.",
+    ),
+]
+UrlOpt = Annotated[
+    str | None,
+    typer.Option(
+        "--url",
+        help="Base URL for azure-devops (default https://dev.azure.com, env AZURE_DEVOPS_URL), "
+        "jenkins (required, env JENKINS_URL) or bitbucket (env BITBUCKET_API_URL).",
+    ),
+]
+UserEnvOpt = Annotated[
+    str | None,
+    typer.Option(
+        "--user-env",
+        help="Env var holding the username for Basic auth (default JENKINS_USER / "
+        "BITBUCKET_USER). Usernames, like tokens, are never accepted as arguments.",
+    ),
+]
+AuthSchemeOpt = Annotated[
+    str | None,
+    typer.Option(
+        "--auth-scheme",
+        help="bearer or basic. Azure DevOps defaults to basic (PATs); use bearer for "
+        "$(System.AccessToken) or Entra tokens.",
+    ),
 ]
 CaBundleOpt = Annotated[
     Path | None,
@@ -116,7 +147,19 @@ SigstoreOfflineOpt = Annotated[
 
 DEFAULT_GITLAB = "https://gitlab.com"
 DEFAULT_GITHUB = DEFAULT_GITHUB_API
-DEFAULT_TOKEN_ENV = {"gitlab": "GITLAB_TOKEN", "github": "GITHUB_TOKEN"}  # env var names
+DEFAULT_TOKEN_ENV = {  # env var names
+    "gitlab": "GITLAB_TOKEN",
+    "github": "GITHUB_TOKEN",
+    "azure-devops": "AZURE_DEVOPS_TOKEN",
+    "jenkins": "JENKINS_TOKEN",
+    "bitbucket": "BITBUCKET_TOKEN",
+}
+DEFAULT_USER_ENV = {"jenkins": "JENKINS_USER", "bitbucket": "BITBUCKET_USER"}
+DEFAULT_URL_ENV = {
+    "azure-devops": ("AZURE_DEVOPS_URL", DEFAULT_AZURE_URL),
+    "jenkins": ("JENKINS_URL", None),
+    "bitbucket": ("BITBUCKET_API_URL", DEFAULT_BITBUCKET_API),
+}
 
 
 def _fail(code: int, message: str) -> typer.Exit:
@@ -131,10 +174,20 @@ def _connector(
     token_env: str | None,
     ca_bundle: Path | None,
     anonymous: bool = False,
+    url: str | None = None,
+    user_env: str | None = None,
+    auth_scheme: str | None = None,
 ) -> CIConnector:
     provider = (provider or "gitlab").lower()
     if provider not in DEFAULT_TOKEN_ENV:
-        raise _fail(EXIT_USAGE, f"error: unknown provider {provider!r} (gitlab or github)")
+        raise _fail(
+            EXIT_USAGE,
+            f"error: unknown provider {provider!r} ({', '.join(DEFAULT_TOKEN_ENV)})",
+        )
+    if auth_scheme not in (None, "bearer", "basic"):
+        raise _fail(
+            EXIT_USAGE, f"error: --auth-scheme must be bearer or basic, not {auth_scheme!r}"
+        )
     token_env = token_env or DEFAULT_TOKEN_ENV[provider]
     token = os.environ.get(token_env, "")
     if anonymous:
@@ -146,9 +199,28 @@ def _connector(
             "(use --anonymous for public projects)",
         )
     ca = str(ca_bundle) if ca_bundle else None
+    user_var = user_env or DEFAULT_USER_ENV.get(provider)
+    username = os.environ.get(user_var) or None if user_var else None
+    if provider in DEFAULT_URL_ENV:
+        env_name, default = DEFAULT_URL_ENV[provider]
+        url = url or os.environ.get(env_name) or default
+        if not url:
+            raise _fail(EXIT_USAGE, f"error: {provider} needs --url (or {env_name})")
     try:
         if provider == "github":
             return GitHubConnector(github_url, token or None, anonymous=anonymous, ca_bundle=ca)
+        if provider == "azure-devops":
+            return AzureDevOpsConnector(
+                url, token or None, anonymous=anonymous, ca_bundle=ca, auth_scheme=auth_scheme
+            )
+        if provider == "jenkins":
+            return JenkinsConnector(
+                url, token or None, username=username, anonymous=anonymous, ca_bundle=ca
+            )
+        if provider == "bitbucket":
+            return BitbucketConnector(
+                url, token or None, username=username, anonymous=anonymous, ca_bundle=ca
+            )
         return GitLabConnector(gitlab_url, token or None, anonymous=anonymous, ca_bundle=ca)
     except ConnectorError as exc:
         raise _fail(EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}") from None
@@ -193,6 +265,9 @@ def inspect(
     gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
     github_url: GitHubUrlOpt = DEFAULT_GITHUB,
     provider: ProviderOpt = None,
+    url: UrlOpt = None,
+    user_env: UserEnvOpt = None,
+    auth_scheme: AuthSchemeOpt = None,
     token_env: TokenEnvOpt = None,
     ca_bundle: CaBundleOpt = None,
     anonymous: AnonymousOpt = False,
@@ -202,7 +277,17 @@ def inspect(
     """Inspect a pipeline (GitLab) or workflow run (GitHub): jobs, retries, artifacts. No policy."""
     _require(project=project, pipeline=pipeline)
     try:
-        with _connector(provider, gitlab_url, github_url, token_env, ca_bundle, anonymous) as gl:
+        with _connector(
+            provider,
+            gitlab_url,
+            github_url,
+            token_env,
+            ca_bundle,
+            anonymous,
+            url,
+            user_env,
+            auth_scheme,
+        ) as gl:
             report = inspect_pipeline(
                 gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
             )
@@ -239,6 +324,9 @@ def evidence(
     gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
     github_url: GitHubUrlOpt = DEFAULT_GITHUB,
     provider: ProviderOpt = None,
+    url: UrlOpt = None,
+    user_env: UserEnvOpt = None,
+    auth_scheme: AuthSchemeOpt = None,
     token_env: TokenEnvOpt = None,
     ca_bundle: CaBundleOpt = None,
     anonymous: AnonymousOpt = False,
@@ -262,7 +350,15 @@ def evidence(
         _require(project=project, pipeline=pipeline, job=job, report=report)
         try:
             with _connector(
-                provider, gitlab_url, github_url, token_env, ca_bundle, anonymous
+                provider,
+                gitlab_url,
+                github_url,
+                token_env,
+                ca_bundle,
+                anonymous,
+                url,
+                user_env,
+                auth_scheme,
             ) as gl:
                 inspection = inspect_pipeline(
                     gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
@@ -376,6 +472,9 @@ def verify(
     gitlab_url: GitLabUrlOpt = DEFAULT_GITLAB,
     github_url: GitHubUrlOpt = DEFAULT_GITHUB,
     provider: ProviderOpt = None,
+    url: UrlOpt = None,
+    user_env: UserEnvOpt = None,
+    auth_scheme: AuthSchemeOpt = None,
     token_env: TokenEnvOpt = None,
     ca_bundle: CaBundleOpt = None,
     anonymous: AnonymousOpt = False,
@@ -399,7 +498,17 @@ def verify(
         )
     provider = loaded.project.provider
     try:
-        with _connector(provider, gitlab_url, github_url, token_env, ca_bundle, anonymous) as gl:
+        with _connector(
+            provider,
+            gitlab_url,
+            github_url,
+            token_env,
+            ca_bundle,
+            anonymous,
+            url,
+            user_env,
+            auth_scheme,
+        ) as gl:
             report = verify_pipeline(
                 gl,
                 loaded,
