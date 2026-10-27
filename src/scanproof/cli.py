@@ -79,7 +79,7 @@ CaBundleOpt = Annotated[
         envvar="SCANPROOF_CA_BUNDLE",
         exists=True,
         dir_okay=False,
-        help="CA bundle for self-hosted GitLab with a private CA.",
+        help="CA bundle for a self-hosted GitLab / GitHub Enterprise with a private CA.",
     ),
 ]
 OutputOpt = Annotated[
@@ -178,7 +178,7 @@ def inspect(
     output: OutputOpt = None,
     quiet: QuietOpt = False,
 ) -> None:
-    """Inspect a GitLab pipeline: jobs, retries and artifacts. No policy is applied."""
+    """Inspect a pipeline (GitLab) or workflow run (GitHub): jobs, retries, artifacts. No policy."""
     _require(project=project, pipeline=pipeline)
     try:
         with _connector(provider, gitlab_url, github_url, token_env, ca_bundle, anonymous) as gl:
@@ -224,7 +224,7 @@ def evidence(
     output: OutputOpt = None,
     quiet: QuietOpt = False,
 ) -> None:
-    """Normalize one scanner report into ScanProof evidence (local file or GitLab job)."""
+    """Normalize one scanner report into ScanProof evidence (local file or CI job/artifact)."""
     try:
         adapter = get_adapter(tool)
     except KeyError as exc:
@@ -286,7 +286,7 @@ def _load(policy_path: Path):
 
 @app.command()
 def validate(policy: PolicyOpt) -> None:
-    """Check a policy file without contacting GitLab."""
+    """Check a policy file without contacting any CI platform."""
     loaded = _load(policy)
     typer.echo(
         f"OK: policy '{loaded.name}' with {len(loaded.requirements)} requirement(s): "

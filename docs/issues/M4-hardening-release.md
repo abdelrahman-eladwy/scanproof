@@ -14,5 +14,7 @@
 - [x] README "Why not just use…" reviewed against current GitLab docs
 - [x] Write-up of the design decisions (`docs/design-decisions.md`)
 - [ ] One-time PyPI / GitHub setup in `docs/releasing.md` ← maintainer
-- [ ] Demo: real GitLab demo project run showing VERIFIED and BLOCKED ← maintainer
+- [x] Demo: real run showing VERIFIED and BLOCKED, on GitHub Actions (`.github/workflows/demo.yml`,
+      `docs/demo.md`). A GitLab demo project is optional; it needs a gitlab.com project and a
+      Developer-role token ← maintainer
 - [ ] Tag `v0.1.0` ← maintainer, after the two items above

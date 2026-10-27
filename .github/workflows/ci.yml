@@ -27,6 +27,44 @@ jobs:
       - run: ruff format --check .
       - run: pytest --cov=scanproof --cov-branch --cov-report=term-missing --cov-fail-under=90
 
+  lowest-deps:
+    # The oldest dependency versions pyproject.toml allows must really work.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]" -c tests/constraints-lowest.txt
+      - run: pytest -q
+
+  package:
+    # Build the wheel exactly as release.yml does and run it from outside the source tree.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - run: pip install build
+      - run: python -m build
+      - name: Install the wheel in a clean venv and smoke test it
+        run: |
+          python -m venv /tmp/v
+          /tmp/v/bin/pip install dist/*.whl
+          cd /tmp
+          /tmp/v/bin/scanproof --version
+          /tmp/v/bin/scanproof evidence -t semgrep -q \
+            -f "$GITHUB_WORKSPACE/tests/fixtures/semgrep/semgrep-findings.json" > /dev/null
+          RELEASE_IMAGE_DIGEST="sha256:$(printf '0%.0s' $(seq 64))" \
+            /tmp/v/bin/scanproof validate -P "$GITHUB_WORKSPACE/examples/policies/sarif-and-sbom.yaml"
+          set +e; /tmp/v/bin/scanproof evidence -t nosuch -f /dev/null; rc=$?; set -e
+          test "$rc" = 3
+
   docker:
     runs-on: ubuntu-latest
     needs: test

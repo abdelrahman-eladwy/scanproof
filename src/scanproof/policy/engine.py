@@ -271,8 +271,7 @@ def _job_checks(req: Requirement, job: InspectedJob) -> list[CheckResult]:
                     "job_success",
                     Outcome.FAIL,
                     "FAILURE_MASKED_BY_ALLOW_FAILURE",
-                    f"Job {latest.id} ended '{status.value}' but allow_failure / "
-                    f"continue-on-error let the pipeline continue ({latest.raw_status})",
+                    f"Job {latest.id} {_how_it_was_masked(status, latest.raw_status)}",
                 )
             )
         elif status.is_terminal or status is JobStatus.MANUAL:
@@ -564,6 +563,15 @@ def _min_resources(ev: ScanEvidence, minimum: int) -> CheckResult:
             f"{count} resource(s) evaluated, at least {minimum} required",
         )
     return _r(name, Outcome.PASS, "RESOURCES_OK", f"{count} resource(s) evaluated")
+
+
+def _how_it_was_masked(status: JobStatus, raw: str | None) -> str:
+    """The platform's own account when it says more than the status (GitHub masked steps)."""
+    if raw and raw != status.value:
+        return raw
+    return (
+        f"ended '{status.value}', and allow_failure / continue-on-error let the pipeline continue"
+    )
 
 
 RequirementInput.model_rebuild()

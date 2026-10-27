@@ -25,13 +25,13 @@ from __future__ import annotations
 import io
 import zipfile
 from typing import Any
-from xml.etree.ElementTree import (
-    Element,
-    ParseError,
-)
+from xml.etree.ElementTree import Element
 
 from defusedxml import DefusedXmlException
-from defusedxml.ElementTree import fromstring
+
+# defusedxml's own ParseError: in defusedxml 0.7.0 it is a different class from the stdlib one,
+# so catching xml.etree's ParseError let malformed FVDL escape the adapter.
+from defusedxml.ElementTree import ParseError, fromstring
 
 from scanproof.evidence.models import FindingsSummary, ScannerError, ScanScope, ScanType
 from scanproof.scanners.base import ReportLoadError, ScannerAdapter, count_by

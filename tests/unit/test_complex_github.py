@@ -242,3 +242,17 @@ def test_report_nested_in_artifact_folder_and_tampered_twin(conn, gh) -> None:
     report = verify(conn, gh, policy("sast", report="reports/semgrep.json"))
     assert report.decision is Decision.BLOCKED
     assert "digest mismatch" in str(report.requirements[0].checks)
+
+
+def test_masked_step_message_says_what_github_reported(conn, gh) -> None:
+    """The job succeeded on GitHub; the message must not claim it 'ended failed'."""
+    gh.job(1, "sast", notes=[[EXIT1]])
+    gh.artifact(10, "scan-report", {"semgrep.json": SEMGREP})
+    report = verify(conn, gh, policy("sast"))
+    (check,) = [c for c in report.requirements[0].checks if c.check == "job_success"]
+    assert "ended 'failed'" not in check.message
+    assert check.message == (
+        "Job 1 succeeded, but a step failed under continue-on-error "
+        "(Process completed with exit code 1)"
+    )
+    assert not any("ended 'failed'" in w for w in report.warnings)

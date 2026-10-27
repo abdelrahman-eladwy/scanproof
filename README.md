@@ -1,6 +1,7 @@
 # ScanProof
 
-> **Status: experimental (pre-alpha).** Interfaces and output formats will change before v0.1.
+> **Status: v0.1, pre-alpha.** Policy and report formats may still change in minor versions
+> before 1.0 (see [CHANGELOG](CHANGELOG.md)). See it work: **[demo](docs/demo.md)**.
 
 **Security Scan Assurance Engine.** ScanProof verifies that the security scans your release
 depends on actually ran, produced valid evidence, and covered what you are about to ship.
@@ -93,6 +94,9 @@ Self-hosted GitLab: `--gitlab-url https://gitlab.internal` and, for a private CA
 
 A release gate should block on anything non-zero.
 
+`evidence` and `inspect` only describe; they exit 0 even when a report is invalid (the output says
+`INVALID`). Use `verify` with a policy to gate.
+
 If no requirement applies to the pipeline (for example every requirement has `applies_to.refs`
 and this is a merge-request pipeline), the decision is INDETERMINATE: nothing was verified. Set
 `enforcement: {on_nothing_applicable: allow}` to make that VERIFIED with a warning instead.
@@ -102,7 +106,7 @@ and this is a merge-request pipeline), the decision is INDETERMINATE: nothing wa
 - [x] **M1 — GitLab Pipeline Inspector**
 - [x] **M2 — Scanner adapters:** Semgrep (scan scope, errors) and Trivy (image digest binding)
 - [x] **M3 — Policy engine:** YAML policies, PASS / FAIL / UNKNOWN / NOT_APPLICABLE, `verify` command
-- [ ] **M4 — Hardening & release:** pinned CI, release workflow with provenance, docs (done); demo project and first PyPI release (pending)
+- [x] **M4 — Hardening & release:** pinned CI, release workflow with provenance, docs, live [demo](docs/demo.md); first PyPI release (pending maintainer setup)
 
 Beyond the original plan (merged):
 
@@ -111,7 +115,8 @@ Beyond the original plan (merged):
 - [x] SARIF and CycloneDX (any SARIF producer, SBOMs), `expected_scanner`, `minimum_components`
 - [x] Dependency, secrets and IaC scan types (Checkov, Trivy filesystem)
 - [x] **GitHub Actions** connector, verified against its own live runs
-- [ ] Fortify FPR and Sonatype IQ (experimental, PR #9)
+- [x] Fortify FPR and Sonatype IQ (experimental)
+- [x] Complex pipelines: child / multi-project / parallel / matrix, re-runs ([scenarios](docs/scenarios.md))
 
 See [`docs/issues/`](docs/issues/) for detailed acceptance criteria.
 

@@ -185,7 +185,8 @@ class GitHubConnector(HttpConnector):
                 masking_checked = masked is not None
                 if masked:
                     status, allow_failure = JobStatus.FAILED, True
-                    raw = f"success, but a step failed under continue-on-error ({masked})"
+                    detail = masked.rstrip(".")
+                    raw = f"succeeded, but a step failed under continue-on-error ({detail})"
 
             return Job(
                 id=item["id"],
