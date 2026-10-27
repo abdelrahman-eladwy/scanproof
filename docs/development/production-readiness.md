@@ -54,8 +54,10 @@ must consume versioned decision reports, not duplicate policy logic.
 - [ ] Write misuse/abuse cases: forged reports, policy weakening, missing
       mandatory job, signed replay, compromised runner, partial API visibility,
       stale artifacts, mutable tags, cross-project children and skipped checks.
-- [ ] Define supported configurations and hardening profiles: default
+- [x] Define supported configurations and hardening profiles: default
       backward-compatible behavior versus recommended strict production profile.
+      *Evidence:* `assurance.profile: compatible | production` (#52);
+      `tests/unit/test_production_profile.py`; docs/advanced-policy.md.
 - [ ] Establish reproducible CI baseline: test count, branch coverage, job
       duration, lowest-dependency constraints, Docker smoke and artifact sizes.
 - [ ] Classify bugs: P0 false VERIFIED / bypass / credential leak; P1 incorrect
@@ -73,10 +75,13 @@ No open P0 security bug is accepted into a release candidate.
 - [ ] Differential/adversarial decision tests: absent/skipped/masked jobs,
       report missing/empty/truncated/wrong schema/wrong scanner, zero coverage,
       mismatched commit/image, retries, matrix and downstream jobs.
-- [ ] Test policy downgrades: `on_unknown: warn`,
+- [x] Test policy downgrades: `on_unknown: warn`,
       `on_nothing_applicable: allow`, waivers, missing/disabled requirements,
       wildcard/mis-scoped policies; ensure production profile rejects unsafe
       combinations and documentation explains opt-in behavior.
+      *Evidence:* #52. One rejection test per opt-in and a compatibility test that it still
+      loads without the profile (`test_production_profile.py`); unknown and wildcard refs
+      (`test_false_verified_paths.py`); `validate --explain`.
 - [ ] Attestation negatives: tampered report, foreign signer, wrong repository,
       wrong commit, wrong run **and attempt**, expired/invalid trust material,
       incomplete transparency evidence, replay across projects.
@@ -88,6 +93,17 @@ No open P0 security bug is accepted into a release candidate.
       malformed archives and compression bombs.
 - [ ] Require regression test for every confirmed bug; prefer a minimal fix in
       the owning connector/adapter rather than adding exception swallowing.
+
+**Status (2026-10-27): exit gate not met.** Remaining work, from a targeted search of
+`tests/unit/` (a gap means no dedicated test was found, not that the behavior is wrong):
+
+| Item | Covered | Gap |
+|---|---|---|
+| Adversarial decisions | `test_adversarial_decision_matrix.py`, `test_false_verified_paths.py`, `test_complex_gitlab.py` / `test_complex_github.py` (retries, masking, matrix, downstream) | **#59** exact-name job hides failing instances; **#60** removed matrix leg undetectable. Both are open false-VERIFIED paths |
+| Attestation negatives | tampered/forged bundles, foreign signer, wrong commit, wrong run and GitHub attempt, missing tlog entries (`test_attestation_verify.py`, `test_attestation_policy.py`, `test_attestation_e2e.py`) | expired/invalid trust root, cross-project replay |
+| Hostile providers | 401/403/429/5xx on report fetch (`test_provider_error_matrix.py`), redirect loops and downgrades, size limits, zip traversal (connector tests) | pagination cycles, connector-level timeouts, partial downloads beyond GitLab |
+| Fuzz/property | seeded adapter fuzz (`test_robustness.py`), Unicode stress | compression bombs; property tests of evidence/decision serialization |
+| Packaged CLI | CI builds the wheel and Docker image and smoke-tests them (`ci.yml`) | the adversarial matrix runs only against the source tree, not the built wheel / container |
 
 **Exit gate:** zero reproducible false VERIFIED cases in the supported threat
 model; all known P0 findings fixed with regression tests; red-team matrix

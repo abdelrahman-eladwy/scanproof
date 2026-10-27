@@ -402,20 +402,8 @@ def _evidence_checks(
     req: Requirement, data: RequirementInput, *, minimum_assurance: str = "report"
 ) -> list[CheckResult]:
     c = req.checks
-    wants_evidence = any(
-        [
-            c.report_required,
-            minimum_assurance == "reported_scope",
-            c.scanner_errors_allowed is not None,
-            c.minimum_scanned_files is not None,
-            c.required_paths,
-            c.image_digest_must_match,
-            c.expected_scanner,
-            c.minimum_components is not None,
-            c.minimum_resources is not None,
-            c.target_url_must_match,
-            c.minimum_endpoints is not None,
-        ]
+    wants_evidence = (
+        c.report_required or minimum_assurance == "reported_scope" or bool(c.evidence_checks())
     )
     if not wants_evidence:
         return []

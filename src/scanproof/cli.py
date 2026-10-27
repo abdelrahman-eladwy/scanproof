@@ -29,7 +29,8 @@ from scanproof.connectors.jenkins import JenkinsConnector
 from scanproof.evidence.collector import collect_evidence, find_job
 from scanproof.evidence.models import EvidenceSource
 from scanproof.inspection import inspect_pipeline
-from scanproof.policy.models import PolicyError, load_policy
+from scanproof.policy.models import Policy, PolicyError, load_policy
+from scanproof.policy.profile import assurance_opt_ins
 from scanproof.reporting.console import (
     print_evidence_summary,
     print_inspection_summary,
@@ -451,7 +452,17 @@ def _load(policy_path: Path):
 
 
 @app.command()
-def validate(policy: PolicyOpt) -> None:
+def validate(
+    policy: PolicyOpt,
+    explain: Annotated[
+        bool,
+        typer.Option(
+            "--explain",
+            help="Also list every setting that weakens assurance, and which ones "
+            "assurance.profile: production would reject.",
+        ),
+    ] = False,
+) -> None:
     """Check a policy file without contacting any CI platform."""
     loaded = _load(policy)
     typer.echo(
@@ -459,7 +470,29 @@ def validate(policy: PolicyOpt) -> None:
         + ", ".join(r.id for r in loaded.requirements),
         err=True,
     )
+    if explain:
+        _explain(loaded)
     raise typer.Exit(EXIT_OK)
+
+
+def _explain(loaded: Policy) -> None:
+    opt_ins = assurance_opt_ins(loaded)
+    profile = loaded.assurance.profile
+    typer.echo(f"profile: {profile}", err=True)
+    rejected = [o for o in opt_ins if o.production == "reject"]
+    notes = [o for o in opt_ins if o.production == "note"]
+    if not rejected:
+        typer.echo("No assurance-weakening opt-ins.", err=True)
+    else:
+        typer.echo(
+            f"{len(rejected)} assurance-weakening opt-in(s), "
+            "each rejected by assurance.profile: production:",
+            err=True,
+        )
+        for o in rejected:
+            typer.echo(f"  - {o.code} at {o.location}: {o.message}", err=True)
+    for o in notes:
+        typer.echo(f"  note {o.code} at {o.location}: {o.message}", err=True)
 
 
 @app.command()

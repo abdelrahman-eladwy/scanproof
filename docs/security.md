@@ -28,6 +28,12 @@ workflow files. Prefer one of:
 2. A **separate audit project** that inspects pipelines with a read-only token
    (scheduled, or triggered before release).
 
+Set `assurance.profile: production` on release-gate policies so that a policy edit weakening
+assurance (`job_success: false`, unbounded waivers, an unpinned signer, ...) is rejected
+instead of quietly passing review ([production profile](advanced-policy.md#production-profile-reject-assurance-weakening-settings)).
+The profile is a review aid, not an access control: whoever can edit the policy can also
+remove the profile line. That's why the protection below still matters.
+
 Keep policy files under code-owner protection. See the [protected release gate guide](protected-release-gates.md)
 for platform-enforced status checks, CODEOWNERS setup, and adversarial validation steps.
 A CODEOWNERS file by itself does not enforce approval.

@@ -5,7 +5,18 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 
 ## [Unreleased]
 
-Nothing yet beyond 0.1.0.
+### Added
+- `assurance.profile: production` ([#52](https://github.com/abdelrahman-eladwy/scanproof/issues/52)):
+  settings that let a weaker pipeline reach VERIFIED are load errors (exit 3), all listed at
+  once with a stable code (`JOB_SUCCESS_DISABLED`, `WAIVER_UNBOUNDED`,
+  `SIGNER_REPOSITORY_UNPINNED`, ...). See
+  [docs/advanced-policy.md](docs/advanced-policy.md#production-profile-reject-assurance-weakening-settings).
+- `scanproof validate --explain`: lists every assurance-weakening setting in any policy, which
+  ones `production` would reject, and platform limitations that no setting removes.
+
+### Compatibility
+- The default profile, `compatible`, accepts every policy that loaded before. No evaluation
+  changes for any profile.
 
 ## [0.1.0] - unreleased
 
