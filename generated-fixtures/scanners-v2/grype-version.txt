@@ -1,0 +1,23 @@
+Unable to find image 'anchore/grype:latest' locally
+latest: Pulling from anchore/grype
+12ca066ccaf4: Pulling fs layer
+c5be454cb30a: Pulling fs layer
+899d6d10af5a: Pulling fs layer
+899d6d10af5a: Download complete
+c5be454cb30a: Download complete
+899d6d10af5a: Pull complete
+c5be454cb30a: Pull complete
+12ca066ccaf4: Download complete
+12ca066ccaf4: Pull complete
+Digest: sha256:621d56d1d68106b787022c81546f7e0a36202a25d1239f0c20195fab8c16f7ea
+Status: Downloaded newer image for anchore/grype:latest
+Application:         grype
+Version:             0.121.0
+BuildDate:           2026-10-19T20:26:34Z
+GitCommit:           afe2742527d98d822da06c9f32eed86fe3d193e0
+GitDescription:      v0.121.0
+Platform:            linux/amd64
+GoVersion:           go1.26.8
+Compiler:            gc
+Syft Version:        v1.55.0
+Supported DB Schema: 6

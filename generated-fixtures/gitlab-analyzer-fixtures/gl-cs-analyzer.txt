@@ -1,0 +1,1 @@
+registry.gitlab.com/security-products/container-scanning:8
