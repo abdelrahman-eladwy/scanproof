@@ -12,9 +12,9 @@ from scanproof.scanners import ADAPTERS
 @pytest.mark.parametrize(
     ("tool", "report"),
     [
-        ("trivy", {"SchemaVersion": 2, "ArtifactName": "\\ud800", "Results": []}),
-        ("semgrep", {"results": [{"check_id": "\\ud800", "path": "a.py", "start": {"line": 1}, "extra": {"message": "x", "severity": "ERROR"}}], "errors": []}),
-        ("gitlab-sast", {"version": "15.0.0", "vulnerabilities": [], "scan": {"scanner": {"id": "\\ud800", "name": "test"}, "type": "sast", "status": "success"}}),
+        ("trivy", {"SchemaVersion": 2, "ArtifactName": chr(0xD800), "Results": []}),
+        ("semgrep", {"results": [{"check_id": chr(0xD800), "path": "a.py", "start": {"line": 1}, "extra": {"message": "x", "severity": "ERROR"}}], "errors": []}),
+        ("gitlab-sast", {"version": "15.0.0", "vulnerabilities": [], "scan": {"scanner": {"id": chr(0xD800), "name": "test"}, "type": "sast", "status": "success"}}),
     ],
 )
 def test_unpaired_unicode_surrogate_never_escapes_to_serialized_evidence(tool, report):
@@ -28,7 +28,7 @@ def test_unpaired_unicode_surrogate_never_escapes_to_serialized_evidence(tool, r
 
 
 def test_valid_escaped_unicode_surrogate_pair_is_accepted():
-    report = b'{"SchemaVersion":2,"ArtifactName":"\\\\ud83d\\\\ude00","Results":[]}'
+    report = b'{"SchemaVersion":2,"ArtifactName":"\\ud83d\\ude00","Results":[]}'
     evidence = ADAPTERS["trivy"].parse(report)
     assert evidence.parseable
     evidence.model_dump_json()
