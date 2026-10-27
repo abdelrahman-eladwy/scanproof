@@ -180,6 +180,14 @@ def test_evidence_replayed_from_another_run(conn, gh) -> None:
     assert codes(report) == {"SAST.attestation": "ATTESTATION_WRONG_RUN"}
 
 
+def test_signed_report_from_previous_attempt_is_rejected(conn, gh) -> None:
+    """Rerunning a workflow keeps the run ID but changes its attempt identity."""
+    gh.run_attempt = int(RUN["run_attempt"]) + 1
+    report = verify(conn, gh, policy(sast()))
+    assert report.decision is Decision.BLOCKED
+    assert codes(report) == {"SAST.attestation": "ATTESTATION_WRONG_RUN"}
+
+
 def test_evidence_from_another_commit(conn, gh) -> None:
     gh.sha = "f" * 40
     report = verify(conn, gh, policy(sast(same_run=False)))
@@ -286,7 +294,9 @@ def test_github_run_matches(uri, expected) -> None:
 
 def test_github_run_attempt_missing_is_unknown() -> None:
     pipe = Pipeline(
-        id=7, sha="a", status="success",
+        id=7,
+        sha="a",
+        status="success",
         web_url="https://github.com/acme/app/actions/runs/7",
     )
     with GitHubConnector(API, "t") as c:
