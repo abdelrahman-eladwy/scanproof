@@ -41,6 +41,14 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   `production` requires the declaration when a prefixed copy is matched (`COPIES_UNDECLARED`,
   UNKNOWN), and rejects a waiver on `copies_declared` (`WAIVER_HIDES_UNDECLARED_COPIES`).
 
+- **Incorrect BLOCKED:** a GitLab trigger that had not started its downstream pipeline yet
+  (created, pending, waiting, running, or an unrecognized status) made every job and declared
+  copy in that pipeline `REQUIRED_JOB_ABSENT` / `REQUIRED_COPY_ABSENT`
+  ([#68](https://github.com/abdelrahman-eladwy/scanproof/issues/68)). It is now an unreadable
+  downstream, so absence is INDETERMINATE (`JOB_MAYBE_IN_UNREADABLE_PIPELINE`). Failed,
+  canceled, skipped and unplayed manual triggers are still absent. Documented in
+  [docs/advanced-policy.md](docs/advanced-policy.md#missing-or-unreadable-when-absence-is-proven).
+
 ### Compatibility
 - The default profile, `compatible`, accepts every policy that loaded before. No evaluation
   changes under `compatible`. Under `production`, a requirement whose job runs as matrix legs

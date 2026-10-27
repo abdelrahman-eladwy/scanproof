@@ -199,6 +199,53 @@ requirements:
 - A qualified `job_name` (`svc-a > sast`) matches only that job and needs no `copies`. One
   requirement per qualified name is an alternative when the copies need different checks.
 
+## Missing or unreadable: when absence is proven
+
+A required job, declared copy or declared matrix leg is **absent** (BLOCKED) only when the job
+inventory ScanProof read is complete enough to prove it isn't there. When the inventory has a
+gap that could hold it, the result is INDETERMINATE: ScanProof does not claim a scan is missing
+when it only failed to look. Absence is about the *job inventory*; a job that exists but whose
+report can't be fetched is judged per check (`evidence_error`, UNKNOWN), not as absent.
+
+**1. The inventory.** The root pipeline's job list (every page, every retry; the latest attempt
+counts), plus, on GitLab, every downstream pipeline reached through trigger (bridge) jobs,
+breadth first, up to 3 levels and 50 pipelines. Downstream jobs are named
+`<trigger> > <job>`. GitHub, Jenkins, Azure DevOps and Bitbucket have no downstream pipelines:
+reusable-workflow callers (`caller / job`) and stage paths are all in the one run's job list.
+
+**2. If the root can't be read**, nothing is decided. Any error reading the pipeline or its job
+list (401/403/404, 429 or 5xx after retries, a timeout, an invalid payload, the page limit)
+ends `verify` with exit 2 and, with `-o`, an error report (`decision: INDETERMINATE` and an
+`error` object, no `requirements`).
+
+**3. Each GitLab trigger** leaves its downstream pipeline in one of three states:
+
+| Trigger and downstream pipeline | State | Why |
+|---|---|---|
+| Pipeline exists, its job list read | **read** | absence inside it is proven |
+| Pipeline exists, job list can't be read (403 private project, 404, 5xx, invalid payload) | **unreadable** | the job may be there |
+| A pipeline's trigger list can't be read (except a 404 at the root: no bridges API) | **unreadable** | its children are unknown |
+| Beyond 3 levels or 50 pipelines | **unreadable** | not looked at |
+| No pipeline yet; trigger `created`, `pending`, `waiting_for_resource`, `preparing`, `scheduled`, `running`, or a status ScanProof doesn't recognize | **unreadable** (`<trigger> (not started: <status>)`) | it may still start ([#68](https://github.com/abdelrahman-eladwy/scanproof/issues/68)) |
+| No pipeline; trigger `failed`, `canceled`, `skipped`, `success`, or `manual` not played | **absent** (a warning) | no pipeline will hold its jobs without someone acting |
+
+**4. The decision** for a job, copy or leg that is not in the inventory:
+
+- nothing unreadable → BLOCKED: `REQUIRED_JOB_ABSENT`, `REQUIRED_COPY_ABSENT` or
+  `REQUIRED_INSTANCE_ABSENT`;
+- at least one unreadable pipeline → INDETERMINATE, `JOB_MAYBE_IN_UNREADABLE_PIPELINE`; the
+  message lists the unreadable pipelines and why.
+
+Matrix legs and `parallel: N` indices are the exception: they are only ever reported missing
+inside a pipeline that was read and runs the same job, so they are always proven.
+
+**Known limit** ([#69](https://github.com/abdelrahman-eladwy/scanproof/issues/69)): an
+unreadable pipeline currently makes *every* missing job and copy INDETERMINATE, even one it
+can't contain (a removed `svc-b` next to an unrelated private trigger). That never yields a
+false VERIFIED under the default `on_unknown: block`, but it can turn a provable BLOCKED into
+INDETERMINATE, and with `enforcement.on_unknown: warn` (rejected by `production`) into a warned
+VERIFIED.
+
 ## Production profile: reject assurance-weakening settings
 
 Every `v1alpha1` setting is valid and evaluated exactly as documented, but some of them let a
