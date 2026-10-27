@@ -33,7 +33,7 @@ NOT_STARTED = [
 ENDED = ["failed", "canceled", "skipped", "manual", "success"]
 
 
-def setup(mock_api, status) -> FakeGitLab:
+def serve_trigger(mock_api, status) -> FakeGitLab:
     gl = FakeGitLab(mock_api)
     gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
     gl.root.children.append(("svc-b", None, status))  # trigger without a downstream pipeline
@@ -48,7 +48,7 @@ def verify(connector, req):
 
 @pytest.mark.parametrize("status", NOT_STARTED)
 def test_declared_copy_in_unstarted_pipeline_is_unknown(connector, mock_api, status) -> None:
-    setup(mock_api, status)
+    serve_trigger(mock_api, status)
     report = verify(connector, requirement(JOB, ["svc-a", "svc-b"]))
     assert report.decision is Decision.INDETERMINATE
     assert failing(report) == {f"job_present [svc-b > {JOB}]": "JOB_MAYBE_IN_UNREADABLE_PIPELINE"}
@@ -57,7 +57,7 @@ def test_declared_copy_in_unstarted_pipeline_is_unknown(connector, mock_api, sta
 @pytest.mark.parametrize("status", NOT_STARTED)
 def test_bare_job_only_in_unstarted_pipeline_is_unknown(connector, mock_api, status) -> None:
     """Predates #65: the same cause gave REQUIRED_JOB_ABSENT for a plain job name."""
-    setup(mock_api, status)
+    serve_trigger(mock_api, status)
     report = verify(connector, requirement("only-in-svc-b"))
     assert report.decision is Decision.INDETERMINATE
     assert failing(report) == {"job_present": "JOB_MAYBE_IN_UNREADABLE_PIPELINE"}
@@ -65,14 +65,14 @@ def test_bare_job_only_in_unstarted_pipeline_is_unknown(connector, mock_api, sta
 
 @pytest.mark.parametrize("status", ENDED)
 def test_trigger_that_ended_without_pipeline_is_absent(connector, mock_api, status) -> None:
-    setup(mock_api, status)
+    serve_trigger(mock_api, status)
     report = verify(connector, requirement(JOB, ["svc-a", "svc-b"]))
     assert report.decision is Decision.BLOCKED
     assert failing(report) == {f"job_present [svc-b > {JOB}]": "REQUIRED_COPY_ABSENT"}
 
 
 def test_inspection_records_why(connector, mock_api) -> None:
-    setup(mock_api, "running")
+    serve_trigger(mock_api, "running")
     report = inspect_pipeline(connector, instance_url=BASE, project="123", pipeline_id=1042)
     assert report.unreadable_downstream == ["svc-b (not started: running)"]
     assert any("has not started its downstream pipeline yet" in w for w in report.warnings)
