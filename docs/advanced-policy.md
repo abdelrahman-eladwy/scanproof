@@ -128,6 +128,44 @@ Legacy `minimum_level: report` policies keep their current behavior.
 Migration is opt-in; update policy files after verifying that your selected
 scanner adapter emits meaningful scanned paths or scope counts.
 
+## Matrix legs: declare the instances that must run
+
+`job_name` covers every matrix leg of the job, and every leg must pass. But matrix leg names
+carry no total: GitLab names a `parallel: matrix:` leg `sast: [py]` and GitHub a
+`strategy.matrix` leg `sast (py)`. If someone drops `js` from the matrix, the remaining legs
+pass and nothing in the pipeline shows that a leg is gone. (`parallel: N` names, `sast 2/3`,
+do carry the total; a missing index is already a FAIL.)
+
+Declare the legs the requirement needs:
+
+```yaml
+requirements:
+  - id: SAST
+    tool: semgrep
+    job_name: sast
+    report_path: semgrep.json
+    instances: [py, js]            # GitLab 'sast: [py]', GitHub 'sast (py)'
+```
+
+- A declared label with no leg is a FAIL, `REQUIRED_INSTANCE_ABSENT` on
+  `job_present [sast: [js]]` (GitHub: `job_present [sast (js)]`). If the job runs with no
+  matrix at all, every declared label is missing.
+- A leg built from several matrix variables is labelled by its values joined with `, `, as
+  the platform names it: `instances: ["py, 3.12"]` for `sast: [py, 3.12]` / `sast (py, 3.12)`.
+  Quote labels that YAML would read as a number or boolean (`"3.12"`, `"on"`).
+- Extra, undeclared legs are allowed. They are still evaluated and must pass.
+- Labels are checked in each pipeline that runs the matrix: with downstream or
+  reusable-workflow copies (`trigger > sast: [py]`, `caller / sast (py)`), each copy that runs
+  any leg must run every declared leg.
+- Without `instances`, behavior is unchanged: the legs that ran are evaluated, a removed leg is
+  not detected, and `verify` adds a warning saying so.
+
+**Not covered:** copies of a job that differ only by a prefix and carry no label: several
+downstream pipelines each running `sast` (`a > sast`, `b > sast`), several callers of a
+reusable workflow, and Jenkins matrix stages (`Scan / Matrix - LANG = 'go' / sast`). Removing
+one of those copies is still not detected. Write one requirement per copy with a qualified
+`job_name` if each must exist.
+
 ## Production profile: reject assurance-weakening settings
 
 Every `v1alpha1` setting is valid and evaluated exactly as documented, but some of them let a
@@ -141,9 +179,9 @@ assurance:
   minimum_level: reported_scope   # independent; recommended alongside production
 ```
 
-`profile` only changes which policies load. It never changes how a loaded policy is
-evaluated. A policy with no weakening settings loads under either profile and returns the
-same decision. Every shipped example in [`examples/policies/`](../examples/policies/) passes
+`profile` changes which policies load, plus one verify-time rule that can't be decided at
+load time (below, [matrix legs](#matrix-legs-under-production)). Otherwise a policy with no
+weakening settings loads under either profile and returns the same decision. Every shipped example in [`examples/policies/`](../examples/policies/) passes
 `production`.
 
 | Code | Setting | Why it weakens assurance |
@@ -161,6 +199,16 @@ same decision. Every shipped example in [`examples/policies/`](../examples/polic
 | `WAIVER_UNBOUNDED` | waivers without `enforcement.max_waiver_days` | `expires` can be any date |
 | `WAIVER_LIMIT_TOO_LONG` | `enforcement.max_waiver_days` above 90 | a huge limit makes waivers effectively permanent |
 | `WAIVER_REMOVES_REQUIREMENT` | a waiver on `job_present` (any code, any instance) | accepts a pipeline without the required job |
+| `WAIVER_HIDES_UNDECLARED_INSTANCES` | a waiver on `instances_declared` | accepts matrix legs whose removal can't be detected |
+
+### Matrix legs under production
+
+Whether `job_name` runs as a matrix is only known from the pipeline, so this is checked by
+`verify`, not at load time. Under `profile: production`, a requirement whose `job_name` matched
+matrix legs (`sast: [py]`, `sast (py)`) but declares no [`instances`](#matrix-legs-declare-the-instances-that-must-run)
+is UNKNOWN: check `instances_declared`, code `INSTANCES_UNDECLARED`, decision INDETERMINATE
+(exit 2). A plain job, or `parallel: N` legs, need no declaration. Under `compatible` the same
+situation is only a warning.
 
 All violations are listed at once. To see them for any policy, without changing its profile:
 
@@ -171,6 +219,7 @@ profile: compatible
 minimum assurance: report (a parseable report is enough; reports are NOT required to claim they scanned anything; set assurance.minimum_level: reported_scope)
 1 assurance-weakening opt-in(s), each rejected by assurance.profile: production:
   - SAME_COMMIT_DISABLED at requirements[SAST].checks.same_commit: evidence from a job that ran on another commit counts
+  note INSTANCES_UNDECLARED at requirements[SAST, IMAGE].instances: no declared matrix legs: ...
 ```
 
 `--explain` always states the policy's `minimum_level`. Under `report`, a policy with no
@@ -181,14 +230,12 @@ The 90-day ceiling is a policy choice, not a platform limit: long enough for a q
 remediation cycle, short enough that a waiver must be re-approved. It applies whether or
 not the policy has waivers today.
 
-`--explain` also prints **notes**, which are limitations that no setting removes and that the
-profile therefore doesn't reject. Today there is one, `GITLAB_SAME_RUN_IS_PIPELINE_WIDE`.
-GitLab's Fulcio identity names the pipeline, not the job, so any job in the verified pipeline
-can produce an accepted signature ([attestations](attestations.md)). Protect who can edit the
-pipeline.
+`--explain` also prints **notes**, which the profile doesn't reject at load time:
 
-**Not covered by the profile:** two job-matching gaps that need detection changes, not
-policy validation. A job named exactly like the requirement hides its matrix or parallel
-instances ([#59](https://github.com/abdelrahman-eladwy/scanproof/issues/59)). A removed matrix
-leg whose name carries no total can't be detected
-([#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60)).
+- `GITLAB_SAME_RUN_IS_PIPELINE_WIDE`: GitLab's Fulcio identity names the pipeline, not the
+  job, so any job in the verified pipeline can produce an accepted signature
+  ([attestations](attestations.md)). No setting removes this; protect who can edit the
+  pipeline.
+- `INSTANCES_UNDECLARED`: lists the requirements without `instances`. If their job runs as a
+  matrix, a removed leg can't be detected; under `production`, `verify` reports such legs as
+  UNKNOWN ([above](#matrix-legs-under-production)). Declaring `instances` removes the note.

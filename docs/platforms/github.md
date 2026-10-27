@@ -78,12 +78,21 @@ ScanProof checks its own run daily against `main`:
 | Re-run attempts | jobs from every attempt | latest attempt is judged; retries are reported |
 | Matrix job, one instance masked | `sast (python)` success, `sast (go)` success + failure annotation | BLOCKED: `job_success [sast (go)]` |
 | Job in a reusable workflow | `caller / sast` | matched by `job_name: sast` |
+| Leg removed from the matrix, `instances: [py, js]` declared | only `sast (py)` ran | BLOCKED: `job_present [sast (js)]` `REQUIRED_INSTANCE_ABSENT` |
 | Workflow still running | job `in_progress` | INDETERMINATE: `JOB_NOT_FINISHED` |
 
 `job_name` matches the job exactly, its matrix instances (`name (...)`) and its name inside a
 reusable workflow (`caller / name`); when several match, every one must pass. That includes the
 exact-name job: a passing `sast` does not stand in for a failing `sast (py)` or `caller / sast`
-([#59](https://github.com/abdelrahman-eladwy/scanproof/issues/59)). All matrix
+([#59](https://github.com/abdelrahman-eladwy/scanproof/issues/59)). Matrix names carry no
+total, so declare the legs that must run, `instances: [py, go]`: a leg removed from
+`strategy.matrix` is then a FAIL (`REQUIRED_INSTANCE_ABSENT`), and `assurance.profile:
+production` requires the declaration
+([#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60),
+[details](../advanced-policy.md#matrix-legs-declare-the-instances-that-must-run)). Legs are
+recognized by GitHub's default form, `sast (py, 3.12)`. A custom `name:` is a leg only if it
+has that form (`name: sast (${{ matrix.lang }})`); with any other form, such as
+`sast-${{ matrix.lang }}`, GitHub appends nothing and each leg is a job of its own name. All matrix
 instances share the one `artifact_name` you give, so give each instance its own artifact (e.g.
 `semgrep-${{ matrix.lang }}`) and one requirement per artifact if each report must be checked.
 

@@ -324,7 +324,8 @@ class Assurance(_Strict):
         "compatible",
         description="compatible: every v1alpha1 setting is accepted (the behavior before "
         "profiles existed). production: settings that let a weaker pipeline reach VERIFIED "
-        "are load errors (scanproof validate --explain lists them)",
+        "are load errors (scanproof validate --explain lists them), and verify reports "
+        "matrix legs of a requirement without `instances` as UNKNOWN",
     )
 
 
