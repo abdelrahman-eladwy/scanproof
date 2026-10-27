@@ -10,6 +10,7 @@ import os
 import re
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlsplit
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
@@ -53,6 +54,30 @@ class Checks(_Strict):
     minimum_resources: int | None = Field(
         None, ge=0, description="IaC: minimum resources the scanner evaluated"
     )
+    minimum_endpoints: int | None = Field(
+        None, ge=0, description="DAST: minimum endpoints the scanner discovered and tested"
+    )
+    target_url_must_match: str | None = Field(
+        None,
+        description="DAST: URL (or ${ENV_VAR}) the scan must have targeted: same origin, and the "
+        "scanned path inside this one",
+    )
+
+    @field_validator("target_url_must_match")
+    @classmethod
+    def _expand_url(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        match = _ENV_REF.match(value.strip())
+        if match:
+            resolved = os.environ.get(match.group(1), "").strip()
+            if not resolved:
+                raise ValueError(f"environment variable {match.group(1)} is not set")
+            value = resolved
+        parts = urlsplit(value.strip())
+        if parts.scheme not in ("http", "https") or not parts.hostname:
+            raise ValueError(f"expected an http(s) URL, got {value!r}")
+        return value.strip()
 
     @field_validator("image_digest_must_match")
     @classmethod

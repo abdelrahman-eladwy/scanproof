@@ -10,6 +10,7 @@ from __future__ import annotations
 import re
 from enum import StrEnum
 from fnmatch import fnmatchcase
+from urllib.parse import urlsplit
 
 from pydantic import BaseModel, Field
 
@@ -352,6 +353,8 @@ def _evidence_checks(req: Requirement, data: RequirementInput) -> list[CheckResu
             c.expected_scanner,
             c.minimum_components is not None,
             c.minimum_resources is not None,
+            c.target_url_must_match,
+            c.minimum_endpoints is not None,
         ]
     )
     if not wants_evidence:
@@ -422,10 +425,66 @@ def _evidence_checks(req: Requirement, data: RequirementInput) -> list[CheckResu
         out.append(_min_components(ev, c.minimum_components))
     if c.minimum_resources is not None:
         out.append(_min_resources(ev, c.minimum_resources))
+    if c.target_url_must_match:
+        out.append(_target_url(ev, c.target_url_must_match))
+    if c.minimum_endpoints is not None:
+        out.append(_min_endpoints(ev, c.minimum_endpoints))
     return out
 
 
 # ---------------------------------------------------------------- individual checks
+
+
+def _origin_and_path(url: str) -> tuple[tuple[str, str, int], str] | None:
+    parts = urlsplit(url.strip())
+    if parts.scheme not in ("http", "https") or not parts.hostname:
+        return None
+    try:
+        port = parts.port or (443 if parts.scheme == "https" else 80)
+    except ValueError:
+        return None
+    path = parts.path.rstrip("/") or ""
+    return (parts.scheme, parts.hostname.lower(), port), path
+
+
+def _min_endpoints(ev: ScanEvidence, minimum: int) -> CheckResult:
+    found = ev.scope.endpoints if ev.scope else None
+    if found is None:
+        return _r(
+            "minimum_endpoints",
+            Outcome.UNKNOWN,
+            "COVERAGE_UNKNOWN",
+            "The report does not say how many endpoints were tested",
+        )
+    if found < minimum:
+        return _r(
+            "minimum_endpoints",
+            Outcome.FAIL,
+            "COVERAGE_TOO_SMALL",
+            f"{found} endpoints tested, policy requires at least {minimum}",
+        )
+    return _r("minimum_endpoints", Outcome.PASS, "COVERAGE_OK", f"{found} endpoints tested")
+
+
+def _target_url(ev: ScanEvidence, expected: str) -> CheckResult:
+    """The DAST scan must have targeted the deployment: same origin, path inside expected."""
+    urls = ev.target.urls if ev.target else None
+    if not urls:
+        return _r(
+            "target_url",
+            Outcome.UNKNOWN,
+            "TARGET_UNKNOWN",
+            "The report does not say which URL was scanned",
+        )
+    want = _origin_and_path(expected)
+    if want is None:  # validated at load time; defensive
+        return _r("target_url", Outcome.UNKNOWN, "TARGET_UNKNOWN", f"Bad expected URL {expected}")
+    for url in urls:
+        got = _origin_and_path(url)
+        if got and got[0] == want[0] and (got[1] + "/").startswith(want[1] + "/"):
+            return _r("target_url", Outcome.PASS, "TARGET_MATCHES", f"Scanned {url}")
+    shown = ", ".join(urls[:5])
+    return _r("target_url", Outcome.FAIL, "TARGET_MISMATCH", f"Scanned {shown}, not {expected}")
 
 
 def _r(check: str, outcome: Outcome, code: str, message: str) -> CheckResult:
