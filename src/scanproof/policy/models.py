@@ -7,6 +7,7 @@ error instead of a silently disabled control.
 from __future__ import annotations
 
 import os
+import posixpath
 import re
 from datetime import date
 from pathlib import Path
@@ -17,10 +18,29 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 _ENV_REF = re.compile(r"^\$\{([A-Za-z_][A-Za-z0-9_]*)\}$")
+_DRIVE = re.compile(r"^[A-Za-z]:")  # 'C:/x' (drive-absolute) and 'C:x' (drive-relative)
 
 
 class PolicyError(Exception):
     """The policy file is missing, malformed or invalid. Maps to exit code 3."""
+
+
+def normalize_scan_path(path: str) -> str | None:
+    """Canonical form of a scanned or required path, or None if it names no usable location.
+
+    Paths are repository-relative. Backslashes become '/', '.' and '..' segments are resolved.
+    A path that is empty, is the root itself ('.'), climbs above it ('../x') or is absolute
+    (POSIX '/repo/src', Windows drive 'C:\\repo' or 'C:repo', UNC '\\\\server\\share')
+    returns None: it can neither prove a repository directory was scanned nor serve as a
+    requirement, and absolute paths would let host-specific locations match each other.
+    """
+    text = path.strip().replace("\\", "/")
+    if not text or text.startswith("/") or _DRIVE.match(text):
+        return None
+    norm = posixpath.normpath(text)
+    if norm in (".", "..") or norm.startswith("../"):
+        return None
+    return norm
 
 
 class _Strict(BaseModel):
@@ -71,6 +91,23 @@ class Checks(_Strict):
         description="DAST: URL (or ${ENV_VAR}) the scan must have targeted: same origin, and the "
         "scanned path inside this one",
     )
+
+    @field_validator("required_paths")
+    @classmethod
+    def _usable_paths(cls, value: list[str] | None) -> list[str] | None:
+        # [] would silently disable the control; '', '.', './' would match every scanned file.
+        if value is None:
+            return None
+        if not value:
+            raise ValueError("required_paths must list at least one path (omit it to disable)")
+        for entry in value:
+            if normalize_scan_path(entry) is None:
+                raise ValueError(
+                    f"required_paths entry {entry!r} names no directory or file inside the "
+                    "repository (empty, '.', absolute, or climbs out with '..'); "
+                    "use a repository-relative path"
+                )
+        return value
 
     @field_validator("target_url_must_match")
     @classmethod

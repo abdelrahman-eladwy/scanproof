@@ -72,6 +72,12 @@ enforcement:
 A waiver only ever touches the check it names, and only when that check failed or is unknown.
 It cannot make a requirement that does not apply (`applies_to`) count as verified.
 
+`applies_to` needs the pipeline's ref. When the provider reports none (a Jenkins build without
+Git `BuildData`, for example), a scoped requirement is `UNKNOWN` (`REF_UNKNOWN`), not
+"not applicable": an unknown ref cannot prove a requirement is out of scope, and
+`on_nothing_applicable: allow` does not apply to it. Only patterns that match every ref (`*`)
+are evaluated without one.
+
 ## Scan freshness
 
 ```yaml
