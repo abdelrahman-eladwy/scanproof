@@ -10,3 +10,6 @@ reports for tests. Never deploy or apply them.
 
 Secret-detection fixtures are produced from a **randomly generated fake token at workflow run
 time**, with scanner redaction on, so no secret-looking string is ever committed.
+
+`kubernetes/` is a deliberately weak manifest (privileged container, unpinned image) so
+Kubescape has controls to fail. Never deploy it.

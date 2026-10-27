@@ -1,0 +1,30 @@
+# Deliberately weak Kubernetes manifest so Kubescape has something to report. Never deploy.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app
+  labels: {app: demo-app}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: demo-app}
+  template:
+    metadata:
+      labels: {app: demo-app}
+    spec:
+      containers:
+        - name: app
+          image: nginx:latest          # unpinned tag
+          securityContext:
+            privileged: true           # privileged container
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-app
+spec:
+  selector: {app: demo-app}
+  ports:
+    - port: 80
