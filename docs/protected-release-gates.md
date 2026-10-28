@@ -168,6 +168,18 @@ a developer with workflow-edit privileges cannot remove the gate or change
 the policy. That independent platform-enforced protection remains an open
 item in [Issue #26](https://github.com/abdelrahman-eladwy/scanproof/issues/26).
 
+## Read-only staging acceptance preflights (not deployment proof)
+
+The [GitHub protected-ruleset preflight](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/docs/github-protected-gate.md) checks the **actual required ScanProof status context and trusted GitHub App**, strict check freshness, CODEOWNER and independent approval, and no observed bypass actors for an active branch rule. The [staging environment preflight](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/docs/github-staging-environment.md) separately checks required deployment reviewers, `prevent_self_review`, protected branch restrictions, and disabled administrator bypass. Both use read-only GitHub API requests and write separate JSON evidence files; denied/invalid API reads never count as a pass.
+
+The [negative-PR evidence observer](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/docs/github-protected-trial-evidence.md) can inspect four sacrificial PRs (valid, missing, failed and skipped gate), but reported GitHub mergeability is **advisory**. Only an actual unauthorized attempted merge and denied staging deployment demonstrate bypass resistance. A successful self-test run **does not mean** the manual ruleset/environment audits have executed.
+
+- GitHub E2E [PR #22](https://github.com/abdelrahman-eladwy/scanproof-e2e/pull/22) merged the environment audit and adversarial configuration checks. Post-merge [preflight CI #40707992324](https://github.com/abdelrahman-eladwy/scanproof-e2e/actions/runs/40707992324) and [demo #40707992244](https://github.com/abdelrahman-eladwy/scanproof-e2e/actions/runs/40707992244) passed. The preflight run's actual target `audit` job was **skipped**, as designed on normal push events.
+- The previously observed core [ruleset 25947920](https://github.com/abdelrahman-eladwy/scanproof/rules/25947920) has six generic required CI checks but no required approving or CODEOWNER review and no independently required ScanProof deployment check. The E2E repository's ruleset query observed no repository rulesets. These are **historical configuration observations**, not current protected-deployment evidence.
+- **Maintainer/admin dependency:** configure a *sacrificial* GitHub repository with security-owned policy/workflow, independent code review, exact mandatory ScanProof check, and reviewed staging environment. Run both preflights **manually** and retain result JSON, then execute the live negative PR matrix and capture an actual rejected merge plus a blocked staging deployment. Independently validate GitLab's centrally managed pipeline execution policy (GitLab Ultimate) with protected policy ownership and private artifact access. Do not test malicious bypasses against live production deployments.
+
+**This material advances #25, #26 and #45 only; none may be marked completed from offline tests or read-only API observations.**
+
 ## Validation evidence and current status
 
 - [GitHub real provider contract with scoped/empty reports](https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40477852618):

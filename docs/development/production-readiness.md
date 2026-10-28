@@ -152,6 +152,17 @@ passes on Python 3.12/3.13 and packaged CLI.
 - [ ] Keep these tests in sacrificial repos and dry-run/staging environments;
       never deliberately weaken a production repository.
 
+**Partial evidence, NOT Phase 2 completion (2026-10-28):** GitHub read-only
+[ruleset](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/docs/github-protected-gate.md),
+[staging environment](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/docs/github-staging-environment.md),
+and [negative-PR observation](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/docs/github-protected-trial-evidence.md)
+tools exist; [E2E PR #22](https://github.com/abdelrahman-eladwy/scanproof-e2e/pull/22)
+and post-merge [self-test #40707992324](https://github.com/abdelrahman-eladwy/scanproof-e2e/actions/runs/40707992324)
+are green. The *manual target audit job was skipped* on this push event.
+No sacrificial ruleset/environment or denied contributor merge/deployment
+has been independently verified. GitLab enforced execution policy remains
+unvalidated. See [protected gate evidence and blockers](../protected-release-gates.md).
+
 **Exit gate:** live evidence proves both (a) valid evidence can release and
 (b) each bypass attempt is rejected by **platform enforcement**. Mark each
 provider as validated only for the configuration actually tested. Credentials,
