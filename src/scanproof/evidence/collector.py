@@ -256,9 +256,7 @@ def match_jobs(
     for (prefix, total), indices in sorted(present.items()):
         if total <= _MAX_PARALLEL_ENUMERATE:
             missing.extend(
-                f"{prefix}{base_name} {i}/{total}"
-                for i in range(1, total + 1)
-                if i not in indices
+                f"{prefix}{base_name} {i}/{total}" for i in range(1, total + 1) if i not in indices
             )
         elif len(indices) != total:
             # A 1/1001 job must not become VERIFIED just because enumerating 1,000 missing
