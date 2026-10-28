@@ -26,11 +26,7 @@ def inspected(number: int, name: str) -> InspectedJob:
 
 
 def large_inventory() -> list[InspectedJob]:
-    names = [
-        f"{copy} > sast: [{label}]"
-        for copy in COPIES
-        for label in INSTANCES
-    ]
+    names = [f"{copy} > sast: [{label}]" for copy in COPIES for label in INSTANCES]
     names.extend(f"unrelated-{i:04d}" for i in range(1000))
     return [inspected(i, name) for i, name in enumerate(names, 1)]
 
