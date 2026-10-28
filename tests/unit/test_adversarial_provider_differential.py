@@ -33,8 +33,14 @@ FAULTS = {
     "scope_zero": (Decision.BLOCKED, {"SCANNED_FILES_BELOW_MINIMUM", "SCANNED_FILES_UNKNOWN"}),
     "commit_mismatch": (Decision.BLOCKED, {"COMMIT_MISMATCH"}),
     "job_running": (Decision.INDETERMINATE, {"JOB_NOT_FINISHED"}),
-    "read_not_authorized": (Decision.INDETERMINATE, {"EVIDENCE_UNAVAILABLE", "STEP_MASKING_UNKNOWN"}),
-    "retry_latest_failed": (Decision.BLOCKED, {"JOB_NOT_SUCCESS", "FAILURE_MASKED_BY_ALLOW_FAILURE"}),
+    "read_not_authorized": (
+        Decision.INDETERMINATE,
+        {"EVIDENCE_UNAVAILABLE", "STEP_MASKING_UNKNOWN"},
+    ),
+    "retry_latest_failed": (
+        Decision.BLOCKED,
+        {"JOB_NOT_SUCCESS", "FAILURE_MASKED_BY_ALLOW_FAILURE"},
+    ),
 }
 
 
@@ -173,8 +179,11 @@ def test_baseline_is_not_restored_by_failing_and_unknown_separate_requirements(
     )
     gl.install()
     result = verify_pipeline(
-        connector, Policy.model_validate(body),
-        instance_url=BASE, project="123", pipeline_id=1042
+        connector,
+        Policy.model_validate(body),
+        instance_url=BASE,
+        project="123",
+        pipeline_id=1042,
     )
     assert result.decision is Decision.BLOCKED
     assert result.exit_code == 1
