@@ -37,6 +37,8 @@ For contributors and maintainers. See also [CONTRIBUTING.md](../CONTRIBUTING.md)
 
 - [Design decisions](development/design-decisions.md)
 - [Production-readiness program](development/production-readiness.md)
+- [Reproducible CI quality baseline](development/ci-baseline.md): test/coverage thresholds,
+  job durations, package integrity metrics, and retained workflow evidence.
 - [Security inventory and invariant traceability](development/security-traceability.md):
   implemented trust boundaries, misuse cases, tests, live evidence, and unresolved gates.
 - [Releasing](development/releasing.md)
