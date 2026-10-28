@@ -10,11 +10,13 @@ Core commit `4b3656474c8e28da31a41ed3803221061f3b3e83`, [successful CI #40681641
 |---|---|---|
 | Python 3.12 and 3.13 tests | 1,075 passed, 1 skipped **per version** | At least 1,075 **passing**, at most 1 skipped; tests removed or newly skipped are detected |
 | Combined line-and-branch coverage | 94.42% | At least 90%, plus an **independent** branch-only coverage floor of 90% |
-| Branch coverage | 1,292 of 1,388 branches = 93.08% | Explicitly measured from coverage JSON; nonempty branch denominator |
+| Branch-only coverage | Not separately captured in the historical console output. First structured PR #86 run: 1,270 of 1,388 branches = **91.50%** | Explicitly measured from coverage JSON; nonempty branch denominator |
 | Full pytest suite wall time | About 69–71 seconds per supported Python version | Recorded for each run, **not a time limit**; shared hosted runners vary |
 | Installed wheel / non-root Docker full suites | 1,075 passed, 1 skipped each | Both remain mandatory green CI jobs, with tests guarded against source imports |
 | Dependency floors | Core and attestation lowest-deps jobs green | Both remain mandatory; CI logs are evidence until added to metrics |
 | Distributions | Wheel and source distribution built in package CI | Record exact bytes and SHA256 for each; reject missing, empty, duplicate, oversized output |
+
+**Careful:** the 96 shown in the historical coverage terminal table is the *partially covered branches* count (`BrPart`), not the *missing branches* count. JSON in the first PR #86 run reported 118 missing of 1,388; do not infer branch-only coverage from `BrPart`.
 
 The 90% combined coverage gate was already present. This change adds *separate branch coverage*, a count/skip floor and retained structured evidence.
 
