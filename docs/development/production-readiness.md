@@ -66,8 +66,11 @@ must consume versioned decision reports, not duplicate policy logic.
       *Evidence:* [measured CI baseline](ci-baseline.md), structured JUnit/coverage JSON,
       distribution-size/digest manifests, lowest-deps/package/non-root Docker CI;
       quality thresholds enforced for both supported Python versions.
-- [ ] Classify bugs: P0 false VERIFIED / bypass / credential leak; P1 incorrect
+- [x] Classify bugs: P0 false VERIFIED / bypass / credential leak; P1 incorrect
       BLOCKED or unavailable legitimate releases; P2 usability/performance.
+      *Evidence:* [defect severity rubric and regression ledger](defect-triage.md),
+      contributor issue/PR templates, source-only consistency checks. Historical
+      defects are sampled, not an exhaustive closed-issue audit.
 - [x] Create a traceability table: invariant -> automated test -> live contract
       -> documentation -> release evidence.
       *Evidence:* [seven-invariant traceability matrix](security-traceability.md#invariant-to-evidence-matrix),
