@@ -22,8 +22,9 @@ REPORT = {"semgrep.json": (FIXTURES / "semgrep/semgrep-findings.json").read_byte
 QUALIFIED = "platform > security > semgrep-sast"
 
 
-def make_policy(*, job_name: str = QUALIFIED, instances: list[str] | None = None,
-                profile: str = "compatible") -> Policy:
+def make_policy(
+    *, job_name: str = QUALIFIED, instances: list[str] | None = None, profile: str = "compatible"
+) -> Policy:
     requirement = {
         "id": "SAST",
         "tool": "semgrep",
@@ -47,8 +48,11 @@ def make_policy(*, job_name: str = QUALIFIED, instances: list[str] | None = None
 def verify(connector, gl: FakeGitLab, *, instances=None, profile="compatible"):
     gl.install()
     return verify_pipeline(
-        connector, make_policy(instances=instances, profile=profile),
-        instance_url=BASE, project="123", pipeline_id=1042,
+        connector,
+        make_policy(instances=instances, profile=profile),
+        instance_url=BASE,
+        project="123",
+        pipeline_id=1042,
     )
 
 
@@ -70,14 +74,10 @@ def test_qualified_parallel_all_legs_pass_and_foreign_jobs_do_not_count(connecto
     for idx in (1, 2, 3):
         child.job(3000 + idx, f"semgrep-sast {idx}/3", files=REPORT)
     gl.job(10, "semgrep-sast 1/3", status="failed", files=REPORT)
-    gl.child("other", pipeline_id=4000).job(
-        4001, "semgrep-sast 1/3", status="failed", files=REPORT
-    )
+    gl.child("other", pipeline_id=4000).job(4001, "semgrep-sast 1/3", status="failed", files=REPORT)
     result = verify(connector, gl)
     assert result.decision is Decision.VERIFIED
-    assert sorted(result.requirements[0].instances) == [
-        f"{QUALIFIED} {idx}/3" for idx in (1, 2, 3)
-    ]
+    assert sorted(result.requirements[0].instances) == [f"{QUALIFIED} {idx}/3" for idx in (1, 2, 3)]
 
 
 def test_qualified_parallel_missing_index_cannot_be_hidden_by_other_child(connector, mock_api):
@@ -88,9 +88,7 @@ def test_qualified_parallel_missing_index_cannot_be_hidden_by_other_child(connec
     gl.child("other", pipeline_id=4000).job(4002, "semgrep-sast 2/3", files=REPORT)
     result = verify(connector, gl)
     assert result.decision is Decision.BLOCKED
-    assert codes(result) == {
-        f"job_present [{QUALIFIED} 2/3]": "REQUIRED_JOB_ABSENT"
-    }
+    assert codes(result) == {f"job_present [{QUALIFIED} 2/3]": "REQUIRED_JOB_ABSENT"}
 
 
 @pytest.mark.parametrize(
@@ -118,9 +116,7 @@ def test_qualified_declared_matrix_missing_leg_blocks(connector, mock_api):
     gl.child("other", pipeline_id=4000).job(4001, "semgrep-sast: [go]", files=REPORT)
     result = verify(connector, gl, instances=["py", "go"], profile="production")
     assert result.decision is Decision.BLOCKED
-    assert codes(result) == {
-        f"job_present [{QUALIFIED}: [go]]": "REQUIRED_INSTANCE_ABSENT"
-    }
+    assert codes(result) == {f"job_present [{QUALIFIED}: [go]]": "REQUIRED_INSTANCE_ABSENT"}
 
 
 def test_qualified_production_job_does_not_need_copies_declaration(connector, mock_api):
@@ -144,12 +140,18 @@ def test_qualified_missing_report_still_blocks(connector, mock_api):
 def test_qualified_reusable_workflow_scope_and_declared_github_legs():
     def item(num: int, name: str) -> InspectedJob:
         latest = Job(
-            id=num, name=name, status=JobStatus.SUCCESS,
-            commit_sha="a" * 40, finished_at=datetime(2026, 10, 28, tzinfo=UTC),
+            id=num,
+            name=name,
+            status=JobStatus.SUCCESS,
+            commit_sha="a" * 40,
+            finished_at=datetime(2026, 10, 28, tzinfo=UTC),
         )
         return InspectedJob(
-            name=name, stage=None, latest=latest,
-            attempt_ids=[num], commit_matches_pipeline=True,
+            name=name,
+            stage=None,
+            latest=latest,
+            attempt_ids=[num],
+            commit_matches_pipeline=True,
         )
 
     jobs = [
