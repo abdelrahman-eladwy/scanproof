@@ -73,6 +73,20 @@ def test_committed_schemas_match_the_catalog() -> None:
     assert export.check() == []
 
 
+def test_no_published_schema_is_git_ignored() -> None:
+    # .gitignore's `inspection*.json` once silently dropped the inspection schema from a commit.
+    import shutil
+    import subprocess
+
+    git = shutil.which("git")
+    if git is None or not (ROOT / ".git").exists():
+        pytest.skip("not a git checkout")
+    names = [f"schemas/{n}" for n in (*documents(), "manifest.json")]
+    # Fixed argv from our own catalog, no shell, no external input.
+    r = subprocess.run([git, "check-ignore", *names], cwd=ROOT, capture_output=True, text=True)  # noqa: S603
+    assert r.stdout.split() == []
+
+
 def test_drift_check_catches_a_hand_edited_schema(tmp_path) -> None:
     for p in SCHEMAS.glob("*.json"):
         (tmp_path / p.name).write_bytes(p.read_bytes())

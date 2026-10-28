@@ -1,0 +1,593 @@
+{
+  "$defs": {
+    "ArtifactFile": {
+      "description": "One entry from a job's artifact list (archive, metadata, trace, report types...).",
+      "properties": {
+        "file_type": {
+          "title": "File Type",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        }
+      },
+      "required": [
+        "file_type"
+      ],
+      "title": "ArtifactFile",
+      "type": "object"
+    },
+    "Downstream": {
+      "description": "A trigger (bridge) job and the pipeline it started, if any.",
+      "properties": {
+        "pipeline_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pipeline Id"
+        },
+        "project": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project"
+        },
+        "sha": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "trigger_name": {
+          "title": "Trigger Name",
+          "type": "string"
+        },
+        "trigger_status": {
+          "$ref": "#/$defs/JobStatus"
+        }
+      },
+      "required": [
+        "trigger_name",
+        "trigger_status"
+      ],
+      "title": "Downstream",
+      "type": "object"
+    },
+    "InspectedJob": {
+      "description": "The effective (latest) attempt of a job name, plus its retry history.",
+      "properties": {
+        "attempt_ids": {
+          "description": "All attempt ids for this name, oldest first",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Attempt Ids",
+          "type": "array"
+        },
+        "commit_matches_pipeline": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job commit SHA equals pipeline SHA; None if the job reported none.",
+          "title": "Commit Matches Pipeline"
+        },
+        "latest": {
+          "$ref": "#/$defs/Job"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Stage"
+        }
+      },
+      "required": [
+        "name",
+        "stage",
+        "latest",
+        "attempt_ids"
+      ],
+      "title": "InspectedJob",
+      "type": "object"
+    },
+    "Job": {
+      "description": "A single job attempt. Retries of the same job share a name but have different ids.",
+      "properties": {
+        "allow_failure": {
+          "default": false,
+          "title": "Allow Failure",
+          "type": "boolean"
+        },
+        "artifacts": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ArtifactFile"
+          },
+          "title": "Artifacts",
+          "type": "array"
+        },
+        "artifacts_expire_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifacts Expire At"
+        },
+        "attempt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attempt"
+        },
+        "commit_sha": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commit Sha"
+        },
+        "created_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created At"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finished At"
+        },
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        },
+        "masking_checked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GitHub: whether a silent step failure (continue-on-error) could be ruled out. False = could not check; None = not applicable to this platform.",
+          "title": "Masking Checked"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "pipeline_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pipeline Id"
+        },
+        "project": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project of a downstream (child / multi-project) pipeline's job; artifacts are fetched from here. None = the inspected project.",
+          "title": "Project"
+        },
+        "raw_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Status"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The platform's own id when it is not an integer (Azure timeline record GUID, Bitbucket step UUID); `id` is then a stable number derived from it.",
+          "title": "Ref"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "status": {
+          "$ref": "#/$defs/JobStatus"
+        },
+        "web_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Web Url"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "status"
+      ],
+      "title": "Job",
+      "type": "object"
+    },
+    "JobStatus": {
+      "description": "Normalised job states. Anything unrecognised becomes UNKNOWN, never SUCCESS.",
+      "enum": [
+        "success",
+        "failed",
+        "canceled",
+        "skipped",
+        "manual",
+        "running",
+        "pending",
+        "created",
+        "unknown"
+      ],
+      "title": "JobStatus",
+      "type": "string"
+    },
+    "Pipeline": {
+      "properties": {
+        "created_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created At"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finished At"
+        },
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref"
+        },
+        "run_attempt": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GitHub Actions: current workflow run attempt; None when unavailable",
+          "title": "Run Attempt"
+        },
+        "sha": {
+          "title": "Sha",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "web_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Web Url"
+        }
+      },
+      "required": [
+        "id",
+        "sha",
+        "status"
+      ],
+      "title": "Pipeline",
+      "type": "object"
+    },
+    "UnreadableDownstream": {
+      "description": "The subtree whose inventory is incomplete; paths use the downstream separator.",
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "triggers_only": {
+          "default": false,
+          "title": "Triggers Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path",
+        "reason"
+      ],
+      "title": "UnreadableDownstream",
+      "type": "object"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/abdelrahman-eladwy/scanproof/main/schemas/inspection-report.v1alpha1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Output of `scanproof inspect`: what the pipeline contains, with no judgement applied.",
+  "properties": {
+    "downstream": {
+      "items": {
+        "$ref": "#/$defs/Downstream"
+      },
+      "title": "Downstream",
+      "type": "array"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "instance_url": {
+      "title": "Instance Url",
+      "type": "string"
+    },
+    "jobs": {
+      "items": {
+        "$ref": "#/$defs/InspectedJob"
+      },
+      "title": "Jobs",
+      "type": "array"
+    },
+    "pipeline": {
+      "$ref": "#/$defs/Pipeline"
+    },
+    "project": {
+      "title": "Project",
+      "type": "string"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "scanproof_version": {
+      "title": "Scanproof Version",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "scanproof.dev/inspection/v1alpha1",
+      "default": "scanproof.dev/inspection/v1alpha1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "unreadable_downstream": {
+      "description": "Downstream pipelines that exist but could not be read; a job that seems absent may be in one of them, so absence is unknown rather than a failure",
+      "items": {
+        "type": "string"
+      },
+      "title": "Unreadable Downstream",
+      "type": "array"
+    },
+    "unreadable_scopes": {
+      "items": {
+        "$ref": "#/$defs/UnreadableDownstream"
+      },
+      "title": "Unreadable Scopes",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "scanproof_version",
+    "generated_at",
+    "provider",
+    "instance_url",
+    "project",
+    "pipeline",
+    "jobs"
+  ],
+  "title": "scanproof inspect output",
+  "type": "object",
+  "x-scanproof-contract": "scanproof.dev/inspection/v1alpha1"
+}

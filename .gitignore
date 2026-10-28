@@ -16,3 +16,5 @@ report*.json
 # Real test data may share those names (e.g. Bitbucket Code Insights reports)
 !tests/fixtures/**/report*.json
 !tests/fixtures/**/inspection*.json
+# Published schemas must never be ignored (inspection*.json above matched one).
+!schemas/*.json
