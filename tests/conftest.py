@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
@@ -11,6 +12,18 @@ import respx
 from scanproof.connectors.gitlab import GitLabConnector
 
 FIXTURES = Path(__file__).parent / "fixtures"
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """SCANPROOF_TEST_INSTALLED=1 (CI's package and docker jobs): the suite must exercise the
+    installed wheel or image, so refuse to run if `scanproof` resolves to a source tree."""
+    if os.environ.get("SCANPROOF_TEST_INSTALLED") != "1":
+        return
+    import scanproof
+
+    where = Path(scanproof.__file__).resolve()
+    if "site-packages" not in where.parts and "dist-packages" not in where.parts:
+        raise pytest.UsageError(f"SCANPROOF_TEST_INSTALLED=1 but scanproof is imported from {where}")
 BASE = "https://gitlab.example.com"
 API = f"{BASE}/api/v4"
 TOKEN = "glpat-TEST-TOKEN-do-not-leak"
