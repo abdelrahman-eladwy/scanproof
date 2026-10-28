@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 
+import httpx
 import pytest
 
 from scanproof.connectors.github import GitHubConnector
@@ -177,6 +178,30 @@ def test_similar_private_prefix_does_not_hide_removed_copy(connector, gl) -> Non
     assert report.decision is Decision.BLOCKED
 
 
+def test_unrelated_private_child_cannot_downgrade_failure_with_on_unknown_warn(
+    connector, gl
+) -> None:
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    gl.child("svc-private", pipeline_id=2001, readable=False)
+    gl.install()
+    body = policy("gitlab", "123", requirement(JOB, ["svc-a", "svc-b"])).model_dump()
+    body["enforcement"]["on_unknown"] = "warn"
+    pol = Policy.model_validate(body)
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert report.decision is Decision.BLOCKED
+    assert failing(report) == {f"job_present [svc-b > {JOB}]": "REQUIRED_COPY_ABSENT"}
+
+
+@pytest.mark.parametrize("path", [f"svc-b > {JOB}", f"svc-private > {JOB}"])
+def test_qualified_missing_job_uses_its_own_subtree(connector, gl, path) -> None:
+    gl.child("svc-private", pipeline_id=2001, readable=False)
+    gl.install()
+    pol = policy("gitlab", "123", requirement(path), "production")
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    expected = Decision.INDETERMINATE if path.startswith("svc-private > ") else Decision.BLOCKED
+    assert report.decision is expected
+
+
 @pytest.mark.parametrize("status", [403, 429])
 def test_declared_public_copies_with_unrelated_unreadable_child_verify(
     connector, gl, mock_api, status
@@ -220,6 +245,38 @@ def test_depth_limit_keeps_nested_copy_unknown(connector, gl, monkeypatch):
     monkeypatch.setattr("scanproof.inspection.MAX_DOWNSTREAM_DEPTH", 0)
     report = gitlab_verify(connector, gl, ["deploy > svc-b"])
     assert report.decision is Decision.INDETERMINATE
+
+
+def test_count_limit_keeps_declared_copy_unknown(connector, gl, monkeypatch):
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    monkeypatch.setattr("scanproof.inspection.MAX_DOWNSTREAM_PIPELINES", 1)
+    report = gitlab_verify(connector, gl, ["svc-a"])
+    assert report.decision is Decision.INDETERMINATE
+
+
+@pytest.mark.parametrize("copy", ["deploy", "deploy > svc-b"])
+def test_unreadable_child_trigger_inventory_only_hides_descendants(connector, gl, mock_api, copy):
+    gl.child("deploy", pipeline_id=2000)  # its own job list is readable and empty
+    gl.install()
+    mock_api.routes["bridges"].mock(
+        side_effect=lambda request: (
+            httpx.Response(429)
+            if request.url.path.endswith("/2000/bridges")
+            else httpx.Response(
+                200,
+                json=[
+                    {
+                        "name": "deploy",
+                        "status": "success",
+                        "downstream_pipeline": {"id": 2000, "project_id": 123},
+                    }
+                ],
+            )
+        )
+    )
+    pol = policy("gitlab", "123", requirement(JOB, [copy]), "production")
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert report.decision is (Decision.BLOCKED if copy == "deploy" else Decision.INDETERMINATE)
 
 
 def test_gitlab_trigger_that_created_no_pipeline_is_absent(connector, gl) -> None:
