@@ -12,7 +12,14 @@ from datetime import UTC, datetime
 
 from scanproof import __version__
 from scanproof.connectors.base import CIConnector, ConnectorError, ErrorKind
-from scanproof.models import Downstream, InspectedJob, InspectionReport, Job, JobStatus
+from scanproof.models import (
+    Downstream,
+    InspectedJob,
+    InspectionReport,
+    Job,
+    JobStatus,
+    UnreadableDownstream,
+)
 
 _MASKABLE = frozenset({JobStatus.FAILED, JobStatus.CANCELED})
 
@@ -47,7 +54,7 @@ MAX_DOWNSTREAM_PIPELINES = 50
 
 def _walk_downstream(
     connector: CIConnector, project: str, pipeline_id: int, warnings: list[str]
-) -> tuple[list[Job], list[Downstream], list[str]]:
+) -> tuple[list[Job], list[Downstream], list[str], list[UnreadableDownstream]]:
     """Collect jobs from child / multi-project pipelines, breadth first and bounded.
 
     Downstream jobs are renamed '<trigger> > <job>' so jobs from different children can never
@@ -58,6 +65,12 @@ def _walk_downstream(
     jobs: list[Job] = []
     seen: list[Downstream] = []
     unreadable: list[str] = []
+    scopes: list[UnreadableDownstream] = []
+
+    def unknown(path: str, reason: str, *, triggers_only: bool = False) -> None:
+        unreadable.append(reason)
+        scopes.append(UnreadableDownstream(path=path, reason=reason, triggers_only=triggers_only))
+
     queue: list[tuple[str, int, str, int]] = [(project, pipeline_id, "", 0)]
     visited = {(project, pipeline_id)}
     while queue:
@@ -67,7 +80,11 @@ def _walk_downstream(
         except ConnectorError as exc:
             if depth == 0 and exc.kind is ErrorKind.NOT_FOUND:
                 continue  # platform/version without a bridges API for this pipeline
-            unreadable.append(f"{prefix or 'pipeline'} triggers ({exc.kind.value})")
+            unknown(
+                prefix.removesuffix(DOWNSTREAM_SEPARATOR),
+                f"{prefix or 'pipeline'} triggers ({exc.kind.value})",
+                triggers_only=True,
+            )
             continue
         for bridge in bridges:
             label = f"{prefix}{bridge.trigger_name}"
@@ -77,7 +94,7 @@ def _walk_downstream(
                 if not status.is_terminal and status is not JobStatus.MANUAL:
                     # Not started yet (or a status we don't recognize): its jobs may still
                     # appear, so their absence is unknown, not proven (#68).
-                    unreadable.append(f"{label} (not started: {status.value})")
+                    unknown(label, f"{label} (not started: {status.value})")
                     warnings.append(
                         f"Trigger '{label}' ({status.value}) has not started its downstream "
                         "pipeline yet; jobs in it can't be verified."
@@ -92,13 +109,13 @@ def _walk_downstream(
             if key in visited:
                 continue
             if depth + 1 > MAX_DOWNSTREAM_DEPTH or len(visited) >= MAX_DOWNSTREAM_PIPELINES:
-                unreadable.append(f"{label} (beyond depth/count limit)")
+                unknown(label, f"{label} (beyond depth/count limit)")
                 continue
             visited.add(key)
             try:
                 child_jobs = connector.list_jobs(bridge.project, bridge.pipeline_id)
             except ConnectorError as exc:
-                unreadable.append(f"{label} ({exc.kind.value})")
+                unknown(label, f"{label} ({exc.kind.value})")
                 warnings.append(
                     f"Downstream pipeline of trigger '{label}' could not be read "
                     f"({exc.kind.value}); jobs in it can't be verified."
@@ -110,7 +127,7 @@ def _walk_downstream(
                 for j in child_jobs
             )
             queue.append((bridge.project, bridge.pipeline_id, child_prefix, depth + 1))
-    return jobs, seen, unreadable
+    return jobs, seen, unreadable, scopes
 
 
 def inspect_pipeline(
@@ -119,7 +136,9 @@ def inspect_pipeline(
     pipeline = connector.get_pipeline(project, pipeline_id)
     jobs = connector.list_jobs(project, pipeline_id)
     warnings: list[str] = []
-    child_jobs, downstream, unreadable = _walk_downstream(connector, project, pipeline_id, warnings)
+    child_jobs, downstream, unreadable, scopes = _walk_downstream(
+        connector, project, pipeline_id, warnings
+    )
     inspected = group_attempts([*jobs, *child_jobs], pipeline.sha)
 
     if pipeline.status in {"created", "pending", "running", "waiting_for_resource", "preparing"}:
@@ -163,5 +182,6 @@ def inspect_pipeline(
         jobs=inspected,
         downstream=downstream,
         unreadable_downstream=unreadable,
+        unreadable_scopes=scopes,
         warnings=warnings,
     )

@@ -18,7 +18,7 @@ from scanproof.attestation.verify import TrustConfig, verify_bundles
 from scanproof.connectors.base import CIConnector, ConnectorError, NotFoundError
 from scanproof.evidence.collector import collect_evidence, is_qualified, match_jobs
 from scanproof.evidence.models import ScanEvidence
-from scanproof.inspection import inspect_pipeline
+from scanproof.inspection import DOWNSTREAM_SEPARATOR, inspect_pipeline
 from scanproof.models import InspectedJob, Pipeline
 from scanproof.policy.engine import Decision, RequirementInput, RequirementResult, evaluate
 from scanproof.policy.models import Policy, Requirement
@@ -119,6 +119,21 @@ def verify_pipeline(
 
     unreadable = inspection.unreadable_downstream
 
+    def absence_unknown(name: str, *, bounded: bool) -> str | None:
+        if not unreadable:
+            return None
+        reasons = unreadable
+        if bounded and inspection.unreadable_scopes:
+            reasons = []
+            for scope in inspection.unreadable_scopes:
+                prefix = f"{scope.path}{DOWNSTREAM_SEPARATOR}" if scope.path else ""
+                if not name.startswith(prefix):
+                    continue
+                tail = name[len(prefix) :]
+                if not scope.triggers_only or DOWNSTREAM_SEPARATOR in tail:
+                    reasons.append(scope.reason)
+        return f"these pipelines could not be read: {', '.join(reasons)}" if reasons else None
+
     def collect(req, job) -> RequirementInput:
         key = (
             job.latest.project or project,
@@ -162,7 +177,25 @@ def verify_pipeline(
         if unread and matches and not req.copies and not is_qualified(req.job_name):
             undeclared["copies_unbounded"] = unread
         if not matches:
-            inputs[req.id] = RequirementInput(absence_unknown=unread)
+            if req.copies:
+                unknown = next(
+                    (
+                        reason
+                        for path in req.copies
+                        if (
+                            reason := absence_unknown(
+                                f"{path}{DOWNSTREAM_SEPARATOR}{req.job_name}"
+                                if path
+                                else req.job_name,
+                                bounded=True,
+                            )
+                        )
+                    ),
+                    None,
+                )
+            else:
+                unknown = absence_unknown(req.job_name, bounded=is_qualified(req.job_name))
+            inputs[req.id] = RequirementInput(absence_unknown=unknown)
         elif (
             len(matches) == 1
             and not missing
@@ -179,7 +212,12 @@ def verify_pipeline(
                 for name, label in match.missing_declared
             ]
             instances += [
-                (name, RequirementInput(missing_copy=path, absence_unknown=unread))
+                (
+                    name,
+                    RequirementInput(
+                        missing_copy=path, absence_unknown=absence_unknown(name, bounded=True)
+                    ),
+                )
                 for name, path in match.missing_copies
             ]
             inputs[req.id] = RequirementInput(instances=instances, **undeclared)
