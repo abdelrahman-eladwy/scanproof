@@ -46,7 +46,6 @@ def test_defect_ledger_cites_existing_regression_tests() -> None:
     )
 
 
-
 def test_early_fix_pr_regressions_remain_auditable() -> None:
     """Early fixes were PRs, not separate issues; require test paths for each."""
     if os.environ.get("SCANPROOF_TEST_INSTALLED") == "1":
@@ -85,6 +84,7 @@ def test_ledger_does_not_claim_complete_security_qualification() -> None:
     assert "not every historical commit" in content
     assert "independent release gates" in content
     assert "Phase 1 #44" in content
+
 
 def test_defect_triage_keeps_security_disclosure_boundary() -> None:
     if os.environ.get("SCANPROOF_TEST_INSTALLED") == "1":
