@@ -73,9 +73,7 @@ def test_large_declared_parallel_total_with_one_leg_never_verifies(connector, mo
         pipeline_id=1042,
     )
     assert report.decision is Decision.BLOCKED
-    assert any(
-        c.code == "REQUIRED_JOB_ABSENT" for c in report.requirements[0].checks
-    )
+    assert any(c.code == "REQUIRED_JOB_ABSENT" for c in report.requirements[0].checks)
 
 
 def test_large_parallel_all_present_is_allowed_without_enumeration():
