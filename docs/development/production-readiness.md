@@ -188,6 +188,13 @@ automated test cannot substitute for those permissions.
 - [ ] Provide operational runbooks for 401/403, rate limiting, unknown scope,
       trust root problems, expired waivers and failed deployments.
 
+**Partial measurement (2026-10-28; NOT a Phase 3 exit):** [large-pipeline
+matching baseline](performance-baseline.md) adds an in-memory 2,000-job /
+50-way-matrix correctness fixture and captures median/p95/peak traced memory
+under Python 3.12/3.13 in core CI. This does not cover provider network behavior,
+full verification, system RSS, 429s, or the required operator runbooks.
+All Phase 3 acceptance checkboxes stay open.
+
 **Exit gate:** performance budgets met or explicitly documented; no unbounded
 resource consumption in supported limits; operational failure paths tested.
 
