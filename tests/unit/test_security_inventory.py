@@ -20,14 +20,34 @@ from scanproof.policy.models import ProjectRef
 from scanproof.scanners import ADAPTERS
 
 CLI_COMMANDS = {
-    "inspect", "evidence", "attestation", "validate", "verify", "verify-release",
+    "inspect",
+    "evidence",
+    "attestation",
+    "validate",
+    "verify",
+    "verify-release",
 }
 PROVIDERS = {"gitlab", "github", "azure-devops", "jenkins", "bitbucket"}
 ADAPTER_TOOLS = {
-    "semgrep", "trivy", "gitlab-sast", "gitlab-container-scanning", "sarif",
-    "cyclonedx", "gitlab-dependency-scanning", "gitlab-secret-detection",
-    "checkov", "fortify", "sonatype-iq", "bitbucket-code-insights", "gitleaks",
-    "grype", "osv-scanner", "snyk", "kubescape", "zap", "nuclei",
+    "semgrep",
+    "trivy",
+    "gitlab-sast",
+    "gitlab-container-scanning",
+    "sarif",
+    "cyclonedx",
+    "gitlab-dependency-scanning",
+    "gitlab-secret-detection",
+    "checkov",
+    "fortify",
+    "sonatype-iq",
+    "bitbucket-code-insights",
+    "gitleaks",
+    "grype",
+    "osv-scanner",
+    "snyk",
+    "kubescape",
+    "zap",
+    "nuclei",
 }
 DOC = Path(__file__).resolve().parents[2] / "docs/development/security-traceability.md"
 
@@ -54,9 +74,7 @@ def test_source_document_matches_inventory_and_references_real_tests() -> None:
         assert match is not None, f"Missing {title} in traceability document"
         assert set(re.findall(r"`([a-z0-9-]+)`", match.group(1))) == expected, title
 
-    assert set(re.findall(r"\*\*(INV-\d{2})\*\*", doc)) == {
-        f"INV-{n:02d}" for n in range(1, 8)
-    }
+    assert set(re.findall(r"\*\*(INV-\d{2})\*\*", doc)) == {f"INV-{n:02d}" for n in range(1, 8)}
     referenced_tests = set(re.findall(r"`(tests/unit/test_[a-z0-9_]+\.py)`", doc))
     assert len(referenced_tests) >= 7
     for path in referenced_tests:
