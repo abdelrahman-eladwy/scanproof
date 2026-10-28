@@ -55,9 +55,7 @@ def policy(job_name: str = "scan") -> Policy:
 
 def decide(gh: FakeGitHub, conn, *, name: str = "scan"):
     gh.install()
-    return verify_pipeline(
-        conn, policy(name), instance_url=API, project=REPO, pipeline_id=RUN
-    )
+    return verify_pipeline(conn, policy(name), instance_url=API, project=REPO, pipeline_id=RUN)
 
 
 def test_gate_only_rerun_does_not_verify_old_masked_scan(gh, conn):
@@ -69,9 +67,7 @@ def test_gate_only_rerun_does_not_verify_old_masked_scan(gh, conn):
     assert result.decision is Decision.INDETERMINATE
     assert result.exit_code == 2
     checks = result.requirements[0].checks
-    assert any(
-        c.code == "STEP_MASKING_UNKNOWN" and c.outcome is Outcome.UNKNOWN for c in checks
-    )
+    assert any(c.code == "STEP_MASKING_UNKNOWN" and c.outcome is Outcome.UNKNOWN for c in checks)
 
 
 def test_current_attempt_scanner_with_readable_annotations_is_verified(gh, conn):
