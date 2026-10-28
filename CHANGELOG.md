@@ -25,6 +25,12 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
+- **P0 false VERIFIED for oversized GitLab parallel totals** ([#88](https://github.com/abdelrahman-eladwy/scanproof/issues/88)):
+  `sast 1/1001` with one passing report could satisfy a required scan even though 1,000
+  advertised legs were absent: a cap on missing-name enumeration silently disabled the
+  missing-leg check. Completeness is now checked for every positive total, with one bounded
+  diagnostic for groups above 1,000. Invalid indices, contradictory totals and oversized
+  decimal values fail closed, while truly complete large groups can still verify.
 - **GitLab root trigger list 404** ([#44](https://github.com/abdelrahman-eladwy/scanproof/issues/44)):
   a 404 on the root pipeline's bridges was read as "no child pipelines", so a failing child copy
   of a passing root job went unseen (VERIFIED under `production`). It is now unreadable like any
