@@ -25,6 +25,10 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
+- **Zip bombs by entry count** ([#44](https://github.com/abdelrahman-eladwy/scanproof/issues/44)):
+  an artifact or Fortify FPR whose central directory lists more than 50,000 entries or is larger
+  than 8 MiB is refused (`LIMIT_EXCEEDED`, UNKNOWN) before `zipfile` builds an object per entry;
+  a 33 MiB archive of 400,000 empty members took 18 s and 219 MiB just to open.
 - **Attestations:** a bundle signed after its Fulcio CA, Rekor key or CT log key was retired
   (the trust root's `validFor` window had ended) verified, because sigstore-python 4.x checks
   those windows against the current time only. ScanProof now requires every recorded signing

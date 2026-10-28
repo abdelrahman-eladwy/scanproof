@@ -46,7 +46,7 @@ A CODEOWNERS file by itself does not enforce approval.
 | No token leakage | Env var only (username too, for Basic); `Authorization: Bearer`, or Basic where the platform requires it (Jenkins, Azure DevOps PATs, Bitbucket API tokens); only to the API origin; excluded from `repr`, errors, logs |
 | Redirects | Followed manually; credentials only to the configured origin; HTTPS->HTTP refused; max 3 |
 | TLS | Always verified; private CAs via `--ca-bundle` |
-| Resource limits | Artifact downloads streamed and capped (50 MB default); zip members capped while reading (zip-bomb safe); pagination capped and must stay on the API origin |
+| Resource limits | Artifact downloads streamed and capped (50 MB default); zip members capped while reading, and archives over 50,000 entries or an 8 MiB central directory refused before opening (zip-bomb safe); pagination capped and must stay on the API origin |
 | Artifact integrity | GitHub: downloaded zip must match the sha256 digest GitHub recorded, otherwise BLOCKED |
 | Untrusted report content | Adapters never raise: malformed, wrong-typed, deeply nested or absurd input becomes "unparseable". Every adapter is fuzzed in CI with corrupted real reports; XML uses defusedxml |
 | Signed evidence | Sigstore verification by sigstore-python (chain, log/timestamp, DSSE); claims read only from a verified certificate; signer must pin repository or workflow; bundles fuzzed in CI; signed blob URLs never stored |
