@@ -160,8 +160,13 @@ tools exist; [E2E PR #22](https://github.com/abdelrahman-eladwy/scanproof-e2e/pu
 and post-merge [self-test #40707992324](https://github.com/abdelrahman-eladwy/scanproof-e2e/actions/runs/40707992324)
 are green. The *manual target audit job was skipped* on this push event.
 No sacrificial ruleset/environment or denied contributor merge/deployment
-has been independently verified. GitLab enforced execution policy remains
-unvalidated. See [protected gate evidence and blockers](../protected-release-gates.md).
+has been independently verified. GitLab's
+[policy-project branch preflight](https://github.com/abdelrahman-eladwy/scanproof-e2e/blob/main/docs/gitlab-policy-preflight.md)
+was introduced by [E2E PR #24](https://github.com/abdelrahman-eladwy/scanproof-e2e/pull/24);
+its post-merge [self-test #40710768712](https://github.com/abdelrahman-eladwy/scanproof-e2e/actions/runs/40710768712)
+is green, but the actual GitLab target audit was **skipped**. Live GitLab
+policy linkage, effective enforcement and denied staging bypass attempts
+remain unvalidated. See [protected gate evidence and blockers](../protected-release-gates.md).
 
 **Exit gate:** live evidence proves both (a) valid evidence can release and
 (b) each bypass attempt is rejected by **platform enforcement**. Mark each
