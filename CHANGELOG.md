@@ -25,6 +25,12 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
+- **P0 GitHub gate-only rerun false VERIFIED** ([#90](https://github.com/abdelrahman-eladwy/scanproof/issues/90)):
+  GitHub may present synthetic current-attempt job IDs for earlier scans when only the
+  verification job is rerun, without the original step-failure annotations. ScanProof
+  could treat masked `continue-on-error` failures as clean. Successful jobs that did
+  not start in the current attempt, or whose attempt timing is unprovable, now produce
+  `STEP_MASKING_UNKNOWN` (INDETERMINATE) instead of VERIFIED; fresh jobs still verify.
 - **P0 false VERIFIED for oversized GitLab parallel totals** ([#88](https://github.com/abdelrahman-eladwy/scanproof/issues/88)):
   `sast 1/1001` with one passing report could satisfy a required scan even though 1,000
   advertised legs were absent: a cap on missing-name enumeration silently disabled the
