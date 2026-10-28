@@ -186,8 +186,9 @@ requirements:
 
 - A declared copy with no job is a FAIL, `REQUIRED_COPY_ABSENT` on `job_present [svc-b > sast]`.
   If the missing copy may be in a downstream pipeline the token couldn't read, it is UNKNOWN
-  (`JOB_MAYBE_IN_UNREADABLE_PIPELINE`) instead. If no copy ran at all, the job itself is absent
-  (`REQUIRED_JOB_ABSENT`).
+  (`JOB_MAYBE_IN_UNREADABLE_PIPELINE`) instead. Each copy is judged on its own, also when no
+  copy ran at all: a provably absent copy is a FAIL even if another declared copy may be in an
+  unreadable pipeline.
 - Paths are written as the platform names them: `deploy > svc-a` for a nested GitLab child,
   `security` for GitHub's `security / sast`, `"Scan / Matrix - LANG = 'go'"` for Jenkins.
   `svc-a >` (trailing separator) is a load error.
@@ -233,8 +234,8 @@ ends `verify` with exit 2 and, with `-o`, an error report (`decision: INDETERMIN
 
 - nothing unreadable → BLOCKED: `REQUIRED_JOB_ABSENT`, `REQUIRED_COPY_ABSENT` or
   `REQUIRED_INSTANCE_ABSENT`;
-- at least one unreadable pipeline → INDETERMINATE, `JOB_MAYBE_IN_UNREADABLE_PIPELINE`; the
-  message lists the unreadable pipelines and why.
+- an unreadable pipeline could contain the required path → INDETERMINATE,
+  `JOB_MAYBE_IN_UNREADABLE_PIPELINE`; the message lists the relevant pipelines and why.
 
 A job that **was** found can still have unseen copies in an unreadable pipeline. Under
 `production`, without `copies`, that is INDETERMINATE too (`COPIES_UNBOUNDED`, [#71](https://github.com/abdelrahman-eladwy/scanproof/issues/71),
@@ -243,12 +244,14 @@ A job that **was** found can still have unseen copies in an unreadable pipeline.
 Matrix legs and `parallel: N` indices are the exception: they are only ever reported missing
 inside a pipeline that was read and runs the same job, so they are always proven.
 
-**Known limit** ([#69](https://github.com/abdelrahman-eladwy/scanproof/issues/69)): an
-unreadable pipeline currently makes *every* missing job and copy INDETERMINATE, even one it
-can't contain (a removed `svc-b` next to an unrelated private trigger). That never yields a
-false VERIFIED under the default `on_unknown: block`, but it can turn a provable BLOCKED into
-INDETERMINATE, and with `enforcement.on_unknown: warn` (rejected by `production`) into a warned
-VERIFIED.
+Uncertainty is scoped to downstream paths ([#69](https://github.com/abdelrahman-eladwy/scanproof/issues/69)).
+An unreadable `svc-private` cannot hide a removed declared `svc-b`: that copy is BLOCKED.
+An unreadable `deploy` can hide `deploy > svc-b`, so that path remains UNKNOWN. An unreadable
+trigger inventory leaves its descendants unknown, and depth/count limits do too. Bare job
+names without `copies` remain conservative because the job could be anywhere. A declared
+root copy (`copies: [""]`) cannot be hidden inside a child. Rate limiting of a required
+child's jobs still leaves its evidence UNKNOWN; an unrelated private child never substitutes
+for a public child's missing evidence.
 
 ## Production profile: reject assurance-weakening settings
 

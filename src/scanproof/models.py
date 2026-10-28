@@ -143,6 +143,14 @@ class InspectedJob(BaseModel):
         return len(self.attempt_ids)
 
 
+class UnreadableDownstream(BaseModel):
+    """The subtree whose inventory is incomplete; paths use the downstream separator."""
+
+    path: str
+    reason: str
+    triggers_only: bool = False
+
+
 class InspectionReport(BaseModel):
     """Output of `scanproof inspect`: what the pipeline contains, with no judgement applied."""
 
@@ -161,6 +169,7 @@ class InspectionReport(BaseModel):
         "absent may be in one of them, so absence is unknown rather than a failure",
     )
     warnings: list[str] = Field(default_factory=list)
+    unreadable_scopes: list[UnreadableDownstream] = Field(default_factory=list)
 
 
 def normalize_instance_label(label: str) -> str:

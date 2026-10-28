@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 
+import httpx
 import pytest
 
 from scanproof.connectors.github import GitHubConnector
@@ -140,6 +141,166 @@ def test_gitlab_missing_copy_with_unreadable_pipeline_is_unknown(connector, gl) 
     report = gitlab_verify(connector, gl, ["svc-a", "svc-b"])
     assert failing(report) == {f"job_present [svc-b > {JOB}]": "JOB_MAYBE_IN_UNREADABLE_PIPELINE"}
     assert report.decision is Decision.INDETERMINATE
+
+
+@pytest.mark.parametrize("copies", [["svc-a", "svc-b"], ["svc-b"], [""]])
+def test_unrelated_private_child_does_not_hide_removed_copy(connector, gl, copies) -> None:
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    gl.child("svc-private", pipeline_id=2001, readable=False)
+    report = gitlab_verify(connector, gl, copies, profile="production")
+    assert report.decision is Decision.BLOCKED
+    assert "JOB_MAYBE_IN_UNREADABLE_PIPELINE" not in failing(report).values()
+
+
+def test_private_ancestor_keeps_declared_nested_copy_unknown(connector, gl) -> None:
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    gl.child("deploy", pipeline_id=2001, readable=False)
+    report = gitlab_verify(connector, gl, ["svc-a", "deploy > svc-b"])
+    assert report.decision is Decision.INDETERMINATE
+
+
+def test_no_visible_match_with_unrelated_private_child_is_blocked(connector, gl) -> None:
+    gl.child("svc-private", pipeline_id=2001, readable=False)
+    report = gitlab_verify(connector, gl, ["svc-b"], profile="production")
+    assert report.decision is Decision.BLOCKED
+
+
+@pytest.mark.parametrize("on_unknown", ["block", "warn"])
+def test_no_match_absent_copy_is_not_hidden_by_unreadable_declared_copy(
+    connector, gl, on_unknown
+) -> None:
+    """No copy ran: svc-a's trigger was removed (proven), svc-private can't be read. The
+    proven absence must BLOCK; before, the whole requirement became UNKNOWN and on_unknown:
+    warn turned it into VERIFIED."""
+    gl.child("svc-private", pipeline_id=2001, readable=False)
+    gl.install()
+    body = policy("gitlab", "123", requirement(JOB, ["svc-a", "svc-private"])).model_dump()
+    body["enforcement"]["on_unknown"] = on_unknown
+    report = verify_pipeline(
+        connector, Policy.model_validate(body), instance_url=BASE, project="123", pipeline_id=1042
+    )
+    assert report.decision is Decision.BLOCKED
+    assert failing(report) == {
+        f"job_present [svc-a > {JOB}]": "REQUIRED_COPY_ABSENT",
+        f"job_present [svc-private > {JOB}]": "JOB_MAYBE_IN_UNREADABLE_PIPELINE",
+    }
+
+
+def test_bare_missing_job_remains_unknown_with_private_child(connector, gl) -> None:
+    gl.child("svc-private", pipeline_id=2001, readable=False)
+    report = gitlab_verify(connector, gl, profile="production")
+    assert report.decision is Decision.INDETERMINATE
+
+
+def test_similar_private_prefix_does_not_hide_removed_copy(connector, gl) -> None:
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    gl.child("svc-b-extra", pipeline_id=2001, readable=False)
+    report = gitlab_verify(connector, gl, ["svc-a", "svc-b"])
+    assert report.decision is Decision.BLOCKED
+
+
+def test_unrelated_private_child_cannot_downgrade_failure_with_on_unknown_warn(
+    connector, gl
+) -> None:
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    gl.child("svc-private", pipeline_id=2001, readable=False)
+    gl.install()
+    body = policy("gitlab", "123", requirement(JOB, ["svc-a", "svc-b"])).model_dump()
+    body["enforcement"]["on_unknown"] = "warn"
+    pol = Policy.model_validate(body)
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert report.decision is Decision.BLOCKED
+    assert failing(report) == {f"job_present [svc-b > {JOB}]": "REQUIRED_COPY_ABSENT"}
+
+
+@pytest.mark.parametrize("path", [f"svc-b > {JOB}", f"svc-private > {JOB}"])
+def test_qualified_missing_job_uses_its_own_subtree(connector, gl, path) -> None:
+    gl.child("svc-private", pipeline_id=2001, readable=False)
+    gl.install()
+    pol = policy("gitlab", "123", requirement(path), "production")
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    expected = Decision.INDETERMINATE if path.startswith("svc-private > ") else Decision.BLOCKED
+    assert report.decision is expected
+
+
+@pytest.mark.parametrize("status", [403, 429])
+def test_declared_public_copies_with_unrelated_unreadable_child_verify(
+    connector, gl, mock_api, status
+) -> None:
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    gl.child("svc-b", pipeline_id=2001).job(3001, JOB, files=REPORT)
+    gl.child("svc-private", pipeline_id=2002, readable=False)
+    gl.install()
+    mock_api.get(f"{BASE}/api/v4/projects/123/pipelines/2002/jobs").respond(status)
+    pol = policy("gitlab", "123", requirement(JOB, ["svc-a", "svc-b"]), "production")
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert report.decision is Decision.VERIFIED
+    assert any("could not be read" in w for w in report.warnings)
+
+
+def test_public_children_rate_limited_reproduces_live_unknown(connector, gl, mock_api) -> None:
+    for i, svc in enumerate(["svc-a", "svc-b", "svc-private"]):
+        gl.child(svc, pipeline_id=2000 + i, readable=False)
+    gl.install()
+    for pid in (2000, 2001, 2002):
+        mock_api.get(f"{BASE}/api/v4/projects/123/pipelines/{pid}/jobs").respond(429)
+    pol = policy("gitlab", "123", requirement(JOB, ["svc-a", "svc-b"]), "production")
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert report.decision is Decision.INDETERMINATE
+    assert failing(report) == {
+        f"job_present [svc-a > {JOB}]": "JOB_MAYBE_IN_UNREADABLE_PIPELINE",
+        f"job_present [svc-b > {JOB}]": "JOB_MAYBE_IN_UNREADABLE_PIPELINE",
+    }
+    assert all("RATE_LIMITED" in w for w in report.warnings if "could not be read" in w)
+
+
+def test_root_trigger_inventory_failure_keeps_missing_child_unknown(connector, gl, mock_api):
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    gl.install()
+    mock_api.routes["bridges"].respond(429)
+    pol = policy("gitlab", "123", requirement(JOB, ["svc-b"]), "production")
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert report.decision is Decision.INDETERMINATE
+
+
+def test_depth_limit_keeps_nested_copy_unknown(connector, gl, monkeypatch):
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    gl.child("deploy", pipeline_id=2001)
+    monkeypatch.setattr("scanproof.inspection.MAX_DOWNSTREAM_DEPTH", 0)
+    report = gitlab_verify(connector, gl, ["deploy > svc-b"])
+    assert report.decision is Decision.INDETERMINATE
+
+
+def test_count_limit_keeps_declared_copy_unknown(connector, gl, monkeypatch):
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    monkeypatch.setattr("scanproof.inspection.MAX_DOWNSTREAM_PIPELINES", 1)
+    report = gitlab_verify(connector, gl, ["svc-a"])
+    assert report.decision is Decision.INDETERMINATE
+
+
+@pytest.mark.parametrize("copy", ["deploy", "deploy > svc-b"])
+def test_unreadable_child_trigger_inventory_only_hides_descendants(connector, gl, mock_api, copy):
+    gl.child("deploy", pipeline_id=2000)  # its own job list is readable and empty
+    gl.install()
+    mock_api.routes["bridges"].mock(
+        side_effect=lambda request: (
+            httpx.Response(429)
+            if request.url.path.endswith("/2000/bridges")
+            else httpx.Response(
+                200,
+                json=[
+                    {
+                        "name": "deploy",
+                        "status": "success",
+                        "downstream_pipeline": {"id": 2000, "project_id": 123},
+                    }
+                ],
+            )
+        )
+    )
+    pol = policy("gitlab", "123", requirement(JOB, [copy]), "production")
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert report.decision is (Decision.BLOCKED if copy == "deploy" else Decision.INDETERMINATE)
 
 
 def test_gitlab_trigger_that_created_no_pipeline_is_absent(connector, gl) -> None:
@@ -393,8 +554,8 @@ def test_production_rejects_waiving_copies_declared() -> None:
 
 
 def test_copies_declared_is_not_a_pass_without_jobs(connector, gl) -> None:
-    """Every copy gone: the job itself is absent (never VERIFIED)."""
+    """Every copy gone: each declared copy is absent (never VERIFIED)."""
     gl.job(1, "unrelated", files=REPORT)
     report = gitlab_verify(connector, gl, ["svc-a"])
-    assert failing(report) == {"job_present": "REQUIRED_JOB_ABSENT"}
+    assert failing(report) == {f"job_present [svc-a > {JOB}]": "REQUIRED_COPY_ABSENT"}
     assert all(c.outcome is not Outcome.PASS for c in report.requirements[0].checks)
