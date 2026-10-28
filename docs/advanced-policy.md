@@ -186,8 +186,9 @@ requirements:
 
 - A declared copy with no job is a FAIL, `REQUIRED_COPY_ABSENT` on `job_present [svc-b > sast]`.
   If the missing copy may be in a downstream pipeline the token couldn't read, it is UNKNOWN
-  (`JOB_MAYBE_IN_UNREADABLE_PIPELINE`) instead. If no copy ran at all, the job itself is absent
-  (`REQUIRED_JOB_ABSENT`).
+  (`JOB_MAYBE_IN_UNREADABLE_PIPELINE`) instead. Each copy is judged on its own, also when no
+  copy ran at all: a provably absent copy is a FAIL even if another declared copy may be in an
+  unreadable pipeline.
 - Paths are written as the platform names them: `deploy > svc-a` for a nested GitLab child,
   `security` for GitHub's `security / sast`, `"Scan / Matrix - LANG = 'go'"` for Jenkins.
   `svc-a >` (trailing separator) is a load error.

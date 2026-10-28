@@ -176,25 +176,8 @@ def verify_pipeline(
         )
         if unread and matches and not req.copies and not is_qualified(req.job_name):
             undeclared["copies_unbounded"] = unread
-        if not matches:
-            if req.copies:
-                unknown = next(
-                    (
-                        reason
-                        for path in req.copies
-                        if (
-                            reason := absence_unknown(
-                                f"{path}{DOWNSTREAM_SEPARATOR}{req.job_name}"
-                                if path
-                                else req.job_name,
-                                bounded=True,
-                            )
-                        )
-                    ),
-                    None,
-                )
-            else:
-                unknown = absence_unknown(req.job_name, bounded=is_qualified(req.job_name))
+        if not matches and not req.copies:
+            unknown = absence_unknown(req.job_name, bounded=is_qualified(req.job_name))
             inputs[req.id] = RequirementInput(absence_unknown=unknown)
         elif (
             len(matches) == 1
@@ -205,6 +188,8 @@ def verify_pipeline(
             single = collect(req, matches[0])
             inputs[req.id] = single.model_copy(update=undeclared)
         else:
+            # Declared copies are judged one by one even when none ran: a copy that is provably
+            # absent must FAIL even if another declared copy may sit in an unreadable pipeline.
             instances = [(job.name, collect(req, job)) for job in matches]
             instances += [(name, RequirementInput()) for name in missing]
             instances += [

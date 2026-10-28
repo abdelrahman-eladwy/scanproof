@@ -165,6 +165,27 @@ def test_no_visible_match_with_unrelated_private_child_is_blocked(connector, gl)
     assert report.decision is Decision.BLOCKED
 
 
+@pytest.mark.parametrize("on_unknown", ["block", "warn"])
+def test_no_match_absent_copy_is_not_hidden_by_unreadable_declared_copy(
+    connector, gl, on_unknown
+) -> None:
+    """No copy ran: svc-a's trigger was removed (proven), svc-private can't be read. The
+    proven absence must BLOCK; before, the whole requirement became UNKNOWN and on_unknown:
+    warn turned it into VERIFIED."""
+    gl.child("svc-private", pipeline_id=2001, readable=False)
+    gl.install()
+    body = policy("gitlab", "123", requirement(JOB, ["svc-a", "svc-private"])).model_dump()
+    body["enforcement"]["on_unknown"] = on_unknown
+    report = verify_pipeline(
+        connector, Policy.model_validate(body), instance_url=BASE, project="123", pipeline_id=1042
+    )
+    assert report.decision is Decision.BLOCKED
+    assert failing(report) == {
+        f"job_present [svc-a > {JOB}]": "REQUIRED_COPY_ABSENT",
+        f"job_present [svc-private > {JOB}]": "JOB_MAYBE_IN_UNREADABLE_PIPELINE",
+    }
+
+
 def test_bare_missing_job_remains_unknown_with_private_child(connector, gl) -> None:
     gl.child("svc-private", pipeline_id=2001, readable=False)
     report = gitlab_verify(connector, gl, profile="production")
@@ -226,7 +247,10 @@ def test_public_children_rate_limited_reproduces_live_unknown(connector, gl, moc
     pol = policy("gitlab", "123", requirement(JOB, ["svc-a", "svc-b"]), "production")
     report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
     assert report.decision is Decision.INDETERMINATE
-    assert failing(report) == {"job_present": "JOB_MAYBE_IN_UNREADABLE_PIPELINE"}
+    assert failing(report) == {
+        f"job_present [svc-a > {JOB}]": "JOB_MAYBE_IN_UNREADABLE_PIPELINE",
+        f"job_present [svc-b > {JOB}]": "JOB_MAYBE_IN_UNREADABLE_PIPELINE",
+    }
     assert all("RATE_LIMITED" in w for w in report.warnings if "could not be read" in w)
 
 
@@ -530,8 +554,8 @@ def test_production_rejects_waiving_copies_declared() -> None:
 
 
 def test_copies_declared_is_not_a_pass_without_jobs(connector, gl) -> None:
-    """Every copy gone: the job itself is absent (never VERIFIED)."""
+    """Every copy gone: each declared copy is absent (never VERIFIED)."""
     gl.job(1, "unrelated", files=REPORT)
     report = gitlab_verify(connector, gl, ["svc-a"])
-    assert failing(report) == {"job_present": "REQUIRED_JOB_ABSENT"}
+    assert failing(report) == {f"job_present [svc-a > {JOB}]": "REQUIRED_COPY_ABSENT"}
     assert all(c.outcome is not Outcome.PASS for c in report.requirements[0].checks)
