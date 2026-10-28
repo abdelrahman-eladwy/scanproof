@@ -49,11 +49,14 @@ must consume versioned decision reports, not duplicate policy logic.
 
 **Goal:** make correctness and release readiness objectively testable.
 
-- [ ] Inventory CLI commands, providers, adapters, trust boundaries and all
+- [x] Inventory CLI commands, providers, adapters, trust boundaries and all
       security-sensitive policy options; publish an explicit support matrix.
-- [ ] Write misuse/abuse cases: forged reports, policy weakening, missing
+      *Evidence:* [security traceability inventory](security-traceability.md),
+      registry drift tests in `test_security_inventory.py`; does not qualify provider enforcement.
+- [x] Write misuse/abuse cases: forged reports, policy weakening, missing
       mandatory job, signed replay, compromised runner, partial API visibility,
       stale artifacts, mutable tags, cross-project children and skipped checks.
+      *Evidence:* [trust-boundary and abuse-case register](security-traceability.md#trust-boundaries-and-abuse-cases).
 - [x] Define supported configurations and hardening profiles: default
       backward-compatible behavior versus recommended strict production profile.
       *Evidence:* `assurance.profile: compatible | production` (#52);
@@ -62,8 +65,11 @@ must consume versioned decision reports, not duplicate policy logic.
       duration, lowest-dependency constraints, Docker smoke and artifact sizes.
 - [ ] Classify bugs: P0 false VERIFIED / bypass / credential leak; P1 incorrect
       BLOCKED or unavailable legitimate releases; P2 usability/performance.
-- [ ] Create a traceability table: invariant -> automated test -> live contract
+- [x] Create a traceability table: invariant -> automated test -> live contract
       -> documentation -> release evidence.
+      *Evidence:* [seven-invariant traceability matrix](security-traceability.md#invariant-to-evidence-matrix),
+      with conditional claims and unvalidated independent gates explicitly identified.
+      This is evidence bookkeeping, not a passed Phase 0 exit gate.
 
 **Exit gate:** every invariant has an owner/test and a named validation method.
 No open P0 security bug is accepted into a release candidate.

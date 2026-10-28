@@ -37,6 +37,8 @@ For contributors and maintainers. See also [CONTRIBUTING.md](../CONTRIBUTING.md)
 
 - [Design decisions](development/design-decisions.md)
 - [Production-readiness program](development/production-readiness.md)
+- [Security inventory and invariant traceability](development/security-traceability.md):
+  implemented trust boundaries, misuse cases, tests, live evidence, and unresolved gates.
 - [Releasing](development/releasing.md)
 - [Milestone records (M1–M4)](development/milestones/): historical specifications and acceptance
   criteria.
