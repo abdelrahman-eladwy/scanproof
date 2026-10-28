@@ -20,8 +20,7 @@ def test_defect_ledger_cites_existing_regression_tests() -> None:
         return
 
     rows = [
-        line for line in LEDGER.read_text(encoding="utf-8").splitlines()
-        if line.startswith("| [#")
+        line for line in LEDGER.read_text(encoding="utf-8").splitlines() if line.startswith("| [#")
     ]
     observed: set[int] = set()
     for row in rows:
