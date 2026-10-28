@@ -304,3 +304,18 @@ def test_pipeline_payload_that_is_a_list(connector, mock_api) -> None:
     with pytest.raises(ConnectorError) as exc:
         connector.get_pipeline("123", 1042)
     assert exc.value.kind is ErrorKind.INVALID_RESPONSE
+
+
+@pytest.mark.parametrize("anonymous", [True, False])
+def test_rate_limit_hint_only_in_anonymous_mode(mock_api, anonymous) -> None:
+    """#74: gitlab.com allows 60 anonymous API requests/hour per IP; say so, and how to fix it."""
+    mock_api.get(PIPELINE_URL).respond(429)
+    token = None if anonymous else TOKEN
+    with (
+        GitLabConnector(BASE, token, anonymous=anonymous, sleep=lambda _: None) as gl,
+        pytest.raises(ConnectorError) as exc,
+    ):
+        gl.get_pipeline("123", 1042)
+    assert exc.value.kind is ErrorKind.RATE_LIMITED
+    assert ("read_api token" in str(exc.value)) is anonymous
+    assert TOKEN not in str(exc.value)

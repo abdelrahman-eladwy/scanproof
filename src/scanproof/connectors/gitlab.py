@@ -171,7 +171,15 @@ class GitLabConnector(HttpConnector):
                 f"{what} not found (HTTP 404). It may not exist, or {who} cannot see it."
             )
         if code == 429:
-            raise ConnectorError(ErrorKind.RATE_LIMITED, f"Rate limited fetching {what}", code)
+            hint = (
+                " Anonymous access is heavily rate limited (gitlab.com: 60 API requests per hour "
+                "per IP); use a read_api token instead of --anonymous."
+                if self.anonymous
+                else ""
+            )
+            raise ConnectorError(
+                ErrorKind.RATE_LIMITED, f"Rate limited fetching {what}.{hint}", code
+            )
         if code >= 500:
             raise ConnectorError(ErrorKind.SERVER, f"GitLab server error fetching {what}", code)
         raise ConnectorError(ErrorKind.INVALID_RESPONSE, f"HTTP {code} fetching {what}", code)

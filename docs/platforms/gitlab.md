@@ -16,6 +16,12 @@ enough.
 Store it as a **masked, protected** CI/CD variable, e.g. `SCANPROOF_GITLAB_TOKEN`, and pass
 `--token-env SCANPROOF_GITLAB_TOKEN`. ScanProof never accepts tokens as arguments.
 
+**`--anonymous`** reads a public project with no token, but gitlab.com allows only **60
+unauthenticated API requests per hour per IP** (since October 2026). One `verify` of a pipeline
+with a few child pipelines makes about 10 requests, so expect HTTP 429 (`RATE_LIMITED`,
+INDETERMINATE) after a handful of runs, sooner on shared CI runner IPs. Use a `read_api` token
+for anything recurring.
+
 ## 2. Write a policy
 
 Start from [`examples/policies/scanproof.yaml`](../../examples/policies/scanproof.yaml) and check it

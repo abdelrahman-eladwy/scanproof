@@ -124,7 +124,10 @@ QuietOpt = Annotated[bool, typer.Option("--quiet", "-q", help="No human summary 
 AnonymousOpt = Annotated[
     bool,
     typer.Option(
-        "--anonymous", help="No token: read a PUBLIC project's pipelines without authenticating."
+        "--anonymous",
+        help="No token: read a PUBLIC project's pipelines without authenticating. Heavily rate "
+        "limited: gitlab.com and api.github.com allow 60 unauthenticated API requests per hour "
+        "per IP, a few verify runs. Prefer a read-only token.",
     ),
 ]
 
@@ -198,7 +201,8 @@ def _connector(
         raise _fail(
             EXIT_USAGE,
             f"error: environment variable {token_env} is not set "
-            "(use --anonymous for public projects)",
+            "(--anonymous reads public projects without one, but gitlab.com and api.github.com "
+            "allow only 60 unauthenticated requests per hour per IP)",
         )
     ca = str(ca_bundle) if ca_bundle else None
     user_var = user_env or DEFAULT_USER_ENV.get(provider)
