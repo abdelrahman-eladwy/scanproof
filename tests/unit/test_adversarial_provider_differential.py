@@ -30,7 +30,8 @@ FAULTS = {
     "report_empty": (Decision.BLOCKED, {"REPORT_MISSING", "REPORT_UNPARSEABLE"}),
     "report_truncated": (Decision.BLOCKED, {"REPORT_UNPARSEABLE"}),
     "report_wrong_schema": (Decision.BLOCKED, {"REPORT_UNPARSEABLE"}),
-    "scope_zero": (Decision.BLOCKED, {"SCANNED_FILES_BELOW_MINIMUM", "SCANNED_FILES_UNKNOWN"}),
+    "scope_zero": (Decision.BLOCKED, {"SCOPE_TOO_SMALL"}),
+    "scope_unreported": (Decision.INDETERMINATE, {"SCOPE_UNKNOWN"}),
     "commit_mismatch": (Decision.BLOCKED, {"COMMIT_MISMATCH"}),
     "job_running": (Decision.INDETERMINATE, {"JOB_NOT_FINISHED"}),
     "read_not_authorized": (
@@ -86,6 +87,10 @@ def exercise(provider: str, fault: str, *, mock_api, connector, sleeps):
             elif fault == "report_wrong_schema":
                 job.files = {"semgrep.json": b'{"SchemaVersion": 2, "Results": []}'}
             elif fault == "scope_zero":
+                job.files = {
+                    "semgrep.json": b'{"results": [], "errors": [], "paths": {"scanned": []}}'
+                }
+            elif fault == "scope_unreported":
                 job.files = {"semgrep.json": b'{"results": [], "errors": []}'}
             elif fault == "commit_mismatch":
                 job.sha = FOREIGN_SHA
@@ -115,6 +120,8 @@ def exercise(provider: str, fault: str, *, mock_api, connector, sleeps):
         elif fault == "report_wrong_schema":
             contents = b'{"SchemaVersion": 2, "Results": []}'
         elif fault == "scope_zero":
+            contents = b'{"results": [], "errors": [], "paths": {"scanned": []}}'
+        elif fault == "scope_unreported":
             contents = b'{"results": [], "errors": []}'
         elif fault == "commit_mismatch":
             gh.jobs[0]["head_sha"] = FOREIGN_SHA
