@@ -18,6 +18,7 @@ from tests.fake_github import API, EXIT1, REPO, RUN, FakeGitHub
 from tests.fake_gitlab import FakeGitLab
 
 SEMGREP = (FIXTURES / "semgrep/semgrep-findings.json").read_bytes()
+SEMGREP_ERRORS = (FIXTURES / "semgrep/semgrep-errors.json").read_bytes()
 FOREIGN_SHA = "f" * 40
 
 # Which observable decision and reason must replace VERIFIED when valid scan
@@ -25,11 +26,14 @@ FOREIGN_SHA = "f" * 40
 FAULTS = {
     "job_absent": (Decision.BLOCKED, {"REQUIRED_JOB_ABSENT"}),
     "job_skipped": (Decision.BLOCKED, {"JOB_NOT_SUCCESS"}),
+    "job_canceled": (Decision.BLOCKED, {"JOB_NOT_SUCCESS"}),
+    "job_unrecognized": (Decision.INDETERMINATE, {"JOB_STATUS_UNKNOWN"}),
     "masked_failure": (Decision.BLOCKED, {"FAILURE_MASKED_BY_ALLOW_FAILURE"}),
     "report_absent": (Decision.BLOCKED, {"REPORT_MISSING"}),
     "report_empty": (Decision.BLOCKED, {"REPORT_MISSING", "REPORT_UNPARSEABLE"}),
     "report_truncated": (Decision.BLOCKED, {"REPORT_UNPARSEABLE"}),
     "report_wrong_schema": (Decision.BLOCKED, {"REPORT_UNPARSEABLE"}),
+    "scanner_error": (Decision.BLOCKED, {"SCANNER_ERRORS"}),
     "scope_zero": (Decision.BLOCKED, {"SCOPE_TOO_SMALL"}),
     "scope_unreported": (Decision.INDETERMINATE, {"SCOPE_UNKNOWN"}),
     "commit_mismatch": (Decision.BLOCKED, {"COMMIT_MISMATCH"}),
@@ -76,6 +80,10 @@ def exercise(provider: str, fault: str, *, mock_api, connector, sleeps):
             job = gl.job(101, "sast", files={"semgrep.json": SEMGREP})
             if fault == "job_skipped":
                 job.status = "skipped"
+            elif fault == "job_canceled":
+                job.status = "canceled"
+            elif fault == "job_unrecognized":
+                job.status = "unrecognized-new-provider-state"
             elif fault == "masked_failure":
                 job.status, job.allow_failure = "failed", True
             elif fault == "report_absent":
@@ -86,6 +94,8 @@ def exercise(provider: str, fault: str, *, mock_api, connector, sleeps):
                 job.files = {"semgrep.json": b'{"results": [broken'}
             elif fault == "report_wrong_schema":
                 job.files = {"semgrep.json": b'{"SchemaVersion": 2, "Results": []}'}
+            elif fault == "scanner_error":
+                job.files = {"semgrep.json": SEMGREP_ERRORS}
             elif fault == "scope_zero":
                 job.files = {
                     "semgrep.json": b'{"results": [], "errors": [], "paths": {"scanned": []}}'
@@ -111,6 +121,10 @@ def exercise(provider: str, fault: str, *, mock_api, connector, sleeps):
         contents = SEMGREP
         if fault == "job_skipped":
             gh.jobs[0]["conclusion"] = "skipped"
+        elif fault == "job_canceled":
+            gh.jobs[0]["conclusion"] = "cancelled"
+        elif fault == "job_unrecognized":
+            gh.jobs[0]["conclusion"] = "unrecognized-new-provider-state"
         elif fault == "masked_failure":
             gh.annotations[101] = [[EXIT1]]
         elif fault == "report_empty":
@@ -119,6 +133,8 @@ def exercise(provider: str, fault: str, *, mock_api, connector, sleeps):
             contents = b'{"results": [broken'
         elif fault == "report_wrong_schema":
             contents = b'{"SchemaVersion": 2, "Results": []}'
+        elif fault == "scanner_error":
+            contents = SEMGREP_ERRORS
         elif fault == "scope_zero":
             contents = b'{"results": [], "errors": [], "paths": {"scanned": []}}'
         elif fault == "scope_unreported":
