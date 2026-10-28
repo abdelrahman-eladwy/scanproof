@@ -79,7 +79,10 @@ def _measure(iterations: int) -> dict[str, object]:
         "p95_seconds": round(durations[math.ceil(0.95 * iterations) - 1], 6),
         "max_seconds": round(max(durations), 6),
         "tracemalloc_peak_bytes": peak_bytes,
-        "scope": "in-memory job matching only; excludes provider API, artifacts and policy evaluation",
+        "scope": (
+            "in-memory job matching only; excludes provider API, "
+            "artifacts and policy evaluation"
+        ),
     }
 
 
