@@ -34,3 +34,43 @@ Which checks each format can satisfy: [scan-types.md](scan-types.md).
 
 Other versions likely work; unknown extra fields are ignored. Unsupported Trivy schema versions are
 rejected as unparseable rather than guessed at.
+
+# Report and policy schemas
+
+ScanProof publishes JSON Schemas (draft 2020-12) for every input and output format in
+[`schemas/`](../schemas/). Each `$id` resolves to the raw file on `main`, and each carries an
+`x-scanproof-contract` naming the versioned identifier it describes.
+
+| File | Describes | Version field |
+|---|---|---|
+| `policy.v1alpha1.schema.json` | policy YAML (input) | `apiVersion: scanproof.dev/v1alpha1` |
+| `release.v1alpha1.schema.json` | `verify-release` file (input) | `apiVersion: scanproof.dev/v1alpha1` |
+| `inspection-report.v1alpha1.schema.json` | `scanproof inspect` | `schema_version: scanproof.dev/inspection/v1alpha1` |
+| `evidence.v1alpha1.schema.json` | `scanproof evidence` | `schema_version: scanproof.dev/evidence/v1alpha1` |
+| `verification-report.v1alpha1.schema.json` | `scanproof verify` | `schema_version: scanproof.dev/verification/v1alpha1` |
+| `verification-error.v1alpha1.schema.json` | `verify -o` when the pipeline could not be read (exit 2) | same as above; has `error`, no `requirements` |
+| `release-report.v1alpha1.schema.json` | `scanproof verify-release` | `schema_version: scanproof.dev/release/v1alpha1` |
+
+**Validation is format, not verdict.** A report that validates can still be BLOCKED or
+INDETERMINATE; gate on `decision` / `exit_code`, never on schema validity.
+
+**`${ENV_VAR}` references** are part of the input schemas where the loader accepts them
+(string fields such as image digests and target URLs; `pipeline` in release files). The
+schema cannot see whether a variable is set or what it resolves to; the loader still
+rejects an unset variable or a resolved value of the wrong shape. The loader is never
+looser than the schema.
+
+## Versioning and compatibility rules
+
+- The `v1alpha1` formats may still change before 1.0, but only with a CHANGELOG entry.
+- **Compatible** (same version identifier): adding an optional output field; adding an enum
+  value to an output field; tightening an input that previously accepted meaningless values
+  (for example a boolean `pipeline`), when the old behavior could verify the wrong thing.
+- **Breaking** (new identifier, e.g. `v1beta1`, old one documented for at least one minor
+  release): removing or renaming a field, changing a type, changing the meaning of
+  `decision` or exit codes, making an optional input required.
+- Consumers should ignore unknown output fields and must reject an unknown
+  `schema_version`.
+- `scripts/export_schemas.py --check` and `tests/unit/test_published_schemas.py` fail CI when
+  the committed schemas drift from the models, and validate real outputs with an
+  independent validator, both from source and from the installed wheel and image.

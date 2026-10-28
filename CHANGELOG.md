@@ -6,6 +6,10 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 ## [Unreleased]
 
 ### Added
+- Versioned JSON Schemas for every input and output format in `schemas/`
+  ([#47](https://github.com/abdelrahman-eladwy/scanproof/issues/47)), single-sourced from the
+  models, drift-checked in CI and validated against real outputs. Rules in
+  [docs/compatibility.md](docs/compatibility.md#report-and-policy-schemas).
 - `assurance.profile: production` ([#52](https://github.com/abdelrahman-eladwy/scanproof/issues/52)):
   settings that let a weaker pipeline reach VERIFIED are load errors (exit 3), all listed at
   once with a stable code (`JOB_SUCCESS_DISABLED`, `WAIVER_UNBOUNDED`,
@@ -25,6 +29,12 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
+- `verify-release`: a component `pipeline` must be a positive decimal id or a `${ENV_VAR}`
+  resolving to one. YAML `pipeline: yes`/`on`/`true` used to become pipeline **1** (bool is
+  an int), silently verifying the wrong pipeline; zero, negative, float, `1_000` and `+5`
+  were also accepted. All are now load errors (exit 3).
+- `verify -o` on an unreadable pipeline now writes a typed report with `scanproof_version`
+  and `generated_at` (fields added; existing fields unchanged).
 - **P0 GitHub gate-only rerun false VERIFIED** ([#90](https://github.com/abdelrahman-eladwy/scanproof/issues/90)):
   GitHub may present synthetic current-attempt job IDs for earlier scans when only the
   verification job is rerun, without the original step-failure annotations. ScanProof

@@ -13,18 +13,21 @@ import re
 from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
+from pydantic.json_schema import WithJsonSchema
 
 from scanproof import __version__
 from scanproof.connectors.base import CIConnector, ConnectorError
+from scanproof.contracts import RELEASE_SCHEMA
 from scanproof.policy.engine import Decision
 from scanproof.policy.models import PolicyError, load_policy
 from scanproof.verification import VerificationReport, verify_pipeline
 
 _ENV_REF = re.compile(r"^\$\{([A-Za-z_][A-Za-z0-9_]*)\}$")
+_DECIMAL_ID = re.compile(r"[1-9][0-9]*")
 MAX_COMPONENTS = 50
 
 
@@ -35,21 +38,43 @@ class _Strict(BaseModel):
 class Component(_Strict):
     name: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
     policy: str = Field(description="Policy file, relative to the release file")
-    pipeline: int = Field(description="Pipeline / run / build id, or ${ENV_VAR}")
+    pipeline: Annotated[
+        int,
+        # Published form of what _pipeline_id accepts: a positive integer, a decimal string,
+        # or a ${ENV_VAR} reference that must itself resolve to a positive decimal.
+        WithJsonSchema(
+            {
+                "anyOf": [
+                    {"type": "integer", "minimum": 1},
+                    {"type": "string", "pattern": r"^\s*[1-9][0-9]*\s*$"},
+                    {"type": "string", "pattern": r"^\s*\$\{[A-Za-z_][A-Za-z0-9_]*\}\s*$"},
+                ]
+            },
+            mode="validation",
+        ),
+    ] = Field(description="Pipeline / run / build id, or ${ENV_VAR}")
     project: str | None = Field(None, description="Override the policy's project")
     url: str | None = Field(None, description="Platform URL for this component")
 
     @field_validator("pipeline", mode="before")
     @classmethod
-    def _env(cls, value: object) -> object:
-        if isinstance(value, str):
-            match = _ENV_REF.match(value.strip())
-            if match:
-                resolved = os.environ.get(match.group(1), "").strip()
-                if not resolved:
-                    raise ValueError(f"environment variable {match.group(1)} is not set")
-                return resolved
-        return value
+    def _pipeline_id(cls, value: object) -> int:
+        # bool is an int subclass and YAML 1.1 reads `yes`/`on` as True: never pipeline 1.
+        if isinstance(value, bool) or not isinstance(value, int | str):
+            raise ValueError("pipeline must be a positive integer or ${ENV_VAR}")
+        if isinstance(value, int):
+            if value < 1:
+                raise ValueError("pipeline must be a positive integer")
+            return value
+        text = value.strip()
+        match = _ENV_REF.match(text)
+        if match:
+            text = os.environ.get(match.group(1), "").strip()
+            if not text:
+                raise ValueError(f"environment variable {match.group(1)} is not set")
+        if not _DECIMAL_ID.fullmatch(text):
+            raise ValueError("pipeline must be a positive decimal integer")
+        return int(text)
 
 
 class Metadata(_Strict):
@@ -83,7 +108,7 @@ class ComponentResult(BaseModel):
 
 
 class ReleaseReport(BaseModel):
-    schema_version: str = "scanproof.dev/release/v1alpha1"
+    schema_version: Literal["scanproof.dev/release/v1alpha1"] = RELEASE_SCHEMA
     scanproof_version: str = __version__
     generated_at: datetime
     release: str

@@ -8,8 +8,11 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from scanproof.contracts import INSPECTION_SCHEMA
 
 
 class JobStatus(StrEnum):
@@ -154,7 +157,7 @@ class UnreadableDownstream(BaseModel):
 class InspectionReport(BaseModel):
     """Output of `scanproof inspect`: what the pipeline contains, with no judgement applied."""
 
-    schema_version: str = "scanproof.dev/inspection/v1alpha1"
+    schema_version: Literal["scanproof.dev/inspection/v1alpha1"] = INSPECTION_SCHEMA
     scanproof_version: str
     generated_at: datetime
     provider: str

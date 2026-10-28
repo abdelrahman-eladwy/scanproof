@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "ConnectorErrorDetail": {
+      "description": "Why the CI platform could not be read. Never contains credentials.",
+      "properties": {
+        "kind": {
+          "description": "connectors.base.ErrorKind value, e.g. AUTH, NETWORK",
+          "title": "Kind",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "status_code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Code"
+        }
+      },
+      "required": [
+        "kind",
+        "message"
+      ],
+      "title": "ConnectorErrorDetail",
+      "type": "object"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/abdelrahman-eladwy/scanproof/main/schemas/verification-error.v1alpha1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Written by `verify -o` when nothing could be verified (exit 2, INDETERMINATE).\n\nSame schema_version as VerificationReport; consumers tell the two apart by the\npresence of `error` (and absence of `requirements`).",
+  "properties": {
+    "decision": {
+      "const": "INDETERMINATE",
+      "default": "INDETERMINATE",
+      "title": "Decision",
+      "type": "string"
+    },
+    "error": {
+      "$ref": "#/$defs/ConnectorErrorDetail"
+    },
+    "exit_code": {
+      "const": 2,
+      "default": 2,
+      "title": "Exit Code",
+      "type": "integer"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "pipeline_id": {
+      "title": "Pipeline Id",
+      "type": "integer"
+    },
+    "project": {
+      "title": "Project",
+      "type": "string"
+    },
+    "scanproof_version": {
+      "default": "0.1.0",
+      "title": "Scanproof Version",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "scanproof.dev/verification/v1alpha1",
+      "default": "scanproof.dev/verification/v1alpha1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project",
+    "pipeline_id",
+    "error"
+  ],
+  "title": "scanproof verify -o output when the pipeline could not be read (exit 2)",
+  "type": "object",
+  "x-scanproof-contract": "scanproof.dev/verification/v1alpha1"
+}

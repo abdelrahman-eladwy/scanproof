@@ -10,8 +10,11 @@ Convention: a field the report does not provide is `None` (unknown), never 0 or 
 from __future__ import annotations
 
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, Field
+
+from scanproof.contracts import EVIDENCE_SCHEMA
 
 
 class ScanType(StrEnum):
@@ -94,7 +97,7 @@ class EvidenceSource(BaseModel):
 
 
 class ScanEvidence(BaseModel):
-    schema_version: str = "scanproof.dev/evidence/v1alpha1"
+    schema_version: Literal["scanproof.dev/evidence/v1alpha1"] = EVIDENCE_SCHEMA
     tool: str
     scan_type: ScanType
     tool_version: str | None = None

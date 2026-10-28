@@ -1,0 +1,1175 @@
+{
+  "$defs": {
+    "AttestationEvidence": {
+      "properties": {
+        "bundle_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bundle Sha256"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where the bundle came from",
+          "title": "Origin"
+        },
+        "predicate_summary": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "A few predicate fields for the report (builder id...)",
+          "title": "Predicate Summary",
+          "type": "object"
+        },
+        "predicate_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Predicate Type"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why it is invalid / unverifiable",
+          "title": "Reason"
+        },
+        "run_matches": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set by the orchestrator: the certificate's run is the verified pipeline (None = could not tell)",
+          "title": "Run Matches"
+        },
+        "signer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SignerClaims"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "statement_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statement Type"
+        },
+        "status": {
+          "$ref": "#/$defs/AttestationStatus"
+        },
+        "subjects": {
+          "items": {
+            "$ref": "#/$defs/Subject"
+          },
+          "title": "Subjects",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "AttestationEvidence",
+      "type": "object"
+    },
+    "AttestationStatus": {
+      "enum": [
+        "verified",
+        "invalid",
+        "unverifiable"
+      ],
+      "title": "AttestationStatus",
+      "type": "string"
+    },
+    "CheckResult": {
+      "properties": {
+        "check": {
+          "title": "Check",
+          "type": "string"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "outcome": {
+          "$ref": "#/$defs/Outcome"
+        }
+      },
+      "required": [
+        "check",
+        "outcome",
+        "code",
+        "message"
+      ],
+      "title": "CheckResult",
+      "type": "object"
+    },
+    "Decision": {
+      "enum": [
+        "VERIFIED",
+        "BLOCKED",
+        "INDETERMINATE"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "EvidenceSource": {
+      "description": "Where the report came from, filled in when it was fetched from a CI platform.",
+      "properties": {
+        "artifact_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Path"
+        },
+        "job_commit_sha": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Commit Sha"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        },
+        "job_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Name"
+        },
+        "local_file": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Local File"
+        },
+        "pipeline_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pipeline Id"
+        },
+        "pipeline_sha": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pipeline Sha"
+        },
+        "project": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        }
+      },
+      "title": "EvidenceSource",
+      "type": "object"
+    },
+    "FindingsSummary": {
+      "properties": {
+        "by_severity": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "By Severity",
+          "type": "object"
+        },
+        "suppressed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Findings excluded from total because they were suppressed/waived",
+          "title": "Suppressed"
+        },
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total"
+      ],
+      "title": "FindingsSummary",
+      "type": "object"
+    },
+    "Outcome": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "UNKNOWN",
+        "NOT_APPLICABLE",
+        "WAIVED"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "Pipeline": {
+      "properties": {
+        "created_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created At"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finished At"
+        },
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref"
+        },
+        "run_attempt": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GitHub Actions: current workflow run attempt; None when unavailable",
+          "title": "Run Attempt"
+        },
+        "sha": {
+          "title": "Sha",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "web_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Web Url"
+        }
+      },
+      "required": [
+        "id",
+        "sha",
+        "status"
+      ],
+      "title": "Pipeline",
+      "type": "object"
+    },
+    "RequirementResult": {
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/CheckResult"
+          },
+          "title": "Checks",
+          "type": "array"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "findings": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reported for context only; findings are never judged",
+          "title": "Findings"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "instances": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job instances evaluated when job_name matched several",
+          "title": "Instances"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Job Id"
+        },
+        "job_name": {
+          "title": "Job Name",
+          "type": "string"
+        },
+        "outcome": {
+          "$ref": "#/$defs/Outcome"
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "description",
+        "tool",
+        "job_name",
+        "job_id",
+        "outcome",
+        "checks"
+      ],
+      "title": "RequirementResult",
+      "type": "object"
+    },
+    "ScanEvidence": {
+      "properties": {
+        "findings": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FindingsSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "parse_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parse Error"
+        },
+        "parseable": {
+          "description": "The report parsed as this tool's format",
+          "title": "Parseable",
+          "type": "boolean"
+        },
+        "present": {
+          "description": "A report file was obtained",
+          "title": "Present",
+          "type": "boolean"
+        },
+        "report_bytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Report Bytes"
+        },
+        "report_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Report Sha256"
+        },
+        "results_reported": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The report contained a results section (even if empty)",
+          "title": "Results Reported"
+        },
+        "scan_type": {
+          "$ref": "#/$defs/ScanType"
+        },
+        "scanner_errors": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ScannerError"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None when the tool's format does not report errors",
+          "title": "Scanner Errors"
+        },
+        "scanner_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Engine that produced the findings, e.g. CodeQL inside SARIF",
+          "title": "Scanner Name"
+        },
+        "schema_version": {
+          "const": "scanproof.dev/evidence/v1alpha1",
+          "default": "scanproof.dev/evidence/v1alpha1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScanScope"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceSource"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScanTarget"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        },
+        "tool_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Version"
+        }
+      },
+      "required": [
+        "tool",
+        "scan_type",
+        "present",
+        "parseable"
+      ],
+      "title": "ScanEvidence",
+      "type": "object"
+    },
+    "ScanScope": {
+      "description": "What the scanner says it looked at.",
+      "properties": {
+        "components": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SBOM component count",
+          "title": "Components"
+        },
+        "endpoints": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DAST: endpoints the scanner discovered and tested",
+          "title": "Endpoints"
+        },
+        "files_scanned": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Files Scanned"
+        },
+        "resources": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IaC resources evaluated",
+          "title": "Resources"
+        },
+        "scanned_paths": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files/targets the scanner reports as scanned",
+          "title": "Scanned Paths"
+        },
+        "skipped_paths": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skipped Paths"
+        }
+      },
+      "title": "ScanScope",
+      "type": "object"
+    },
+    "ScanTarget": {
+      "description": "The artifact a scan was run against (container image for Trivy).",
+      "properties": {
+        "artifact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Name"
+        },
+        "artifact_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Type"
+        },
+        "image_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Id"
+        },
+        "repo_digests": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repo Digests"
+        },
+        "repo_tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repo Tags"
+        },
+        "urls": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DAST: the target URLs the scanner says it scanned",
+          "title": "Urls"
+        }
+      },
+      "title": "ScanTarget",
+      "type": "object"
+    },
+    "ScanType": {
+      "enum": [
+        "SAST",
+        "CONTAINER",
+        "DEPENDENCY",
+        "SECRETS",
+        "IAC",
+        "SBOM",
+        "DAST",
+        "OTHER"
+      ],
+      "title": "ScanType",
+      "type": "string"
+    },
+    "ScannerError": {
+      "description": "An error the scanner reported about its own run (not a finding).",
+      "properties": {
+        "level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "ScannerError",
+      "type": "object"
+    },
+    "SignerClaims": {
+      "description": "Identity claims from the Fulcio certificate's OIDC extensions (OID 1.3.6.1.4.1.57264.1.*).\n\nOn GitHub Actions: `build_signer_uri` is the workflow file that ran the signing job (for a\nreusable workflow, the reusable file), `build_config_uri` is the top-level workflow.",
+      "properties": {
+        "build_config_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Build Config Uri"
+        },
+        "build_signer_digest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Build Signer Digest"
+        },
+        "build_signer_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Build Signer Uri"
+        },
+        "issuer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issuer"
+        },
+        "run_invocation_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Invocation Uri"
+        },
+        "runner_environment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Runner Environment"
+        },
+        "san": {
+          "description": "Certificate SANs",
+          "items": {
+            "type": "string"
+          },
+          "title": "San",
+          "type": "array"
+        },
+        "source_repository_digest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Repository Digest"
+        },
+        "source_repository_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Repository Ref"
+        },
+        "source_repository_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Repository Uri"
+        }
+      },
+      "title": "SignerClaims",
+      "type": "object"
+    },
+    "Subject": {
+      "properties": {
+        "digest": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Digest",
+          "type": "object"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "Subject",
+      "type": "object"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/abdelrahman-eladwy/scanproof/main/schemas/verification-report.v1alpha1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "attestations": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/AttestationEvidence"
+        },
+        "type": "array"
+      },
+      "description": "Every bundle checked, per requirement id",
+      "title": "Attestations",
+      "type": "object"
+    },
+    "decision": {
+      "$ref": "#/$defs/Decision"
+    },
+    "evidence": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ScanEvidence"
+      },
+      "description": "Normalized evidence per requirement id",
+      "title": "Evidence",
+      "type": "object"
+    },
+    "exit_code": {
+      "title": "Exit Code",
+      "type": "integer"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "instance_url": {
+      "title": "Instance Url",
+      "type": "string"
+    },
+    "pipeline": {
+      "$ref": "#/$defs/Pipeline"
+    },
+    "policy": {
+      "title": "Policy",
+      "type": "string"
+    },
+    "project": {
+      "title": "Project",
+      "type": "string"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "requirements": {
+      "items": {
+        "$ref": "#/$defs/RequirementResult"
+      },
+      "title": "Requirements",
+      "type": "array"
+    },
+    "scanproof_version": {
+      "title": "Scanproof Version",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "scanproof.dev/verification/v1alpha1",
+      "default": "scanproof.dev/verification/v1alpha1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "scanproof_version",
+    "generated_at",
+    "policy",
+    "provider",
+    "instance_url",
+    "project",
+    "pipeline",
+    "decision",
+    "exit_code",
+    "requirements"
+  ],
+  "title": "scanproof verify output",
+  "type": "object",
+  "x-scanproof-contract": "scanproof.dev/verification/v1alpha1"
+}

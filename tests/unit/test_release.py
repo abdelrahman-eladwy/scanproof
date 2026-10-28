@@ -141,6 +141,50 @@ def test_invalid_release_files(tmp_path, components, message) -> None:
         load_release(write_release(tmp_path, components))
 
 
+@pytest.mark.parametrize(
+    "pipeline",
+    [
+        "yes",
+        "on",
+        "true",
+        "false",
+        "0",
+        "-3",
+        "1.0",
+        "'1_000'",
+        "'+5'",
+        "'0x10'",
+        "'007'",
+        "null",
+        "'$RUN_ID'",
+        "'${PIPE_NEGATIVE}'",
+        "'${PIPE_TEXT}'",
+    ],
+)
+def test_pipeline_id_must_be_a_positive_decimal(tmp_path, monkeypatch, pipeline) -> None:
+    # YAML 1.1 reads `yes`/`on`/`true` as booleans; bool is an int, and used to become
+    # pipeline 1 -- silently verifying the wrong pipeline instead of failing.
+    monkeypatch.setenv("PIPE_NEGATIVE", "-1")
+    monkeypatch.setenv("PIPE_TEXT", "latest")
+    path = write_release(
+        tmp_path, f"  - {{name: a, policy: policies/backend.yaml, pipeline: {pipeline}}}\n"
+    )
+    with pytest.raises(PolicyError, match="pipeline"):
+        load_release(path)
+
+
+@pytest.mark.parametrize(
+    ("pipeline", "expected"),
+    [("1042", 1042), ("'1042'", 1042), ("' 77 '", 77), ("'${PIPE_OK}'", 9), ("' ${PIPE_OK} '", 9)],
+)
+def test_valid_pipeline_ids(tmp_path, monkeypatch, pipeline, expected) -> None:
+    monkeypatch.setenv("PIPE_OK", " 9 ")
+    path = write_release(
+        tmp_path, f"  - {{name: a, policy: policies/backend.yaml, pipeline: {pipeline}}}\n"
+    )
+    assert load_release(path).components[0].pipeline == expected
+
+
 def test_missing_policy_is_a_usage_error(tmp_path, sleeps) -> None:
     path = write_release(tmp_path, "  - {name: a, policy: policies/nope.yaml, pipeline: 1}\n")
     with pytest.raises(PolicyError, match="cannot read policy"):

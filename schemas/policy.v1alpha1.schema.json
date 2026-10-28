@@ -1,0 +1,675 @@
+{
+  "$defs": {
+    "AppliesTo": {
+      "additionalProperties": false,
+      "properties": {
+        "refs": {
+          "description": "Glob patterns for pipeline refs, e.g. main, release/*",
+          "items": {
+            "type": "string"
+          },
+          "title": "Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "refs"
+      ],
+      "title": "AppliesTo",
+      "type": "object"
+    },
+    "Assurance": {
+      "additionalProperties": false,
+      "description": "A policy's minimum claimed assurance. A report only proves its own assertions.\n\n'reported_scope' checks that the scanner claims a nonempty examined scope;\nit does not cryptographically prove that scan work happened.",
+      "properties": {
+        "minimum_level": {
+          "default": "report",
+          "enum": [
+            "report",
+            "reported_scope"
+          ],
+          "title": "Minimum Level",
+          "type": "string"
+        },
+        "profile": {
+          "default": "compatible",
+          "description": "compatible: every v1alpha1 setting is accepted (the behavior before profiles existed). production: settings that let a weaker pipeline reach VERIFIED are load errors (scanproof validate --explain lists them), and verify reports matrix legs of a requirement without `instances` as UNKNOWN",
+          "enum": [
+            "compatible",
+            "production"
+          ],
+          "title": "Profile",
+          "type": "string"
+        }
+      },
+      "title": "Assurance",
+      "type": "object"
+    },
+    "AttestationRequirement": {
+      "additionalProperties": false,
+      "description": "A signed in-toto attestation (Sigstore bundle) must exist for the report or the image.",
+      "properties": {
+        "artifact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GitHub: run artifact holding bundle_path (default: the report's)",
+          "title": "Artifact Name"
+        },
+        "bundle_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "artifact: path of the bundle file",
+          "title": "Bundle Path"
+        },
+        "predicate_type": {
+          "default": "https://slsa.dev/provenance/v1",
+          "title": "Predicate Type",
+          "type": "string"
+        },
+        "same_commit": {
+          "default": true,
+          "description": "Certificate source digest = pipeline commit",
+          "title": "Same Commit",
+          "type": "boolean"
+        },
+        "same_run": {
+          "default": true,
+          "description": "Certificate run = the verified pipeline / run",
+          "title": "Same Run",
+          "type": "boolean"
+        },
+        "signer": {
+          "$ref": "#/$defs/SignerPolicy"
+        },
+        "source": {
+          "description": "artifact: a bundle file next to the report; platform: the CI platform's attestation store (GitHub attestations API)",
+          "enum": [
+            "artifact",
+            "platform"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "subject": {
+          "default": "report",
+          "description": "report: sha256 of the report file; image: image_digest_must_match",
+          "enum": [
+            "report",
+            "image"
+          ],
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "signer"
+      ],
+      "title": "AttestationRequirement",
+      "type": "object"
+    },
+    "Checks": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_scanner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Engine that must have produced the report (e.g. CodeQL inside SARIF); case-insensitive",
+          "title": "Expected Scanner"
+        },
+        "ignore_scanner_warnings": {
+          "default": false,
+          "description": "Do not count errors with level warn/warning/info",
+          "title": "Ignore Scanner Warnings",
+          "type": "boolean"
+        },
+        "image_digest_must_match": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "sha256:... digest (or ${ENV_VAR}) the scanned image must have",
+          "title": "Image Digest Must Match"
+        },
+        "job_success": {
+          "default": true,
+          "description": "Latest attempt must have status success",
+          "title": "Job Success",
+          "type": "boolean"
+        },
+        "max_age_hours": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The scan job must have finished at most this many hours ago",
+          "title": "Max Age Hours"
+        },
+        "minimum_components": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SBOM: minimum components",
+          "title": "Minimum Components"
+        },
+        "minimum_endpoints": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DAST: minimum endpoints the scanner discovered and tested",
+          "title": "Minimum Endpoints"
+        },
+        "minimum_resources": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IaC: minimum resources the scanner evaluated",
+          "title": "Minimum Resources"
+        },
+        "minimum_scanned_files": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Scanned Files"
+        },
+        "report_required": {
+          "default": true,
+          "description": "A parseable report must be present",
+          "title": "Report Required",
+          "type": "boolean"
+        },
+        "required_paths": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Each prefix must match at least one scanned path",
+          "title": "Required Paths"
+        },
+        "same_commit": {
+          "default": true,
+          "description": "Job commit SHA must equal the pipeline SHA",
+          "title": "Same Commit",
+          "type": "boolean"
+        },
+        "same_target_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Requirement id whose scan must be about the same target (image digest or DAST origin), e.g. an SBOM and the container scan of one image",
+          "title": "Same Target As"
+        },
+        "scanner_errors_allowed": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max scanner errors; unset = not checked",
+          "title": "Scanner Errors Allowed"
+        },
+        "target_url_must_match": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DAST: URL (or ${ENV_VAR}) the scan must have targeted: same origin, and the scanned path inside this one",
+          "title": "Target Url Must Match"
+        }
+      },
+      "title": "Checks",
+      "type": "object"
+    },
+    "Enforcement": {
+      "additionalProperties": false,
+      "properties": {
+        "max_waiver_days": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Longest a waiver may run (expires - created)",
+          "title": "Max Waiver Days"
+        },
+        "on_failure": {
+          "const": "block",
+          "default": "block",
+          "title": "On Failure",
+          "type": "string"
+        },
+        "on_nothing_applicable": {
+          "default": "block",
+          "enum": [
+            "block",
+            "allow"
+          ],
+          "title": "On Nothing Applicable",
+          "type": "string"
+        },
+        "on_unknown": {
+          "default": "block",
+          "enum": [
+            "block",
+            "warn"
+          ],
+          "title": "On Unknown",
+          "type": "string"
+        }
+      },
+      "title": "Enforcement",
+      "type": "object"
+    },
+    "Metadata": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Metadata",
+      "type": "object"
+    },
+    "ProjectRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "gitlab",
+            "github",
+            "azure-devops",
+            "jenkins",
+            "bitbucket"
+          ],
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "id"
+      ],
+      "title": "ProjectRef",
+      "type": "object"
+    },
+    "Requirement": {
+      "additionalProperties": false,
+      "properties": {
+        "applies_to": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AppliesTo"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "artifact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GitHub: name of the run artifact (zip) that contains report_path",
+          "title": "Artifact Name"
+        },
+        "attestation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AttestationRequirement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "checks": {
+          "$ref": "#/$defs/Checks"
+        },
+        "copies": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copies of the job that must all run, by the path that qualifies their names, without the trailing separator: [svc-a, svc-b] for GitLab downstream jobs 'svc-a > sast', [api, web] for GitHub reusable-workflow callers 'api / sast', \"Scan / Matrix - LANG = 'go'\" for a Jenkins stage path. \"\" is the pipeline's own, unprefixed job. A declared copy with no job is REQUIRED_COPY_ABSENT. Undeclared extra copies are allowed and still checked. Omit to keep the old behavior, where a removed copy is not detected",
+          "title": "Copies"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "instances": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matrix legs that must all run, by label: [py, js] for GitLab 'sast: [py]' or GitHub 'sast (py)' legs (multi-variable legs: 'py, 3.12'). A declared label with no leg is REQUIRED_INSTANCE_ABSENT. Undeclared extra legs are allowed and still checked. Omit to keep the old behavior, where a removed leg is not detected",
+          "title": "Instances"
+        },
+        "job_name": {
+          "title": "Job Name",
+          "type": "string"
+        },
+        "report_path": {
+          "title": "Report Path",
+          "type": "string"
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "tool",
+        "job_name",
+        "report_path"
+      ],
+      "title": "Requirement",
+      "type": "object"
+    },
+    "SignerPolicy": {
+      "additionalProperties": false,
+      "description": "Who must have signed the attestation, matched against the Fulcio certificate claims.",
+      "properties": {
+        "issuer": {
+          "description": "OIDC issuer, e.g. https://token.actions.githubusercontent.com",
+          "title": "Issuer",
+          "type": "string"
+        },
+        "repository": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source repository URI, exact (e.g. https://github.com/org/app)",
+          "title": "Repository"
+        },
+        "workflow": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Regex that must fully match the Build Signer URI, e.g. 'https://github\\.com/org/app/\\.github/workflows/ci\\.yml@refs/heads/main'",
+          "title": "Workflow"
+        }
+      },
+      "required": [
+        "issuer"
+      ],
+      "title": "SignerPolicy",
+      "type": "object"
+    },
+    "Waiver": {
+      "additionalProperties": false,
+      "description": "An accepted, time-boxed exception. It turns a matching FAIL / UNKNOWN check into WAIVED,\nvisibly, until `expires`; after that it does nothing (and the report says so).",
+      "properties": {
+        "approved_by": {
+          "minLength": 1,
+          "title": "Approved By",
+          "type": "string"
+        },
+        "check": {
+          "description": "Check name, e.g. scanner_errors; covers its instances too",
+          "title": "Check",
+          "type": "string"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only this result code, e.g. SCANNER_ERRORS",
+          "title": "Code"
+        },
+        "created": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when max_waiver_days is set",
+          "title": "Created"
+        },
+        "expires": {
+          "description": "Last day the waiver applies (UTC)",
+          "format": "date",
+          "title": "Expires",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Why the risk is accepted (ticket, context)",
+          "minLength": 10,
+          "title": "Reason",
+          "type": "string"
+        },
+        "requirement": {
+          "description": "Requirement id",
+          "title": "Requirement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement",
+        "check",
+        "reason",
+        "approved_by",
+        "expires"
+      ],
+      "title": "Waiver",
+      "type": "object"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/abdelrahman-eladwy/scanproof/main/schemas/policy.v1alpha1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "const": "scanproof.dev/v1alpha1",
+      "title": "Apiversion",
+      "type": "string"
+    },
+    "assurance": {
+      "$ref": "#/$defs/Assurance"
+    },
+    "enforcement": {
+      "$ref": "#/$defs/Enforcement"
+    },
+    "kind": {
+      "const": "PipelineAssurancePolicy",
+      "title": "Kind",
+      "type": "string"
+    },
+    "metadata": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Metadata"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "project": {
+      "$ref": "#/$defs/ProjectRef"
+    },
+    "requirements": {
+      "items": {
+        "$ref": "#/$defs/Requirement"
+      },
+      "minItems": 1,
+      "title": "Requirements",
+      "type": "array"
+    },
+    "waivers": {
+      "items": {
+        "$ref": "#/$defs/Waiver"
+      },
+      "title": "Waivers",
+      "type": "array"
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "project",
+    "requirements"
+  ],
+  "title": "ScanProof PipelineAssurancePolicy (input)",
+  "type": "object",
+  "x-scanproof-contract": "scanproof.dev/v1alpha1"
+}

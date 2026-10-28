@@ -104,7 +104,7 @@ jobs:
       - name: Full suite, adversarial decision matrix included, against the installed wheel
         run: |
           python -m venv /tmp/w
-          /tmp/w/bin/pip install "$(ls dist/*.whl)[attestations]" pytest respx
+          /tmp/w/bin/pip install "$(ls dist/*.whl)[attestations]" pytest respx jsonschema
           scripts/test_installed.sh /tmp/w/bin/python "$GITHUB_WORKSPACE"
       - name: Record and enforce wheel/sdist sizes and digests
         run: >-
@@ -138,4 +138,4 @@ jobs:
       - name: Full suite, adversarial decision matrix included, inside the image (non-root)
         run: |
           docker run --rm --entrypoint sh -v "$PWD:/repo:ro" scanproof:ci -c \
-            'pip install --user --no-cache-dir -q pytest respx && sh /repo/scripts/test_installed.sh python /repo'
+            'pip install --user --no-cache-dir -q pytest respx jsonschema && sh /repo/scripts/test_installed.sh python /repo'
