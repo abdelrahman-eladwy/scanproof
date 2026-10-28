@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 LEDGER = ROOT / "docs/development/defect-triage.md"
-REQUIRED_CASES = {50, 59, 60, 62, 65, 68, 69, 71, 88}
+REQUIRED_CASES = {50, 59, 60, 62, 65, 68, 69, 71, 88, 90}
 
 
 def test_defect_ledger_cites_existing_regression_tests() -> None:
