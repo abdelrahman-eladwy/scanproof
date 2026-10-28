@@ -30,6 +30,7 @@ from urllib.parse import urljoin, urlsplit
 import httpx
 
 from scanproof import __version__
+from scanproof.archives import ZipTooLarge, check_zip_directory
 from scanproof.connectors.base import (
     AuthError,
     CIConnector,
@@ -260,6 +261,12 @@ class HttpConnector(CIConnector):
             wanted = wanted[2:]
         if ".." in wanted.split("/"):
             raise ConnectorError(ErrorKind.INVALID_RESPONSE, "Report path must not contain '..'")
+        try:
+            check_zip_directory(archive)
+        except ZipTooLarge as exc:
+            raise ConnectorError(
+                ErrorKind.LIMIT_EXCEEDED, f"Artifact '{artifact_name}': {exc}"
+            ) from None
         try:
             with zipfile.ZipFile(io.BytesIO(archive)) as zf:
                 names = zf.namelist()

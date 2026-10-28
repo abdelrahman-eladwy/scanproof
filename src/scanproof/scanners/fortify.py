@@ -33,6 +33,7 @@ from defusedxml import DefusedXmlException
 # so catching xml.etree's ParseError let malformed FVDL escape the adapter.
 from defusedxml.ElementTree import ParseError, fromstring
 
+from scanproof.archives import ZipTooLarge, check_zip_directory
 from scanproof.evidence.models import FindingsSummary, ScannerError, ScanScope, ScanType
 from scanproof.scanners.base import ReportLoadError, ScannerAdapter, count_by
 
@@ -129,6 +130,10 @@ class FortifyAdapter(ScannerAdapter):
 
 
 def _read_fpr(raw: bytes) -> tuple[bytes, bytes | None]:
+    try:
+        check_zip_directory(raw)
+    except ZipTooLarge as exc:
+        raise ReportLoadError(f"FPR {exc}") from None
     try:
         with zipfile.ZipFile(io.BytesIO(raw)) as zf:
             if "audit.fvdl" not in zf.namelist():

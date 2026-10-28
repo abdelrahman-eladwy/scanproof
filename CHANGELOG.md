@@ -25,6 +25,10 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
+- **Zip bombs by entry count** ([#44](https://github.com/abdelrahman-eladwy/scanproof/issues/44)):
+  an artifact or Fortify FPR whose central directory lists more than 50,000 entries or is larger
+  than 8 MiB is refused (`LIMIT_EXCEEDED`, UNKNOWN) before `zipfile` builds an object per entry;
+  a 33 MiB archive of 400,000 empty members took 18 s and 219 MiB just to open.
 - **Hostile providers** ([#44](https://github.com/abdelrahman-eladwy/scanproof/issues/44)): a
   pagination loop is detected at once (it used to cost up to 100 requests); a non-numeric GitLab
   `X-Next-Page` is a connector error instead of a crash; API pages are size-capped like
