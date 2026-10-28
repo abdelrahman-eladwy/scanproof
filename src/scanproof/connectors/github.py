@@ -25,6 +25,7 @@ import json
 import re
 import time
 from collections.abc import Callable, Iterator
+from datetime import datetime
 from typing import Any, ClassVar
 from urllib.parse import quote
 
@@ -104,6 +105,9 @@ class GitHubConnector(HttpConnector):
             **limits,
         )
         self._run_conclusion: dict[tuple[str, int], str | None] = {}
+        # GitHub can synthesize attempt-N entries for jobs last executed in attempt N-1
+        # when only a gate is rerun. Their check-run annotations need not be preserved.
+        self._run_attempt_start: dict[tuple[str, int], tuple[int | None, str | None]] = {}
 
     # ------------------------------------------------------------------ public API
 
@@ -175,7 +179,7 @@ class GitHubConnector(HttpConnector):
         run = self._get_json(f"/repos/{_repo(project)}/actions/runs/{int(pipeline_id)}")
         try:
             self._run_conclusion[(project, int(pipeline_id))] = run.get("conclusion")
-            return Pipeline(
+            pipeline = Pipeline(
                 id=run["id"],
                 run_attempt=run.get("run_attempt"),
                 sha=run["head_sha"],
@@ -186,6 +190,11 @@ class GitHubConnector(HttpConnector):
                 finished_at=run.get("updated_at") if run.get("status") == "completed" else None,
                 web_url=run.get("html_url"),
             )
+            self._run_attempt_start[(project, int(pipeline_id))] = (
+                pipeline.run_attempt,
+                run.get("run_started_at"),
+            )
+            return pipeline
         except (KeyError, TypeError, ValueError, AttributeError) as exc:
             raise ConnectorError(
                 ErrorKind.INVALID_RESPONSE, f"Unexpected run payload: {exc}"
@@ -256,6 +265,12 @@ class GitHubConnector(HttpConnector):
                     status, allow_failure = JobStatus.FAILED, True
                     detail = masked.rstrip(".")
                     raw = f"succeeded, but a step failed under continue-on-error ({detail})"
+                elif not self._executed_in_current_attempt(project, item):
+                    # Rerunning only a gate yields synthetic current-attempt jobs for old scans.
+                    # Those check-runs can have empty annotations even after a masked failure;
+                    # do not interpret absence of annotations as proof the scan succeeded.
+                    masking_checked = False
+                    raw = "scan job predates the current workflow run attempt"
 
             return Job(
                 id=item["id"],
@@ -276,6 +291,34 @@ class GitHubConnector(HttpConnector):
             raise ConnectorError(
                 ErrorKind.INVALID_RESPONSE, f"Unexpected job payload: {exc}"
             ) from exc
+
+    def _executed_in_current_attempt(self, project: str, item: dict[str, Any]) -> bool:
+        """Do not trust synthetic rerun records whose execution predates the current attempt.
+
+        The run API's run_started_at changes on rerun. GitHub can list older scan jobs
+        under the new run_attempt with new IDs but original started_at timestamps;
+        annotations on the synthetic check-runs may be missing (#90).
+        """
+        key = (project, item.get("run_id"))
+        metadata = self._run_attempt_start.get(key)
+        if metadata is None:
+            return True  # direct _to_job usage without a fetched run, only in tests
+        attempt, run_started_at = metadata
+        if attempt == 1:
+            return True
+        if attempt is None or item.get("run_attempt") != attempt:
+            return False
+        started_at = item.get("started_at")
+        if not isinstance(run_started_at, str) or not isinstance(started_at, str):
+            return False
+        try:
+            run_time = datetime.fromisoformat(run_started_at.replace("Z", "+00:00"))
+            job_time = datetime.fromisoformat(started_at.replace("Z", "+00:00"))
+            if run_time.tzinfo is None or job_time.tzinfo is None:
+                return False
+            return job_time >= run_time
+        except ValueError:
+            return False
 
     def _masked_step_failure(self, item: dict[str, Any]) -> str | bool | None:
         """Return the failure message if a step failed silently, False if none did, None if the
