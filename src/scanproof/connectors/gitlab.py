@@ -54,6 +54,7 @@ class GitLabConnector(HttpConnector):
         max_artifact_bytes: int = DEFAULT_MAX_ARTIFACT_BYTES,
         transport: httpx.BaseTransport | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        **limits: Any,  # request_deadline, run_budget, clock (see HttpConnector)
     ) -> None:
         super().__init__(
             base_url,
@@ -67,6 +68,7 @@ class GitLabConnector(HttpConnector):
             max_artifact_bytes=max_artifact_bytes,
             transport=transport,
             sleep=sleep,
+            **limits,
         )
 
     # ------------------------------------------------------------------ public API
@@ -203,6 +205,12 @@ class GitLabConnector(HttpConnector):
             next_page = response.headers.get("x-next-page", "").strip()
             if not next_page or not items:
                 return
+            # Pages only move forward; anything else is a loop or a broken header.
+            if not next_page.isdigit() or int(next_page) <= page:
+                raise ConnectorError(
+                    ErrorKind.INVALID_RESPONSE,
+                    f"Pagination of {path} did not advance (page {page} -> {next_page!r})",
+                )
             page = int(next_page)
         raise ConnectorError(ErrorKind.LIMIT_EXCEEDED, f"More than {MAX_PAGES} pages from {path}")
 

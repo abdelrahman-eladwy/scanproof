@@ -80,6 +80,7 @@ class BitbucketConnector(HttpConnector):
         max_artifact_bytes: int = DEFAULT_MAX_ARTIFACT_BYTES,
         transport: httpx.BaseTransport | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        **limits: Any,  # request_deadline, run_budget, clock (see HttpConnector)
     ) -> None:
         super().__init__(
             api_url,
@@ -93,6 +94,7 @@ class BitbucketConnector(HttpConnector):
             max_artifact_bytes=max_artifact_bytes,
             transport=transport,
             sleep=sleep,
+            **limits,
             username=username,
             auth_scheme="basic" if username else "bearer",
         )
@@ -181,7 +183,11 @@ class BitbucketConnector(HttpConnector):
 
     def _paginate(self, url: str, what: str):
         """Bitbucket pages carry an absolute `next` URL; it must stay on the API origin."""
+        seen: set[str] = set()
         for _ in range(MAX_PAGES):
+            if url in seen:
+                raise ConnectorError(ErrorKind.INVALID_RESPONSE, f"Pagination loop in {what}")
+            seen.add(url)
             body = self._get_json_capped(url, what)
             values = body.get("values") if isinstance(body, dict) else None
             if not isinstance(values, list):

@@ -82,6 +82,7 @@ class JenkinsConnector(HttpConnector):
         max_artifact_bytes: int = DEFAULT_MAX_ARTIFACT_BYTES,
         transport: httpx.BaseTransport | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        **limits: Any,  # request_deadline, run_budget, clock (see HttpConnector)
     ) -> None:
         if token and not anonymous and not username:
             raise AuthError("Jenkins API tokens need a username (JENKINS_USER).")
@@ -97,6 +98,7 @@ class JenkinsConnector(HttpConnector):
             max_artifact_bytes=max_artifact_bytes,
             transport=transport,
             sleep=sleep,
+            **limits,
             username=username,
         )
         self._builds: dict[tuple[str, int], dict[str, Any]] = {}

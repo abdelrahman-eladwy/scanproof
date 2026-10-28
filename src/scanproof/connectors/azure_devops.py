@@ -75,6 +75,7 @@ class AzureDevOpsConnector(HttpConnector):
         max_artifact_bytes: int = DEFAULT_MAX_ARTIFACT_BYTES,
         transport: httpx.BaseTransport | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        **limits: Any,  # request_deadline, run_budget, clock (see HttpConnector)
     ) -> None:
         super().__init__(
             base_url,
@@ -88,6 +89,7 @@ class AzureDevOpsConnector(HttpConnector):
             max_artifact_bytes=max_artifact_bytes,
             transport=transport,
             sleep=sleep,
+            **limits,
             username="",
             auth_scheme=auth_scheme,  # type: ignore[arg-type]
         )
