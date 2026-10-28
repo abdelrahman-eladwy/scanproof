@@ -39,6 +39,8 @@ For contributors and maintainers. See also [CONTRIBUTING.md](../CONTRIBUTING.md)
 - [Production-readiness program](development/production-readiness.md)
 - [Reproducible CI quality baseline](development/ci-baseline.md): test/coverage thresholds,
   job durations, package integrity metrics, and retained workflow evidence.
+- [Bug severity and regression evidence](development/defect-triage.md):
+  P0/P1/P2 classification, confirmed-defect test mappings and release disposition.
 - [Security inventory and invariant traceability](development/security-traceability.md):
   implemented trust boundaries, misuse cases, tests, live evidence, and unresolved gates.
 - [Releasing](development/releasing.md)

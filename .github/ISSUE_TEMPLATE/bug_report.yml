@@ -8,6 +8,9 @@ body:
         **A VERIFIED result for missing, failed, masked, stale or foreign evidence is a security
         vulnerability.** Report it privately through the security advisory link instead.
         Never paste tokens; redact project names if needed.
+        Maintainers classify bugs as P0 (release-bypass/false VERIFIED/credential leak),
+        P1 (incorrect BLOCKED, legitimate release unavailable), or P2 (non-security
+        usability/performance). See docs/development/defect-triage.md.
   - type: input
     id: version
     attributes:
@@ -20,6 +23,17 @@ body:
     attributes:
       label: CI platform
       options: [GitLab, GitHub Actions, Azure DevOps, Jenkins, Bitbucket Pipelines, Local file only]
+    validations:
+      required: true
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact of the bug (public reports only)
+      description: For false VERIFIED, a gate bypass or leaked credentials, stop and use the private security advisory form instead.
+      options:
+        - P1 candidate - legitimate release incorrectly blocked or unavailable
+        - P2 candidate - usability, documentation or routine performance
+        - Unsure - maintainer triage needed (do not submit sensitive exploit details)
     validations:
       required: true
   - type: textarea
