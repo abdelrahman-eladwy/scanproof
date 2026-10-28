@@ -10,6 +10,9 @@ REPO="$2"
 WORK="$(mktemp -d)"
 # The suite reads its fixtures, the example policies and pyproject (version check); no src/.
 cp -R "$REPO/tests" "$REPO/examples" "$REPO/pyproject.toml" "$WORK/"
+# CI-only quality reporter is used by its own tests; never copy src/.
+mkdir -p "$WORK/scripts"
+cp "$REPO/scripts/ci_baseline.py" "$WORK/scripts/"
 cd "$WORK"
 "$PY" -c 'import scanproof, sys; print("testing installed scanproof", scanproof.__version__, "at", scanproof.__file__)'
 SCANPROOF_TEST_INSTALLED=1 "$PY" -m pytest -q -p no:cacheprovider -rs tests
