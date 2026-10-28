@@ -9,6 +9,7 @@ raised to the caller (nothing can be verified).
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -16,6 +17,7 @@ from scanproof import __version__
 from scanproof.attestation.models import AttestationEvidence
 from scanproof.attestation.verify import TrustConfig, verify_bundles
 from scanproof.connectors.base import CIConnector, ConnectorError, NotFoundError
+from scanproof.contracts import VERIFICATION_SCHEMA
 from scanproof.evidence.collector import collect_evidence, is_qualified, match_jobs
 from scanproof.evidence.models import ScanEvidence
 from scanproof.inspection import DOWNSTREAM_SEPARATOR, inspect_pipeline
@@ -25,8 +27,33 @@ from scanproof.policy.models import Policy, Requirement
 from scanproof.scanners import get_adapter
 
 
+class ConnectorErrorDetail(BaseModel):
+    """Why the CI platform could not be read. Never contains credentials."""
+
+    kind: str = Field(description="connectors.base.ErrorKind value, e.g. AUTH, NETWORK")
+    message: str
+    status_code: int | None = None
+
+
+class VerificationErrorReport(BaseModel):
+    """Written by `verify -o` when nothing could be verified (exit 2, INDETERMINATE).
+
+    Same schema_version as VerificationReport; consumers tell the two apart by the
+    presence of `error` (and absence of `requirements`).
+    """
+
+    schema_version: Literal["scanproof.dev/verification/v1alpha1"] = VERIFICATION_SCHEMA
+    scanproof_version: str = __version__
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    decision: Literal["INDETERMINATE"] = "INDETERMINATE"
+    exit_code: Literal[2] = 2
+    project: str
+    pipeline_id: int
+    error: ConnectorErrorDetail
+
+
 class VerificationReport(BaseModel):
-    schema_version: str = "scanproof.dev/verification/v1alpha1"
+    schema_version: Literal["scanproof.dev/verification/v1alpha1"] = VERIFICATION_SCHEMA
     scanproof_version: str
     generated_at: datetime
     policy: str

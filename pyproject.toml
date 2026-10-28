@@ -45,6 +45,7 @@ dev = [
   "pytest-cov>=5",
   "respx>=0.22",  # 0.21 breaks with httpx 0.28
   "ruff>=0.6",
+  "jsonschema>=4.18",  # independent validator for the published schemas/ (tests only)
 ]
 
 [project.scripts]

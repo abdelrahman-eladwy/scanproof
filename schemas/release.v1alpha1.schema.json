@@ -1,0 +1,120 @@
+{
+  "$defs": {
+    "Component": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "pipeline": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "pattern": "^\\s*[1-9][0-9]*\\s*$",
+              "type": "string"
+            },
+            {
+              "pattern": "^\\s*\\$\\{[A-Za-z_][A-Za-z0-9_]*\\}\\s*$",
+              "type": "string"
+            }
+          ],
+          "description": "Pipeline / run / build id, or ${ENV_VAR}",
+          "title": "Pipeline"
+        },
+        "policy": {
+          "description": "Policy file, relative to the release file",
+          "title": "Policy",
+          "type": "string"
+        },
+        "project": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Override the policy's project",
+          "title": "Project"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Platform URL for this component",
+          "title": "Url"
+        }
+      },
+      "required": [
+        "name",
+        "policy",
+        "pipeline"
+      ],
+      "title": "Component",
+      "type": "object"
+    },
+    "Metadata": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Metadata",
+      "type": "object"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/abdelrahman-eladwy/scanproof/main/schemas/release.v1alpha1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "const": "scanproof.dev/v1alpha1",
+      "title": "Apiversion",
+      "type": "string"
+    },
+    "components": {
+      "items": {
+        "$ref": "#/$defs/Component"
+      },
+      "maxItems": 50,
+      "minItems": 1,
+      "title": "Components",
+      "type": "array"
+    },
+    "kind": {
+      "const": "ReleaseAssurance",
+      "title": "Kind",
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "components"
+  ],
+  "title": "ScanProof ReleaseAssurance (input)",
+  "type": "object",
+  "x-scanproof-contract": "scanproof.dev/v1alpha1"
+}

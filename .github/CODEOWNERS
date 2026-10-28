@@ -11,3 +11,5 @@
 /src/scanproof/attestation/ @abdelrahman-eladwy
 /docs/security.md @abdelrahman-eladwy
 /docs/protected-release-gates.md @abdelrahman-eladwy
+/schemas/ @abdelrahman-eladwy
+/src/scanproof/contracts.py @abdelrahman-eladwy

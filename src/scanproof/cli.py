@@ -38,7 +38,11 @@ from scanproof.reporting.console import (
     print_verification_summary,
 )
 from scanproof.scanners import ADAPTERS, get_adapter
-from scanproof.verification import verify_pipeline
+from scanproof.verification import (
+    ConnectorErrorDetail,
+    VerificationErrorReport,
+    verify_pipeline,
+)
 
 EXIT_OK = 0
 EXIT_POLICY_FAILURE = 1
@@ -574,21 +578,12 @@ def verify(
             )
     except ConnectorError as exc:
         if output:
-            output.write_text(
-                json.dumps(
-                    {
-                        "schema_version": "scanproof.dev/verification/v1alpha1",
-                        "decision": "INDETERMINATE",
-                        "exit_code": EXIT_INDETERMINATE,
-                        "project": target_project,
-                        "pipeline_id": pipeline,
-                        "error": exc.to_dict(),
-                    },
-                    indent=2,
-                )
-                + "\n",
-                encoding="utf-8",
+            error_report = VerificationErrorReport(
+                project=target_project,
+                pipeline_id=pipeline,
+                error=ConnectorErrorDetail.model_validate(exc.to_dict()),
             )
+            output.write_text(error_report.model_dump_json(indent=2) + "\n", encoding="utf-8")
         raise _fail(EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}") from None
 
     _emit(report.model_dump_json(indent=2), output)
