@@ -41,6 +41,10 @@ jobs:
         run: >-
           python scripts/benchmark_job_matching.py
           --output build/job-matching-benchmark.json
+      - name: Record end-to-end verify timings and memory (in-process double, not an SLO)
+        run: >-
+          python scripts/benchmark_verify_pipeline.py
+          --output build/verify-pipeline-benchmark.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
