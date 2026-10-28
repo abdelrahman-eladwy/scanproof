@@ -197,8 +197,13 @@ requirements:
   copy that ran must run every declared leg, even if it no longer runs as a matrix.
 - Without `copies`, behavior is unchanged: the copies that ran are evaluated, a removed copy
   is not detected, and `verify` adds a warning saying so.
-- A qualified `job_name` (`svc-a > sast`) matches only that job and needs no `copies`. One
-  requirement per qualified name is an alternative when the copies need different checks.
+- A qualified `job_name` (`svc-a > sast` or `api / sast`) matches **only that
+  path's job and its parallel/matrix instances**: `svc-a > sast 1/3`,
+  `svc-a > sast: [py]` and `api / sast (py)`. The same-named job under another
+  child/caller is **not** matched. A qualified requirement needs no `copies`;
+  declare `instances: [py, go]` when all matrix legs must run, and missing
+  `N`-way parallel indices remain a failure. One qualified requirement per
+  path is an alternative when copies need different checks.
 
 ## Missing or unreadable: when absence is proven
 

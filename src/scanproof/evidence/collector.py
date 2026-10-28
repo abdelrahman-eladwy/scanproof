@@ -146,8 +146,11 @@ def find_jobs(jobs: list[InspectedJob], name: str) -> tuple[list[InspectedJob], 
 
 
 def is_qualified(name: str) -> bool:
-    """A job_name with a path ('svc-a > sast', 'caller / sast') matches only itself, so it has
-    no copies elsewhere, in a readable pipeline or not (#71)."""
+    """A path-qualified job_name covers only that exact prefix and its job instances.
+
+    It never matches copies in another child/caller, even if they share the final job
+    name. The qualifier replaces a broad copies declaration (#62, #71).
+    """
     return any(sep in name for sep in _TAIL_SEPARATORS)
 
 
@@ -199,25 +202,32 @@ def match_jobs(
 
     An exact match does not hide instances (#59). ScanProof cannot tell a deliberate,
     unrelated 'sast 1/2' from a leg of 'sast', and letting a passing 'sast' stand in for a
-    failing leg would be a false VERIFIED. A qualified name ('child > sast') still matches
-    only itself, because the instance patterns apply to the last segment.
+    failing leg would be a false VERIFIED. A qualified name ('child > sast') covers only
+    that child's 'sast' job and its parallel/matrix instances (#62), not other children.
     """
-    matches = [j for j in jobs if j.name == name or _is_instance(_tail(j.name)[1], name)]
+    qualified = is_qualified(name)
+    required_prefix, base_name = _tail(name) if qualified else ("", name)
+    matches = [
+        j
+        for j in jobs
+        if (not qualified or _tail(j.name)[0] == required_prefix)
+        and _is_instance(_tail(j.name)[1], base_name)
+    ]
     present: dict[tuple[str, int], set[int]] = {}
     legs: dict[str, tuple[set[str], str]] = {}  # prefix -> (labels present, naming style)
     undeclared: list[str] = []
     for j in matches:
         prefix, tail = _tail(j.name)
         m = _PARALLEL.match(tail)
-        if m and m.group("base") == name:
+        if m and m.group("base") == base_name:
             present.setdefault((prefix, int(m.group("total"))), set()).add(int(m.group("index")))
-        leg = _matrix_label(tail, name)
+        leg = _matrix_label(tail, base_name)
         if leg is not None:
             style, label = leg
             legs.setdefault(prefix, (set(), style))[0].add(normalize_instance_label(label))
             undeclared.append(j.name)
     missing = [
-        f"{prefix}{name} {i}/{total}"
+        f"{prefix}{base_name} {i}/{total}"
         for (prefix, total), indices in sorted(present.items())
         if total <= 1000
         for i in range(1, total + 1)
@@ -225,11 +235,13 @@ def match_jobs(
     ]
     present_copies: dict[str, str] = {}  # copy path -> its name prefix
     for j in matches:
-        present_copies.setdefault(_copy_path(j.name, name), _tail(j.name)[0])
+        present_copies.setdefault(_copy_path(j.name, base_name), _tail(j.name)[0])
     missing_copies = [
-        (_copy_name(c, name, matches), c) for c in copies or [] if c not in present_copies
+        (_copy_name(c, base_name, matches), c) for c in copies or [] if c not in present_copies
     ]
-    undeclared_copies = [] if copies else [j.name for j in matches if _copy_path(j.name, name)]
+    undeclared_copies = (
+        [] if copies or qualified else [j.name for j in matches if _copy_path(j.name, base_name)]
+    )
     if not instances:
         return JobMatch(
             jobs=matches,
@@ -246,7 +258,7 @@ def match_jobs(
         if path in present_copies:  # a declared copy that ran must run every declared leg
             legs.setdefault(present_copies[path], (set(), leg_style))
     missing_declared = [
-        (_leg_name(prefix, name, label, style or None), label)
+        (_leg_name(prefix, base_name, label, style or None), label)
         for prefix, (labels, style) in sorted(legs.items())
         for label in instances
         if label not in labels
