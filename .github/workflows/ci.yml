@@ -37,6 +37,10 @@ jobs:
         run: >-
           python scripts/ci_baseline.py tests --junit build/junit.xml
           --coverage build/coverage.json --output build/ci-baseline.json
+      - name: Record large-pipeline matching timings and memory (not an end-to-end SLO)
+        run: >-
+          python scripts/benchmark_job_matching.py
+          --output build/job-matching-benchmark.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
