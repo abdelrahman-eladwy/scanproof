@@ -29,6 +29,12 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
+- Retries ([#46](https://github.com/abdelrahman-eladwy/scanproof/issues/46)): a 429/503 whose
+  `Retry-After` is over 60 s, or whose wait would not fit in the remaining run budget, is no
+  longer slept on and retried early; it is reported immediately as RATE_LIMITED / SERVER
+  instead of a misleading NETWORK "time budget" error. Total retry sleep can no longer
+  overrun `run_budget`. HTTP-date `Retry-After` is honored. A GitHub 403 secondary rate limit
+  (`Retry-After` present) is RATE_LIMITED, not AUTH. Every path stays INDETERMINATE.
 - `verify-release`: a component `pipeline` must be a positive decimal id or a `${ENV_VAR}`
   resolving to one. YAML `pipeline: yes`/`on`/`true` used to become pipeline **1** (bool is
   an int), silently verifying the wrong pipeline; zero, negative, float, `1_000` and `+5`
