@@ -160,9 +160,7 @@ def test_one_adversarial_mutation_never_silently_passes(
     assert actual_codes & expected_codes, (provider, fault, actual_codes)
 
 
-def test_baseline_is_not_restored_by_failing_and_unknown_separate_requirements(
-    mock_api, connector
-):
+def test_baseline_is_not_restored_by_failing_and_unknown_separate_requirements(mock_api, connector):
     """Aggregation contract: one failed scan always beats an unavailable scan."""
     gl = FakeGitLab(mock_api)
     gl.job(101, "sast", status="failed", files={"semgrep.json": SEMGREP})
