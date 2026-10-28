@@ -81,6 +81,11 @@ def find_job(jobs: list[InspectedJob], name: str) -> InspectedJob | None:
 
 
 _PARALLEL = re.compile(r"^(?P<base>.+) (?P<index>\d+)/(?P<total>\d+)$")
+# Bound only diagnostic enumeration, NEVER the check that all advertised legs exist.
+_MAX_PARALLEL_ENUMERATE = 1000
+# Avoid unbounded decimal conversion (Python raises for >4300 digits); malformed API job
+# names must fail closed rather than raising or silently bypassing missing-leg checks.
+_MAX_PARALLEL_DIGITS = 12
 _TAIL_SEPARATORS = (" > ", " / ")  # ScanProof downstream prefix; GitHub reusable workflows
 
 
@@ -185,7 +190,9 @@ def match_jobs(
     Every job the name covers counts and every one must pass: the exact name itself, parallel
     ('sast 2/3'), GitLab matrix ('sast: [py]'), GitHub matrix ('sast (py)'), downstream
     ('trigger > sast') and GitHub reusable workflow ('caller / sast') jobs. GitLab parallel
-    names carry the total, so missing indices are reported.
+    names carry the total, so missing indices are reported. For totals above 1,000
+    a compact missing-leg diagnostic replaces enumeration; the completeness check
+    itself is never skipped (#88). Invalid indices and inconsistent totals fail closed.
 
     Matrix names carry no total, so a removed leg is invisible from the names alone (#60).
     `instances` (the requirement's declared labels, normalized) closes that gap: within every
@@ -214,25 +221,51 @@ def match_jobs(
         and _is_instance(_tail(j.name)[1], base_name)
     ]
     present: dict[tuple[str, int], set[int]] = {}
+    invalid_parallel: set[str] = set()
     legs: dict[str, tuple[set[str], str]] = {}  # prefix -> (labels present, naming style)
     undeclared: list[str] = []
     for j in matches:
         prefix, tail = _tail(j.name)
         m = _PARALLEL.match(tail)
         if m and m.group("base") == base_name:
-            present.setdefault((prefix, int(m.group("total"))), set()).add(int(m.group("index")))
+            index_raw, total_raw = m.group("index"), m.group("total")
+            if len(index_raw) > _MAX_PARALLEL_DIGITS or len(total_raw) > _MAX_PARALLEL_DIGITS:
+                invalid_parallel.add(f"{prefix}{base_name} [invalid parallel index/total]")
+            else:
+                index, total = int(index_raw), int(total_raw)
+                if not 1 <= index <= total:
+                    invalid_parallel.add(f"{prefix}{base_name} [invalid parallel index/total]")
+                else:
+                    present.setdefault((prefix, total), set()).add(index)
         leg = _matrix_label(tail, base_name)
         if leg is not None:
             style, label = leg
             legs.setdefault(prefix, (set(), style))[0].add(normalize_instance_label(label))
             undeclared.append(j.name)
-    missing = [
-        f"{prefix}{base_name} {i}/{total}"
-        for (prefix, total), indices in sorted(present.items())
-        if total <= 1000
-        for i in range(1, total + 1)
-        if i not in indices
-    ]
+
+    # A conflicting total in one pipeline copy is ambiguous, even if both sets happen
+    # to be individually complete. Different downstream copies may have different totals.
+    totals_by_prefix: dict[str, set[int]] = {}
+    for prefix, total in present:
+        totals_by_prefix.setdefault(prefix, set()).add(total)
+    for prefix, totals in totals_by_prefix.items():
+        if len(totals) > 1:
+            invalid_parallel.add(f"{prefix}{base_name} [conflicting parallel totals]")
+
+    missing = sorted(invalid_parallel)
+    for (prefix, total), indices in sorted(present.items()):
+        if total <= _MAX_PARALLEL_ENUMERATE:
+            missing.extend(
+                f"{prefix}{base_name} {i}/{total}"
+                for i in range(1, total + 1)
+                if i not in indices
+            )
+        elif len(indices) != total:
+            # A 1/1001 job must not become VERIFIED just because enumerating 1,000 missing
+            # names was capped. Checking the observed count is O(number of visible jobs).
+            missing.append(
+                f"{prefix}{base_name} [missing {total - len(indices)} of {total} parallel legs]"
+            )
     present_copies: dict[str, str] = {}  # copy path -> its name prefix
     for j in matches:
         present_copies.setdefault(_copy_path(j.name, base_name), _tail(j.name)[0])
