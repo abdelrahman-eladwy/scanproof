@@ -12,7 +12,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 LEDGER = ROOT / "docs/development/defect-triage.md"
-REQUIRED_CASES = {50, 59, 60, 62, 65, 68, 69, 71, 88, 90}
+REQUIRED_CASES = {23, 50, 59, 60, 62, 65, 68, 69, 71, 88, 90}
+REQUIRED_FIX_PRS = {20, 21, 22, 78, 80, 81, 82}
 
 
 def test_defect_ledger_cites_existing_regression_tests() -> None:
@@ -43,6 +44,46 @@ def test_defect_ledger_cites_existing_regression_tests() -> None:
     assert observed >= REQUIRED_CASES, (
         f"Missing known regression mappings: {REQUIRED_CASES - observed}"
     )
+
+
+def test_early_fix_pr_regressions_remain_auditable() -> None:
+    """Early fixes were PRs, not separate issues; require test paths for each."""
+    if os.environ.get("SCANPROOF_TEST_INSTALLED") == "1":
+        return
+
+    content = LEDGER.read_text(encoding="utf-8")
+    rows = [line for line in content.splitlines() if line.startswith("| [PR #")]
+    observed: set[int] = set()
+    for row in rows:
+        cells = [cell.strip() for cell in row.strip("|").split("|")]
+        assert len(cells) == 4, row
+        pr = re.fullmatch(
+            r"\[PR #(\d+)\]\(https://github\.com/abdelrahman-eladwy/scanproof/pull/\1\)"
+            r"(?: .*)?",
+            cells[0],
+        )
+        assert pr is not None, row
+        number = int(pr.group(1))
+        assert number not in observed, f"Duplicate fix PR #{number}"
+        observed.add(number)
+        assert re.fullmatch(r"P[012](?: .*)?", cells[1]), f"Unclassified PR #{number}"
+        paths = re.findall(r"`(tests/unit/test_[a-z0-9_]+\.py)`", cells[2])
+        assert paths, f"No regression path for PR #{number}"
+        for path in paths:
+            assert (ROOT / path).is_file(), f"PR #{number} references missing {path}"
+        assert cells[3], f"PR #{number} lacks a validation limitation"
+    assert observed >= REQUIRED_FIX_PRS, (
+        f"Missing historical fix PR mappings: {REQUIRED_FIX_PRS - observed}"
+    )
+
+
+def test_ledger_does_not_claim_complete_security_qualification() -> None:
+    if os.environ.get("SCANPROOF_TEST_INSTALLED") == "1":
+        return
+    content = LEDGER.read_text(encoding="utf-8")
+    assert "not every historical commit" in content
+    assert "independent release gates" in content
+    assert "Phase 1 #44" in content
 
 
 def test_defect_triage_keeps_security_disclosure_boundary() -> None:

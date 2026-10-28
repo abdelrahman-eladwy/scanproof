@@ -22,6 +22,7 @@ Rows are backed by code-level regression tests in the core repo and public GitHu
 
 | Defect | Severity | Regression file(s) | Release disposition |
 |---|---|---|---|
+| [#23](https://github.com/abdelrahman-eladwy/scanproof/issues/23) scope-free parseable reports lacked a release-grade scope option | P1 (assurance-contract gap) | `tests/unit/test_assurance_profile.py` | Mitigated by **opt-in** `assurance.minimum_level: reported_scope` (PR #24): unknown scope is UNKNOWN, empty scope FAIL; compatible `report` policies remain weaker. Reported scope is still self-attested, not independent proof |
 | [#50](https://github.com/abdelrahman-eladwy/scanproof/issues/50) unknown ref and required-path bypass | P0 | `tests/unit/test_false_verified_paths.py` | Fixed; do not weaken scoped policy/ref handling |
 | [#59](https://github.com/abdelrahman-eladwy/scanproof/issues/59) exact job hides failed instances | P0 | `tests/unit/test_exact_name_instances.py` | Fixed; all matched jobs must pass |
 | [#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60) removed matrix leg not detected | P0 | `tests/unit/test_declared_instances.py` and `tests/unit/test_adversarial_decision_matrix.py` | Fixed with declared legs; unknown total still requires declarations |
@@ -32,6 +33,31 @@ Rows are backed by code-level regression tests in the core repo and public GitHu
 | [#71](https://github.com/abdelrahman-eladwy/scanproof/issues/71) visible job with unreadable child still VERIFIED in production | P0 (re-triaged from historical P1 label) | `tests/unit/test_unbounded_copies.py` | Fixed for production; review waiver/declaration behavior before claiming gate completeness |
 | [#62](https://github.com/abdelrahman-eladwy/scanproof/issues/62) qualified child matrix/parallel job falsely absent | P2 (issue label; reconsider P1 if a supported release is blocked) | `tests/unit/test_qualified_instances.py` | Fixed; child-prefix scope stays narrow |
 | [#69](https://github.com/abdelrahman-eladwy/scanproof/issues/69) unrelated unreadable child misclassifies missing copy | P2 (issue label; compatible fail-open warning amplifies risk) | `tests/unit/test_declared_copies.py` | Fixed; unreadable scope must be bounded to relevant child |
+
+### Older security/correctness fixes tracked by pull request
+
+Several early fixes were submitted directly as PRs rather than standalone defect
+issues. These are **fixed code regressions**, not new claims about protected provider
+enforcement. Their source-level test paths are checked automatically just like the
+issue-linked rows above. PR numbers are used to avoid incorrectly treating a PR as
+a separate issue.
+
+| Fix PR | Severity / affected boundary | Regression file(s) | What the test protects / limitation |
+|---|---|---|---|
+| [PR #20](https://github.com/abdelrahman-eladwy/scanproof/pull/20) downstream source project | P1 (false BLOCKED) | `tests/unit/test_complex_gitlab.py` | Child-project artifacts, report provenance and bundled attestations must be read from the originating project; live authenticated private artifacts remain unqualified under #25 |
+| [PR #21](https://github.com/abdelrahman-eladwy/scanproof/pull/21) future-dated scan completion | P0 (false freshness evidence) | `tests/unit/test_advanced_policy.py` | A job timestamp over five minutes in the future is UNKNOWN, not proof of a fresh scan; freshness requires `max_age_hours` |
+| [PR #22](https://github.com/abdelrahman-eladwy/scanproof/pull/22) GitHub signed run replay | P0 (attestation replay) | `tests/unit/test_attestation_e2e.py` | Signed attempt must equal the current workflow-run attempt when `same_run` is required; this alone does not protect the signer workflow |
+| [PR #78](https://github.com/abdelrahman-eladwy/scanproof/pull/78) retired trust root | P0 (untrusted signing material) | `tests/unit/test_attestation_trust_windows.py` | Fulcio CA, Rekor and CT trust windows are checked at signing time; signing timestamp/source validation remains a distinct boundary |
+| [PR #80](https://github.com/abdelrahman-eladwy/scanproof/pull/80) hostile HTTP pagination/response budgets | P0 candidate (resource-exhaustion/availability) | `tests/unit/test_hostile_providers.py` | Slow-drip responses, inflated API pages and repeating pagination are bounded; no live provider throughput/SLO certification |
+| [PR #81](https://github.com/abdelrahman-eladwy/scanproof/pull/81) oversized ZIP directories | P0 candidate (resource-exhaustion) | `tests/unit/test_zip_guard.py` | Excessive archive entry counts/central-directory sizes are rejected before full ZIP parsing; full-system memory ceilings remain to be load-tested |
+| [PR #82](https://github.com/abdelrahman-eladwy/scanproof/pull/82) GitLab root trigger-list 404 | P0 (false VERIFIED from incomplete graph) | `tests/unit/test_declared_copies.py` | Root downstream inventory 404 must not hide a failing child copy behind a passing root job; unresolved child access stays UNKNOWN |
+
+**Audit boundary:** This register now covers the explicitly enumerated issue-linked
+and early PR-linked regressions, not every historical commit. The evidence
+required to close Phase 1 #44 includes an exhaustive confirmed-defect sweep,
+red/green regression history where available, and verification of open P0
+findings. Source-level test references alone cannot prove past vulnerable code
+was exercised or that independent release gates reject malicious bypasses.
 
 **Scope caveat:** Historical labels reflect triage at the time. #71 carried a P1 label despite a reproduced false VERIFIED under `production`, so **this ledger re-triages that fixed issue as P0** based on the invariant, rather than copying the historical label. #88 was experimentally confirmed by a **red** test and fixed in #89; #90 was reproduced against a real GitHub rerun and fixed in #92, with a separate live provider rerun acceptance requirement. All rows are regression-mapped, but this *does not claim that every confirmed bug ever found* has a listed test; that broader inventory remains in #44/#41.
 
