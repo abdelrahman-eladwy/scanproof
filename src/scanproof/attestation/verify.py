@@ -15,6 +15,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from scanproof.attestation import windows
 from scanproof.attestation.models import (
     AttestationEvidence,
     AttestationStatus,
@@ -97,6 +98,7 @@ class TrustConfig:
         self.trusted_roots = list(trusted_roots or [])
         self.offline = offline
         self._verifiers: list[Any] | None = None
+        self._roots: list[dict] = []  # trusted root of each verifier, same order
         self._error: str | None = None
 
     def verifiers(self) -> list[Any]:
@@ -112,12 +114,18 @@ class TrustConfig:
             raise RuntimeError(self._error)
         return self._verifiers or []
 
+    def root(self, index: int) -> dict:
+        """The trusted root (as a dict) of verifiers()[index], for the validity-window check."""
+        return self._roots[index]
+
     def _build(self) -> list[Any]:
         from sigstore.models import ClientTrustConfig, TrustedRoot
         from sigstore.verify import Verifier
 
         if not self.trusted_roots:
             config = ClientTrustConfig.production(offline=self.offline)
+            # sigstore-python exposes no public accessor for the root's validity windows.
+            self._roots = [json.loads(config.trusted_root._inner.to_json())]
             return [Verifier(trusted_root=config.trusted_root)]
         verifiers = []
         with tempfile.TemporaryDirectory() as tmp:
@@ -132,6 +140,7 @@ class TrustConfig:
                     one = Path(tmp) / f"{len(verifiers)}-{i}.json"
                     one.write_text(doc, encoding="utf-8")
                     verifiers.append(Verifier(trusted_root=TrustedRoot.from_file(str(one))))
+                    self._roots.append(json.loads(doc))
         if not verifiers:
             raise ValueError("no trusted roots in the given files")
         return verifiers
@@ -183,7 +192,7 @@ def verify_bundle(
         )
 
     errors: list[str] = []
-    for verifier in verifiers:
+    for index, verifier in enumerate(verifiers):
         try:
             if is_dsse:
                 payload_type, payload = verifier.verify_dsse(bundle, _IdentityCheckedByPolicy())
@@ -192,6 +201,7 @@ def verify_bundle(
                     _prehashed(artifact_sha256 or ""), bundle, _IdentityCheckedByPolicy()
                 )
                 payload_type, payload = None, None
+            accepted = index  # whose trust root the validity-window check uses
             break
         except Exception as exc:  # VerificationError and anything malformed inside the bundle
             errors.append(_short(exc))
@@ -206,6 +216,13 @@ def verify_bundle(
         signer = signer_claims(bundle.signing_certificate)
     except Exception as exc:
         return fail(AttestationStatus.INVALID, f"unreadable signing certificate: {_short(exc)}")
+
+    # sigstore-python doesn't check signing time against the trust root's validity windows.
+    outcome, why = windows.check(raw, bundle.signing_certificate, trust.root(accepted))
+    if outcome == windows.INVALID:
+        return fail(AttestationStatus.INVALID, f"trust material not valid at signing time: {why}")
+    if outcome != windows.OK:
+        return fail(AttestationStatus.UNVERIFIABLE, why)
 
     if payload is None:  # message signature over the artifact bytes
         return AttestationEvidence(

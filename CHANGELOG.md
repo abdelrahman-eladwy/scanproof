@@ -25,6 +25,12 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
+- **Attestations:** a bundle signed after its Fulcio CA, Rekor key or CT log key was retired
+  (the trust root's `validFor` window had ended) verified, because sigstore-python 4.x checks
+  those windows against the current time only. ScanProof now requires every recorded signing
+  time to fall inside them (`ATTESTATION_INVALID`). A GitHub run whose URL is unknown no longer
+  counts as the signing run on run id alone (`ATTESTATION_RUN_UNKNOWN`)
+  ([#44](https://github.com/abdelrahman-eladwy/scanproof/issues/44)).
 - `--anonymous` help, the missing-token error and the anonymous GitLab 429 message now state that
   gitlab.com and api.github.com allow 60 unauthenticated API requests per hour per IP, and
   suggest a `read_api` token ([#74](https://github.com/abdelrahman-eladwy/scanproof/issues/74)).

@@ -146,13 +146,16 @@ class GitHubConnector(HttpConnector):
         m = _RUN_URI.match(invocation_uri)
         if not m:
             return None
-        if pipeline.web_url:
-            run = _RUN_URI.match(pipeline.web_url)
-            if run and (run.group("host"), run.group("repo").lower()) != (
-                m.group("host"),
-                m.group("repo").lower(),
-            ):
-                return False
+        # Host and repository come from the run's own URL. Without it, a matching run id alone
+        # would not show the signature was made in this repository: unknown, not a match.
+        run = _RUN_URI.match(pipeline.web_url or "")
+        if run is None:
+            return None
+        if (run.group("host"), run.group("repo").lower()) != (
+            m.group("host"),
+            m.group("repo").lower(),
+        ):
+            return False
         if int(m.group("run")) != pipeline.id:
             return False
         # Run IDs survive reruns. Both attempt numbers are required to

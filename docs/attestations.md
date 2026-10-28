@@ -14,12 +14,18 @@ pip install "scanproof[attestations]"     # adds sigstore-python; the Docker ima
 ## What gets checked
 
 For each bundle, `sigstore-python` verifies the Fulcio certificate chain, the signing time
-(Rekor transparency log or an RFC 3161 timestamp), log inclusion, and the DSSE signature. Only
-after that does ScanProof read the claims, and then the policy is checked against them:
+(Rekor transparency log or an RFC 3161 timestamp), log inclusion, and the DSSE signature.
+ScanProof then checks that the trust material was valid **when the bundle was signed**: every
+recorded signing time must fall inside the trust root's `validFor` window of the Fulcio CA that
+issued the certificate and of the transparency log, and each SCT inside its CT log's window.
+sigstore-python 4.x compares those windows with the current time only, so without this a
+signature made after Sigstore retired a CA or log key would verify. Only after that does
+ScanProof read the claims, and then the policy is checked against them:
 
 | Check | Fails with |
 |---|---|
 | Bundle verifies against a trusted Sigstore instance | `ATTESTATION_INVALID` (edited payload, swapped certificate, wrong instance...) |
+| Signed while the CA, log and CT log keys were valid (trust root `validFor`) | `ATTESTATION_INVALID` ("trust material not valid at signing time") |
 | Statement subject = sha256 of the report, or the image digest | `ATTESTATION_SUBJECT_MISMATCH` |
 | `predicateType` is the one the policy asks for | `ATTESTATION_PREDICATE_MISMATCH` |
 | Certificate issuer, source repository, Build Signer URI (regex, full match) | `ATTESTATION_SIGNER_MISMATCH` |
@@ -118,6 +124,12 @@ By default ScanProof trusts **Sigstore public-good**, refreshed over TUF (networ
 - `--sigstore-trusted-root FILE` (repeatable): trusted_root.json, or JSON lines of them. **Private
   GitHub repositories** sign with GitHub's own Sigstore instance; get its root with
   `gh attestation trusted-root > roots.jsonl`. A bundle is valid if it verifies against any root.
+
+A replay from **another project** (its genuine report and bundle copied into this run, even a
+fork at the same commit) fails the repository pin (`ATTESTATION_SIGNER_MISMATCH`) and the run
+check (`ATTESTATION_WRONG_RUN`). Only a signer without `repository` plus `same_run: false` would
+accept it, and `assurance.profile: production` rejects both. Timestamp authorities' own `validFor`
+windows are not checked against the signing time.
 
 `scanproof attestation -b bundle.json [-f report.json]` verifies bundles and prints the claims
 ScanProof would judge, which helps when writing the `signer` block.

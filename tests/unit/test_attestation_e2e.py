@@ -264,6 +264,96 @@ def test_store_request_never_sends_the_token_elsewhere(conn, gh, mock_api) -> No
             assert "authorization" not in call.request.headers
 
 
+# ---------------------------------------------------------------- replay across projects
+#
+# The genuine report and bundle of abdelrahman-eladwy/scanproof, copied into another project's
+# run: a fork at the same commit, so only the project (and run) differ.
+
+VICTIM = "victim-org/app"
+VICTIM_SIGNER = {
+    "issuer": "https://token.actions.githubusercontent.com",
+    "repository": f"https://github.com/{VICTIM}",
+    "workflow": r"https://github\.com/victim-org/app/\.github/workflows/ci\.yml@refs/heads/main",
+}
+
+
+@pytest.fixture
+def victim(mock_api) -> FakeGitHub:
+    fake = FakeGitHub(mock_api, repo=VICTIM, run_id=int(RUN["run_id"]) + 5, sha=RUN["sha"])
+    fake.job(1, "sast")
+    fake.artifact(
+        10,
+        "semgrep-report",
+        {
+            "semgrep.json": REPORT,
+            "semgrep.json.provenance.sigstore.json": (
+                A / "semgrep.provenance.sigstore.json"
+            ).read_bytes(),
+        },
+    )
+    return fake
+
+
+def verify_victim(conn, victim, profile="compatible", **attestation):
+    body = {
+        "apiVersion": "scanproof.dev/v1alpha1",
+        "kind": "PipelineAssurancePolicy",
+        "project": {"provider": "github", "id": VICTIM},
+        "assurance": {"profile": profile},
+        "requirements": [sast(**({"signer": VICTIM_SIGNER} | attestation))],
+    }
+    victim.install()
+    return verify_pipeline(
+        conn,
+        Policy.model_validate(body),
+        instance_url=API,
+        project=VICTIM,
+        pipeline_id=victim.run_id,
+        trust=TRUST,
+    )
+
+
+@pytest.mark.parametrize("profile", ["compatible", "production"])
+def test_bundle_replayed_into_another_project_is_rejected(conn, victim, profile) -> None:
+    report = verify_victim(conn, victim, profile)
+    assert report.decision is Decision.BLOCKED
+    assert codes(report) == {"SAST.attestation": "ATTESTATION_SIGNER_MISMATCH"}
+
+
+def test_repository_pin_alone_rejects_a_replay_from_another_project(conn, victim) -> None:
+    """The weakest signer production accepts: repository only, no workflow regex."""
+    signer = {k: v for k, v in VICTIM_SIGNER.items() if k != "workflow"}
+    report = verify_victim(conn, victim, "production", signer=signer)
+    assert codes(report) == {"SAST.attestation": "ATTESTATION_SIGNER_MISMATCH"}
+
+
+def test_unpinned_signer_still_fails_on_the_run(conn, victim) -> None:
+    """A loose signer (compatible only) is still caught by same_run: another project's run."""
+    loose = {"issuer": VICTIM_SIGNER["issuer"], "workflow": ".*"}
+    report = verify_victim(conn, victim, signer=loose)
+    assert codes(report) == {"SAST.attestation": "ATTESTATION_WRONG_RUN"}
+
+
+def test_cross_project_replay_needs_opt_ins_production_rejects(conn, victim) -> None:
+    """Only a loose signer AND same_run: false accept it, and production rejects both."""
+    loose = {"issuer": VICTIM_SIGNER["issuer"], "workflow": ".*"}
+    assert verify_victim(conn, victim, signer=loose, same_run=False).decision is Decision.VERIFIED
+    with pytest.raises(ValueError) as err:
+        verify_victim(conn, victim, "production", signer=loose, same_run=False)
+    assert "SIGNER_REPOSITORY_UNPINNED" in str(err.value)
+    assert "ATTESTATION_SAME_RUN_DISABLED" in str(err.value)
+
+
+def test_github_run_without_its_url_is_unknown_not_a_match() -> None:
+    """Without the run's URL, host and repository can't be compared: a run id is not enough."""
+    pipe = Pipeline(id=7, sha="a", status="success", run_attempt=1)
+    with GitHubConnector(API, "t") as c:
+        assert (
+            c.run_matches("https://github.com/evil/app/actions/runs/7/attempts/1", pipe, set())
+            is None
+        )
+
+
 # ---------------------------------------------------------------- run matching
 
 
