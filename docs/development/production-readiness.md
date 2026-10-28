@@ -61,8 +61,11 @@ must consume versioned decision reports, not duplicate policy logic.
       backward-compatible behavior versus recommended strict production profile.
       *Evidence:* `assurance.profile: compatible | production` (#52);
       `tests/unit/test_production_profile.py`; docs/advanced-policy.md.
-- [ ] Establish reproducible CI baseline: test count, branch coverage, job
+- [x] Establish reproducible CI baseline: test count, branch coverage, job
       duration, lowest-dependency constraints, Docker smoke and artifact sizes.
+      *Evidence:* [measured CI baseline](ci-baseline.md), structured JUnit/coverage JSON,
+      distribution-size/digest manifests, lowest-deps/package/non-root Docker CI;
+      quality thresholds enforced for both supported Python versions.
 - [ ] Classify bugs: P0 false VERIFIED / bypass / credential leak; P1 incorrect
       BLOCKED or unavailable legitimate releases; P2 usability/performance.
 - [x] Create a traceability table: invariant -> automated test -> live contract

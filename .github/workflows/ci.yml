@@ -22,10 +22,27 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python }}
+      - name: Start measurable test job
+        run: |
+          echo "SCANPROOF_CI_START_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+          mkdir -p build
       - run: pip install -e ".[dev]"
       - run: ruff check .
       - run: ruff format --check .
-      - run: pytest --cov=scanproof --cov-branch --cov-report=term-missing --cov-fail-under=90
+      - run: >-
+          pytest --cov=scanproof --cov-branch --cov-report=term-missing
+          --cov-report=json:build/coverage.json --junitxml=build/junit.xml
+          --cov-fail-under=90
+      - name: Record and enforce test quality baseline
+        run: >-
+          python scripts/ci_baseline.py tests --junit build/junit.xml
+          --coverage build/coverage.json --output build/ci-baseline.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: ci-quality-${{ matrix.python }}
+          path: build/
+          if-no-files-found: warn
 
   lowest-deps:
     # The oldest dependency versions pyproject.toml allows must really work, with and without
@@ -58,6 +75,10 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.13"
+      - name: Start measurable package job
+        run: |
+          echo "SCANPROOF_CI_START_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+          mkdir -p build
       - run: pip install build
       - run: python -m build
       - name: Install the wheel in a clean venv and smoke test it
@@ -77,6 +98,16 @@ jobs:
           python -m venv /tmp/w
           /tmp/w/bin/pip install "$(ls dist/*.whl)[attestations]" pytest respx
           scripts/test_installed.sh /tmp/w/bin/python "$GITHUB_WORKSPACE"
+      - name: Record and enforce wheel/sdist sizes and digests
+        run: >-
+          python scripts/ci_baseline.py artifacts --dist dist
+          --output build/ci-package.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: ci-package-quality
+          path: build/ci-package.json
+          if-no-files-found: warn
 
   docker:
     runs-on: ubuntu-latest
