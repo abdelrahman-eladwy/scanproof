@@ -559,3 +559,50 @@ def test_copies_declared_is_not_a_pass_without_jobs(connector, gl) -> None:
     report = gitlab_verify(connector, gl, ["svc-a"])
     assert failing(report) == {f"job_present [svc-a > {JOB}]": "REQUIRED_COPY_ABSENT"}
     assert all(c.outcome is not Outcome.PASS for c in report.requirements[0].checks)
+
+
+# ---------------------------------------------------------------- root trigger list 404 (#44)
+
+
+def _root_bridges_404(gl, mock_api) -> None:
+    """A failing child copy exists, but the root's trigger list answers 404."""
+    gl.job(1, JOB, files=REPORT)
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, status="failed", files=REPORT)
+    gl.install()
+    mock_api.routes["bridges"].respond(404)
+
+
+def test_root_bridges_404_cannot_hide_a_failing_child_in_production(connector, gl, mock_api):
+    """Was VERIFIED: the 404 was read as 'no child pipelines', so the failing
+    'svc-a > semgrep-sast' was never seen next to the passing root job."""
+    _root_bridges_404(gl, mock_api)
+    pol = policy("gitlab", "123", requirement(JOB), "production")
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert report.decision is Decision.INDETERMINATE
+    assert set(failing(report).values()) == {"COPIES_UNBOUNDED"}
+
+
+def test_root_bridges_404_is_reported_in_compatible(connector, gl, mock_api):
+    _root_bridges_404(gl, mock_api)
+    pol = policy("gitlab", "123", requirement(JOB))
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert any("could not be read" in w or "unreadable" in w.lower() for w in report.warnings)
+
+
+def test_root_bridges_404_keeps_a_declared_child_copy_unknown(connector, gl, mock_api):
+    _root_bridges_404(gl, mock_api)
+    pol = policy("gitlab", "123", requirement(JOB, ["", "svc-a"]))
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert failing(report) == {f"job_present [svc-a > {JOB}]": "JOB_MAYBE_IN_UNREADABLE_PIPELINE"}
+
+
+def test_root_bridges_404_still_proves_root_jobs(connector, gl, mock_api):
+    """The root's own job list was read: a missing root copy is still a proven FAIL."""
+    gl.child("svc-a", pipeline_id=2000).job(3000, JOB, files=REPORT)
+    gl.job(1, "other", files=REPORT)
+    gl.install()
+    mock_api.routes["bridges"].respond(404)
+    pol = policy("gitlab", "123", requirement(JOB, [""]))
+    report = verify_pipeline(connector, pol, instance_url=BASE, project="123", pipeline_id=1042)
+    assert report.decision is Decision.BLOCKED
+    assert failing(report) == {f"job_present [{JOB}]": "REQUIRED_COPY_ABSENT"}

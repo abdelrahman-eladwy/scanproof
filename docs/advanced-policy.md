@@ -225,7 +225,7 @@ ends `verify` with exit 2 and, with `-o`, an error report (`decision: INDETERMIN
 |---|---|---|
 | Pipeline exists, its job list read | **read** | absence inside it is proven |
 | Pipeline exists, job list can't be read (403 private project, 404, 5xx, invalid payload) | **unreadable** | the job may be there |
-| A pipeline's trigger list can't be read (except a 404 at the root: no bridges API) | **unreadable** | its children are unknown |
+| A pipeline's trigger list can't be read (any error, including a 404 at the root) | **unreadable** | its children are unknown |
 | Beyond 3 levels or 50 pipelines | **unreadable** | not looked at |
 | No pipeline yet; trigger `created`, `pending`, `waiting_for_resource`, `preparing`, `scheduled`, `running`, or a status ScanProof doesn't recognize | **unreadable** (`<trigger> (not started: <status>)`) | it may still start ([#68](https://github.com/abdelrahman-eladwy/scanproof/issues/68)) |
 | No pipeline; trigger `failed`, `canceled`, `skipped`, `success`, or `manual` not played | **absent** (a warning) | no pipeline will hold its jobs without someone acting |
