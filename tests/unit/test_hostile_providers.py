@@ -243,3 +243,56 @@ def test_api_page_dropping_mid_body_is_a_network_error(mock_api, name) -> None:
         with pytest.raises(ConnectorError) as err:
             c._send(url)
     assert err.value.kind is ErrorKind.NETWORK
+
+
+# ---------------------------------------------------------------- compression bombs
+
+
+def _gzip_bomb(mib: int) -> bytes:
+    import gzip
+    import io
+
+    raw = io.BytesIO()
+    with gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9) as g:
+        for _ in range(mib):
+            g.write(b"\0" * (1 << 20))
+    return raw.getvalue()
+
+
+BOMB = _gzip_bomb(256)  # about 250 KiB on the wire, 256 MiB decoded
+
+
+class Network(httpx.SyncByteStream):
+    """Deliver the body as an HTTP/1.1 connection does: reads of at most 64 KiB."""
+
+    def __iter__(self):
+        for i in range(0, len(BOMB), 65536):
+            yield BOMB[i : i + 65536]
+
+
+@pytest.mark.parametrize("kind", ["api page", "artifact"])
+def test_gzip_bomb_stops_at_the_cap_with_bounded_memory(mock_api, kind) -> None:
+    import tracemalloc
+
+    headers = {"Content-Encoding": "gzip"}
+    mock_api.get(JOBS).mock(
+        side_effect=lambda r: httpx.Response(200, headers=headers, stream=Network())
+    )
+    url = f"{API}/projects/123/jobs/7/artifacts/r.json"
+    mock_api.get(url).mock(
+        side_effect=lambda r: httpx.Response(200, headers=headers, stream=Network())
+    )
+    tracemalloc.start()
+    try:
+        with gitlab(max_artifact_bytes=1 << 20) as gl, pytest.raises(ConnectorError) as err:
+            if kind == "api page":
+                gl.list_jobs("123", 1042)
+            else:
+                gl.download_artifact_file("123", 7, "r.json")
+        peak = tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+    assert err.value.kind is ErrorKind.LIMIT_EXCEEDED
+    # One 64 KiB read inflates to at most ~64 MiB (deflate's ratio is about 1000:1); the cap
+    # stops reading right after. Without the cap, the whole 256 MiB would be decoded.
+    assert peak < 160 * 2**20
