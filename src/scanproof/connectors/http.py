@@ -8,7 +8,11 @@ Every connector (GitLab, GitHub, ...) inherits these guarantees (see docs/securi
   * Redirects are followed manually: credentials are dropped on cross-origin redirects (e.g. to
     object storage for artifacts) and any HTTPS -> HTTP downgrade is refused.
   * TLS verification cannot be disabled; private CAs are supported via a CA bundle.
-  * Downloads are streamed and capped; retries back off and respect Retry-After.
+  * Every response body (API pages included) is streamed and capped; retries back off and
+    respect Retry-After.
+  * Time is bounded: each response body must arrive within `request_deadline` seconds (a server
+    dripping bytes never trips the per-read timeout), and a connector's requests together within
+    `run_budget` seconds. Both end as a NETWORK error, i.e. UNKNOWN, never as a pass.
   * Anonymous access must be requested explicitly and never sends a token.
 """
 
@@ -39,6 +43,9 @@ RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504})
 DEFAULT_MAX_ARTIFACT_BYTES = 50 * 1024 * 1024
 MAX_PAGES = 100
 MAX_REDIRECTS = 3
+DEFAULT_REQUEST_DEADLINE = 300.0  # seconds for one response body, retries not included
+DEFAULT_RUN_BUDGET = 1800.0  # seconds for everything one connector does
+_REBUILT_DROP = frozenset({"content-encoding", "content-length", "transfer-encoding"})
 
 
 def origin_of(url: str | httpx.URL) -> tuple[str, str, int | None]:
@@ -76,6 +83,9 @@ class HttpConnector(CIConnector):
         sleep: Callable[[float], None] = time.sleep,
         username: str | None = None,
         auth_scheme: Literal["bearer", "basic"] | None = None,
+        request_deadline: float = DEFAULT_REQUEST_DEADLINE,
+        run_budget: float = DEFAULT_RUN_BUDGET,
+        clock: Callable[[], float] = time.monotonic,
     ) -> None:
         # Anonymous access must be asked for explicitly, so a token that silently failed to
         # load can never degrade into unauthenticated requests.
@@ -104,6 +114,10 @@ class HttpConnector(CIConnector):
         self.max_retries = max_retries
         self.backoff_seconds = backoff_seconds
         self.max_artifact_bytes = max_artifact_bytes
+        self.request_deadline = request_deadline
+        self.run_budget = run_budget
+        self._clock = clock
+        self._started = clock()
         self._sleep = sleep
         self._client = httpx.Client(
             timeout=timeout,
@@ -139,6 +153,7 @@ class HttpConnector(CIConnector):
         """GET with retries and manual, credential-safe redirect handling."""
         attempt = 0
         while True:
+            self._check_budget()
             try:
                 response = self._follow(url, params, stream=stream)
             except httpx.TransportError as exc:
@@ -162,6 +177,31 @@ class HttpConnector(CIConnector):
     def _should_retry(self, response: httpx.Response) -> bool:
         return response.status_code in RETRYABLE_STATUS
 
+    def _check_budget(self) -> None:
+        if self._clock() - self._started > self.run_budget:
+            raise ConnectorError(
+                ErrorKind.NETWORK,
+                f"{self.label} requests exceeded the {self.run_budget:.0f}s time budget",
+            )
+
+    def _body(self, response: httpx.Response, what: str):
+        """Yield the (decoded) body, enforcing the size cap and the per-response deadline."""
+        started = self._clock()
+        total = 0
+        for chunk in response.iter_bytes():
+            total += len(chunk)
+            if total > self.max_artifact_bytes:
+                raise ConnectorError(
+                    ErrorKind.LIMIT_EXCEEDED,
+                    f"{what} exceeded {self.max_artifact_bytes} bytes while streaming",
+                )
+            if self._clock() - started > self.request_deadline:
+                raise ConnectorError(
+                    ErrorKind.NETWORK,
+                    f"{what} took longer than {self.request_deadline:.0f}s to download",
+                )
+            yield chunk
+
     def _follow(self, url: str, params: dict[str, Any] | None, *, stream: bool) -> httpx.Response:
         # httpx.URL(url, params=None) drops url's own query string (e.g. pagination links),
         # so merge explicit params into the existing query instead.
@@ -172,9 +212,24 @@ class HttpConnector(CIConnector):
             request = self._client.build_request(
                 "GET", current, headers=self._auth_headers_for(current)
             )
-            response = self._client.send(request, stream=stream)
+            response = self._client.send(request, stream=True)
             if not response.is_redirect:
-                return response
+                if stream:
+                    return response
+                # Read the whole body here, capped and against the deadline; a transport error
+                # mid-body reaches _send's retry loop like any other.
+                try:
+                    content = b"".join(self._body(response, current.path))
+                finally:
+                    response.close()
+                headers = [
+                    (k, v)
+                    for k, v in response.headers.multi_items()
+                    if k.lower() not in _REBUILT_DROP
+                ]
+                return httpx.Response(
+                    response.status_code, headers=headers, content=content, request=request
+                )
             location = response.headers.get("Location", "")
             response.close()
             target = httpx.URL(urljoin(str(current), location))
@@ -329,14 +384,4 @@ class HttpConnector(CIConnector):
                 ErrorKind.LIMIT_EXCEEDED,
                 f"Artifact is {int(declared)} bytes; limit is {self.max_artifact_bytes}",
             )
-        chunks: list[bytes] = []
-        total = 0
-        for chunk in response.iter_bytes():
-            total += len(chunk)
-            if total > self.max_artifact_bytes:
-                raise ConnectorError(
-                    ErrorKind.LIMIT_EXCEEDED,
-                    f"Artifact exceeded {self.max_artifact_bytes} bytes while streaming",
-                )
-            chunks.append(chunk)
-        return b"".join(chunks)
+        return b"".join(self._body(response, f"Artifact {what}"))
