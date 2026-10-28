@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import pytest
 
+from scanproof.connectors.base import ConnectorError, ErrorKind
 from scanproof.connectors.github import GitHubConnector
 from scanproof.policy.engine import Decision, Outcome
 from scanproof.policy.models import Policy
@@ -82,10 +83,19 @@ def test_current_attempt_masked_failure_still_blocks(gh, conn):
     assert any(c.code == "FAILURE_MASKED_BY_ALLOW_FAILURE" for c in result.requirements[0].checks)
 
 
-@pytest.mark.parametrize("started", [None, "not-a-timestamp", PREVIOUS])
-def test_missing_invalid_or_prior_start_does_not_silently_verify(gh, conn, started):
+@pytest.mark.parametrize("started", [None, PREVIOUS])
+def test_missing_or_prior_start_does_not_silently_verify(gh, conn, started):
     gh.job(20, "scan", attempt=2, started_at=started, notes=[[]])
     assert decide(gh, conn).decision is Decision.INDETERMINATE
+
+
+def test_invalid_provider_timestamp_is_a_fail_closed_connector_error(gh, conn):
+    # Job timestamps are validated by the provider model. Malformed timestamps
+    # abort inspection rather than manufacturing a trustworthy successful job.
+    gh.job(20, "scan", attempt=2, started_at="not-a-timestamp", notes=[[]])
+    with pytest.raises(ConnectorError) as exc:
+        decide(gh, conn)
+    assert exc.value.kind is ErrorKind.INVALID_RESPONSE
 
 
 def test_job_from_old_attempt_is_unknown_even_without_synthetic_copy(gh, conn):
