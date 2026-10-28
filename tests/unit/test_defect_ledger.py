@@ -41,7 +41,9 @@ def test_defect_ledger_cites_existing_regression_tests() -> None:
         for path in paths:
             assert (ROOT / path).is_file(), f"#{number} references missing {path}"
         assert cells[3], f"#{number} has no release disposition"
-    assert observed >= REQUIRED_CASES, f"Missing known regression mappings: {REQUIRED_CASES - observed}"
+    assert observed >= REQUIRED_CASES, (
+        f"Missing known regression mappings: {REQUIRED_CASES - observed}"
+    )
 
 
 def test_defect_triage_keeps_security_disclosure_boundary() -> None:
