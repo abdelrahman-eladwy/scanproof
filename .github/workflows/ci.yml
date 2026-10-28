@@ -72,6 +72,11 @@ jobs:
             /tmp/v/bin/scanproof validate -P "$GITHUB_WORKSPACE/examples/policies/sarif-and-sbom.yaml"
           set +e; /tmp/v/bin/scanproof evidence -t nosuch -f /dev/null; rc=$?; set -e
           test "$rc" = 3
+      - name: Full suite, adversarial decision matrix included, against the installed wheel
+        run: |
+          python -m venv /tmp/w
+          /tmp/w/bin/pip install "$(ls dist/*.whl)[attestations]" pytest respx
+          scripts/test_installed.sh /tmp/w/bin/python "$GITHUB_WORKSPACE"
 
   docker:
     runs-on: ubuntu-latest
@@ -91,3 +96,7 @@ jobs:
           docker run --rm -v "$PWD/tests/fixtures:/fx:ro" scanproof:ci attestation --sigstore-offline \
             -b /fx/attestations/semgrep.provenance.sigstore.json -f /fx/attestations/semgrep.json \
             | grep -q '"status": "verified"'
+      - name: Full suite, adversarial decision matrix included, inside the image (non-root)
+        run: |
+          docker run --rm --entrypoint sh -v "$PWD:/repo:ro" scanproof:ci -c \
+            'pip install --user --no-cache-dir -q pytest respx && sh /repo/scripts/test_installed.sh python /repo'
