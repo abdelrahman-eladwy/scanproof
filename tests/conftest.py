@@ -23,7 +23,11 @@ def pytest_configure(config: pytest.Config) -> None:
 
     where = Path(scanproof.__file__).resolve()
     if "site-packages" not in where.parts and "dist-packages" not in where.parts:
-        raise pytest.UsageError(f"SCANPROOF_TEST_INSTALLED=1 but scanproof is imported from {where}")
+        raise pytest.UsageError(
+            f"SCANPROOF_TEST_INSTALLED=1 but scanproof is imported from {where}"
+        )
+
+
 BASE = "https://gitlab.example.com"
 API = f"{BASE}/api/v4"
 TOKEN = "glpat-TEST-TOKEN-do-not-leak"
