@@ -202,8 +202,11 @@ requirements:
   `svc-a > sast: [py]` and `api / sast (py)`. The same-named job under another
   child/caller is **not** matched. A qualified requirement needs no `copies`;
   declare `instances: [py, go]` when all matrix legs must run, and missing
-  `N`-way parallel indices remain a failure. One qualified requirement per
-  path is an alternative when copies need different checks.
+  `N`-way parallel indices remain a failure. Parallel totals above 1,000 still
+  require **every** advertised leg: missing legs produce one bounded failure rather
+  than a very large list. Invalid indices (such as `0/2`), conflicting totals within
+  a copy and absurdly large totals fail closed; a complete large group is accepted.
+  One qualified requirement per path is an alternative when copies need different checks.
 
 ## Missing or unreadable: when absence is proven
 
