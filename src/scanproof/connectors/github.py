@@ -87,6 +87,7 @@ class GitHubConnector(HttpConnector):
         max_artifact_bytes: int = DEFAULT_MAX_ARTIFACT_BYTES,
         transport: httpx.BaseTransport | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        **limits: Any,  # request_deadline, run_budget, clock (see HttpConnector)
     ) -> None:
         super().__init__(
             api_url,
@@ -100,6 +101,7 @@ class GitHubConnector(HttpConnector):
             max_artifact_bytes=max_artifact_bytes,
             transport=transport,
             sleep=sleep,
+            **limits,
         )
         self._run_conclusion: dict[tuple[str, int], str | None] = {}
 
@@ -116,9 +118,13 @@ class GitHubConnector(HttpConnector):
         url: str | None = f"{self.api_url}{path}"
         params: dict[str, Any] | None = {"per_page": 100}
         bundles: list[Any] = []
+        seen: set[str] = set()
         for _ in range(MAX_PAGES):
             if url is None:
                 break
+            if url in seen:
+                raise ConnectorError(ErrorKind.INVALID_RESPONSE, f"Pagination loop in {path}")
+            seen.add(url)
             try:
                 body, url = self._download_page(url, path, params)
             except NotFoundError:
@@ -283,7 +289,11 @@ class GitHubConnector(HttpConnector):
             return None
         next_url: str | None = f"{url}/annotations"
         params: dict[str, Any] | None = {"per_page": 100}
+        seen: set[str] = set()
         for _ in range(MAX_ANNOTATION_PAGES):
+            if next_url in seen:
+                return None  # a pagination loop: can't be sure, so unknown
+            seen.add(next_url)
             try:
                 response = self._send(next_url, params)
                 self._raise_for_status(response, "check run annotations")
@@ -340,9 +350,13 @@ class GitHubConnector(HttpConnector):
     def _paginate(self, path: str, key: str, params: dict[str, Any]) -> Iterator[dict[str, Any]]:
         url: str | None = f"{self.api_url}{path}"
         query: dict[str, Any] | None = {**params, "per_page": 100}
+        seen: set[str] = set()
         for _ in range(MAX_PAGES):
             if url is None:
                 return
+            if url in seen:
+                raise ConnectorError(ErrorKind.INVALID_RESPONSE, f"Pagination loop in {path}")
+            seen.add(url)
             response = self._send(url, query)
             self._raise_for_status(response, path)
             try:

@@ -25,6 +25,11 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
+- **Hostile providers** ([#44](https://github.com/abdelrahman-eladwy/scanproof/issues/44)): a
+  pagination loop is detected at once (it used to cost up to 100 requests); a non-numeric GitLab
+  `X-Next-Page` is a connector error instead of a crash; API pages are size-capped like
+  downloads; each response body must arrive within 300 s and a connector's requests within
+  30 min, so a slowly dripping server can no longer hang `verify`. All end as UNKNOWN (exit 2).
 - **Attestations:** a bundle signed after its Fulcio CA, Rekor key or CT log key was retired
   (the trust root's `validFor` window had ended) verified, because sigstore-python 4.x checks
   those windows against the current time only. ScanProof now requires every recorded signing
