@@ -96,6 +96,7 @@ def test_large_parallel_missing_middle_index_is_bounded_and_blocking():
         ["semgrep-sast 1/0"],
         ["semgrep-sast 1/2", "semgrep-sast 2/2", "semgrep-sast 3/2"],
         ["semgrep-sast 1/2", "semgrep-sast 2/3"],
+        ["semgrep-sast 1/1", "semgrep-sast 1/2", "semgrep-sast 2/2"],
     ],
 )
 def test_impossible_or_conflicting_parallel_metadata_fails_closed(names):
