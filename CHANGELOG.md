@@ -25,6 +25,9 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
+- `--anonymous` help, the missing-token error and the anonymous GitLab 429 message now state that
+  gitlab.com and api.github.com allow 60 unauthenticated API requests per hour per IP, and
+  suggest a `read_api` token ([#74](https://github.com/abdelrahman-eladwy/scanproof/issues/74)).
 - **False VERIFIED:** a job named exactly like a requirement's `job_name` hid that name's
   matrix, parallel, downstream and reusable-workflow instances, so a passing `sast` could stand
   in for a failing `sast (py)`, `sast 1/2` or `trigger > sast`
