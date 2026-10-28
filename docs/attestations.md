@@ -128,8 +128,8 @@ By default ScanProof trusts **Sigstore public-good**, refreshed over TUF (networ
 A replay from **another project** (its genuine report and bundle copied into this run, even a
 fork at the same commit) fails the repository pin (`ATTESTATION_SIGNER_MISMATCH`) and the run
 check (`ATTESTATION_WRONG_RUN`). Only a signer without `repository` plus `same_run: false` would
-accept it, and `assurance.profile: production` rejects both. Timestamp authorities' own `validFor`
-windows are not checked against the signing time.
+accept it, and `assurance.profile: production` rejects both. sigstore-python itself counts an
+RFC 3161 timestamp only inside its timestamp authority's `validFor` window.
 
 `scanproof attestation -b bundle.json [-f report.json]` verifies bundles and prints the claims
 ScanProof would judge, which helps when writing the `signer` block.

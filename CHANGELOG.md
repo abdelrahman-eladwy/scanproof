@@ -25,6 +25,11 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   [docs/advanced-policy.md](docs/advanced-policy.md#prefixed-copies-declare-the-copies-that-must-run).
 
 ### Fixed
+- **GitLab root trigger list 404** ([#44](https://github.com/abdelrahman-eladwy/scanproof/issues/44)):
+  a 404 on the root pipeline's bridges was read as "no child pipelines", so a failing child copy
+  of a passing root job went unseen (VERIFIED under `production`). It is now unreadable like any
+  other trigger-list error: `COPIES_UNBOUNDED` under `production`, a warning under `compatible`,
+  and declared child copies stay UNKNOWN. Root jobs are still proven, as their list was read.
 - **Zip bombs by entry count** ([#44](https://github.com/abdelrahman-eladwy/scanproof/issues/44)):
   an artifact or Fortify FPR whose central directory lists more than 50,000 entries or is larger
   than 8 MiB is refused (`LIMIT_EXCEEDED`, UNKNOWN) before `zipfile` builds an object per entry;

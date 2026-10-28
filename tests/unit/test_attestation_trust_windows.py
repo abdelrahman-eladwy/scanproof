@@ -156,3 +156,25 @@ def test_unreadable_root_is_unverifiable_never_ok(root) -> None:
 
 def test_garbage_bundle_is_unverifiable() -> None:
     assert windows.check(b"{not json", leaf(), ROOT)[0] == windows.UNVERIFIABLE
+
+
+@pytest.mark.parametrize(
+    "window", [{"end": "2026-10-27T06:00:00Z"}, {"start": "2026-10-27T07:00:00Z"}]
+)
+def test_timestamp_authority_windows_are_enforced_by_sigstore_python(tmp_path, window) -> None:
+    """Pins upstream behavior ScanProof relies on: an RFC 3161 time counts only inside its
+    timestamp authority's validFor window (sigstore-python checks gen_time, unlike for CAs and
+    logs). The bundle still verifies here through its transparency log time."""
+    from sigstore.models import Bundle, TrustedRoot
+    from sigstore.verify import Verifier
+
+    def sources(root: dict) -> set[str]:
+        path = tmp_path / "root.json"
+        path.write_text(json.dumps(root))
+        verifier = Verifier(trusted_root=TrustedRoot.from_file(str(path)))
+        return {t.source.name for t in verifier._establish_time(Bundle.from_json(BLOB))}
+
+    assert "TIMESTAMP_AUTHORITY" in sources(ROOT)
+    root = copy.deepcopy(ROOT)
+    root["timestampAuthorities"][0]["validFor"].update(window)
+    assert sources(root) == {"TRANSPARENCY_SERVICE"}

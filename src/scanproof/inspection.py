@@ -11,7 +11,7 @@ from collections import defaultdict
 from datetime import UTC, datetime
 
 from scanproof import __version__
-from scanproof.connectors.base import CIConnector, ConnectorError, ErrorKind
+from scanproof.connectors.base import CIConnector, ConnectorError
 from scanproof.models import (
     Downstream,
     InspectedJob,
@@ -78,8 +78,9 @@ def _walk_downstream(
         try:
             bridges = connector.list_downstream(cur_project, cur_id)
         except ConnectorError as exc:
-            if depth == 0 and exc.kind is ErrorKind.NOT_FOUND:
-                continue  # platform/version without a bridges API for this pipeline
+            # Also a 404 at the root: the pipeline itself was just read, so a missing trigger
+            # list is an anomaly, not proof there are no children. Treating it as "none" hid
+            # every child pipeline: a failing child copy went unseen next to a passing root job.
             unknown(
                 prefix.removesuffix(DOWNSTREAM_SEPARATOR),
                 f"{prefix or 'pipeline'} triggers ({exc.kind.value})",

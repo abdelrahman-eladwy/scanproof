@@ -19,7 +19,8 @@ time, which is among them, and extra (even forged) times can only make the check
 
 Pure: no I/O. Returns (status, reason) with status "ok", "invalid" (outside a window, or the
 material isn't in the root) or "unverifiable" (the check itself could not be carried out).
-Timestamp authorities' own windows are not checked here.
+Timestamp authorities' own windows are not checked here: sigstore-python already counts an
+RFC 3161 time only inside its authority's window (test_attestation_trust_windows.py pins it).
 """
 
 from __future__ import annotations
