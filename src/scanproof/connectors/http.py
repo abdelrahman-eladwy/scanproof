@@ -24,6 +24,8 @@ import json
 import time
 import zipfile
 from collections.abc import Callable
+from datetime import UTC, datetime
+from email.utils import parsedate_to_datetime
 from typing import Any, ClassVar, Literal
 from urllib.parse import urljoin, urlsplit
 
@@ -45,7 +47,30 @@ MAX_PAGES = 100
 MAX_REDIRECTS = 3
 DEFAULT_REQUEST_DEADLINE = 300.0  # seconds for one response body, retries not included
 DEFAULT_RUN_BUDGET = 1800.0  # seconds for everything one connector does
+MAX_RETRY_WAIT = 60.0  # longest single wait before a retry; longer Retry-After = give up
 _REBUILT_DROP = frozenset({"content-encoding", "content-length", "transfer-encoding"})
+
+
+def parse_retry_after(value: str | None, *, now: datetime | None = None) -> float | None:
+    """Retry-After as seconds (delta-seconds or HTTP-date, RFC 9110 10.2.3), else None.
+
+    A date in the past means "now" (0). Anything unparseable is ignored, so the normal
+    bounded backoff applies; it can never extend a wait beyond MAX_RETRY_WAIT.
+    """
+    if value is None:
+        return None
+    text = value.strip()
+    if text.isdigit():
+        return float(text)
+    if not text or text[0].isdigit() or text[0] in "+-":
+        return None
+    try:
+        when = parsedate_to_datetime(text)
+    except (TypeError, ValueError, IndexError):
+        return None
+    if when.tzinfo is None:
+        return None
+    return max(0.0, (when - (now or datetime.now(UTC))).total_seconds())
 
 
 def origin_of(url: str | httpx.URL) -> tuple[str, str, int | None]:
@@ -150,28 +175,35 @@ class HttpConnector(CIConnector):
     def _send(
         self, url: str, params: dict[str, Any] | None = None, *, stream: bool = False
     ) -> httpx.Response:
-        """GET with retries and manual, credential-safe redirect handling."""
+        """GET with retries and manual, credential-safe redirect handling.
+
+        A retry happens only if its wait is allowed by the server's Retry-After (at most
+        MAX_RETRY_WAIT) and still fits in the run budget; otherwise the real outcome is
+        reported now (the last response, or a NETWORK error) instead of sleeping first.
+        """
         attempt = 0
         while True:
             self._check_budget()
             try:
                 response = self._follow(url, params, stream=stream)
             except httpx.TransportError as exc:
-                if attempt >= self.max_retries:
+                delay = self._retry_delay(attempt, None)
+                if delay is None:
                     raise ConnectorError(
                         ErrorKind.NETWORK,
                         f"Network error calling {self.label}: {type(exc).__name__}",
                     ) from exc
-                self._backoff(attempt, None)
+                self._sleep(delay)
                 attempt += 1
                 continue
 
-            if self._should_retry(response) and attempt < self.max_retries:
-                retry_after = response.headers.get("Retry-After")
-                response.close()
-                self._backoff(attempt, retry_after)
-                attempt += 1
-                continue
+            if self._should_retry(response):
+                delay = self._retry_delay(attempt, response.headers.get("Retry-After"))
+                if delay is not None:
+                    response.close()
+                    self._sleep(delay)
+                    attempt += 1
+                    continue
             return response
 
     def _should_retry(self, response: httpx.Response) -> bool:
@@ -242,11 +274,21 @@ class HttpConnector(CIConnector):
             current = target
         raise ConnectorError(ErrorKind.UNSAFE_REDIRECT, f"More than {MAX_REDIRECTS} redirects")
 
-    def _backoff(self, attempt: int, retry_after: str | None) -> None:
+    def _retry_delay(self, attempt: int, retry_after: str | None) -> float | None:
+        """Seconds to wait before the next attempt, or None when retrying is pointless."""
+        if attempt >= self.max_retries:
+            return None
         delay = self.backoff_seconds * (2**attempt)
-        if retry_after and retry_after.isdigit():
-            delay = max(delay, float(retry_after))
-        self._sleep(min(delay, 60.0))
+        server_wait = parse_retry_after(retry_after)
+        if server_wait is not None:
+            if server_wait > MAX_RETRY_WAIT:
+                return None  # the server says not yet: retrying sooner only burns budget
+            delay = max(delay, server_wait)
+        delay = min(delay, MAX_RETRY_WAIT)
+        remaining = self.run_budget - (self._clock() - self._started)
+        if delay >= remaining:
+            return None
+        return delay
 
     def _raise_for_status(self, response: httpx.Response, what: str) -> None:
         code = response.status_code
@@ -348,13 +390,14 @@ class HttpConnector(CIConnector):
             try:
                 return self._download_once(url, what)
             except httpx.TransportError as exc:
-                if attempt >= self.max_retries:
+                delay = self._retry_delay(attempt, None)
+                if delay is None:
                     raise ConnectorError(
                         ErrorKind.NETWORK,
                         f"Download from {self.label} kept failing mid-transfer: "
                         f"{type(exc).__name__}",
                     ) from exc
-                self._backoff(attempt, None)
+                self._sleep(delay)
                 attempt += 1
 
     def _download_once(self, url: str, what: str | None) -> bytes:

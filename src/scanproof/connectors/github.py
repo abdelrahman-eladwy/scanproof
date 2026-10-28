@@ -366,7 +366,10 @@ class GitHubConnector(HttpConnector):
         code = response.status_code
         if code < 400:
             return
-        if code == 403 and response.headers.get("x-ratelimit-remaining") == "0":
+        if code == 403 and (
+            response.headers.get("x-ratelimit-remaining") == "0"
+            or "retry-after" in response.headers  # secondary rate limit
+        ):
             raise ConnectorError(
                 ErrorKind.RATE_LIMITED, f"GitHub rate limit hit fetching {what}", 403
             )

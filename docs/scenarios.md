@@ -33,6 +33,8 @@ GitLab rows replay real gitlab.com API responses saved in `tests/fixtures/gitlab
 | Artifact download drops mid-transfer once | retried, VERIFIED | | test |
 | Download keeps dropping | INDETERMINATE | `EVIDENCE_UNAVAILABLE` | test |
 | 429 during job pagination | retried after `Retry-After` | | test |
+| 429 / 503 whose `Retry-After` exceeds 60 s, or whose wait would overrun the run budget | not retried: reported as RATE_LIMITED / SERVER at once (INDETERMINATE) | | test |
+| `Retry-After` as an HTTP-date | honored (past date = retry now); unparseable values fall back to bounded backoff | | test |
 | 2,000 jobs over 21 pages, 50-way parallel scan | correct decision in under 10 s | | test |
 
 ## GitHub Actions (`tests/unit/test_complex_github.py`)
