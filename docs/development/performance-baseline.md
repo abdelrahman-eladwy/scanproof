@@ -29,11 +29,35 @@ missing declared legs or copies. Compare measurements across CI runs with
 runner/Python version in mind; a single hosted-runner p95 is not a deployment SLO.
 The memory metric excludes native allocator overhead and system RSS.
 
+## End-to-end verify measurement (in-process provider double)
+
+`scripts/benchmark_verify_pipeline.py` runs the full `verify_pipeline` path —
+pipeline and paginated jobs API, bridges, artifact downloads, Semgrep/Trivy
+parsing and policy evaluation — against the respx GitLab double used by the
+unit tests. Fixture: 100 jobs over 5 job-API pages, 10 required reports
+(5 Semgrep, 5 Trivy), exactly 17 HTTP calls per run. Every measured run must be
+VERIFIED and a missing-report negative control must not be, or the script exits
+non-zero. It records median, nearest-rank p95, maximum, process peak RSS and
+peak traced Python allocations; both core CI test jobs upload
+`verify-pipeline-benchmark.json`.
+
+```sh
+python scripts/benchmark_verify_pipeline.py --iterations 30 \
+  --output build/verify-pipeline-benchmark.json
+```
+
+First local measurement (Python 3.13, 10 iterations): median ≈0.055 s,
+p95 ≈0.069 s, peak RSS ≈60 MiB. These are far inside the proposed budgets but
+**exclude network latency, provider rate-limit waits, real artifact sizes,
+attestation verification and concurrency**, so they do not satisfy the Phase 3
+SLO checkbox by themselves. Regression: `tests/unit/test_verify_pipeline_benchmark.py`.
+
 ## Unmet acceptance criteria
 
-This baseline measures neither provider API latency/retries/429 behavior nor
-artifact parsing, attestation verification, decision serialization, concurrency,
-or end-to-end memory. The Phase 3 target (such as p95 under 30 seconds for a
+The matching microbenchmark and the in-process verify measurement above cover
+neither real provider API latency/retries/429 behavior nor attestation
+verification, real-size artifacts, concurrency, or provider-backed 2,000-job
+pipelines. The Phase 3 target (such as p95 under 30 seconds for a
 representative 100-job/10-report pipeline and memory under 512 MiB) is only a
 proposal until full-pipeline measurements, tolerances and owner sign-off exist.
 
