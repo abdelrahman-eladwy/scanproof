@@ -50,14 +50,14 @@ def test_source_document_matches_inventory_and_references_real_tests() -> None:
         ("Provider ID inventory", PROVIDERS),
         ("Adapter tool ID inventory", ADAPTER_TOOLS),
     ):
-        match = re.search(rf"^\\*\\*{re.escape(title)}:\\*\\* (.+)$", doc, re.MULTILINE)
+        match = re.search(rf"^\*\*{re.escape(title)}:\*\* (.+)$", doc, re.MULTILINE)
         assert match is not None, f"Missing {title} in traceability document"
         assert set(re.findall(r"`([a-z0-9-]+)`", match.group(1))) == expected, title
 
-    assert set(re.findall(r"\\*\\*(INV-\\d{2})\\*\\*", doc)) == {
+    assert set(re.findall(r"\*\*(INV-\d{2})\*\*", doc)) == {
         f"INV-{n:02d}" for n in range(1, 8)
     }
-    referenced_tests = set(re.findall(r"`(tests/unit/test_[a-z0-9_]+\\.py)`", doc))
+    referenced_tests = set(re.findall(r"`(tests/unit/test_[a-z0-9_]+\.py)`", doc))
     assert len(referenced_tests) >= 7
     for path in referenced_tests:
         assert (DOC.parents[2] / path).is_file(), f"Broken regression reference: {path}"
