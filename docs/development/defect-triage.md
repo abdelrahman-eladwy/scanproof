@@ -18,7 +18,7 @@ Assign the highest credible severity based on the worst supported failure, not o
 
 ## Evidence ledger — representative confirmed bugs
 
-Rows are backed by code-level regression tests in the core repo and public GitHub issue classifications. The **CI column** below is the latest [post-merge `main` run #40690689285](https://github.com/abdelrahman-eladwy/scanproof/actions/runs/40690689285); the run demonstrates the named test files execute in the suite, not independent platform enforcement. Live acceptance must be recorded separately in the [security traceability register](security-traceability.md).
+Rows are backed by code-level regression tests in the core repo and public GitHub issue classifications. Automated regression evidence for each row comes from its listed test file and the applicable PR/post-merge CI (for the newest GitHub rerun fix, [#92](https://github.com/abdelrahman-eladwy/scanproof/pull/92)). A single historical CI run is **not** evidence for regressions added afterward, nor proof of independently protected provider enforcement. Live acceptance must be recorded separately in the [security traceability register](security-traceability.md).
 
 | Defect | Severity | Regression file(s) | Release disposition |
 |---|---|---|---|
@@ -27,12 +27,13 @@ Rows are backed by code-level regression tests in the core repo and public GitHu
 | [#60](https://github.com/abdelrahman-eladwy/scanproof/issues/60) removed matrix leg not detected | P0 | `tests/unit/test_declared_instances.py` and `tests/unit/test_adversarial_decision_matrix.py` | Fixed with declared legs; unknown total still requires declarations |
 | [#65](https://github.com/abdelrahman-eladwy/scanproof/issues/65) removed child/caller copy not detected | P0 | `tests/unit/test_declared_copies.py` and `tests/unit/test_adversarial_decision_matrix.py` | Fixed with declared copies; undeclared copy cardinality cannot be inferred |
 | [#88](https://github.com/abdelrahman-eladwy/scanproof/issues/88) missing parallel legs above cap | P0 | `tests/unit/test_parallel_total_bounds.py` | Fixed; completeness never bypassed by an enumeration cap |
+| [#90](https://github.com/abdelrahman-eladwy/scanproof/issues/90) gate-only GitHub rerun accepted inherited masking evidence | P0 | `tests/unit/test_github_gate_rerun.py` | Fixed; inherited old-attempt scan jobs cannot silently satisfy masking checks |
 | [#68](https://github.com/abdelrahman-eladwy/scanproof/issues/68) pending child incorrectly BLOCKED | P1 | `tests/unit/test_unstarted_downstream.py` | Fixed; pending child is UNKNOWN until observable |
 | [#71](https://github.com/abdelrahman-eladwy/scanproof/issues/71) visible job with unreadable child still VERIFIED in production | P0 (re-triaged from historical P1 label) | `tests/unit/test_unbounded_copies.py` | Fixed for production; review waiver/declaration behavior before claiming gate completeness |
 | [#62](https://github.com/abdelrahman-eladwy/scanproof/issues/62) qualified child matrix/parallel job falsely absent | P2 (issue label; reconsider P1 if a supported release is blocked) | `tests/unit/test_qualified_instances.py` | Fixed; child-prefix scope stays narrow |
 | [#69](https://github.com/abdelrahman-eladwy/scanproof/issues/69) unrelated unreadable child misclassifies missing copy | P2 (issue label; compatible fail-open warning amplifies risk) | `tests/unit/test_declared_copies.py` | Fixed; unreadable scope must be bounded to relevant child |
 
-**Scope caveat:** Historical labels reflect triage at the time. #71 carried a P1 label despite a reproduced false VERIFIED under `production`, so **this ledger re-triages that fixed issue as P0** based on the invariant, rather than copying the historical label. #88 was experimentally confirmed by a **red** test and fixed in #89. All rows are regression-mapped, but this *does not claim that every confirmed bug ever found* has a listed test; that broader inventory remains in #44/#41.
+**Scope caveat:** Historical labels reflect triage at the time. #71 carried a P1 label despite a reproduced false VERIFIED under `production`, so **this ledger re-triages that fixed issue as P0** based on the invariant, rather than copying the historical label. #88 was experimentally confirmed by a **red** test and fixed in #89; #90 was reproduced against a real GitHub rerun and fixed in #92, with a separate live provider rerun acceptance requirement. All rows are regression-mapped, but this *does not claim that every confirmed bug ever found* has a listed test; that broader inventory remains in #44/#41.
 
 ## Required development and release workflow
 
