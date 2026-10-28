@@ -75,7 +75,7 @@ ScanProof checks its own run daily against `main`:
 | Scan job skipped by `if:` | job skipped | BLOCKED: `JOB_NOT_SUCCESS` |
 | Token lacks `checks: read` | annotations 403 | INDETERMINATE: `STEP_MASKING_UNKNOWN` |
 | Artifact bytes differ from GitHub's digest | — | BLOCKED: report unparseable (digest mismatch) |
-| Re-run attempts | jobs from every attempt | latest attempt is judged; retries are reported |
+| Re-run attempts | Jobs from every attempt; gate-only reruns can synthesize new IDs for scans executed before the attempt started | Earlier-attempt successful jobs with unverifiable masking are INDETERMINATE (`STEP_MASKING_UNKNOWN`), not VERIFIED; rerun scans with the gate |
 | Matrix job, one instance masked | `sast (python)` success, `sast (go)` success + failure annotation | BLOCKED: `job_success [sast (go)]` |
 | Job in a reusable workflow | `caller / sast` | matched by `job_name: sast` |
 | Leg removed from the matrix, `instances: [py, js]` declared | only `sast (py)` ran | BLOCKED: `job_present [sast (js)]` `REQUIRED_INSTANCE_ABSENT` |
@@ -103,3 +103,24 @@ instances share the one `artifact_name` you give, so give each instance its own 
 GitHub keeps only a limited number of annotations per step and per job (in our live run, 10 of
 150 warnings from one step). ScanProof still reads every annotation page, and treats a list it
 cannot finish reading as UNKNOWN.
+
+### Gate-only reruns and inherited scan jobs
+
+A `Re-run jobs` action on **only the ScanProof gate job** creates a new GitHub
+`run_attempt` while leaving earlier scan executions in place. In a real October 28, 2026
+run, GitHub exposed synthetic attempt-2 job records with fresh IDs but `started_at`
+timestamps *before* the new attempt's `run_started_at`. Those synthetic jobs no
+longer carried the original failure annotations for step-level `continue-on-error`;
+before [#90](https://github.com/abdelrahman-eladwy/scanproof/issues/90), ScanProof
+returned VERIFIED for masked failures.
+
+For a rerun, ScanProof requires a successful scan job to have started **during**
+the current attempt before considering empty annotations as evidence of no masked
+failure. A job that predates the attempt (or lacks usable attempt timestamps) is
+`STEP_MASKING_UNKNOWN` / INDETERMINATE. A visible failed job remains BLOCKED.
+This is deliberate fail-closed behavior: rerun the **scan jobs and gate** in the
+same attempt, or use trusted signed evidence with explicit attempt binding. A
+gate-only rerun is not a substitute for a successful fresh scan.
+
+This validation checks the provider's attempt timestamps; it does not make
+GitHub annotations an independently signed proof of scanner completeness.

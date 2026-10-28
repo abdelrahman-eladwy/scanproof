@@ -37,6 +37,7 @@ class FakeGitHub:
     sha: str = SHA
     run_conclusion: str | None = "success"
     run_attempt: int = 1
+    run_started_at: str | None = None
     jobs: list[dict] = field(default_factory=list)
     annotations: dict[int, list] = field(default_factory=dict)  # job id -> pages / HTTP status
     artifacts: list[dict] = field(default_factory=list)
@@ -44,7 +45,16 @@ class FakeGitHub:
     # sha256 hex -> pages of bundles (each page a list of bundle dicts) or an HTTP status
     attestations: dict[str, list | int] = field(default_factory=dict)
 
-    def job(self, jid, name, conclusion="success", attempt=1, notes=None, status="completed"):
+    def job(
+        self,
+        jid,
+        name,
+        conclusion="success",
+        attempt=1,
+        notes=None,
+        status="completed",
+        started_at=None,
+    ):
         self.jobs.append(
             {
                 "id": jid,
@@ -54,6 +64,7 @@ class FakeGitHub:
                 "name": name,
                 "status": status,
                 "conclusion": conclusion,
+                "started_at": started_at,
                 "check_run_url": f"{API}/repos/{self.repo}/check-runs/{jid}",
             }
         )
@@ -78,6 +89,7 @@ class FakeGitHub:
             json={
                 "id": run,
                 "run_attempt": self.run_attempt,
+                "run_started_at": self.run_started_at,
                 "head_sha": self.sha,
                 "head_branch": "main",
                 "event": "push",
