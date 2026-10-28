@@ -240,9 +240,7 @@ def match_jobs(
         (_copy_name(c, base_name, matches), c) for c in copies or [] if c not in present_copies
     ]
     undeclared_copies = (
-        []
-        if copies or qualified
-        else [j.name for j in matches if _copy_path(j.name, base_name)]
+        [] if copies or qualified else [j.name for j in matches if _copy_path(j.name, base_name)]
     )
     if not instances:
         return JobMatch(
