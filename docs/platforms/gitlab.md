@@ -139,8 +139,11 @@ instance; it does **not** stand in for the others. A passing `semgrep` next to a
 `semgrep 1/2` or `trigger > semgrep` is BLOCKED
 ([#59](https://github.com/abdelrahman-eladwy/scanproof/issues/59)). If a same-named job really
 is unrelated, rename it. To pin one child job, name it fully:
-`job_name: "security-child > semgrep"`. A qualified name matches only that job, not its
-parallel or matrix instances ([#62](https://github.com/abdelrahman-eladwy/scanproof/issues/62)).
+`job_name: "security-child > semgrep"`. A qualified name matches the named
+child's job **and its parallel/matrix instances**, but never a same-named job
+in another child or the root pipeline ([#62](https://github.com/abdelrahman-eladwy/scanproof/issues/62)).
+Missing parallel indices fail closed, and missing matrix labels require a
+declared `instances` list.
 
 Matrix names carry no total, so a leg dropped from `parallel: matrix:` is invisible unless the
 requirement declares its legs: `instances: [python, go]` makes a missing `semgrep: [go]` a FAIL
