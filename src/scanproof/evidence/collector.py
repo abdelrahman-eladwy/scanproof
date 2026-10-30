@@ -220,28 +220,57 @@ def match_jobs(
         if (not qualified or _tail(j.name)[0] == required_prefix)
         and _is_instance(_tail(j.name)[1], base_name)
     ]
+    missing = _parallel_gaps(matches, base_name)
+    legs, undeclared_legs = _matrix_legs(matches, base_name)
+    present_copies = _present_copies(matches, base_name)
+    missing_copies = [
+        (_copy_name(c, base_name, matches), c) for c in copies or [] if c not in present_copies
+    ]
+    undeclared_copies = (
+        [] if copies or qualified else [j.name for j in matches if _copy_path(j.name, base_name)]
+    )
+    if not instances:
+        return JobMatch(
+            jobs=matches,
+            missing=missing,
+            undeclared_legs=undeclared_legs,
+            missing_copies=missing_copies,
+            undeclared_copies=undeclared_copies,
+        )
+    return JobMatch(
+        jobs=matches,
+        missing=missing,
+        missing_declared=_declared_gaps(
+            matches, base_name, legs, instances, copies or [], present_copies
+        ),
+        missing_copies=missing_copies,
+        undeclared_copies=undeclared_copies,
+    )
+
+
+# Matrix legs seen per name prefix: prefix -> (normalized labels present, naming style).
+_Legs = dict[str, tuple[set[str], str]]
+
+
+def _parallel_gaps(matches: list[InspectedJob], base_name: str) -> list[str]:
+    """Missing or invalid 'name i/N' legs, per prefix. Fails closed: an index outside 1..N,
+    an oversized number or two different totals in one prefix are all reported as gaps."""
     present: dict[tuple[str, int], set[int]] = {}
-    invalid_parallel: set[str] = set()
-    legs: dict[str, tuple[set[str], str]] = {}  # prefix -> (labels present, naming style)
-    undeclared: list[str] = []
+    invalid: set[str] = set()
     for j in matches:
         prefix, tail = _tail(j.name)
         m = _PARALLEL.match(tail)
-        if m and m.group("base") == base_name:
-            index_raw, total_raw = m.group("index"), m.group("total")
-            if len(index_raw) > _MAX_PARALLEL_DIGITS or len(total_raw) > _MAX_PARALLEL_DIGITS:
-                invalid_parallel.add(f"{prefix}{base_name} [invalid parallel index/total]")
-            else:
-                index, total = int(index_raw), int(total_raw)
-                if not 1 <= index <= total:
-                    invalid_parallel.add(f"{prefix}{base_name} [invalid parallel index/total]")
-                else:
-                    present.setdefault((prefix, total), set()).add(index)
-        leg = _matrix_label(tail, base_name)
-        if leg is not None:
-            style, label = leg
-            legs.setdefault(prefix, (set(), style))[0].add(normalize_instance_label(label))
-            undeclared.append(j.name)
+        if not m or m.group("base") != base_name:
+            continue
+        index_raw, total_raw = m.group("index"), m.group("total")
+        if len(index_raw) > _MAX_PARALLEL_DIGITS or len(total_raw) > _MAX_PARALLEL_DIGITS:
+            invalid.add(f"{prefix}{base_name} [invalid parallel index/total]")
+            continue
+        index, total = int(index_raw), int(total_raw)
+        if not 1 <= index <= total:
+            invalid.add(f"{prefix}{base_name} [invalid parallel index/total]")
+            continue
+        present.setdefault((prefix, total), set()).add(index)
 
     # A conflicting total in one pipeline copy is ambiguous, even if both sets happen
     # to be individually complete. Different downstream copies may have different totals.
@@ -250,9 +279,9 @@ def match_jobs(
         totals_by_prefix.setdefault(prefix, set()).add(total)
     for prefix, totals in totals_by_prefix.items():
         if len(totals) > 1:
-            invalid_parallel.add(f"{prefix}{base_name} [conflicting parallel totals]")
+            invalid.add(f"{prefix}{base_name} [conflicting parallel totals]")
 
-    missing = sorted(invalid_parallel)
+    missing = sorted(invalid)
     for (prefix, total), indices in sorted(present.items()):
         if total <= _MAX_PARALLEL_ENUMERATE:
             missing.extend(
@@ -264,40 +293,51 @@ def match_jobs(
             missing.append(
                 f"{prefix}{base_name} [missing {total - len(indices)} of {total} parallel legs]"
             )
-    present_copies: dict[str, str] = {}  # copy path -> its name prefix
+    return missing
+
+
+def _matrix_legs(matches: list[InspectedJob], base_name: str) -> tuple[_Legs, list[str]]:
+    """Matrix legs ('name: [label]' / 'name (label)') per prefix, and their job names."""
+    legs: _Legs = {}
+    names: list[str] = []
     for j in matches:
-        present_copies.setdefault(_copy_path(j.name, base_name), _tail(j.name)[0])
-    missing_copies = [
-        (_copy_name(c, base_name, matches), c) for c in copies or [] if c not in present_copies
-    ]
-    undeclared_copies = (
-        [] if copies or qualified else [j.name for j in matches if _copy_path(j.name, base_name)]
-    )
-    if not instances:
-        return JobMatch(
-            jobs=matches,
-            missing=missing,
-            undeclared_legs=undeclared,
-            missing_copies=missing_copies,
-            undeclared_copies=undeclared_copies,
-        )
+        prefix, tail = _tail(j.name)
+        leg = _matrix_label(tail, base_name)
+        if leg is not None:
+            style, label = leg
+            legs.setdefault(prefix, (set(), style))[0].add(normalize_instance_label(label))
+            names.append(j.name)
+    return legs, names
+
+
+def _present_copies(matches: list[InspectedJob], base_name: str) -> dict[str, str]:
+    """Copy path -> its name prefix, for every copy with at least one matched job."""
+    present: dict[str, str] = {}
+    for j in matches:
+        present.setdefault(_copy_path(j.name, base_name), _tail(j.name)[0])
+    return present
+
+
+def _declared_gaps(
+    matches: list[InspectedJob],
+    base_name: str,
+    legs: _Legs,
+    instances: list[str],
+    copies: list[str],
+    present_copies: dict[str, str],
+) -> list[tuple[str, str]]:
+    """(job name the leg would have, label) for every declared instance without a leg."""
+    legs = {prefix: (set(labels), style) for prefix, (labels, style) in legs.items()}
     if matches and not legs:
         # The job runs, but not as a matrix: every declared leg is gone.
         legs = {prefix: (set(), "") for prefix in sorted({_tail(j.name)[0] for j in matches})}
     leg_style = next(iter(legs.values()))[1] if legs else ""
-    for path in copies or []:
+    for path in copies:
         if path in present_copies:  # a declared copy that ran must run every declared leg
             legs.setdefault(present_copies[path], (set(), leg_style))
-    missing_declared = [
+    return [
         (_leg_name(prefix, base_name, label, style or None), label)
         for prefix, (labels, style) in sorted(legs.items())
         for label in instances
         if label not in labels
     ]
-    return JobMatch(
-        jobs=matches,
-        missing=missing,
-        missing_declared=missing_declared,
-        missing_copies=missing_copies,
-        undeclared_copies=undeclared_copies,
-    )
