@@ -107,3 +107,26 @@ def test_run_attempt_one_maintains_original_behavior(mock_api, conn):
     gh = FakeGitHub(mock_api, run_attempt=1, run_conclusion="success")
     gh.job(10, "scan", attempt=1, started_at=None, notes=[[]])
     assert decide(gh, conn).decision is Decision.VERIFIED
+
+
+def test_gate_only_rerun_diagnosis_names_the_rerun_not_permissions(gh, conn):
+    # #117: the cause is a synthetic prior-attempt scan, not a missing checks:read.
+    gh.job(10, "scan", attempt=1, started_at=PREVIOUS, notes=[[EXIT1]])
+    gh.job(20, "scan", attempt=2, started_at=PREVIOUS, notes=[[]])
+    result = decide(gh, conn)
+    assert result.decision is Decision.INDETERMINATE
+    masking = [c for c in result.requirements[0].checks if c.code == "STEP_MASKING_UNKNOWN"]
+    assert masking and masking[0].outcome is Outcome.UNKNOWN
+    assert "predates the current workflow run attempt" in masking[0].message
+    assert "re-run all jobs" in masking[0].message
+    assert "grant checks:read" not in masking[0].message
+    assert any("Re-run all jobs" in w for w in result.warnings)
+    assert not any("grant checks:read" in w for w in result.warnings)
+
+
+def test_unreadable_annotations_still_point_at_permissions(gh, conn):
+    gh.job(20, "scan", attempt=2, started_at=CURRENT, notes=[403])
+    result = decide(gh, conn)
+    assert result.decision is Decision.INDETERMINATE
+    masking = [c for c in result.requirements[0].checks if c.code == "STEP_MASKING_UNKNOWN"]
+    assert masking and "grant checks:read" in masking[0].message
