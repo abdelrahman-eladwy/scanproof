@@ -227,6 +227,7 @@ class HttpConnector(CIConnector):
                     ErrorKind.LIMIT_EXCEEDED,
                     f"{what} exceeded {self.max_artifact_bytes} bytes while streaming",
                 )
+            self._check_budget()
             if self._clock() - started > self.request_deadline:
                 raise ConnectorError(
                     ErrorKind.NETWORK,
