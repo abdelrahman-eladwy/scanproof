@@ -8,6 +8,8 @@ raised to the caller (nothing can be verified).
 
 from __future__ import annotations
 
+import time
+from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Literal
 
@@ -73,7 +75,70 @@ class VerificationReport(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+#: First pause before re-reading a pipeline whose required jobs are not finished;
+#: doubled each time, capped by the caller's total ``settle_seconds`` budget.
+SETTLE_FIRST_DELAY = 5.0
+
+
+def _has_unfinished(report: VerificationReport) -> bool:
+    return any(c.code == "JOB_NOT_FINISHED" for r in report.requirements for c in r.checks)
+
+
 def verify_pipeline(
+    connector: CIConnector,
+    policy: Policy,
+    *,
+    instance_url: str,
+    project: str,
+    pipeline_id: int,
+    trust: TrustConfig | None = None,
+    settle_seconds: float = 0,
+    sleep: Callable[[float], None] = time.sleep,
+) -> VerificationReport:
+    """Verify a pipeline; optionally re-read it while required jobs look unfinished.
+
+    CI platforms can report a job as queued/running after it finished (GitHub under
+    load, even for a gate that `needs:` the job: #118). With ``settle_seconds > 0`` the
+    whole verification is repeated with backoff until no requirement reports
+    JOB_NOT_FINISHED or the budget is spent. Only the last result is returned, so an
+    unfinished job after the budget is still UNKNOWN: nothing is assumed from waiting.
+    """
+    report = _verify_once(
+        connector,
+        policy,
+        instance_url=instance_url,
+        project=project,
+        pipeline_id=pipeline_id,
+        trust=trust,
+    )
+    waited, delay, rereads = 0.0, SETTLE_FIRST_DELAY, 0
+    while _has_unfinished(report) and waited < settle_seconds:
+        pause = min(delay, settle_seconds - waited)
+        sleep(pause)
+        waited, delay, rereads = waited + pause, delay * 2, rereads + 1
+        report = _verify_once(
+            connector,
+            policy,
+            instance_url=instance_url,
+            project=project,
+            pipeline_id=pipeline_id,
+            trust=trust,
+        )
+    if rereads:
+        state = "still unfinished" if _has_unfinished(report) else "now finished"
+        report = report.model_copy(
+            update={
+                "warnings": [
+                    *report.warnings,
+                    f"Required jobs were reported unfinished; re-read the pipeline {rereads} "
+                    f"time(s) over {waited:g}s and they are {state}.",
+                ]
+            }
+        )
+    return report
+
+
+def _verify_once(
     connector: CIConnector,
     policy: Policy,
     *,

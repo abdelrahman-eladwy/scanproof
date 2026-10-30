@@ -6,6 +6,12 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 ## [Unreleased]
 
 ### Added
+- `scanproof verify --settle-seconds` (default 30, range 0-300;
+  [#118](https://github.com/abdelrahman-eladwy/scanproof/issues/118)): when a required job is
+  reported unfinished, re-read the pipeline with backoff (5s, 10s, ...) within the budget before
+  deciding. CI APIs can report a job as queued after it finished, even to a gate that `needs:`
+  it. Still-unfinished jobs stay `JOB_NOT_FINISHED` / INDETERMINATE; a warning records the
+  re-reads. `--settle-seconds 0` restores the previous immediate decision.
 - Versioned JSON Schemas for every input and output format in `schemas/`
   ([#47](https://github.com/abdelrahman-eladwy/scanproof/issues/47)), single-sourced from the
   models, drift-checked in CI and validated against real outputs. Rules in

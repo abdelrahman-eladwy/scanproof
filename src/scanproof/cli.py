@@ -541,6 +541,17 @@ def verify(
     quiet: QuietOpt = False,
     trusted_root: TrustedRootOpt = None,
     sigstore_offline: SigstoreOfflineOpt = False,
+    settle_seconds: Annotated[
+        float,
+        typer.Option(
+            "--settle-seconds",
+            min=0,
+            max=300,
+            help="If required jobs are reported unfinished, re-read the pipeline with "
+            "backoff for up to this many seconds before deciding (platform status can lag "
+            "completion). They stay UNKNOWN if still unfinished. 0 disables.",
+        ),
+    ] = 30,
 ) -> None:
     """Verify a pipeline's security-scan evidence against a policy.
 
@@ -575,6 +586,7 @@ def verify(
                 project=target_project,
                 pipeline_id=pipeline,
                 trust=TrustConfig(trusted_root, offline=sigstore_offline),
+                settle_seconds=settle_seconds,
             )
     except ConnectorError as exc:
         if output:
