@@ -55,8 +55,7 @@ class SlowEmpty(httpx.SyncByteStream):
 
     def __iter__(self):
         self.clock.now += self.elapsed
-        return
-        yield b""  # pragma: no cover
+        yield from ()
 
 
 class Drops(httpx.SyncByteStream):
