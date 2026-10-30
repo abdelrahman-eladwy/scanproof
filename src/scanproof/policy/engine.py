@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 
 from scanproof.attestation.models import AttestationEvidence, AttestationStatus
 from scanproof.evidence.models import ScanEvidence
-from scanproof.models import InspectedJob, JobStatus, Pipeline
+from scanproof.models import InspectedJob, Job, JobStatus, Pipeline
 from scanproof.policy.models import (
     AttestationRequirement,
     Policy,
@@ -507,6 +507,24 @@ def _evaluate_instances(
     )
 
 
+def _masking_unknown_cause(job: Job) -> str:
+    """Why a continue-on-error step could not be ruled out, with the matching remedy.
+
+    The outcome is UNKNOWN either way; only the diagnosis differs (#117). A connector
+    that refused the evidence for a specific reason records it in ``raw_status``;
+    otherwise the annotations were unreadable.
+    """
+    if job.raw_status and job.raw_status not in ("success", JobStatus.SUCCESS.value):
+        return (
+            f"a step hidden by continue-on-error cannot be ruled out: {job.raw_status} "
+            "(re-run all jobs, not only the gate)"
+        )
+    return (
+        "its check-run annotations could not be read to rule out a step hidden by "
+        "continue-on-error (grant checks:read, or retry if the API was unavailable)"
+    )
+
+
 def _job_checks(req: Requirement, job: InspectedJob) -> list[CheckResult]:
     out: list[CheckResult] = []
     latest = job.latest
@@ -520,8 +538,7 @@ def _job_checks(req: Requirement, job: InspectedJob) -> list[CheckResult]:
                     "job_success",
                     Outcome.UNKNOWN,
                     "STEP_MASKING_UNKNOWN",
-                    f"Job {latest.id} reports success, but its check-run annotations could not "
-                    "be read to rule out a step hidden by continue-on-error (grant checks:read)",
+                    f"Job {latest.id} reports success, but {_masking_unknown_cause(latest)}",
                 )
             )
         elif status is JobStatus.SUCCESS:

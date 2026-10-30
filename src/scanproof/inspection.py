@@ -164,11 +164,19 @@ def inspect_pipeline(
                     f"Job '{job.name}' ended '{job.latest.status.value}', but allow_failure / "
                     "continue-on-error kept the pipeline going."
                 )
-    unchecked = [j.name for j in inspected if j.latest.masking_checked is False]
-    if unchecked:
+    unchecked = [j for j in inspected if j.latest.masking_checked is False]
+    stale = [j.name for j in unchecked if _refused_for_reason(j.latest.raw_status)]
+    no_notes = [j.name for j in unchecked if not _refused_for_reason(j.latest.raw_status)]
+    if stale:
         warnings.append(
-            "Could not read check-run annotations (grant checks:read) to rule out steps hidden by "
-            f"continue-on-error in: {', '.join(unchecked)}."
+            "Scan jobs predate the current workflow run attempt, so steps hidden by "
+            f"continue-on-error cannot be ruled out in: {', '.join(stale)}. Re-run all jobs."
+        )
+    if no_notes:
+        warnings.append(
+            "Could not read check-run annotations (grant checks:read, or retry if the API was "
+            "unavailable) to rule out steps hidden by continue-on-error in: "
+            f"{', '.join(no_notes)}."
         )
     if not inspected:
         warnings.append("Pipeline has no jobs visible to this token.")
@@ -186,3 +194,8 @@ def inspect_pipeline(
         unreadable_scopes=scopes,
         warnings=warnings,
     )
+
+
+def _refused_for_reason(raw_status: str | None) -> bool:
+    """True when the connector recorded why masking was not checked (#117)."""
+    return bool(raw_status) and raw_status != "success"
