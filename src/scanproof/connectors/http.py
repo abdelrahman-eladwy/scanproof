@@ -266,6 +266,10 @@ class HttpConnector(CIConnector):
             location = response.headers.get("Location", "")
             response.close()
             target = httpx.URL(urljoin(str(current), location))
+            if target.username or target.password:
+                raise ConnectorError(
+                    ErrorKind.UNSAFE_REDIRECT, "Refused redirect URL containing credentials"
+                )
             if current.scheme == "https" and target.scheme != "https":
                 raise ConnectorError(
                     ErrorKind.UNSAFE_REDIRECT,
