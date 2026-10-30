@@ -341,7 +341,7 @@ class GitHubConnector(HttpConnector):
                 response = self._send(next_url, params)
                 self._raise_for_status(response, "check run annotations")
                 annotations = response.json()
-            except (ConnectorError, ValueError):
+            except (ConnectorError, ValueError, RecursionError):
                 return None
             if not isinstance(annotations, list):
                 return None
@@ -408,7 +408,7 @@ class GitHubConnector(HttpConnector):
             try:
                 body = response.json()
                 items = body[key]
-            except (ValueError, KeyError, TypeError) as exc:
+            except (ValueError, KeyError, TypeError, RecursionError) as exc:
                 raise ConnectorError(
                     ErrorKind.INVALID_RESPONSE, f"Unexpected page from {path}"
                 ) from exc

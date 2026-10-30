@@ -6,6 +6,10 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 ## [Unreleased]
 
 ### Fixed
+- A deeply nested JSON document from the GitLab or GitHub API (pipeline, run, job page or
+  check-run annotations) escaped as an unhandled `RecursionError`: a traceback and exit code 1,
+  which reads as a policy FAIL. It is now an `INVALID_RESPONSE` connector error, i.e.
+  INDETERMINATE (exit 2).
 - Raised the minimum `typer` to 0.16 ([#121](https://github.com/abdelrahman-eladwy/scanproof/issues/121)):
   with the old floor (0.13) and any `click` >= 8.2, every `--help` crashed
   (`make_metavar() missing 'ctx'`). A help smoke test now runs in the lowest-deps CI job.
