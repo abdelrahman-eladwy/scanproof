@@ -47,6 +47,17 @@ class Drip(httpx.SyncByteStream):
         yield b"]"
 
 
+class SlowEmpty(httpx.SyncByteStream):
+    """An empty response whose stream completes after the clock advances."""
+
+    def __init__(self, clock: Clock, elapsed: float) -> None:
+        self.clock, self.elapsed = clock, elapsed
+
+    def __iter__(self):
+        self.clock.now += self.elapsed
+        yield from ()
+
+
 class Drops(httpx.SyncByteStream):
     def __iter__(self):
         yield b'{"partial": '
@@ -196,6 +207,43 @@ def test_run_budget_interrupts_streamed_artifact(mock_api) -> None:
     url = f"{API}/projects/123/jobs/7/artifacts/semgrep.json"
     route = mock_api.get(url).mock(
         side_effect=lambda req: httpx.Response(200, stream=Drip(clock, step=10, chunks=10))
+    )
+    with (
+        gitlab(clock=clock, run_budget=25, request_deadline=300) as gl,
+        pytest.raises(ConnectorError) as err,
+    ):
+        gl.download_artifact_file("123", 7, "semgrep.json")
+    assert err.value.kind is ErrorKind.NETWORK
+    assert "time budget" in err.value.message
+    assert route.call_count == 1
+
+
+@pytest.mark.parametrize(
+    ("run_budget", "request_deadline", "expected"),
+    [(1800, 25, "took longer than 25s"), (25, 300, "time budget")],
+)
+def test_empty_slow_api_stream_checks_deadline_at_end(
+    mock_api, run_budget, request_deadline, expected
+) -> None:
+    clock = Clock()
+    route = mock_api.get(JOBS).mock(
+        side_effect=lambda req: httpx.Response(200, stream=SlowEmpty(clock, 40))
+    )
+    with (
+        gitlab(clock=clock, run_budget=run_budget, request_deadline=request_deadline) as gl,
+        pytest.raises(ConnectorError) as err,
+    ):
+        gl.list_jobs("123", 1042)
+    assert err.value.kind is ErrorKind.NETWORK
+    assert expected in err.value.message
+    assert route.call_count == 1
+
+
+def test_empty_slow_artifact_stream_checks_run_budget_at_end(mock_api) -> None:
+    clock = Clock()
+    url = f"{API}/projects/123/jobs/7/artifacts/semgrep.json"
+    route = mock_api.get(url).mock(
+        side_effect=lambda req: httpx.Response(200, stream=SlowEmpty(clock, 40))
     )
     with (
         gitlab(clock=clock, run_budget=25, request_deadline=300) as gl,
