@@ -235,6 +235,15 @@ def _base_url(provider: str, settings: ConnectionSettings) -> str:
 
 
 def _connector(provider: str | None, settings: ConnectionSettings) -> CIConnector:
+    """Open a connector for a single-pipeline command: usage errors exit 3, a connector that
+    cannot be built exits 2 (INDETERMINATE)."""
+    with _indeterminate_on_connector_error():
+        return _open_connector(provider, settings)
+
+
+def _open_connector(provider: str | None, settings: ConnectionSettings) -> CIConnector:
+    """Like _connector, but a connector that cannot be built raises ConnectorError, so a
+    caller judging several pipelines (verify-release) can record it for that one only."""
     provider = (provider or "gitlab").lower()
     if provider not in _BUILDERS:
         raise _fail(
@@ -266,8 +275,7 @@ def _connector(provider: str | None, settings: ConnectionSettings) -> CIConnecto
         ca=str(settings.ca_bundle) if settings.ca_bundle else None,
         auth_scheme=settings.auth_scheme,
     )
-    with _indeterminate_on_connector_error():
-        return _BUILDERS[provider](resolved)
+    return _BUILDERS[provider](resolved)
 
 
 @contextmanager
@@ -681,7 +689,8 @@ def verify_release_cmd(
         raise _fail(EXIT_USAGE, f"error: {exc}") from None
 
     def connect(provider: str, url: str | None) -> CIConnector:
-        return _connector(
+        # Usage errors still exit 3; a ConnectorError becomes this component's INDETERMINATE.
+        return _open_connector(
             provider,
             ConnectionSettings(
                 gitlab_url=url if provider == "gitlab" and url else gitlab_url,
