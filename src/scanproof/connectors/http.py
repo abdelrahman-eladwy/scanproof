@@ -246,6 +246,18 @@ class HttpConnector(CIConnector):
         # httpx.URL(url, params=None) drops url's own query string (e.g. pagination links),
         # so merge explicit params into the existing query instead.
         current = httpx.URL(url)
+        # Artifact URLs may come from untrusted provider metadata rather than a redirect.
+        # Enforce the same transport and credential rules before the first request.
+        if current.username or current.password:
+            raise ConnectorError(
+                ErrorKind.UNSAFE_REDIRECT, "Refused request URL containing credentials"
+            )
+        if current.scheme != "https" and not (
+            current.scheme == "http" and is_loopback(str(current))
+        ):
+            raise ConnectorError(
+                ErrorKind.UNSAFE_REDIRECT, "Refused non-HTTPS non-loopback request URL"
+            )
         if params:
             current = current.copy_merge_params(params)
         for _ in range(MAX_REDIRECTS + 1):
