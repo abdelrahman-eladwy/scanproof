@@ -165,6 +165,33 @@ def test_a_body_just_inside_the_deadline_is_fine(mock_api) -> None:
         assert gl.list_jobs("123", 1042) == []
 
 
+def test_run_budget_interrupts_streamed_api_body(mock_api) -> None:
+    clock = Clock()
+    route = mock_api.get(JOBS).mock(
+        side_effect=lambda req: httpx.Response(200, stream=Drip(clock, step=10, chunks=10))
+    )
+    with gitlab(clock=clock, run_budget=25, request_deadline=300) as gl:
+        with pytest.raises(ConnectorError) as err:
+            gl.list_jobs("123", 1042)
+    assert err.value.kind is ErrorKind.NETWORK
+    assert "time budget" in err.value.message
+    assert route.call_count == 1
+
+
+def test_run_budget_interrupts_streamed_artifact(mock_api) -> None:
+    clock = Clock()
+    url = f"{API}/projects/123/jobs/7/artifacts/semgrep.json"
+    route = mock_api.get(url).mock(
+        side_effect=lambda req: httpx.Response(200, stream=Drip(clock, step=10, chunks=10))
+    )
+    with gitlab(clock=clock, run_budget=25, request_deadline=300) as gl:
+        with pytest.raises(ConnectorError) as err:
+            gl.download_artifact_file("123", 7, "semgrep.json")
+    assert err.value.kind is ErrorKind.NETWORK
+    assert "time budget" in err.value.message
+    assert route.call_count == 1
+
+
 def test_run_budget_stops_further_requests(mock_api) -> None:
     clock = Clock()
     route = mock_api.get(JOBS).respond(200, json=[JOB])
