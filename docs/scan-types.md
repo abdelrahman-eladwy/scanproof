@@ -59,7 +59,7 @@ It is **UNKNOWN** for formats that drop suppressed results without recording the
 Counting cannot see what a scanner was told to skip *before* it ran (an ignored file is simply
 not scanned). Pair this check with scanner configuration owned by the protected branch, and
 neutralise PR-supplied ignore files before scanning; see the signed-gate pattern in
-[platforms/github.md](platforms/github.md).
+[GitHub: make the required check independent of the pull request](platforms/github.md#make-the-required-check-independent-of-the-pull-request).
 
 ## Recommended checks per type
 
