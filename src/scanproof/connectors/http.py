@@ -319,7 +319,13 @@ class HttpConnector(CIConnector):
                         f"'{wanted}' not found in artifact '{artifact_name}' (contains: {sample})",
                         None,
                     )
-                info = zf.getinfo(wanted)
+                matches = [entry for entry in zf.infolist() if entry.filename == wanted]
+                if len(matches) != 1:
+                    raise ConnectorError(
+                        ErrorKind.INVALID_RESPONSE,
+                        f"Artifact '{artifact_name}' has ambiguous duplicate report path '{wanted}'",
+                    )
+                info = matches[0]
                 if info.file_size > self.max_artifact_bytes:
                     raise ConnectorError(
                         ErrorKind.LIMIT_EXCEEDED,
