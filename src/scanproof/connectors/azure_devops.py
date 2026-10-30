@@ -33,7 +33,13 @@ from urllib.parse import quote
 
 import httpx
 
-from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
+from scanproof.connectors.base import (
+    AuthError,
+    ConnectorError,
+    ErrorKind,
+    NotFoundError,
+    require_pipeline_id,
+)
 from scanproof.connectors.http import DEFAULT_MAX_ARTIFACT_BYTES, HttpConnector
 from scanproof.models import Job, JobStatus, Pipeline
 
@@ -147,7 +153,7 @@ class AzureDevOpsConnector(HttpConnector):
                 ErrorKind.INVALID_RESPONSE,
                 "Azure DevOps artifacts are published per build: set artifact_name in the policy",
             )
-        build_id = int(job.pipeline_id or 0)
+        build_id = int(require_pipeline_id(job))
         listing = self._get(project, f"builds/{build_id}/artifacts", "artifacts")
         matches = [
             a

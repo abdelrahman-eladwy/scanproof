@@ -31,7 +31,13 @@ from urllib.parse import quote
 
 import httpx
 
-from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
+from scanproof.connectors.base import (
+    AuthError,
+    ConnectorError,
+    ErrorKind,
+    NotFoundError,
+    require_pipeline_id,
+)
 from scanproof.connectors.http import (
     DEFAULT_MAX_ARTIFACT_BYTES,
     MAX_PAGES,
@@ -220,7 +226,7 @@ class GitHubConnector(HttpConnector):
                 ErrorKind.INVALID_RESPONSE,
                 "GitHub artifacts belong to the run, not a job: set artifact_name in the policy",
             )
-        run_id = job.pipeline_id
+        run_id = require_pipeline_id(job)
         path = f"/repos/{_repo(project)}/actions/runs/{run_id}/artifacts"
         matches = [
             a

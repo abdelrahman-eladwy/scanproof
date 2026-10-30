@@ -10,6 +10,10 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   check-run annotations) escaped as an unhandled `RecursionError`: a traceback and exit code 1,
   which reads as a policy FAIL. It is now an `INVALID_RESPONSE` connector error, i.e.
   INDETERMINATE (exit 2).
+- A GitHub job the API returned without `run_id` made ScanProof request
+  `/actions/runs/None/artifacts`; the 404 read as `REPORT_MISSING`, a policy FAIL based on data
+  ScanProof never had. Jenkins and Azure DevOps substituted build `0` the same way. A missing
+  run/build id is now `INVALID_RESPONSE` (UNKNOWN, exit 2) and no request is made.
 - Raised the minimum `typer` to 0.16 ([#121](https://github.com/abdelrahman-eladwy/scanproof/issues/121)):
   with the old floor (0.13) and any `click` >= 8.2, every `--help` crashed
   (`make_metavar() missing 'ctx'`). A help smoke test now runs in the lowest-deps CI job.

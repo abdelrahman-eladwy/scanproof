@@ -36,9 +36,7 @@ def collect_evidence(
     # parent pipeline passed to verify_pipeline(). The job metadata was populated
     # while walking the downstream graph in inspect_pipeline().
     source_project = job.latest.project or project
-    source_pipeline_id = (
-        job.latest.pipeline_id if job.latest.pipeline_id is not None else pipeline.id
-    )
+    source_pipeline_id = source_pipeline_of(job, pipeline)
     source_sha = job.latest.commit_sha if job.latest.project else pipeline.sha
     source = EvidenceSource(
         provider=connector.provider,
@@ -74,6 +72,13 @@ def collect_evidence(
 
     evidence.source = source
     return evidence
+
+
+def source_pipeline_of(job: InspectedJob, pipeline: Pipeline) -> int:
+    """The pipeline whose artifacts hold the job's report: a downstream job's own pipeline,
+    else the inspected one. Shared by evidence collection and the verify caches so both
+    always agree on which pipeline a report came from."""
+    return job.latest.pipeline_id if job.latest.pipeline_id is not None else pipeline.id
 
 
 def find_job(jobs: list[InspectedJob], name: str) -> InspectedJob | None:
