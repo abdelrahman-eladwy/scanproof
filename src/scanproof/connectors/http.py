@@ -323,7 +323,8 @@ class HttpConnector(CIConnector):
                 if len(matches) != 1:
                     raise ConnectorError(
                         ErrorKind.INVALID_RESPONSE,
-                        f"Artifact '{artifact_name}' has ambiguous duplicate report path '{wanted}'",
+                        f"Artifact '{artifact_name}' has ambiguous duplicate report path "
+                        f"'{wanted}'",
                     )
                 info = matches[0]
                 if info.file_size > self.max_artifact_bytes:
