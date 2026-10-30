@@ -55,6 +55,21 @@ class NotFoundError(ConnectorError):
         super().__init__(ErrorKind.NOT_FOUND, message, status_code)
 
 
+def require_pipeline_id(job: Job) -> int:
+    """The pipeline/run/build a job belongs to, needed to locate its artifacts.
+
+    A missing id is a malformed API response (UNKNOWN). Substituting a placeholder (None, 0)
+    would request a nonexistent run, and its 404 would read as a missing report: a FAIL
+    based on data ScanProof never had.
+    """
+    if job.pipeline_id is None:
+        raise ConnectorError(
+            ErrorKind.INVALID_RESPONSE,
+            f"Job '{job.name}' has no pipeline/run id; cannot locate its artifacts",
+        )
+    return job.pipeline_id
+
+
 class CIConnector(ABC):
     """Read-only access to pipeline evidence on a CI/CD platform."""
 

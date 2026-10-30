@@ -20,7 +20,12 @@ from scanproof.attestation.models import AttestationEvidence
 from scanproof.attestation.verify import TrustConfig, verify_bundles
 from scanproof.connectors.base import CIConnector, ConnectorError, NotFoundError
 from scanproof.contracts import VERIFICATION_SCHEMA
-from scanproof.evidence.collector import collect_evidence, is_qualified, match_jobs
+from scanproof.evidence.collector import (
+    collect_evidence,
+    is_qualified,
+    match_jobs,
+    source_pipeline_of,
+)
 from scanproof.evidence.models import ScanEvidence
 from scanproof.inspection import DOWNSTREAM_SEPARATOR, inspect_pipeline
 from scanproof.models import InspectedJob, Pipeline
@@ -176,7 +181,7 @@ def _verify_once(
             key = (
                 "artifact",
                 source_project,
-                str(job.latest.pipeline_id or inspection.pipeline.id),
+                str(source_pipeline_of(job, inspection.pipeline)),
                 str(job.latest.id),
                 spec.bundle_path or "",
                 bundle_artifact or "",
@@ -229,7 +234,7 @@ def _verify_once(
     def collect(req, job) -> RequirementInput:
         key = (
             job.latest.project or project,
-            job.latest.pipeline_id or inspection.pipeline.id,
+            source_pipeline_of(job, inspection.pipeline),
             job.latest.id,
             req.report_path,
             req.tool.lower(),

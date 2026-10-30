@@ -30,7 +30,13 @@ from urllib.parse import quote
 
 import httpx
 
-from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
+from scanproof.connectors.base import (
+    AuthError,
+    ConnectorError,
+    ErrorKind,
+    NotFoundError,
+    require_pipeline_id,
+)
 from scanproof.connectors.http import DEFAULT_MAX_ARTIFACT_BYTES, HttpConnector
 from scanproof.models import Job, JobStatus, Pipeline
 
@@ -169,13 +175,14 @@ class JenkinsConnector(HttpConnector):
         self, project: str, job: Job, report_path: str, artifact_name: str | None = None
     ) -> bytes:
         """Archived artifacts belong to the build (any stage could have archived them)."""
-        build = self._build(project, job.pipeline_id or 0)
+        build_number = require_pipeline_id(job)
+        build = self._build(project, build_number)
         wanted = _clean_path(report_path)
         archived = {a.get("relativePath") for a in build.get("artifacts") or []}
         if wanted not in archived:
             sample = ", ".join(sorted(p for p in archived if p)[:10]) or "(none)"
             raise NotFoundError(f"'{wanted}' was not archived (archived: {sample})", None)
-        base = f"{_job_path(project)}/{int(job.pipeline_id or 0)}"
+        base = f"{_job_path(project)}/{int(build_number)}"
         url = f"{self.api_url}{base}/artifact/{quote(wanted)}"
         return self._download(url, f"artifact '{wanted}'")
 

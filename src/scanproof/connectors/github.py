@@ -31,7 +31,13 @@ from urllib.parse import quote
 
 import httpx
 
-from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
+from scanproof.connectors.base import (
+    AuthError,
+    ConnectorError,
+    ErrorKind,
+    NotFoundError,
+    require_pipeline_id,
+)
 from scanproof.connectors.http import (
     DEFAULT_MAX_ARTIFACT_BYTES,
     MAX_PAGES,
@@ -220,7 +226,7 @@ class GitHubConnector(HttpConnector):
                 ErrorKind.INVALID_RESPONSE,
                 "GitHub artifacts belong to the run, not a job: set artifact_name in the policy",
             )
-        run_id = job.pipeline_id
+        run_id = require_pipeline_id(job)
         path = f"/repos/{_repo(project)}/actions/runs/{run_id}/artifacts"
         matches = [
             a
@@ -341,7 +347,7 @@ class GitHubConnector(HttpConnector):
                 response = self._send(next_url, params)
                 self._raise_for_status(response, "check run annotations")
                 annotations = response.json()
-            except (ConnectorError, ValueError):
+            except (ConnectorError, ValueError, RecursionError):
                 return None
             if not isinstance(annotations, list):
                 return None
@@ -408,7 +414,7 @@ class GitHubConnector(HttpConnector):
             try:
                 body = response.json()
                 items = body[key]
-            except (ValueError, KeyError, TypeError) as exc:
+            except (ValueError, KeyError, TypeError, RecursionError) as exc:
                 raise ConnectorError(
                     ErrorKind.INVALID_RESPONSE, f"Unexpected page from {path}"
                 ) from exc

@@ -414,7 +414,7 @@ class HttpConnector(CIConnector):
         self._raise_for_status(response, path)
         try:
             return response.json()
-        except ValueError as exc:
+        except (ValueError, RecursionError) as exc:
             raise ConnectorError(
                 ErrorKind.INVALID_RESPONSE, f"Non-JSON response from {path}"
             ) from exc

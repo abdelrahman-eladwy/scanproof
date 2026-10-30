@@ -195,7 +195,7 @@ class GitLabConnector(HttpConnector):
             self._raise_for_status(response, path)
             try:
                 items = response.json()
-            except ValueError as exc:
+            except (ValueError, RecursionError) as exc:
                 raise ConnectorError(
                     ErrorKind.INVALID_RESPONSE, f"Non-JSON page from {path}"
                 ) from exc
