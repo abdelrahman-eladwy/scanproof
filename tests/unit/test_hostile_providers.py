@@ -79,6 +79,29 @@ def test_redirect_with_url_credentials_is_refused_before_follow(mock_api) -> Non
     assert len(mock_api.calls) == 1
 
 
+def test_local_http_origin_cannot_redirect_to_remote_plaintext(mock_api) -> None:
+    source = "http://localhost/api/v4/projects/123/pipelines/1042"
+    mock_api.get(source).respond(302, headers={"Location": "http://example.org/collect"})
+    with (
+        GitLabConnector("http://localhost", TOKEN, sleep=lambda _: None) as gl,
+        pytest.raises(ConnectorError) as err,
+    ):
+        gl._get_json("/projects/123/pipelines/1042")
+    assert err.value.kind is ErrorKind.UNSAFE_REDIRECT
+    assert len(mock_api.calls) == 1
+
+
+def test_local_http_redirect_to_local_http_still_works(mock_api) -> None:
+    source = "http://localhost/api/v4/projects/123/pipelines/1042"
+    target = "http://127.0.0.1/api/v4/continuation"
+    mock_api.get(source).respond(302, headers={"Location": target})
+    mock_api.get(target).respond(200, json={"ok": True})
+    with GitLabConnector("http://localhost", TOKEN, sleep=lambda _: None) as gl:
+        assert gl._get_json("/projects/123/pipelines/1042") == {"ok": True}
+    assert len(mock_api.calls) == 2
+    assert "authorization" not in mock_api.calls[1].request.headers
+
+
 # ---------------------------------------------------------------- pagination loops
 
 
