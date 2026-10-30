@@ -12,7 +12,9 @@ Mapping (all runs combined):
   runs[].artifacts[].location.uri    scope (scanned files), when the producer lists them
   runs[].results[]                   findings by level; a result without `level` takes its
                                      rule's defaultConfiguration.level, else SARIF's default
-                                     "warning"
+                                     "warning". A result with a suppression whose status is
+                                     not "rejected" (e.g. `# nosemgrep` -> kind inSource) is
+                                     counted in `suppressed`, not in the total (#123)
   runs[].properties.repoDigests etc. container target (Trivy image scans)
 """
 
@@ -61,10 +63,14 @@ class SarifAdapter(ScannerAdapter):
         )
 
         severities: list[str] = []
+        suppressed = 0
         for run, driver in zip(runs, drivers, strict=True):
             rules = driver.get("rules") or []
             by_id = {r.get("id"): r for r in rules if isinstance(r, dict)}
             for result in run.get("results") or []:
+                if _is_suppressed(result):
+                    suppressed += 1
+                    continue
                 severities.append(_result_level(result, rules, by_id).upper())
 
         return {
@@ -73,7 +79,9 @@ class SarifAdapter(ScannerAdapter):
             "scanner_errors": _errors(runs),
             "scope": _scope(runs),
             "results_reported": all("results" in r for r in runs),
-            "findings": FindingsSummary(total=len(severities), by_severity=count_by(severities)),
+            "findings": FindingsSummary(
+                total=len(severities), by_severity=count_by(severities), suppressed=suppressed
+            ),
             "target": _target(runs),
         }
 
@@ -154,3 +162,17 @@ def _target(runs: list[dict[str, Any]]) -> ScanTarget | None:
                 repo_tags=[str(t) for t in tags] if isinstance(tags, list) else None,
             )
     return None
+
+
+def _is_suppressed(result: Any) -> bool:
+    """SARIF 3.35: any suppression not explicitly rejected hides the result.
+
+    A malformed `suppressions` value counts as suppressed: a report that tries to hide a
+    result must not have it silently counted as an ordinary, unsuppressed finding instead.
+    """
+    if not isinstance(result, dict) or "suppressions" not in result:
+        return False
+    items = result["suppressions"]
+    if not isinstance(items, list):
+        return True
+    return any(not (isinstance(i, dict) and i.get("status") == "rejected") for i in items)

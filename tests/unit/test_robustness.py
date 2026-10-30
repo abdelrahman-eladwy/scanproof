@@ -19,7 +19,12 @@ SAMPLES = {
     "gitlab-container-scanning": ["gitlab-reports/gl-container-scanning-report.json"],
     "gitlab-dependency-scanning": ["gitlab-reports/gl-dependency-scanning-report.json"],
     "gitlab-secret-detection": ["gitlab-reports/gl-secret-detection-report.json"],
-    "sarif": ["sarif/semgrep.sarif", "sarif/trivy-image.sarif", "sarif/checkov.sarif"],
+    "sarif": [
+        "sarif/semgrep.sarif",
+        "sarif/semgrep-nosem.sarif",
+        "sarif/trivy-image.sarif",
+        "sarif/checkov.sarif",
+    ],
     "cyclonedx": ["cyclonedx/trivy-image.cdx.json", "cyclonedx/syft-alpine.cdx.json"],
     "checkov": ["checkov/checkov.json"],
     "sonatype-iq": ["sonatype/many_vulns.json"],

@@ -11,6 +11,11 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
   (`make_metavar() missing 'ctx'`). A help smoke test now runs in the lowest-deps CI job.
 
 ### Added
+- `checks.suppressed_findings_allowed` ([#123](https://github.com/abdelrahman-eladwy/scanproof/issues/123)):
+  caps findings a report marks as suppressed (inline comments, ignore files, waivers); UNKNOWN
+  when the format does not record suppressions. The `sarif` adapter now counts results with a
+  non-rejected `suppressions[]` entry in `suppressed` instead of the total, so tools that export
+  SARIF (Semgrep `# nosemgrep`, CodeQL, ...) are covered without per-tool code.
 - `scanproof verify --settle-seconds` (default 30, range 0-300;
   [#118](https://github.com/abdelrahman-eladwy/scanproof/issues/118)): when a required job is
   reported unfinished, re-read the pipeline with backoff (5s, 10s, ...) within the budget before

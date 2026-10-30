@@ -331,6 +331,7 @@ NOT_EVIDENCE = {
 EVIDENCE_SAMPLES = {
     "scanner_errors_allowed": 0,
     "minimum_scanned_files": 1,
+    "suppressed_findings_allowed": 0,
     "required_paths": ["src/"],
     "image_digest_must_match": DIGEST,
     "expected_scanner": "CodeQL",
