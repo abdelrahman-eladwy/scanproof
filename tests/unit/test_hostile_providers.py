@@ -57,6 +57,17 @@ def gitlab(**kw) -> GitLabConnector:
     return GitLabConnector(BASE, TOKEN, sleep=lambda _: None, **kw)
 
 
+def test_redirect_with_url_credentials_is_refused_before_follow(mock_api) -> None:
+    source = f"{API}/projects/123/pipelines/1042"
+    target = "https://attacker:password@example.org/collect"
+    mock_api.get(source).respond(302, headers={"Location": target})
+    with gitlab() as gl, pytest.raises(ConnectorError) as err:
+        gl._get_json("/projects/123/pipelines/1042")
+    assert err.value.kind is ErrorKind.UNSAFE_REDIRECT
+    assert "password" not in err.value.message
+    assert len(mock_api.calls) == 1
+
+
 # ---------------------------------------------------------------- pagination loops
 
 
