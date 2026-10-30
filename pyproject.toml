@@ -22,7 +22,7 @@ classifiers = [
   "Topic :: Software Development :: Quality Assurance",
 ]
 dependencies = [
-  "typer>=0.13",  # 0.12 cannot handle `str | None` options
+  "typer>=0.16",  # older typer crashes every --help with click>=8.2 (#121)
   "httpx>=0.27",
   "pydantic>=2.7",
   "pyyaml>=6.0.1",  # 6.0 no longer builds (Cython 3)

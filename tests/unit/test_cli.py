@@ -316,3 +316,19 @@ def test_verify_settle_seconds_is_bounded(tmp_path) -> None:
         assert bad_run.exit_code == 2  # click usage error, raised before any I/O
         assert "--settle-seconds" in plain(bad_run.output)
         assert "range" in plain(bad_run.output)
+
+
+@pytest.mark.parametrize(
+    "args", [["--help"], *([c, "--help"] for c in ("inspect", "evidence", "validate", "verify"))]
+)
+def test_help_renders_with_the_installed_typer_and_click(args) -> None:
+    # #121: typer < 0.15.4 + click >= 8.2 crashed every --help. This runs in the
+    # lowest-deps CI job too, so a floor that cannot render help fails loudly.
+    import re
+
+    from typer.testing import CliRunner
+
+    result = CliRunner().invoke(app, args)
+    assert result.exception is None, repr(result.exception)
+    assert result.exit_code == 0
+    assert "Usage:" in re.sub(r"\x1b\[[0-9;]*m", "", result.output)

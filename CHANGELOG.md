@@ -5,6 +5,11 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 
 ## [Unreleased]
 
+### Fixed
+- Raised the minimum `typer` to 0.16 ([#121](https://github.com/abdelrahman-eladwy/scanproof/issues/121)):
+  with the old floor (0.13) and any `click` >= 8.2, every `--help` crashed
+  (`make_metavar() missing 'ctx'`). A help smoke test now runs in the lowest-deps CI job.
+
 ### Added
 - `scanproof verify --settle-seconds` (default 30, range 0-300;
   [#118](https://github.com/abdelrahman-eladwy/scanproof/issues/118)): when a required job is
