@@ -234,6 +234,13 @@ class HttpConnector(CIConnector):
                     f"{what} took longer than {self.request_deadline:.0f}s to download",
                 )
             yield chunk
+        # Even a stream that yields no chunks can consume the entire deadline.
+        self._check_budget()
+        if self._clock() - started > self.request_deadline:
+            raise ConnectorError(
+                ErrorKind.NETWORK,
+                f"{what} took longer than {self.request_deadline:.0f}s to download",
+            )
 
     def _follow(self, url: str, params: dict[str, Any] | None, *, stream: bool) -> httpx.Response:
         # httpx.URL(url, params=None) drops url's own query string (e.g. pagination links),
