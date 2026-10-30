@@ -58,6 +58,17 @@ def test_small_archives_pass(gl) -> None:
     assert gl._extract(data, "semgrep.json", "a").startswith(b'{"results"')
 
 
+def test_duplicate_report_path_is_rejected_as_ambiguous(gl) -> None:
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_STORED) as z:
+        z.writestr("semgrep.json", b'{"results": [{"check_id": "bad"}]}')
+        z.writestr("semgrep.json", b'{"results": [], "errors": []}')
+    with pytest.raises(ConnectorError) as err:
+        gl._extract(buf.getvalue(), "semgrep.json", "scan-results")
+    assert err.value.kind is ErrorKind.INVALID_RESPONSE
+    assert "ambiguous duplicate report path" in err.value.message
+
+
 def test_zip64_end_record_is_read() -> None:
     entries, size = zip_directory(MANY)
     assert entries == MAX_ZIP_ENTRIES + 20_001
