@@ -102,6 +102,39 @@ def test_local_http_redirect_to_local_http_still_works(mock_api) -> None:
     assert "authorization" not in mock_api.calls[1].request.headers
 
 
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://example.org/untrusted-report.json",
+        "ftp://example.org/untrusted-report.json",
+        "https://injected:password@example.org/untrusted-report.json",
+    ],
+)
+def test_initial_untrusted_artifact_url_is_rejected_without_request(mock_api, url) -> None:
+    with gitlab() as gl, pytest.raises(ConnectorError) as err:
+        gl._download(url)
+    assert err.value.kind is ErrorKind.UNSAFE_REDIRECT
+    assert "password" not in err.value.message
+    assert len(mock_api.calls) == 0
+
+
+def test_external_https_artifact_url_is_allowed_without_provider_token(mock_api) -> None:
+    url = "https://objects.example.org/report.json"
+    mock_api.get(url).respond(200, content=b"evidence")
+    with gitlab() as gl:
+        assert gl._download(url) == b"evidence"
+    assert len(mock_api.calls) == 1
+    assert "authorization" not in mock_api.calls[0].request.headers
+
+
+def test_loopback_http_artifact_url_is_allowed_without_provider_token(mock_api) -> None:
+    url = "http://127.0.0.1/report.json"
+    mock_api.get(url).respond(200, content=b"local")
+    with gitlab() as gl:
+        assert gl._download(url) == b"local"
+    assert "authorization" not in mock_api.calls[0].request.headers
+
+
 # ---------------------------------------------------------------- pagination loops
 
 
