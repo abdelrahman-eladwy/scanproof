@@ -295,3 +295,20 @@ def test_github_provider_uses_github_token(monkeypatch, mock_api) -> None:
     result = runner.invoke(app, ["inspect", "--provider", "github", "-p", "o/r", "--pipeline", "7"])
     assert result.exit_code == EXIT_INDETERMINATE
     assert route.calls.last.request.headers["Authorization"] == "Bearer ghp_x"
+
+
+def test_verify_settle_seconds_is_bounded_and_documented(tmp_path) -> None:
+    # #118: the CLI exposes a bounded budget (0..300s); out-of-range is a usage error.
+    from typer.testing import CliRunner
+
+    from scanproof.cli import app
+
+    result = CliRunner().invoke(app, ["verify", "--help"])
+    assert "--settle-seconds" in result.output
+    existing = tmp_path / "policy.yaml"
+    existing.write_text("{}\n")
+    for bad in ("-1", "301"):
+        bad_run = CliRunner().invoke(app, ["verify", "-P", str(existing), "--settle-seconds", bad])
+        assert bad_run.exit_code == 2  # click usage error, raised before any I/O
+        assert "--settle-seconds" in bad_run.output
+        assert "range" in bad_run.output
