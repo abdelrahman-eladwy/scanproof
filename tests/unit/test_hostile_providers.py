@@ -174,7 +174,7 @@ def test_run_budget_interrupts_streamed_api_body(mock_api) -> None:
         gitlab(clock=clock, run_budget=25, request_deadline=300) as gl,
         pytest.raises(ConnectorError) as err,
     ):
-            gl.list_jobs("123", 1042)
+        gl.list_jobs("123", 1042)
     assert err.value.kind is ErrorKind.NETWORK
     assert "time budget" in err.value.message
     assert route.call_count == 1
