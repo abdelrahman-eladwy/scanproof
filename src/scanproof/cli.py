@@ -13,6 +13,9 @@ import hashlib
 import json
 import os
 import sys
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Annotated
 
@@ -176,30 +179,76 @@ def _fail(code: int, message: str) -> typer.Exit:
     return typer.Exit(code)
 
 
-def _connector(
-    provider: str | None,
-    gitlab_url: str,
-    github_url: str,
-    token_env: str | None,
-    ca_bundle: Path | None,
-    anonymous: bool = False,
-    url: str | None = None,
-    user_env: str | None = None,
-    auth_scheme: str | None = None,
-) -> CIConnector:
+@dataclass(frozen=True)
+class ConnectionSettings:
+    """How to reach a CI platform, as given on the command line. Never holds a credential:
+    tokens and usernames are read from the environment when a connector is opened."""
+
+    gitlab_url: str = DEFAULT_GITLAB
+    github_url: str = DEFAULT_GITHUB
+    token_env: str | None = None
+    ca_bundle: Path | None = None
+    anonymous: bool = False
+    url: str | None = None
+    user_env: str | None = None
+    auth_scheme: str | None = None
+
+
+@dataclass(frozen=True)
+class _Resolved:
+    """Settings after defaults and environment lookups, for one provider."""
+
+    url: str
+    token: str | None
+    username: str | None
+    anonymous: bool
+    ca: str | None
+    auth_scheme: str | None
+
+
+_BUILDERS: dict[str, Callable[[_Resolved], CIConnector]] = {
+    "gitlab": lambda r: GitLabConnector(r.url, r.token, anonymous=r.anonymous, ca_bundle=r.ca),
+    "github": lambda r: GitHubConnector(r.url, r.token, anonymous=r.anonymous, ca_bundle=r.ca),
+    "azure-devops": lambda r: AzureDevOpsConnector(
+        r.url, r.token, anonymous=r.anonymous, ca_bundle=r.ca, auth_scheme=r.auth_scheme
+    ),
+    "jenkins": lambda r: JenkinsConnector(
+        r.url, r.token, username=r.username, anonymous=r.anonymous, ca_bundle=r.ca
+    ),
+    "bitbucket": lambda r: BitbucketConnector(
+        r.url, r.token, username=r.username, anonymous=r.anonymous, ca_bundle=r.ca
+    ),
+}
+assert set(_BUILDERS) == set(DEFAULT_TOKEN_ENV)
+
+
+def _base_url(provider: str, settings: ConnectionSettings) -> str:
+    if provider == "gitlab":
+        return settings.gitlab_url
+    if provider == "github":
+        return settings.github_url
+    env_name, default = DEFAULT_URL_ENV[provider]
+    url = settings.url or os.environ.get(env_name) or default
+    if not url:
+        raise _fail(EXIT_USAGE, f"error: {provider} needs --url (or {env_name})")
+    return url
+
+
+def _connector(provider: str | None, settings: ConnectionSettings) -> CIConnector:
     provider = (provider or "gitlab").lower()
-    if provider not in DEFAULT_TOKEN_ENV:
+    if provider not in _BUILDERS:
         raise _fail(
             EXIT_USAGE,
             f"error: unknown provider {provider!r} ({', '.join(DEFAULT_TOKEN_ENV)})",
         )
-    if auth_scheme not in (None, "bearer", "basic"):
+    if settings.auth_scheme not in (None, "bearer", "basic"):
         raise _fail(
-            EXIT_USAGE, f"error: --auth-scheme must be bearer or basic, not {auth_scheme!r}"
+            EXIT_USAGE,
+            f"error: --auth-scheme must be bearer or basic, not {settings.auth_scheme!r}",
         )
-    token_env = token_env or DEFAULT_TOKEN_ENV[provider]
+    token_env = settings.token_env or DEFAULT_TOKEN_ENV[provider]
     token = os.environ.get(token_env, "")
-    if anonymous:
+    if settings.anonymous:
         token = ""  # never send a token in anonymous mode, even if one is set
     elif not token:
         raise _fail(
@@ -208,30 +257,25 @@ def _connector(
             "(--anonymous reads public projects without one, but gitlab.com and api.github.com "
             "allow only 60 unauthenticated requests per hour per IP)",
         )
-    ca = str(ca_bundle) if ca_bundle else None
-    user_var = user_env or DEFAULT_USER_ENV.get(provider)
-    username = os.environ.get(user_var) or None if user_var else None
-    if provider in DEFAULT_URL_ENV:
-        env_name, default = DEFAULT_URL_ENV[provider]
-        url = url or os.environ.get(env_name) or default
-        if not url:
-            raise _fail(EXIT_USAGE, f"error: {provider} needs --url (or {env_name})")
+    user_var = settings.user_env or DEFAULT_USER_ENV.get(provider)
+    resolved = _Resolved(
+        url=_base_url(provider, settings),
+        token=token or None,
+        username=(os.environ.get(user_var) or None) if user_var else None,
+        anonymous=settings.anonymous,
+        ca=str(settings.ca_bundle) if settings.ca_bundle else None,
+        auth_scheme=settings.auth_scheme,
+    )
+    with _indeterminate_on_connector_error():
+        return _BUILDERS[provider](resolved)
+
+
+@contextmanager
+def _indeterminate_on_connector_error() -> Iterator[None]:
+    """Map a ConnectorError to exit 2 (INDETERMINATE): it never says a control passed or
+    failed, only that ScanProof could not find out."""
     try:
-        if provider == "github":
-            return GitHubConnector(github_url, token or None, anonymous=anonymous, ca_bundle=ca)
-        if provider == "azure-devops":
-            return AzureDevOpsConnector(
-                url, token or None, anonymous=anonymous, ca_bundle=ca, auth_scheme=auth_scheme
-            )
-        if provider == "jenkins":
-            return JenkinsConnector(
-                url, token or None, username=username, anonymous=anonymous, ca_bundle=ca
-            )
-        if provider == "bitbucket":
-            return BitbucketConnector(
-                url, token or None, username=username, anonymous=anonymous, ca_bundle=ca
-            )
-        return GitLabConnector(gitlab_url, token or None, anonymous=anonymous, ca_bundle=ca)
+        yield
     except ConnectorError as exc:
         raise _fail(EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}") from None
 
@@ -286,23 +330,25 @@ def inspect(
 ) -> None:
     """Inspect a pipeline (GitLab) or workflow run (GitHub): jobs, retries, artifacts. No policy."""
     _require(project=project, pipeline=pipeline)
-    try:
-        with _connector(
+    with (
+        _indeterminate_on_connector_error(),
+        _connector(
             provider,
-            gitlab_url,
-            github_url,
-            token_env,
-            ca_bundle,
-            anonymous,
-            url,
-            user_env,
-            auth_scheme,
-        ) as gl:
-            report = inspect_pipeline(
-                gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
-            )
-    except ConnectorError as exc:
-        raise _fail(EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}") from None
+            ConnectionSettings(
+                gitlab_url=gitlab_url,
+                github_url=github_url,
+                token_env=token_env,
+                ca_bundle=ca_bundle,
+                anonymous=anonymous,
+                url=url,
+                user_env=user_env,
+                auth_scheme=auth_scheme,
+            ),
+        ) as gl,
+    ):
+        report = inspect_pipeline(
+            gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
+        )
 
     _emit(report.model_dump_json(indent=2), output)
     if not quiet:
@@ -358,40 +404,40 @@ def evidence(
         ev.source = EvidenceSource(local_file=str(file))
     else:
         _require(project=project, pipeline=pipeline, job=job, report=report)
-        try:
-            with _connector(
+        with (
+            _indeterminate_on_connector_error(),
+            _connector(
                 provider,
-                gitlab_url,
-                github_url,
-                token_env,
-                ca_bundle,
-                anonymous,
-                url,
-                user_env,
-                auth_scheme,
-            ) as gl:
-                inspection = inspect_pipeline(
-                    gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
+                ConnectionSettings(
+                    gitlab_url=gitlab_url,
+                    github_url=github_url,
+                    token_env=token_env,
+                    ca_bundle=ca_bundle,
+                    anonymous=anonymous,
+                    url=url,
+                    user_env=user_env,
+                    auth_scheme=auth_scheme,
+                ),
+            ) as gl,
+        ):
+            inspection = inspect_pipeline(
+                gl, instance_url=gl.base_url, project=project, pipeline_id=pipeline
+            )
+            found = find_job(inspection.jobs, job)
+            if found is None:
+                raise _fail(
+                    EXIT_INDETERMINATE,
+                    f"REQUIRED_JOB_ABSENT: no job named '{job}' in pipeline {pipeline}",
                 )
-                found = find_job(inspection.jobs, job)
-                if found is None:
-                    raise _fail(
-                        EXIT_INDETERMINATE,
-                        f"REQUIRED_JOB_ABSENT: no job named '{job}' in pipeline {pipeline}",
-                    )
-                ev = collect_evidence(
-                    gl,
-                    project=project,
-                    pipeline=inspection.pipeline,
-                    job=found,
-                    report_path=report,
-                    adapter=adapter,
-                    artifact_name=artifact,
-                )
-        except ConnectorError as exc:
-            raise _fail(
-                EXIT_INDETERMINATE, f"INDETERMINATE: {exc.kind.value}: {exc.message}"
-            ) from None
+            ev = collect_evidence(
+                gl,
+                project=project,
+                pipeline=inspection.pipeline,
+                job=found,
+                report_path=report,
+                adapter=adapter,
+                artifact_name=artifact,
+            )
 
     _emit(ev.model_dump_json(indent=2), output)
     if not quiet:
@@ -570,14 +616,16 @@ def verify(
     try:
         with _connector(
             provider,
-            gitlab_url,
-            github_url,
-            token_env,
-            ca_bundle,
-            anonymous,
-            url,
-            user_env,
-            auth_scheme,
+            ConnectionSettings(
+                gitlab_url=gitlab_url,
+                github_url=github_url,
+                token_env=token_env,
+                ca_bundle=ca_bundle,
+                anonymous=anonymous,
+                url=url,
+                user_env=user_env,
+                auth_scheme=auth_scheme,
+            ),
         ) as gl:
             report = verify_pipeline(
                 gl,
@@ -635,14 +683,14 @@ def verify_release_cmd(
     def connect(provider: str, url: str | None) -> CIConnector:
         return _connector(
             provider,
-            url if provider == "gitlab" and url else gitlab_url,
-            url if provider == "github" and url else github_url,
-            None,
-            ca_bundle,
-            False,
-            url if provider not in ("gitlab", "github") else None,
-            user_env,
-            auth_scheme,
+            ConnectionSettings(
+                gitlab_url=url if provider == "gitlab" and url else gitlab_url,
+                github_url=url if provider == "github" and url else github_url,
+                ca_bundle=ca_bundle,
+                url=url if provider not in ("gitlab", "github") else None,
+                user_env=user_env,
+                auth_scheme=auth_scheme,
+            ),
         )
 
     try:
