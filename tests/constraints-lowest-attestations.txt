@@ -1,6 +1,6 @@
 # Lowest versions with the attestations extra (ci.yml: lowest-deps / attestations).
 # sigstore raises some core floors; keep the rest equal to constraints-lowest.txt.
-typer==0.13.0
+typer==0.16.0
 httpx==0.27.0
 pydantic==2.11.7  # sigstore 4.0 (via sigstore-models) needs it
 pyyaml==6.0.1
