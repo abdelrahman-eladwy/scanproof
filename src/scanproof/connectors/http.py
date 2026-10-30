@@ -283,6 +283,12 @@ class HttpConnector(CIConnector):
                     f"Refused redirect from HTTPS to {target.scheme.upper()} ({target.host})",
                     response.status_code,
                 )
+            if target.scheme != "https" and not (
+                target.scheme == "http" and is_loopback(str(target))
+            ):
+                raise ConnectorError(
+                    ErrorKind.UNSAFE_REDIRECT, "Refused redirect to non-HTTPS non-loopback URL"
+                )
             current = target
         raise ConnectorError(ErrorKind.UNSAFE_REDIRECT, f"More than {MAX_REDIRECTS} redirects")
 
