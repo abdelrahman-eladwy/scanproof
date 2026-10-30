@@ -1,0 +1,108 @@
+{
+  "version": "2.1.0",
+  "runs": [
+    {
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "toolExecutionNotifications": []
+        }
+      ],
+      "results": [
+        {
+          "fingerprints": {
+            "matchBasedId/v1": "requires login"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pr/demo/app.py",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "endColumn": 11,
+                  "endLine": 1,
+                  "snippet": {
+                    "text": "print(\"a\")"
+                  },
+                  "startColumn": 1,
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Sacrificial test rule; informational print call"
+          },
+          "properties": {},
+          "ruleId": "gate-lab-print"
+        },
+        {
+          "fingerprints": {
+            "matchBasedId/v1": "requires login"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pr/demo/hidden.py",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "endColumn": 11,
+                  "endLine": 1,
+                  "snippet": {
+                    "text": "print(\"b\")  # nosemgrep"
+                  },
+                  "startColumn": 1,
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Sacrificial test rule; informational print call"
+          },
+          "properties": {},
+          "ruleId": "gate-lab-print",
+          "suppressions": [
+            {
+              "kind": "inSource"
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "Semgrep OSS",
+          "rules": [
+            {
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "fullDescription": {
+                "text": "Sacrificial test rule; informational print call"
+              },
+              "help": {
+                "markdown": "Sacrificial test rule; informational print call",
+                "text": "Sacrificial test rule; informational print call"
+              },
+              "id": "gate-lab-print",
+              "name": "gate-lab-print",
+              "properties": {
+                "precision": "very-high",
+                "tags": []
+              },
+              "shortDescription": {
+                "text": "Semgrep Finding: gate-lab-print"
+              }
+            }
+          ],
+          "semanticVersion": "1.183.0"
+        }
+      }
+    }
+  ],
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/schemas/sarif-schema-2.1.0.json"
+}

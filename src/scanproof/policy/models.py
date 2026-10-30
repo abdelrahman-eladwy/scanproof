@@ -62,6 +62,12 @@ class Checks(_Strict):
         False, description="Do not count errors with level warn/warning/info"
     )
     minimum_scanned_files: int | None = Field(None, ge=0)
+    suppressed_findings_allowed: int | None = Field(
+        None,
+        ge=0,
+        description="Max findings the scanner reports as suppressed (inline comments, ignore "
+        "files, waivers); unset = not checked. UNKNOWN when the report does not say (#123)",
+    )
     required_paths: list[str] | None = Field(
         None, description="Each prefix must match at least one scanned path"
     )
@@ -103,6 +109,7 @@ class Checks(_Strict):
         configured = {
             "scanner_errors_allowed": self.scanner_errors_allowed is not None,
             "minimum_scanned_files": self.minimum_scanned_files is not None,
+            "suppressed_findings_allowed": self.suppressed_findings_allowed is not None,
             "required_paths": bool(self.required_paths),
             "image_digest_must_match": bool(self.image_digest_must_match),
             "expected_scanner": bool(self.expected_scanner),

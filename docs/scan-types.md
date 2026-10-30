@@ -42,6 +42,25 @@ are ignored for this check: they name a location on the runner, not in the repos
 report that lists only absolute paths fails `required_paths`. Run the scanner from the
 repository root with relative targets (e.g. `semgrep scan src/`, `checkov -d .`).
 
+## Suppressed findings (`suppressed_findings_allowed`)
+
+Code under scan can often silence its own results: inline comments (`# nosemgrep`,
+`#checkov:skip`, `gitleaks:allow`) or ignore files (`.semgrepignore`, `.trivyignore`, `.snyk`).
+`suppressed_findings_allowed: N` caps how many results the report marks as suppressed (#123).
+It is **UNKNOWN** for formats that drop suppressed results without recording them.
+
+| `tool:` | Records suppressions? |
+|---|---|
+| `sarif` | ✓ `results[].suppressions[]` (any status except `rejected`), e.g. Semgrep `# nosemgrep` → `inSource` |
+| `fortify` | ✓ issues marked suppressed in `audit.xml` |
+| `sonatype` | ✓ policy violations with status `Waived` |
+| all others | — (suppressed results are omitted, not counted) |
+
+Counting cannot see what a scanner was told to skip *before* it ran (an ignored file is simply
+not scanned). Pair this check with scanner configuration owned by the protected branch, and
+neutralise PR-supplied ignore files before scanning; see the signed-gate pattern in
+[platforms/github.md](platforms/github.md).
+
 ## Recommended checks per type
 
 **SAST** — prove the code was actually analysed, not just that the job was green.

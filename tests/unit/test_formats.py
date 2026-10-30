@@ -250,3 +250,68 @@ def test_minimum_components_and_sbom_digest() -> None:
     assert _evaluate("cyclonedx", no_scope, minimum_components=1)["minimum_components"][0] is (
         Outcome.UNKNOWN
     )
+
+
+# ---------------------------------------------------------------- suppressed findings (#123)
+
+
+def test_real_nosemgrep_suppression_is_counted_not_hidden() -> None:
+    # Real Semgrep SARIF: two `print` matches, one silenced with `# nosemgrep`.
+    ev = sarif.parse(raw("sarif/semgrep-nosem.sarif"))
+    assert ev.findings.total == 1
+    assert ev.findings.suppressed == 1
+
+
+@pytest.mark.parametrize(
+    "name", ["sarif/semgrep.sarif", "sarif/trivy-image.sarif", "sarif/checkov.sarif"]
+)
+def test_sarif_without_suppressions_reports_zero(name) -> None:
+    assert sarif.parse(raw(name)).findings.suppressed == 0
+
+
+@pytest.mark.parametrize(
+    ("suppressions", "hidden"),
+    [
+        ([], False),  # SARIF: empty array = not suppressed
+        ([{"kind": "inSource"}], True),
+        ([{"kind": "external", "status": "underReview"}], True),
+        ([{"kind": "external", "status": "accepted"}], True),
+        ([{"kind": "inSource", "status": "rejected"}], False),
+        ([{"status": "rejected"}, {"kind": "inSource"}], True),
+        ("garbage", True),  # malformed: never counted as an ordinary finding
+        (["garbage"], True),
+    ],
+)
+def test_sarif_suppression_status_semantics(suppressions, hidden) -> None:
+    def mark(data):
+        data["runs"][0]["results"][0]["suppressions"] = suppressions
+        return data
+
+    ev = sarif.parse(modified("sarif/semgrep.sarif", mark))
+    base = sarif.parse(raw("sarif/semgrep.sarif"))
+    assert ev.findings.suppressed == (1 if hidden else 0)
+    assert ev.findings.total == base.findings.total - (1 if hidden else 0)
+
+
+def test_suppressed_findings_allowed_check() -> None:
+    ev = sarif.parse(raw("sarif/semgrep-nosem.sarif"))
+    check = "suppressed_findings_allowed"
+    assert _evaluate("sarif", ev, suppressed_findings_allowed=1)[check] == (
+        Outcome.PASS,
+        "SUPPRESSIONS_OK",
+    )
+    assert _evaluate("sarif", ev, suppressed_findings_allowed=0)[check] == (
+        Outcome.FAIL,
+        "SUPPRESSED_FINDINGS_EXCEEDED",
+    )
+
+
+def test_suppressed_findings_unknown_when_the_format_does_not_say() -> None:
+    # Semgrep JSON does not report nosemgrep-silenced results: unknown, never a pass.
+    from scanproof.scanners.semgrep import SemgrepAdapter
+
+    ev = SemgrepAdapter().parse(raw("semgrep/semgrep-findings.json"))
+    assert ev.findings.suppressed is None
+    assert _evaluate("semgrep", ev, suppressed_findings_allowed=5)[
+        "suppressed_findings_allowed"
+    ] == (Outcome.UNKNOWN, "SUPPRESSIONS_UNKNOWN")

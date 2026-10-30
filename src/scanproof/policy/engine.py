@@ -681,6 +681,8 @@ def _evidence_checks(
         out.append(_scanner_errors(ev, c.scanner_errors_allowed, c.ignore_scanner_warnings))
     if c.minimum_scanned_files is not None:
         out.append(_min_files(ev, c.minimum_scanned_files))
+    if c.suppressed_findings_allowed is not None:
+        out.append(_suppressed(ev, c.suppressed_findings_allowed))
     if c.required_paths:
         out.append(_required_paths(ev, c.required_paths))
     if c.image_digest_must_match:
@@ -886,6 +888,27 @@ def _min_files(ev: ScanEvidence, minimum: int) -> CheckResult:
             f"{files} file(s) scanned, at least {minimum} required",
         )
     return _r(name, Outcome.PASS, "SCOPE_OK", f"{files} file(s) scanned")
+
+
+def _suppressed(ev: ScanEvidence, allowed: int) -> CheckResult:
+    """Cap findings the scanned code or its config told the scanner to hide (#123)."""
+    name = "suppressed_findings_allowed"
+    count = ev.findings.suppressed if ev.findings else None
+    if count is None:
+        return _r(
+            name,
+            Outcome.UNKNOWN,
+            "SUPPRESSIONS_UNKNOWN",
+            f"{ev.tool} report does not state how many findings were suppressed",
+        )
+    if count > allowed:
+        return _r(
+            name,
+            Outcome.FAIL,
+            "SUPPRESSED_FINDINGS_EXCEEDED",
+            f"{count} finding(s) suppressed, at most {allowed} allowed",
+        )
+    return _r(name, Outcome.PASS, "SUPPRESSIONS_OK", f"{count} finding(s) suppressed")
 
 
 def _covers(required: str, scanned: str) -> bool:

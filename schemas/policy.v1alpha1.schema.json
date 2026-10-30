@@ -287,6 +287,20 @@
           "description": "Max scanner errors; unset = not checked",
           "title": "Scanner Errors Allowed"
         },
+        "suppressed_findings_allowed": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max findings the scanner reports as suppressed (inline comments, ignore files, waivers); unset = not checked. UNKNOWN when the report does not say (#123)",
+          "title": "Suppressed Findings Allowed"
+        },
         "target_url_must_match": {
           "anyOf": [
             {
