@@ -6,6 +6,10 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 ## [Unreleased]
 
 ### Fixed
+- `verify-release`: a component whose connector cannot be built (for example a non-HTTPS
+  `url:`) stopped the whole release, so later components were never verified and `-o` got no
+  report ([#131](https://github.com/abdelrahman-eladwy/scanproof/issues/131)). It is now that
+  component's INDETERMINATE; the others are still verified. Usage errors still exit 3.
 - A deeply nested JSON document from the GitLab or GitHub API (pipeline, run, job page or
   check-run annotations) escaped as an unhandled `RecursionError`: a traceback and exit code 1,
   which reads as a policy FAIL. It is now an `INVALID_RESPONSE` connector error, i.e.
