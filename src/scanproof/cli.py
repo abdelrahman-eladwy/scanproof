@@ -272,11 +272,7 @@ def _open_connector(provider: str | None, settings: ConnectionSettings) -> CICon
         )
     user_var = settings.user_env or DEFAULT_USER_ENV.get(provider)
     resolved_auth_scheme = settings.auth_scheme
-    if (
-        resolved_auth_scheme is None
-        and provider == "gitlab"
-        and token_env == "CI_JOB_TOKEN"  # noqa: S105 - env var name, not a token value
-    ):
+    if resolved_auth_scheme is None and provider == "gitlab" and token_env == "CI_JOB_TOKEN":  # noqa: S105 - env var name, not a token value
         resolved_auth_scheme = "job-token"
     resolved = _Resolved(
         url=_base_url(provider, settings),
