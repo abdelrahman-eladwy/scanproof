@@ -51,6 +51,7 @@ class CheckResult(BaseModel):
     outcome: Outcome
     code: str
     message: str
+    waived_unknown: bool = False  # Original outcome was UNKNOWN; preserved in JSON reports.
 
 
 class RequirementInput(BaseModel):
@@ -1144,8 +1145,15 @@ def _apply_waivers(policy: Policy, results: list[RequirementResult], today: date
                 continue
             if w.created is not None and w.created > today:
                 continue
+            if check.outcome is Outcome.UNKNOWN:
+                warnings.append(
+                    f"WAIVED_UNKNOWN: {w.requirement}/{check.check} ({check.code}) "
+                    f"was UNKNOWN, not verified; risk accepted by {w.approved_by} "
+                    f"until {w.expires}."
+                )
             res.checks[n] = check.model_copy(
                 update={
+                    "waived_unknown": check.outcome is Outcome.UNKNOWN,
                     "outcome": Outcome.WAIVED,
                     "message": f"{check.message} [waived until {w.expires} by {w.approved_by}: "
                     f"{w.reason}]",
