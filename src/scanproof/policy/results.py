@@ -116,4 +116,3 @@ def combine(outcomes: list[Outcome]) -> Outcome:
     if all(o is Outcome.NOT_APPLICABLE for o in outcomes):
         return Outcome.NOT_APPLICABLE
     return Outcome.PASS
-
