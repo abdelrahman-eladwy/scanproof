@@ -90,7 +90,7 @@ class HttpConnector(CIConnector):
     label: ClassVar[str] = "CI platform"
     auth_hint: ClassVar[str] = "Set a read-only token."
     extra_headers: ClassVar[dict[str, str]] = {}
-    default_auth_scheme: ClassVar[Literal["bearer", "basic"]] = "bearer"
+    default_auth_scheme: ClassVar[Literal["bearer", "basic", "job-token"]] = "bearer"
 
     def __init__(
         self,
@@ -107,7 +107,7 @@ class HttpConnector(CIConnector):
         transport: httpx.BaseTransport | None = None,
         sleep: Callable[[float], None] = time.sleep,
         username: str | None = None,
-        auth_scheme: Literal["bearer", "basic"] | None = None,
+        auth_scheme: Literal["bearer", "basic", "job-token"] | None = None,
         request_deadline: float = DEFAULT_REQUEST_DEADLINE,
         run_budget: float = DEFAULT_RUN_BUDGET,
         clock: Callable[[], float] = time.monotonic,
@@ -130,7 +130,7 @@ class HttpConnector(CIConnector):
         self._origin = origin_of(api_url)
         self._token = None if anonymous else token
         self.auth_scheme = auth_scheme or self.default_auth_scheme
-        if self.auth_scheme not in ("bearer", "basic"):
+        if self.auth_scheme not in ("bearer", "basic", "job-token"):
             raise AuthError(f"Unknown auth scheme {self.auth_scheme!r}")
         if username is not None and (":" in username or not username.isprintable()):
             raise AuthError("Username must be printable and must not contain ':'")
@@ -170,7 +170,9 @@ class HttpConnector(CIConnector):
         if self.auth_scheme == "basic":
             pair = f"{self._username or ''}:{self._token}".encode()
             return {"Authorization": f"Basic {base64.b64encode(pair).decode()}"}
-        return {"Authorization": f"Bearer {self._token}"}
+        if self.auth_scheme == "job-token":
+            return {"JOB-TOKEN": self._token}
+        return {"Authorization": f"Bearer {self._token}"
 
     def _send(
         self, url: str, params: dict[str, Any] | None = None, *, stream: bool = False
