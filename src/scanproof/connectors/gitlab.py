@@ -158,8 +158,7 @@ class GitLabConnector(HttpConnector):
             # the archive endpoint and extract the exact requested member with the same
             # size and path protections as other connectors.
             archive_url = (
-                f"{self.api_url}/projects/{_project_ref(artifact_project)}"
-                f"/jobs/{job.id}/artifacts"
+                f"{self.api_url}/projects/{_project_ref(artifact_project)}/jobs/{job.id}/artifacts"
             )
             try:
                 archive = self._download(archive_url)
