@@ -278,7 +278,12 @@ def _open_connector(provider: str | None, settings: ConnectionSettings) -> CICon
         anonymous=settings.anonymous,
         ca=str(settings.ca_bundle) if settings.ca_bundle else None,
         auth_scheme=settings.auth_scheme
-        or ("job-token" if provider == "gitlab" and token_env == "CI_JOB_TOKEN" else None),
+        or (
+            "job-token"
+            if provider == "gitlab"
+            and token_env == "CI_JOB_TOKEN"  # noqa: S105 - env var name, not a token value
+            else None
+        ),
     )
     return _BUILDERS[provider](resolved)
 
