@@ -28,8 +28,8 @@ from scanproof.policy.results import (
     Outcome,
     RequirementInput,
     RequirementResult,
-    combine,
     _r,
+    combine,
 )
 from scanproof.policy.scope import _reported_scope
 from scanproof.policy.waivers import _apply_waivers
