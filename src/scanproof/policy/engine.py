@@ -8,12 +8,9 @@ a machine-readable code and a human message for every check.
 from __future__ import annotations
 
 import re
-from datetime import UTC, date, datetime
-from enum import StrEnum
+from datetime import UTC, datetime
 from fnmatch import fnmatchcase
 from urllib.parse import urlsplit
-
-from pydantic import BaseModel, Field
 
 from scanproof.attestation.models import AttestationEvidence, AttestationStatus
 from scanproof.evidence.models import ScanEvidence
@@ -24,118 +21,21 @@ from scanproof.policy.models import (
     Requirement,
     normalize_scan_path,
 )
+from scanproof.policy.results import (
+    CheckResult,
+    Decision,
+    Evaluation,
+    Outcome,
+    RequirementInput,
+    RequirementResult,
+    combine,
+)
+from scanproof.policy.waivers import _apply_waivers
 
 _WARNING_LEVELS = {"warn", "warning", "info"}
 
 
-class Outcome(StrEnum):
-    PASS = "PASS"  # noqa: S105 - outcome name, not a password
-    FAIL = "FAIL"
-    UNKNOWN = "UNKNOWN"
-    NOT_APPLICABLE = "NOT_APPLICABLE"
-    WAIVED = "WAIVED"  # failed or unknown, but covered by an unexpired waiver in the policy
-
-
-class Decision(StrEnum):
-    VERIFIED = "VERIFIED"
-    BLOCKED = "BLOCKED"
-    INDETERMINATE = "INDETERMINATE"
-
-    @property
-    def exit_code(self) -> int:
-        return {Decision.VERIFIED: 0, Decision.BLOCKED: 1, Decision.INDETERMINATE: 2}[self]
-
-
-class CheckResult(BaseModel):
-    check: str
-    outcome: Outcome
-    code: str
-    message: str
-    waived_unknown: bool = False  # Original outcome was UNKNOWN; preserved in JSON reports.
-
-
-class RequirementInput(BaseModel):
-    """What the orchestrator gathered for one requirement (or one instance of it)."""
-
-    job: InspectedJob | None = None
-    evidence: ScanEvidence | None = None
-    evidence_error: str | None = Field(
-        default=None, description="Why evidence could not be fetched (auth, network...)"
-    )
-    absence_unknown: str | None = Field(
-        default=None,
-        description="Job not found, but it may live in a pipeline that couldn't be read",
-    )
-    instances: list[tuple[str, RequirementInput]] | None = Field(
-        default=None,
-        description="Parallel / matrix / downstream instances; every one must pass",
-    )
-    declared_instance: str | None = Field(
-        default=None,
-        description="This missing instance is a label the requirement declares in `instances`",
-    )
-    undeclared_instances: list[str] | None = Field(
-        default=None,
-        description="Matrix legs matched while the requirement declares no `instances`: a "
-        "removed leg would go unnoticed (#60)",
-    )
-    missing_copy: str | None = Field(
-        default=None,
-        description="This missing instance is a path the requirement declares in `copies`",
-    )
-    undeclared_copies: list[str] | None = Field(
-        default=None,
-        description="Prefixed copies matched while the requirement declares no `copies`: a "
-        "removed copy would go unnoticed (#65)",
-    )
-    copies_unbounded: str | None = Field(
-        default=None,
-        description="The job was found, but pipelines that could not be read may hold more "
-        "copies of it, and the requirement declares no `copies` (#71)",
-    )
-    attestations: list[AttestationEvidence] | None = Field(
-        default=None, description="Every bundle found for the attestation subject"
-    )
-    attestation_error: str | None = Field(
-        default=None, description="Why attestations could not be fetched (auth, network...)"
-    )
-
-
-class RequirementResult(BaseModel):
-    id: str
-    description: str | None
-    tool: str
-    job_name: str
-    job_id: int | None
-    outcome: Outcome
-    checks: list[CheckResult]
-    findings: dict[str, int] | None = Field(
-        default=None, description="Reported for context only; findings are never judged"
-    )
-    instances: list[str] | None = Field(
-        default=None, description="Job instances evaluated when job_name matched several"
-    )
-
-
-class Evaluation(BaseModel):
-    decision: Decision
-    requirements: list[RequirementResult]
-    warnings: list[str] = Field(default_factory=list)
-
-
 # ---------------------------------------------------------------- aggregation
-
-
-def combine(outcomes: list[Outcome]) -> Outcome:
-    if not outcomes:
-        return Outcome.NOT_APPLICABLE
-    if Outcome.FAIL in outcomes:
-        return Outcome.FAIL
-    if Outcome.UNKNOWN in outcomes:
-        return Outcome.UNKNOWN
-    if all(o is Outcome.NOT_APPLICABLE for o in outcomes):
-        return Outcome.NOT_APPLICABLE
-    return Outcome.PASS
 
 
 def evaluate(
@@ -1122,55 +1022,6 @@ def _cross_requirement_checks(
                 )
         res.checks.append(check)
         res.outcome = combine([c.outcome for c in res.checks])
-
-
-def _apply_waivers(policy: Policy, results: list[RequirementResult], today: date) -> list[str]:
-    warnings: list[str] = []
-    used: set[int] = set()
-    by_id = {r.id: r for r in results}
-    for i, w in enumerate(policy.waivers):
-        res = by_id.get(w.requirement)
-        if res is None:
-            continue
-        matched = False
-        for n, check in enumerate(res.checks):
-            if check.outcome not in (Outcome.FAIL, Outcome.UNKNOWN):
-                continue
-            if not (check.check == w.check or check.check.startswith(f"{w.check} [")):
-                continue
-            if w.code is not None and check.code != w.code:
-                continue
-            matched = True
-            if w.expires < today:
-                continue
-            if w.created is not None and w.created > today:
-                continue
-            if check.outcome is Outcome.UNKNOWN:
-                warnings.append(
-                    f"WAIVED_UNKNOWN: {w.requirement}/{check.check} ({check.code}) "
-                    f"was UNKNOWN, not verified; risk accepted by {w.approved_by} "
-                    f"until {w.expires}."
-                )
-            res.checks[n] = check.model_copy(
-                update={
-                    "waived_unknown": check.outcome is Outcome.UNKNOWN,
-                    "outcome": Outcome.WAIVED,
-                    "message": f"{check.message} [waived until {w.expires} by {w.approved_by}: "
-                    f"{w.reason}]",
-                }
-            )
-            used.add(i)
-        label = f"{w.requirement}/{w.check}" + (f" ({w.code})" if w.code else "")
-        if matched and w.expires < today:
-            warnings.append(f"Waiver {label} expired on {w.expires}; not applied.")
-        elif matched and w.created is not None and w.created > today:
-            warnings.append(f"Waiver {label} starts on {w.created}; not applied yet.")
-        elif not matched:
-            warnings.append(f"Waiver {label} matched nothing; remove it if the risk is gone.")
-        if i in used:
-            warnings.append(f"Waiver {label} applied (expires {w.expires}, by {w.approved_by}).")
-        res.outcome = combine([c.outcome for c in res.checks])
-    return warnings
 
 
 # ---------------------------------------------------------------- attestations
