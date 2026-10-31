@@ -153,10 +153,13 @@ class GitLabConnector(HttpConnector):
         try:
             return self.download_artifact_file(artifact_project, job.id, report_path)
         except NotFoundError:
+            if self.auth_scheme != "job-token":
+                raise NotFoundError(
+                    f"'{report_path}' not found in job artifacts (never uploaded, or expired)"
+                ) from None
             # GitLab can return 404 for the single-file endpoint even when the archive
-            # is available (notably for cross-project job-token requests). Retry through
-            # the archive endpoint and extract the exact requested member with the same
-            # size and path protections as other connectors.
+            # is available for cross-project job-token requests. Retry through the archive
+            # endpoint and extract the exact member with the same size and path protections.
             archive_url = (
                 f"{self.api_url}/projects/{_project_ref(artifact_project)}/jobs/{job.id}/artifacts"
             )
