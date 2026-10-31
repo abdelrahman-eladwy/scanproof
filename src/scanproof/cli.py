@@ -110,8 +110,8 @@ AuthSchemeOpt = Annotated[
     str | None,
     typer.Option(
         "--auth-scheme",
-        help="bearer or basic. Azure DevOps defaults to basic (PATs); use bearer for "
-        "$(System.AccessToken) or Entra tokens.",
+        help="bearer or basic. GitLab CI_JOB_TOKEN uses job-token; Azure DevOps defaults to "
+        "basic (PATs), or bearer for $(System.AccessToken) and Entra tokens.",
     ),
 ]
 CaBundleOpt = Annotated[
@@ -207,7 +207,9 @@ class _Resolved:
 
 
 _BUILDERS: dict[str, Callable[[_Resolved], CIConnector]] = {
-    "gitlab": lambda r: GitLabConnector(r.url, r.token, anonymous=r.anonymous, ca_bundle=r.ca),
+    "gitlab": lambda r: GitLabConnector(
+        r.url, r.token, anonymous=r.anonymous, ca_bundle=r.ca, auth_scheme=r.auth_scheme
+    ),
     "github": lambda r: GitHubConnector(r.url, r.token, anonymous=r.anonymous, ca_bundle=r.ca),
     "azure-devops": lambda r: AzureDevOpsConnector(
         r.url, r.token, anonymous=r.anonymous, ca_bundle=r.ca, auth_scheme=r.auth_scheme
@@ -250,10 +252,12 @@ def _open_connector(provider: str | None, settings: ConnectionSettings) -> CICon
             EXIT_USAGE,
             f"error: unknown provider {provider!r} ({', '.join(DEFAULT_TOKEN_ENV)})",
         )
-    if settings.auth_scheme not in (None, "bearer", "basic"):
+    if settings.auth_scheme not in (None, "bearer", "basic", "job-token") or (
+        settings.auth_scheme == "job-token" and provider != "gitlab"
+    ):
         raise _fail(
             EXIT_USAGE,
-            f"error: --auth-scheme must be bearer or basic, not {settings.auth_scheme!r}",
+            "error: --auth-scheme must be bearer or basic; job-token is GitLab-only",
         )
     token_env = settings.token_env or DEFAULT_TOKEN_ENV[provider]
     token = os.environ.get(token_env, "")
@@ -273,7 +277,8 @@ def _open_connector(provider: str | None, settings: ConnectionSettings) -> CICon
         username=(os.environ.get(user_var) or None) if user_var else None,
         anonymous=settings.anonymous,
         ca=str(settings.ca_bundle) if settings.ca_bundle else None,
-        auth_scheme=settings.auth_scheme,
+        auth_scheme=settings.auth_scheme
+        or ("job-token" if provider == "gitlab" and token_env == "CI_JOB_TOKEN" else None),
     )
     return _BUILDERS[provider](resolved)
 
