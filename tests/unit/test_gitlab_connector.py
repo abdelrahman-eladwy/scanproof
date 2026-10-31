@@ -252,7 +252,7 @@ def test_artifact_not_found(connector, mock_api) -> None:
         connector.download_artifact_file("123", 8821, "semgrep.json")
 
 
-def test_fetch_report_falls_back_to_artifact_archive(connector, mock_api) -> None:
+def test_fetch_report_falls_back_to_artifact_archive(mock_api) -> None:
     mock_api.get(JOBS_URL).respond(json=load_fixture("gitlab/jobs_page1.json"))
     mock_api.get(ARTIFACT_URL).respond(404)
 
@@ -262,8 +262,9 @@ def test_fetch_report_falls_back_to_artifact_archive(connector, mock_api) -> Non
         zf.writestr("semgrep.json", b'{"results": []}')
     archive_route = mock_api.get(archive_url).respond(content=archive.getvalue())
 
-    job = next(j for j in connector.list_jobs("123", 1042) if j.id == 8821)
-    assert connector.fetch_report("123", job, "semgrep.json") == b'{"results": []}'
+    with GitLabConnector(BASE, TOKEN, auth_scheme="job-token") as connector:
+        job = next(j for j in connector.list_jobs("123", 1042) if j.id == 8821)
+        assert connector.fetch_report("123", job, "semgrep.json") == b'{"results": []}'
     assert archive_route.called
 
 
