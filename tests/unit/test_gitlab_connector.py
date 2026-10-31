@@ -51,6 +51,16 @@ def test_get_pipeline_parses_and_sends_bearer(connector, mock_api) -> None:
     assert TOKEN not in str(request.url)
 
 
+def test_job_token_scheme_uses_dedicated_header(mock_api) -> None:
+    route = mock_api.get(PIPELINE_URL).respond(json=load_fixture("gitlab/pipeline.json"))
+    with GitLabConnector(BASE, TOKEN, auth_scheme="job-token") as connector:
+        assert connector.get_pipeline("123", 1042).id == 1042
+    request = route.calls.last.request
+    assert request.headers["JOB-TOKEN"] == TOKEN
+    assert "Authorization" not in request.headers
+    assert TOKEN not in str(request.url)
+
+
 def test_project_path_is_url_encoded(connector, mock_api) -> None:
     route = mock_api.get(f"{API}/projects/acme%2Fpayment-service/pipelines/1042").respond(
         json=load_fixture("gitlab/pipeline.json")
