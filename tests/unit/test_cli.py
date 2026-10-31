@@ -42,6 +42,24 @@ def test_inspect_prints_json_to_stdout(env, mock_api) -> None:
     assert TOKEN not in result.stdout + result.stderr
 
 
+def test_ci_job_token_uses_gitlab_job_token_header(monkeypatch, mock_api) -> None:
+    monkeypatch.delenv("GITLAB_TOKEN", raising=False)
+    monkeypatch.setenv("CI_JOB_TOKEN", TOKEN)
+    pipeline_route = mock_api.get(f"{API}/projects/123/pipelines/1042").respond(
+        json=load_fixture("gitlab/pipeline.json")
+    )
+    mock_api.get(f"{API}/projects/123/pipelines/1042/jobs").respond(
+        json=load_fixture("gitlab/jobs_page1.json")
+    )
+
+    result = runner.invoke(app, [*ARGS, "--token-env", "CI_JOB_TOKEN", "--quiet"])
+
+    assert result.exit_code == EXIT_OK, result.output
+    request = pipeline_route.calls.last.request
+    assert request.headers["JOB-TOKEN"] == TOKEN
+    assert "Authorization" not in request.headers
+
+
 def test_inspect_writes_output_file(env, mock_api, tmp_path) -> None:
     _mock_ok(mock_api)
     out = tmp_path / "inspection.json"
