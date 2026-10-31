@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from enum import StrEnum
+
 from pydantic import BaseModel, Field
+
 from scanproof.attestation.models import AttestationEvidence
 from scanproof.evidence.models import ScanEvidence
 from scanproof.models import InspectedJob
