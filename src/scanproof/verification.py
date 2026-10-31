@@ -28,7 +28,7 @@ from scanproof.evidence.collector import (
 )
 from scanproof.evidence.models import ScanEvidence
 from scanproof.inspection import DOWNSTREAM_SEPARATOR, inspect_pipeline
-from scanproof.models import InspectedJob, Pipeline
+from scanproof.models import InspectedJob, InspectionReport, Pipeline
 from scanproof.policy.engine import Decision, RequirementInput, RequirementResult, evaluate
 from scanproof.policy.models import Policy, Requirement
 from scanproof.scanners import get_adapter
@@ -143,6 +143,23 @@ def verify_pipeline(
     return report
 
 
+def _absence_unknown(inspection: InspectionReport, name: str, *, bounded: bool) -> str | None:
+    if not inspection.unreadable_downstream:
+        return None
+    reasons = inspection.unreadable_downstream
+    if bounded and inspection.unreadable_scopes:
+        reasons = []
+        for scope in inspection.unreadable_scopes:
+            prefix = f"{scope.path}{DOWNSTREAM_SEPARATOR}" if scope.path else ""
+            if not name.startswith(prefix):
+                continue
+            tail = name[len(prefix) :]
+            if not scope.triggers_only or DOWNSTREAM_SEPARATOR in tail:
+                reasons.append(scope.reason)
+    return f"these pipelines could not be read: {', '.join(reasons)}" if reasons else None
+
+
+
 def _verify_once(
     connector: CIConnector,
     policy: Policy,
@@ -216,20 +233,6 @@ def _verify_once(
 
     unreadable = inspection.unreadable_downstream
 
-    def absence_unknown(name: str, *, bounded: bool) -> str | None:
-        if not unreadable:
-            return None
-        reasons = unreadable
-        if bounded and inspection.unreadable_scopes:
-            reasons = []
-            for scope in inspection.unreadable_scopes:
-                prefix = f"{scope.path}{DOWNSTREAM_SEPARATOR}" if scope.path else ""
-                if not name.startswith(prefix):
-                    continue
-                tail = name[len(prefix) :]
-                if not scope.triggers_only or DOWNSTREAM_SEPARATOR in tail:
-                    reasons.append(scope.reason)
-        return f"these pipelines could not be read: {', '.join(reasons)}" if reasons else None
 
     def collect(req, job) -> RequirementInput:
         key = (
@@ -274,7 +277,7 @@ def _verify_once(
         if unread and matches and not req.copies and not is_qualified(req.job_name):
             undeclared["copies_unbounded"] = unread
         if not matches and not req.copies:
-            unknown = absence_unknown(req.job_name, bounded=is_qualified(req.job_name))
+            unknown = _absence_unknown(inspection, req.job_name, bounded=is_qualified(req.job_name))
             inputs[req.id] = RequirementInput(absence_unknown=unknown)
         elif (
             len(matches) == 1
@@ -297,7 +300,7 @@ def _verify_once(
                 (
                     name,
                     RequirementInput(
-                        missing_copy=path, absence_unknown=absence_unknown(name, bounded=True)
+                        missing_copy=path, absence_unknown=_absence_unknown(inspection, name, bounded=True)
                     ),
                 )
                 for name, path in match.missing_copies
