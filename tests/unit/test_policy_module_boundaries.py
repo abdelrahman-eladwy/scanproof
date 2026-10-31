@@ -14,10 +14,7 @@ def test_engine_still_exports_exact_result_types_and_aggregation():
     assert engine.RequirementResult is results.RequirementResult
     assert engine.Evaluation is results.Evaluation
     assert engine.combine is results.combine
-    assert (
-        engine.combine([engine.Outcome.UNKNOWN, engine.Outcome.WAIVED])
-        is engine.Outcome.UNKNOWN
-    )
+    assert engine.combine([engine.Outcome.UNKNOWN, engine.Outcome.WAIVED]) is engine.Outcome.UNKNOWN
 
 
 def test_waiver_function_identity_and_unknown_provenance():
