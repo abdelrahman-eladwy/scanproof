@@ -172,7 +172,7 @@ class HttpConnector(CIConnector):
             return {"Authorization": f"Basic {base64.b64encode(pair).decode()}"}
         if self.auth_scheme == "job-token":
             return {"JOB-TOKEN": self._token}
-        return {"Authorization": f"Bearer {self._token}"
+        return {"Authorization": f"Bearer {self._token}"}
 
     def _send(
         self, url: str, params: dict[str, Any] | None = None, *, stream: bool = False
