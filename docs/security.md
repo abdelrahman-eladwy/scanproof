@@ -43,7 +43,7 @@ A CODEOWNERS file by itself does not enforce approval.
 | Control | Implementation |
 |---|---|
 | Least privilege | GitLab: `read_api` (Developer role for security-report artifacts). GitHub: `actions: read` + `checks: read` (+ `attestations: read` for `source: platform`). Azure DevOps: Build (Read). Jenkins: Job/Read. Bitbucket: pipelines + repository read. ScanProof never writes to the CI platform |
-| No token leakage | Env var only (username too, for Basic); `Authorization: Bearer`, or Basic where the platform requires it (Jenkins, Azure DevOps PATs, Bitbucket API tokens); only to the API origin; excluded from `repr`, errors, logs |
+| No token leakage | Env var only (username too, for Basic); `JOB-TOKEN` for GitLab CI job tokens, `Authorization: Bearer`, or Basic where required; only to the API origin; excluded from `repr`, errors, logs |
 | Redirects | Followed manually; credentials only to the configured origin; HTTPS->HTTP refused; max 3 |
 | TLS | Always verified; private CAs via `--ca-bundle` |
 | Resource limits | Every response body (API pages and artifacts) streamed and capped (50 MB default); zip members capped while reading, and archives over 50,000 entries or an 8 MiB central directory refused before opening (zip-bomb safe); pagination capped, must stay on the API origin, and a repeating page is an error |
