@@ -271,19 +271,20 @@ def _open_connector(provider: str | None, settings: ConnectionSettings) -> CICon
             "allow only 60 unauthenticated requests per hour per IP)",
         )
     user_var = settings.user_env or DEFAULT_USER_ENV.get(provider)
+    resolved_auth_scheme = settings.auth_scheme
+    if (
+        resolved_auth_scheme is None
+        and provider == "gitlab"
+        and token_env == "CI_JOB_TOKEN"  # noqa: S105 - env var name, not a token value
+    ):
+        resolved_auth_scheme = "job-token"
     resolved = _Resolved(
         url=_base_url(provider, settings),
         token=token or None,
         username=(os.environ.get(user_var) or None) if user_var else None,
         anonymous=settings.anonymous,
         ca=str(settings.ca_bundle) if settings.ca_bundle else None,
-        auth_scheme=settings.auth_scheme
-        or (
-            "job-token"
-            if provider == "gitlab"
-            and token_env == "CI_JOB_TOKEN"  # noqa: S105 - env var name, not a token value
-            else None
-        ),
+        auth_scheme=resolved_auth_scheme,
     )
     return _BUILDERS[provider](resolved)
 
