@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import io
+import zipfile
+
 import httpx
 import pytest
 import respx
@@ -48,6 +51,16 @@ def test_get_pipeline_parses_and_sends_bearer(connector, mock_api) -> None:
     request = route.calls.last.request
     assert request.headers["Authorization"] == f"Bearer {TOKEN}"
     assert "PRIVATE-TOKEN" not in request.headers
+    assert TOKEN not in str(request.url)
+
+
+def test_job_token_scheme_uses_dedicated_header(mock_api) -> None:
+    route = mock_api.get(PIPELINE_URL).respond(json=load_fixture("gitlab/pipeline.json"))
+    with GitLabConnector(BASE, TOKEN, auth_scheme="job-token") as connector:
+        assert connector.get_pipeline("123", 1042).id == 1042
+    request = route.calls.last.request
+    assert request.headers["JOB-TOKEN"] == TOKEN
+    assert "Authorization" not in request.headers
     assert TOKEN not in str(request.url)
 
 
@@ -237,6 +250,22 @@ def test_artifact_not_found(connector, mock_api) -> None:
     mock_api.get(ARTIFACT_URL).respond(404)
     with pytest.raises(NotFoundError):
         connector.download_artifact_file("123", 8821, "semgrep.json")
+
+
+def test_fetch_report_falls_back_to_artifact_archive(mock_api) -> None:
+    mock_api.get(JOBS_URL).respond(json=load_fixture("gitlab/jobs_page1.json"))
+    mock_api.get(ARTIFACT_URL).respond(404)
+
+    archive_url = f"{API}/projects/123/jobs/8821/artifacts"
+    archive = io.BytesIO()
+    with zipfile.ZipFile(archive, "w") as zf:
+        zf.writestr("semgrep.json", b'{"results": []}')
+    archive_route = mock_api.get(archive_url).respond(content=archive.getvalue())
+
+    with GitLabConnector(BASE, TOKEN, auth_scheme="job-token") as connector:
+        job = next(j for j in connector.list_jobs("123", 1042) if j.id == 8821)
+        assert connector.fetch_report("123", job, "semgrep.json") == b'{"results": []}'
+    assert archive_route.called
 
 
 class _chunks(httpx.SyncByteStream):

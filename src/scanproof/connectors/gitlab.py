@@ -149,12 +149,27 @@ class GitLabConnector(HttpConnector):
     ) -> bytes:
         if not job.has_archive:
             raise NotFoundError("Job uploaded no artifacts archive", status_code=None)
+        artifact_project = job.project or project
         try:
-            return self.download_artifact_file(job.project or project, job.id, report_path)
+            return self.download_artifact_file(artifact_project, job.id, report_path)
         except NotFoundError:
-            raise NotFoundError(
-                f"'{report_path}' not found in job artifacts (never uploaded, or expired)"
-            ) from None
+            if self.auth_scheme != "job-token":
+                raise NotFoundError(
+                    f"'{report_path}' not found in job artifacts (never uploaded, or expired)"
+                ) from None
+            # GitLab can return 404 for the single-file endpoint even when the archive
+            # is available for cross-project job-token requests. Retry through the archive
+            # endpoint and extract the exact member with the same size and path protections.
+            archive_url = (
+                f"{self.api_url}/projects/{_project_ref(artifact_project)}/jobs/{job.id}/artifacts"
+            )
+            try:
+                archive = self._download(archive_url)
+            except NotFoundError:
+                raise NotFoundError(
+                    f"'{report_path}' not found in job artifacts (never uploaded, or expired)"
+                ) from None
+            return self._extract(archive, report_path, f"job {job.id}")
 
     def _raise_for_status(self, response: httpx.Response, what: str) -> None:
         code = response.status_code
