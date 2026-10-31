@@ -19,6 +19,15 @@ enforcement:
   max_waiver_days: 60              # optional: refuse waivers longer than this (needs `created`)
 ```
 
+When a waiver accepts an `UNKNOWN` check, the JSON report includes
+`waived_unknown: true` on that check, alongside `outcome: WAIVED`, and
+`warnings` includes a `WAIVED_UNKNOWN:` warning naming the requirement,
+check, original result code, approver and expiry. The waiver is an **explicit
+acceptance of uncertainty**, not evidence that the scan completed. An expired,
+not-yet-active or unmatched waiver does not set this flag. A waived `FAIL`
+also has `waived_unknown: false`. The additive field is present on all checks
+for consumers that distinguish accepted uncertainty from accepted failures.
+
 A waiver only ever touches the check it names, and only when that check failed or is unknown.
 It cannot make a requirement that does not apply (`applies_to`) count as verified.
 
