@@ -12,11 +12,15 @@ from datetime import UTC, datetime
 from fnmatch import fnmatchcase
 from urllib.parse import urlsplit
 
-
 from scanproof.attestation.models import AttestationEvidence, AttestationStatus
 from scanproof.evidence.models import ScanEvidence
 from scanproof.models import InspectedJob, Job, JobStatus, Pipeline
-from scanproof.policy.waivers import _apply_waivers
+from scanproof.policy.models import (
+    AttestationRequirement,
+    Policy,
+    Requirement,
+    normalize_scan_path,
+)
 from scanproof.policy.results import (
     CheckResult,
     Decision,
@@ -26,12 +30,7 @@ from scanproof.policy.results import (
     RequirementResult,
     combine,
 )
-from scanproof.policy.models import (
-    AttestationRequirement,
-    Policy,
-    Requirement,
-    normalize_scan_path,
-)
+from scanproof.policy.waivers import _apply_waivers
 
 _WARNING_LEVELS = {"warn", "warning", "info"}
 
