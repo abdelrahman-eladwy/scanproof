@@ -37,9 +37,7 @@ def _evidence(*, results_reported=True, files=None, paths=None):
     ],
 )
 def test_scanner_scope_decisions(reported, files, paths, expected_outcome, expected_code):
-    result = engine._reported_scope(
-        _evidence(results_reported=reported, files=files, paths=paths)
-    )
+    result = engine._reported_scope(_evidence(results_reported=reported, files=files, paths=paths))
     assert result.check == "reported_scope"
     assert result.outcome is expected_outcome
     assert result.code == expected_code
