@@ -2,8 +2,7 @@
 
 from datetime import date
 
-from scanproof.policy import engine
-from scanproof.policy import results, waivers
+from scanproof.policy import engine, results, waivers
 from scanproof.policy.models import Policy, Waiver
 
 
@@ -15,22 +14,35 @@ def test_engine_still_exports_exact_result_types_and_aggregation():
     assert engine.RequirementResult is results.RequirementResult
     assert engine.Evaluation is results.Evaluation
     assert engine.combine is results.combine
-    assert engine.combine([engine.Outcome.UNKNOWN, engine.Outcome.WAIVED]) is engine.Outcome.UNKNOWN
+    assert (
+        engine.combine([engine.Outcome.UNKNOWN, engine.Outcome.WAIVED])
+        is engine.Outcome.UNKNOWN
+    )
 
 
 def test_waiver_function_identity_and_unknown_provenance():
     assert engine._apply_waivers is waivers._apply_waivers
     check = engine.CheckResult(
-        check="report", outcome=engine.Outcome.UNKNOWN,
-        code="EVIDENCE_UNAVAILABLE", message="API unavailable",
+        check="report",
+        outcome=engine.Outcome.UNKNOWN,
+        code="EVIDENCE_UNAVAILABLE",
+        message="API unavailable",
     )
     result = engine.RequirementResult(
-        id="sast", description=None, tool="semgrep", job_name="scan",
-        job_id=1, outcome=engine.Outcome.UNKNOWN, checks=[check],
+        id="sast",
+        description=None,
+        tool="semgrep",
+        job_name="scan",
+        job_id=1,
+        outcome=engine.Outcome.UNKNOWN,
+        checks=[check],
     )
     waiver = Waiver(
-        requirement="sast", check="report", code="EVIDENCE_UNAVAILABLE",
-        reason="Risk tracked in release issue", approved_by="security",
+        requirement="sast",
+        check="report",
+        code="EVIDENCE_UNAVAILABLE",
+        reason="Risk tracked in release issue",
+        approved_by="security",
         expires=date(2026, 12, 31),
     )
     policy = Policy.model_construct(waivers=[waiver])
