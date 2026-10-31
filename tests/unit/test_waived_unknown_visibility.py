@@ -15,17 +15,30 @@ from scanproof.policy.models import Policy, Waiver
 
 def _result(outcome: Outcome, *, check: str = "report") -> RequirementResult:
     return RequirementResult(
-        id="sast", description=None, tool="sarif", job_name="scan", job_id=1,
+        id="sast",
+        description=None,
+        tool="sarif",
+        job_name="scan",
+        job_id=1,
         outcome=outcome,
-        checks=[CheckResult(check=check, outcome=outcome, code="EVIDENCE_UNAVAILABLE",
-                            message="Provider API could not be read")],
+        checks=[
+            CheckResult(
+                check=check,
+                outcome=outcome,
+                code="EVIDENCE_UNAVAILABLE",
+                message="Provider API could not be read",
+            )
+        ],
     )
 
 
 def _policy(*, expires: str = "2026-12-01", created: str | None = None) -> Policy:
     waiver = {
-        "requirement": "sast", "check": "report", "code": "EVIDENCE_UNAVAILABLE",
-        "approved_by": "security-owner", "reason": "Tracked risk acceptance #132",
+        "requirement": "sast",
+        "check": "report",
+        "code": "EVIDENCE_UNAVAILABLE",
+        "approved_by": "security-owner",
+        "reason": "Tracked risk acceptance #132",
         "expires": expires,
     }
     if created is not None:
