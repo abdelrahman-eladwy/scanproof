@@ -307,28 +307,43 @@ def _verify_once(
             ]
             inputs[req.id] = RequirementInput(instances=instances, **undeclared)
 
-    generated_at = datetime.now(UTC)
-    evaluation = evaluate(policy, inspection.pipeline, inputs, now=generated_at)
-    evidence: dict[str, ScanEvidence] = {}
-    attestations: dict[str, list[AttestationEvidence]] = {}
-    for rid, item in inputs.items():
-        for key, one in [(rid, item), *((f"{rid} [{n}]", i) for n, i in item.instances or [])]:
-            if one.evidence is not None:
-                evidence[key] = one.evidence
-            if one.attestations:
-                attestations[key] = one.attestations
-    return VerificationReport(
-        scanproof_version=__version__,
-        generated_at=generated_at,
-        policy=policy.name,
-        provider=connector.provider,
-        instance_url=instance_url,
-        project=project,
-        pipeline=inspection.pipeline,
-        decision=evaluation.decision,
-        exit_code=evaluation.decision.exit_code,
-        requirements=evaluation.requirements,
-        evidence=evidence,
-        attestations=attestations,
-        warnings=[*inspection.warnings, *evaluation.warnings],
+    return _build_report(
+        connector, policy, inspection, inputs, instance_url=instance_url, project=project
     )
+
+
+def _build_report(
+    connector: CIConnector,
+    policy: Policy,
+    inspection: InspectionReport,
+    inputs: dict[str, RequirementInput],
+    *,
+    instance_url: str,
+    project: str,
+) -> VerificationReport:
+    """Finalize evaluated inputs without changing policy or evidence collection."""
+generated_at = datetime.now(UTC)
+evaluation = evaluate(policy, inspection.pipeline, inputs, now=generated_at)
+evidence: dict[str, ScanEvidence] = {}
+attestations: dict[str, list[AttestationEvidence]] = {}
+for rid, item in inputs.items():
+    for key, one in [(rid, item), *((f"{rid} [{n}]", i) for n, i in item.instances or [])]:
+        if one.evidence is not None:
+            evidence[key] = one.evidence
+        if one.attestations:
+            attestations[key] = one.attestations
+return VerificationReport(
+    scanproof_version=__version__,
+    generated_at=generated_at,
+    policy=policy.name,
+    provider=connector.provider,
+    instance_url=instance_url,
+    project=project,
+    pipeline=inspection.pipeline,
+    decision=evaluation.decision,
+    exit_code=evaluation.decision.exit_code,
+    requirements=evaluation.requirements,
+    evidence=evidence,
+    attestations=attestations,
+    warnings=[*inspection.warnings, *evaluation.warnings],
+)
