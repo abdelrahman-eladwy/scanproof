@@ -159,7 +159,6 @@ def _absence_unknown(inspection: InspectionReport, name: str, *, bounded: bool) 
     return f"these pipelines could not be read: {', '.join(reasons)}" if reasons else None
 
 
-
 def _verify_once(
     connector: CIConnector,
     policy: Policy,
@@ -232,7 +231,6 @@ def _verify_once(
         return item.model_copy(update={"attestations": checked})
 
     unreadable = inspection.unreadable_downstream
-
 
     def collect(req, job) -> RequirementInput:
         key = (
