@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+
 from scanproof.policy.models import Policy
 from scanproof.policy.results import Outcome, RequirementResult, combine
 
