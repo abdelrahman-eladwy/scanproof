@@ -579,13 +579,14 @@
     }
   },
   "required": [
-    "scanproof_version",
     "generated_at",
-    "provider",
     "instance_url",
-    "project",
+    "jobs",
     "pipeline",
-    "jobs"
+    "project",
+    "provider",
+    "scanproof_version",
+    "schema_version"
   ],
   "title": "scanproof inspect output",
   "type": "object",

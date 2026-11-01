@@ -339,3 +339,45 @@ def test_policy_schema_rejects_what_the_loader_rejects(mutate) -> None:
     assert errors("policy.v1alpha1.schema.json", bad) != []
     with pytest.raises(Exception):  # noqa: B017 - pydantic ValidationError
         Policy.model_validate(bad)
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "inspection-report.v1alpha1.schema.json",
+        "evidence.v1alpha1.schema.json",
+        "verification-report.v1alpha1.schema.json",
+        "verification-error.v1alpha1.schema.json",
+        "release-report.v1alpha1.schema.json",
+    ],
+)
+def test_output_schema_requires_contract_version(name) -> None:
+    assert "schema_version" in schema(name)["required"]
+
+
+def test_verification_error_requires_fixed_verdict_metadata() -> None:
+    name = "verification-error.v1alpha1.schema.json"
+    assert {"schema_version", "decision", "exit_code"} <= set(schema(name)["required"])
+    for field in ("schema_version", "decision", "exit_code"):
+        invalid = _error_doc()
+        invalid.pop(field)
+        assert errors(name, invalid), field
+
+
+def test_published_attestation_schema_rejects_unverified_identity_claims() -> None:
+    from scanproof.attestation.models import AttestationEvidence, AttestationStatus
+
+    name = "verification-report.v1alpha1.schema.json"
+    definitions = schema(name)["$defs"]
+    attestation = definitions["AttestationEvidence"]
+    js = pytest.importorskip("jsonschema")
+    validator = js.Draft202012Validator({"$defs": definitions, **attestation})
+    baseline = AttestationEvidence(status=AttestationStatus.INVALID).model_dump(mode="json")
+    assert not list(validator.iter_errors(baseline))
+    for forged in (
+        {"signer": {"issuer": "forged"}},
+        {"subjects": [{"digest": {"sha256": "a" * 64}}]},
+        {"predicate_type": "https://slsa.dev/provenance/v1"},
+    ):
+        altered = {**baseline, **forged}
+        assert list(validator.iter_errors(altered)), forged

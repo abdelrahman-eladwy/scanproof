@@ -84,6 +84,34 @@ def documents() -> dict[str, dict[str, Any]]:
     out: dict[str, dict[str, Any]] = {}
     for filename, (model, contract, mode, title) in _CATALOG.items():
         body = model.model_json_schema(mode=mode)  # type: ignore[arg-type]
+        if mode == "serialization":
+            # Pydantic defaults are always emitted by ScanProof's JSON reports.
+            # Downstream validators must reject versionless or misleading fragments.
+            required = set(body.get("required", []))
+            required.add("schema_version")
+            if model is VerificationErrorReport:
+                required.update(("decision", "exit_code"))
+            body["required"] = sorted(required)
+            attestation = body.get("$defs", {}).get("AttestationEvidence")
+            if isinstance(attestation, dict):
+                # Pydantic's model validator disallows authenticated claims when
+                # the bundle itself is invalid or unverifiable. Mirror this at
+                # the published schema boundary.
+                attestation["allOf"] = [
+                    {
+                        "if": {
+                            "properties": {"status": {"enum": ["invalid", "unverifiable"]}},
+                            "required": ["status"],
+                        },
+                        "then": {
+                            "properties": {
+                                "signer": {"type": "null"},
+                                "subjects": {"maxItems": 0},
+                                "predicate_type": {"type": "null"},
+                            }
+                        },
+                    }
+                ]
         out[filename] = {
             "$schema": DRAFT,
             "$id": SCHEMA_URL_BASE + filename,
