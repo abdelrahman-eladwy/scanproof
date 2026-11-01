@@ -70,7 +70,7 @@ def split_bundles(raw: bytes) -> list[bytes]:
                 if not line.strip():
                     continue
                 if len(docs) >= MAX_BUNDLES:
-                    raise BundleFormatError(f"too many JSONL documents; at most {MAX_BUNDLES} are checked")
+                    raise BundleFormatError(f"at most {MAX_BUNDLES} JSONL documents")
                 docs.append(json.loads(line))
         except (json.JSONDecodeError, RecursionError):
             raise BundleFormatError("not JSON or JSON lines") from None
