@@ -138,6 +138,11 @@
         },
         "outcome": {
           "$ref": "#/$defs/Outcome"
+        },
+        "waived_unknown": {
+          "default": false,
+          "title": "Waived Unknown",
+          "type": "boolean"
         }
       },
       "required": [
