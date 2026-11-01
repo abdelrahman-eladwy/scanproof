@@ -117,10 +117,11 @@ def test_job_succeeded_but_no_report(connector, gl) -> None:
     assert codes(report, "SAST-001") == {"REPORT_MISSING"}
 
 
-def test_job_without_artifacts_archive(connector, gl) -> None:
+def test_job_without_artifacts_archive_still_attempts_report(connector, gl) -> None:
     happy(gl).jobs[0].archive = False
     report = run(connector, gl)
-    assert codes(report, "SAST-001") == {"REPORT_MISSING"}
+    assert report.decision is Decision.VERIFIED
+    assert codes(report, "SAST-001") == set()
 
 
 def test_invalid_report(connector, gl) -> None:
