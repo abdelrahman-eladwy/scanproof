@@ -29,6 +29,16 @@ jobs:
       # Published schemas have one explicitly pinned generator. This is a required
       # test job, while wheel / lowest-deps jobs exercise other supported versions.
       - run: pip install -e ".[dev]" "pydantic==2.13.5"
+      - name: Temporary pinned schema capture (remove before merging)
+        run: |
+          python - <<'PY'
+          import base64
+          from scripts.export_schemas import expected
+          for name, content in expected().items():
+              encoded = base64.b64encode(content.encode("utf-8")).decode("ascii")
+              for i in range(0, len(encoded), 1200):
+                  print(f"SCHEMA_DUMP:{name}:{i // 1200}:{encoded[i:i + 1200]}")
+          PY
       - run: python scripts/export_schemas.py --check
       - run: ruff check .
       - run: ruff format --check .
