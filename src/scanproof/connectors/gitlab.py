@@ -206,7 +206,12 @@ class GitLabConnector(HttpConnector):
             if not next_page or not items:
                 return
             # Pages only move forward; anything else is a loop or a broken header.
-            if not next_page.isdigit() or int(next_page) <= page:
+            if (
+                not next_page.isascii()
+                or not next_page.isdigit()
+                or len(next_page) > 20
+                or int(next_page) <= page
+            ):
                 raise ConnectorError(
                     ErrorKind.INVALID_RESPONSE,
                     f"Pagination of {path} did not advance (page {page} -> {next_page!r})",

@@ -276,8 +276,8 @@ class HttpConnector(CIConnector):
                     response.close()
                 headers = [
                     (k, v)
-                    for k, v in response.headers.multi_items()
-                    if k.lower() not in _REBUILT_DROP
+                    for k, v in response.headers.raw
+                    if k.decode("ascii").lower() not in _REBUILT_DROP
                 ]
                 return httpx.Response(
                     response.status_code, headers=headers, content=content, request=request
