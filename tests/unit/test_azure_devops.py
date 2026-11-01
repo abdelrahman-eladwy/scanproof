@@ -283,3 +283,18 @@ def test_artifact_name_is_required_by_the_policy() -> None:
                 ],
             }
         )
+
+
+@pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
+def test_artifact_provider_error_is_indeterminate(azure, mock_api, status) -> None:
+    serve(
+        mock_api, "azure-sdk", "7003618",
+        {"packages": zipped("packages", {"semgrep.json": REPORT})},
+    )
+    api = f"{BASE}/azure-sdk/public/_apis/build/builds/7003618"
+    mock_api.get(
+        url__regex=rf"^{re.escape(api)}/artifacts\\?artifactName=packages&%24format=zip.*"
+    ).respond(status)
+    report = verify(azure, "azure-sdk", "7003618", policy("Job", "packages"))
+    assert report.decision is Decision.INDETERMINATE
+    assert report.exit_code == 2
