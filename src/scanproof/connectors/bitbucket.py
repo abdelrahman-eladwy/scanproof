@@ -136,7 +136,7 @@ class BitbucketConnector(HttpConnector):
         """The newest Code Insights report on the job's commit whose title or external id is
         `report_path`, with all of its annotations, as one JSON document for the adapter."""
         if not job.commit_sha:
-            raise NotFoundError("The pipeline has no commit to look up reports for", None)
+            raise ConnectorError(\n                ErrorKind.INVALID_RESPONSE,\n                "Bitbucket did not provide a commit SHA; cannot determine which reports belong to this pipeline",\n            )
         base = f"{self.api_url}/repositories/{_repo(project)}/commit/{quote(job.commit_sha)}"
         reports = [
             r
