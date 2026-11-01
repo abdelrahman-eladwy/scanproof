@@ -228,7 +228,7 @@ def test_too_many_jsonl_documents_are_rejected_before_full_parse() -> None:
     from scanproof.attestation.verify import MAX_BUNDLES, BundleFormatError
 
     data = b"{}\n" * MAX_BUNDLES + b"not-json\n"
-    with pytest.raises(BundleFormatError, match="more than"):
+    with pytest.raises(BundleFormatError, match="at most"):
         split_bundles(data)
 
 
