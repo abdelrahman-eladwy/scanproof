@@ -1,7 +1,6 @@
 # Releasing
 
-Releases are cut by pushing a `vX.Y.Z` tag. `.github/workflows/release.yml` then tests, builds,
-publishes to PyPI and GHCR, attaches SLSA provenance, and creates a GitHub (pre-)release.
+Releases are cut by pushing a `vX.Y.Z` tag. `.github/workflows/release.yml` first proves the\ntag commit belongs to `main` and that the exact commit passed the `ci.yml` main-push run.\nOnly then does it test and build without OIDC permission, sign distributions in a separate\nOIDC job, publish to PyPI and GHCR, and create a GitHub pre-release.
 
 ## One-time setup (maintainer)
 
@@ -23,13 +22,13 @@ No API tokens or passwords are stored anywhere.
 1. PR that sets the version in **both** `pyproject.toml` and `src/scanproof/__init__.py`
    (the workflow refuses a tag that doesn't match), and moves the `CHANGELOG.md` entries under
    the new version with today's date.
-2. Merge, then on `main`:
+2. Merge and verify **successful `ci.yml` on the exact `main` commit**. Only then, on `main`:
    ```bash
    git pull
    git tag -a v0.1.0 -m "ScanProof v0.1.0"
    git push origin v0.1.0
    ```
-3. Watch the `release` workflow. Approve the `pypi` environment if you added a reviewer.
+3. Watch the `release` workflow: the tag ancestry and successful main-push CI preflight must\n   both pass, followed by build, distribution attestation and publishing. Approve the `pypi`\n   environment if you added a reviewer. Do not bypass a rejected preflight by rerunning\n   unreviewed or orphaned tag commits.\n\nThis release path is still subject to a controlled live-tag acceptance run. Unit tests of the\nworkflow are necessary but do not prove external publishing credentials, environment gates,\nprovenance or registry availability.
 
 ## Verifying a release (for users)
 
