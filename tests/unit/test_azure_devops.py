@@ -289,7 +289,7 @@ def test_artifact_name_is_required_by_the_policy() -> None:
 def test_artifact_provider_error_is_indeterminate(azure, mock_api, status) -> None:
     api = f"{BASE}/azure-sdk/public/_apis/build/builds/7003618"
     mock_api.get(
-        url__regex=rf"^{re.escape(api)}/artifacts\\?artifactName=packages&%24format=zip.*"
+        url__regex=rf"^{re.escape(api)}/artifacts\?artifactName=packages&%24format=zip.*"
     ).respond(status)
     serve(
         mock_api,
