@@ -13,7 +13,7 @@ LABEL org.opencontainers.image.source="https://github.com/abdelrahman-eladwy/sca
       org.opencontainers.image.description="ScanProof - Security Scan Assurance Engine" \
       org.opencontainers.image.licenses="Apache-2.0"
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
-RUN useradd --create-home --uid 10001 scanproof
+RUN useradd --create-home --uid 10001 scanproof && mkdir -p /work && chown 10001:10001 /work
 COPY --from=build /dist/*.whl /tmp/
 # With the attestations extra (sigstore-python), so `attestation:` policies work in the image.
 RUN pip install --no-cache-dir "$(ls /tmp/*.whl)[attestations]" && rm /tmp/*.whl
