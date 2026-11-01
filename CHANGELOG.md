@@ -5,6 +5,13 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 
 ## [Unreleased]
 
+### Security and correctness
+- Reject production-profile waivers that suppress missing reports, applicability, required job checks, or configured attestations (#145).
+- Reject malformed ZIP64 sentinels before opening attacker-controlled central directories (#153).
+- Require immutable SHA-256 image references for target binding; prevent empty release aggregation, duplicate bindings, and empty applicability filters from passing (#157).
+- Require the production assurance profile for every `verify-release` component (#163).
+- Harden Azure rerun attempt ordering, GitHub masked annotations, scanner error handling, and internal-error exit semantics (#143).
+
 ### Changed
 - `verify-release` now requires each component policy to select `assurance.profile: production`.
   Compatible-profile policies are rejected with a configuration error rather than permitting
