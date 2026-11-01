@@ -35,8 +35,12 @@ def zipped(artifact: str, files: dict[str, bytes]) -> bytes:
 
 
 def serve(
-    router, org: str, build: str, zips: dict[str, bytes] | None = None,
-    *, artifact_status: int | None = None,
+    router,
+    org: str,
+    build: str,
+    zips: dict[str, bytes] | None = None,
+    *,
+    artifact_status: int | None = None,
 ) -> str:
     d = A / org / build
     api = f"{BASE}/{org}/public/_apis/build/builds/{build}"
@@ -52,11 +56,13 @@ def serve(
             content=f.read_bytes()
         )
     for name, data in (zips or {}).items():
-        router.get(
+        route = router.get(
             url__regex=rf"^{re.escape(api)}/artifacts\?artifactName={re.escape(name)}&%24format=zip.*"
-        ).respond(artifact_status) if artifact_status is not None else router.get(
-            url__regex=rf"^{re.escape(api)}/artifacts\\?artifactName={re.escape(name)}&%24format=zip.*"
-        ).respond(content=data, headers={"Content-Type": "application/zip"})
+        )
+        if artifact_status is None:
+            route.respond(content=data, headers={"Content-Type": "application/zip"})
+        else:
+            route.respond(artifact_status)
     if (d / "artifacts.json").exists():
         router.get(url__regex=rf"^{re.escape(api)}/artifacts\?api-version=.*").respond(
             content=(d / "artifacts.json").read_bytes()
