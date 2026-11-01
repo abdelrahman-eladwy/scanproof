@@ -17,12 +17,16 @@ import json
 import math
 import os
 import platform
-import resource
 import statistics
 import sys
 import time
 import tracemalloc
 from pathlib import Path
+
+try:
+    import resource
+except ImportError:  # Windows has no resource module
+    resource = None  # type: ignore[assignment]
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -121,7 +125,9 @@ def nearest_rank(values: list[float], pct: float) -> float:
     return ordered[max(0, math.ceil(pct / 100 * len(ordered)) - 1)]
 
 
-def peak_rss_mib() -> float:
+def peak_rss_mib() -> float | None:
+    if resource is None:
+        return None  # Windows: tracemalloc is available, but it is not total process RSS.
     raw = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     # Linux reports KiB, macOS reports bytes.
     return raw / (1024 * 1024) if sys.platform == "darwin" else raw / 1024
@@ -169,7 +175,7 @@ def measure(iterations: int, warmups: int) -> dict[str, object]:
             "p95_nearest_rank": round(p95, 6),
             "max": round(max(samples), 6),
         },
-        "peak_rss_mib": round(rss, 1),
+        "peak_rss_mib": round(rss, 1) if rss is not None else None,
         "peak_traced_python_mib": round(traced_peak / (1024 * 1024), 2),
         "every_run_verified": True,
         "negative_control_decision": negative.decision.value,
@@ -177,7 +183,7 @@ def measure(iterations: int, warmups: int) -> dict[str, object]:
             "p95_seconds": PROPOSED_P95_SECONDS,
             "rss_mib": PROPOSED_RSS_MIB,
             "p95_within": p95 < PROPOSED_P95_SECONDS,
-            "rss_within": rss < PROPOSED_RSS_MIB,
+            "rss_within": rss < PROPOSED_RSS_MIB if rss is not None else None,
         },
     }
 
