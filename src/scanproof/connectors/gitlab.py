@@ -35,13 +35,33 @@ from scanproof.models import ArtifactFile, Downstream, Job, JobStatus, Pipeline
 
 # The job-ID artifacts endpoint accepts these report file_type values on GitLab 19.4+.
 # Never forward an arbitrary provider value as a query parameter.
-_REPORT_FILE_TYPES = frozenset({
-    "accessibility", "api_fuzzing", "browser_performance", "cluster_image_scanning",
-    "cobertura", "codequality", "container_scanning", "cyclonedx", "dast",
-    "dependency_scanning", "dotenv", "jacoco", "junit", "license_scanning",
-    "load_performance", "lsif", "metrics", "performance", "requirements",
-    "requirements_v2", "sarif", "sast", "secret_detection",
-})
+_REPORT_FILE_TYPES = frozenset(
+    {
+        "accessibility",
+        "api_fuzzing",
+        "browser_performance",
+        "cluster_image_scanning",
+        "cobertura",
+        "codequality",
+        "container_scanning",
+        "cyclonedx",
+        "dast",
+        "dependency_scanning",
+        "dotenv",
+        "jacoco",
+        "junit",
+        "license_scanning",
+        "load_performance",
+        "lsif",
+        "metrics",
+        "performance",
+        "requirements",
+        "requirements_v2",
+        "sarif",
+        "sast",
+        "secret_detection",
+    }
+)
 
 _JOB_URI = re.compile(r"^(?P<origin>https://[^/]+)/(?P<path>.+)/-/jobs/(?P<job>\d+)/?$")
 
@@ -163,7 +183,8 @@ class GitLabConnector(HttpConnector):
             # raw-path endpoint cannot retrieve these; use the job-ID file_type API.
             # Never substitute a different report for the policy's exact path.
             matches = [
-                a for a in job.artifacts
+                a
+                for a in job.artifacts
                 if a.filename == report_path and a.file_type in _REPORT_FILE_TYPES
             ]
             if len(matches) > 1:
