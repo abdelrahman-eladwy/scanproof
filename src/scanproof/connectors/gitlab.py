@@ -147,8 +147,6 @@ class GitLabConnector(HttpConnector):
     def fetch_report(
         self, project: str, job: Job, report_path: str, artifact_name: str | None = None
     ) -> bytes:
-        if not job.has_archive:
-            raise NotFoundError("Job uploaded no artifacts archive", status_code=None)
         try:
             return self.download_artifact_file(job.project or project, job.id, report_path)
         except NotFoundError:
