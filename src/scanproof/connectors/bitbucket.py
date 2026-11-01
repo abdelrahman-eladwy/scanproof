@@ -217,7 +217,10 @@ class BitbucketConnector(HttpConnector):
                     status = JobStatus.MANUAL
             raw = str(result or name).lower()
             allow_failure = False
-            if status is JobStatus.FAILED and pipeline_result not in ("FAILED", "ERROR"):
+            if status is JobStatus.FAILED and pipeline_result == "SUCCESSFUL":
+                # Only a pipeline that actually succeeded masked this step. A still-running,
+                # stopped or expired pipeline masked nothing, so saying it did is a wrong
+                # diagnosis (the verdict stays BLOCKED either way).
                 allow_failure = True
                 raw = f"{raw}, but the pipeline did not fail (on-fail: strategy: ignore)"
             step_uuid = str(s["uuid"])

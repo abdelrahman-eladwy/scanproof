@@ -230,16 +230,21 @@ class GitHubConnector(HttpConnector):
         matches = [
             a
             for a in self._paginate(path, "artifacts", {"name": artifact_name})
-            if a.get("name") == artifact_name
+            if isinstance(a, dict) and a.get("name") == artifact_name
         ]
         if not matches:
             raise NotFoundError(f"No artifact named '{artifact_name}' in run {run_id}", None)
-        artifact = max(matches, key=lambda a: a.get("id", 0))
+        artifact = max(matches, key=lambda a: a.get("id") or 0)
         if artifact.get("expired"):
             raise NotFoundError(f"Artifact '{artifact_name}' has expired", None)
+        artifact_id = artifact.get("id")
+        if not isinstance(artifact_id, int):
+            raise ConnectorError(
+                ErrorKind.INVALID_RESPONSE, f"Artifact '{artifact_name}' has no usable id"
+            )
 
         archive = self._download(
-            f"{self.api_url}/repos/{_repo(project)}/actions/artifacts/{artifact['id']}/zip",
+            f"{self.api_url}/repos/{_repo(project)}/actions/artifacts/{artifact_id}/zip",
             what=f"artifact '{artifact_name}'",
         )
         _verify_digest(archive, artifact.get("digest"), artifact_name)
@@ -455,7 +460,12 @@ def _verify_digest(archive: bytes, recorded: str | None, name: str) -> None:
         return  # older artifacts have no digest; nothing to compare against
     algo, _, expected = recorded.partition(":")
     if algo != "sha256" or not expected:
-        return
+        # A digest that is present but unusable is not the same as no digest: skipping the
+        # check would accept unverified bytes as if the platform had vouched for them.
+        raise ConnectorError(
+            ErrorKind.INTEGRITY,
+            f"Artifact '{name}' has a digest ScanProof cannot check ({recorded!r})",
+        )
     actual = hashlib.sha256(archive).hexdigest()
     if actual != expected.lower():
         raise ConnectorError(

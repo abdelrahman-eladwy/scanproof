@@ -148,6 +148,23 @@ def test_snyk_without_a_reported_path_claims_no_scanned_files() -> None:
     assert ev.parseable and ev.scope.files_scanned is None and ev.scope.scanned_paths == []
 
 
+def test_null_severity_is_unknown_not_a_bucket_called_none() -> None:
+    """`severity: null` became str(None).upper() == "NONE", a bucket every consumer must know."""
+    report = {
+        "results": [
+            {
+                "check_id": "x",
+                "path": "a.py",
+                "start": {"line": 1},
+                "extra": {"severity": None, "message": "m"},
+            }
+        ],
+        "errors": [],
+    }
+    ev = get_adapter("semgrep").parse(json.dumps(report).encode())
+    assert ev.parseable and ev.findings.by_severity == {"UNKNOWN": 1}
+
+
 def test_nuclei_empty_export_is_valid_but_targetless() -> None:
     ev = parse("nuclei", "nuclei/nuclei-empty-export.json")
     assert ev.findings.total == 0 and ev.target.urls is None

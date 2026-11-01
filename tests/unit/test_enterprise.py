@@ -17,7 +17,7 @@ from scanproof.evidence.models import ScanType
 from scanproof.models import InspectedJob, Job, JobStatus, Pipeline
 from scanproof.policy.engine import Outcome, RequirementInput, evaluate_requirement
 from scanproof.policy.models import Requirement
-from scanproof.scanners.fortify import FortifyAdapter
+from scanproof.scanners.fortify import FortifyAdapter, _priority
 from scanproof.scanners.sonatype import SonatypeIqAdapter
 from tests.conftest import FIXTURES
 
@@ -89,6 +89,21 @@ def test_rule_without_metadata_is_unknown_priority() -> None:
     members["audit.fvdl"] = members["audit.fvdl"].replace(b'name="Impact"', b'name="X-Impact"')
     ev = fortify.parse(make_fpr(members))
     assert set(ev.findings.by_severity) == {"UNKNOWN"}
+
+
+@pytest.mark.parametrize(
+    "meta",
+    [
+        {"Impact": "nan", "Accuracy": "5", "Probability": "5"},
+        {"Impact": "inf", "Accuracy": "5", "Probability": "5"},
+        {"Impact": "5", "Accuracy": "nan", "Probability": "5"},
+        {"Impact": "5", "Accuracy": "5", "Probability": "inf"},
+    ],
+)
+def test_non_finite_metadata_is_unknown_priority(meta) -> None:
+    """float() accepts nan/inf; a NaN compares False against every band, so it used to read
+    as LOW (or CRITICAL for inf) instead of UNKNOWN."""
+    assert _priority(meta, "5") == "UNKNOWN"
 
 
 @pytest.mark.parametrize(

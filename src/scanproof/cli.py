@@ -740,7 +740,7 @@ def run() -> None:
     except typer.Abort:
         typer.echo("Aborted.", err=True)
         sys.exit(130)
-    except Exception as exc:  # noqa: BLE001 - a bug must never look like a failed control
+    except Exception as exc:  # a bug must never look like a failed control
         # Exit 1 means BLOCKED, i.e. "a required control failed". An unhandled exception is
         # not a judgement about the pipeline, so it exits 2 (INDETERMINATE) and says so.
         typer.echo(f"INTERNAL ERROR: {type(exc).__name__}: {exc}", err=True)

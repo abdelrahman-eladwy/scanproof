@@ -139,7 +139,10 @@ def _errors(runs: list[dict[str, Any]]) -> list[ScannerError] | None:
                     )
                     errors.append(
                         ScannerError(
-                            level=_LEVEL_MAP.get(level, "warn"), type=key, message=str(msg), path=uri
+                            level=_LEVEL_MAP.get(level, "warn"),
+                            type=key,
+                            message=str(msg),
+                            path=uri,
                         )
                     )
     return errors

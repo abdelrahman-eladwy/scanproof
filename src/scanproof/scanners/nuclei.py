@@ -32,8 +32,10 @@ class NucleiAdapter(ScannerAdapter):
             parsed = None
         if isinstance(parsed, list):
             return parsed
-        if isinstance(parsed, dict) and "template-id" in parsed and isinstance(
-            parsed.get("info"), dict
+        if (
+            isinstance(parsed, dict)
+            and "template-id" in parsed
+            and isinstance(parsed.get("info"), dict)
         ):
             # A JSONL file with exactly one finding is a single JSON object. Parsing it as
             # JSON first used to reject it as "not an array", so a valid -jsonl report from a

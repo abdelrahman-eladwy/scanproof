@@ -56,7 +56,8 @@ class SemgrepAdapter(ScannerAdapter):
             )
 
         severities = [
-            str((r.get("extra") or {}).get("severity", "UNKNOWN")).upper() for r in data["results"]
+            str((r.get("extra") or {}).get("severity") or "UNKNOWN").upper()
+            for r in data["results"]
         ]
         return {
             "tool_version": data.get("version"),
