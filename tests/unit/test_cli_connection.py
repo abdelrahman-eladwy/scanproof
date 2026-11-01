@@ -214,6 +214,7 @@ JENKINS_POLICY = """
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy
 project: {provider: jenkins, id: app}
+assurance: {profile: production}
 requirements:
   - {id: SAST, tool: semgrep, job_name: sast, report_path: semgrep.json}
 """
