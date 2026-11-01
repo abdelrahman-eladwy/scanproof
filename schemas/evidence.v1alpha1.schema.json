@@ -556,7 +556,8 @@
     "tool",
     "scan_type",
     "present",
-    "parseable"
+    "parseable",
+    "schema_version"
   ],
   "title": "scanproof evidence output",
   "type": "object",

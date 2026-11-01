@@ -80,7 +80,10 @@
   "required": [
     "project",
     "pipeline_id",
-    "error"
+    "error",
+    "schema_version",
+    "decision",
+    "exit_code"
   ],
   "title": "scanproof verify -o output when the pipeline could not be read (exit 2)",
   "type": "object",

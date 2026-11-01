@@ -84,6 +84,41 @@ def documents() -> dict[str, dict[str, Any]]:
     out: dict[str, dict[str, Any]] = {}
     for filename, (model, contract, mode, title) in _CATALOG.items():
         body = model.model_json_schema(mode=mode)  # type: ignore[arg-type]
+        if model in (
+            InspectionReport,
+            ScanEvidence,
+            VerificationReport,
+            VerificationErrorReport,
+            ReleaseReport,
+        ):
+            # A const with a default is not necessarily "required" in generated schemas.
+            # Consumers must not accept an unversioned output as a known contract.
+            required = body.setdefault("required", [])
+            if "schema_version" not in required:
+                required.append("schema_version")
+        if model is VerificationErrorReport:
+            for field in ("decision", "exit_code"):
+                if field not in body["required"]:
+                    body["required"].append(field)
+        attestation = body.get("$defs", {}).get("AttestationEvidence")
+        if attestation is not None:
+            # Pydantic's model_validator forbids trusted claims on invalid bundles;
+            # model_json_schema cannot express cross-field validators itself.
+            attestation["allOf"] = [
+                {
+                    "if": {
+                        "properties": {"status": {"enum": ["invalid", "unverifiable"]}},
+                        "required": ["status"],
+                    },
+                    "then": {
+                        "properties": {
+                            "signer": {"type": "null"},
+                            "subjects": {"maxItems": 0},
+                            "predicate_type": {"type": "null"},
+                        }
+                    },
+                }
+            ]
         out[filename] = {
             "$schema": DRAFT,
             "$id": SCHEMA_URL_BASE + filename,

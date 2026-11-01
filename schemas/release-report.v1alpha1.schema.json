@@ -1,6 +1,36 @@
 {
   "$defs": {
     "AttestationEvidence": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "invalid",
+                  "unverifiable"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "predicate_type": {
+                "type": "null"
+              },
+              "signer": {
+                "type": "null"
+              },
+              "subjects": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ],
       "properties": {
         "bundle_sha256": {
           "anyOf": [
@@ -1299,7 +1329,8 @@
     "release",
     "decision",
     "exit_code",
-    "components"
+    "components",
+    "schema_version"
   ],
   "title": "scanproof verify-release output",
   "type": "object",

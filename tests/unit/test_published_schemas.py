@@ -142,6 +142,41 @@ def test_version_field_is_pinned_to_the_contract(name, field, value) -> None:
     assert schema(name)["properties"][field]["const"] == value
 
 
+@pytest.mark.parametrize(
+    "name",
+    [
+        "inspection-report.v1alpha1.schema.json",
+        "evidence.v1alpha1.schema.json",
+        "verification-report.v1alpha1.schema.json",
+        "verification-error.v1alpha1.schema.json",
+        "release-report.v1alpha1.schema.json",
+    ],
+)
+def test_output_schema_requires_version_field(name) -> None:
+    assert "schema_version" in schema(name)["required"]
+
+
+def test_verification_error_requires_decision_and_exit_code() -> None:
+    assert {"schema_version", "decision", "exit_code"} <= set(
+        schema("verification-error.v1alpha1.schema.json")["required"]
+    )
+
+
+def test_published_attestation_schema_rejects_unverified_claims() -> None:
+    js = pytest.importorskip("jsonschema")
+    source = schema("verification-report.v1alpha1.schema.json")
+    assert "AttestationEvidence" in source["$defs"]
+    validator = js.Draft202012Validator(
+        {"$defs": source["$defs"], "$ref": "#/$defs/AttestationEvidence"}
+    )
+    for bad in (
+        {"status": "invalid", "signer": {"issuer": "forged"}},
+        {"status": "unverifiable", "subjects": [{"digest": {"sha256": "a"}}]},
+        {"status": "invalid", "predicate_type": "https://slsa.dev/provenance/v1"},
+    ):
+        assert list(validator.iter_errors(bad))
+
+
 def test_model_literals_match_contract_constants() -> None:
     for model in (Policy, Release):
         assert typing.get_args(model.model_fields["apiVersion"].annotation) == (

@@ -585,7 +585,8 @@
     "instance_url",
     "project",
     "pipeline",
-    "jobs"
+    "jobs",
+    "schema_version"
   ],
   "title": "scanproof inspect output",
   "type": "object",
