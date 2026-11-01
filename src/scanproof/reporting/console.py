@@ -26,7 +26,7 @@ def print_inspection_summary(report: InspectionReport) -> None:
     out = lambda line="": typer.echo(line, err=True)  # noqa: E731
     out(f"ScanProof {report.scanproof_version} - pipeline inspection")
     out(f"Project:  {report.project}")
-    out(f"Pipeline: #{p.id}  status={p.status}  ref={p.ref}  sha={p.sha[:12]}")
+    out(f"Pipeline: #{p.id}  status={p.status}  ref={p.ref}  sha={p.sha[:12] or 'unknown'}")
     out()
     for job in report.jobs:
         mark = _STATUS_MARK.get(job.latest.status, "??  ")
@@ -88,7 +88,7 @@ def print_verification_summary(report: VerificationReport) -> None:
     out(f"ScanProof {report.scanproof_version} - verify")
     out(f"Policy:   {report.policy}")
     out(f"Project:  {report.project}")
-    out(f"Pipeline: #{p.id}  ref={p.ref}  sha={p.sha[:12]}")
+    out(f"Pipeline: #{p.id}  ref={p.ref}  sha={p.sha[:12] or 'unknown'}")
     out()
     for req in report.requirements:
         job = f"job {req.job_id}" if req.job_id else "no job"
@@ -127,5 +127,23 @@ def print_release_summary(report) -> None:
             for check in req.checks:
                 if check.outcome.value in {"FAIL", "UNKNOWN", "WAIVED"}:
                     out(f"         {req.id} {check.outcome.value}: {check.code}: {check.message}")
+    failed = sum(c.decision.value == "BLOCKED" for c in report.components)
+    unknown = sum(c.decision.value == "INDETERMINATE" for c in report.components)
+    waived = sum(
+        check.outcome.value == "WAIVED"
+        for c in report.components
+        if c.report is not None
+        for req in c.report.requirements
+        for check in req.checks
+    )
+    warnings = sum(len(c.report.warnings) for c in report.components if c.report is not None)
+    for c in report.components:
+        if c.report is not None and c.report.warnings:
+            for warning in c.report.warnings:
+                out(f"         {c.name} warning: {warning}")
     out()
-    out(f"Release decision: {report.decision.value}  exit {report.exit_code}")
+    out(
+        f"Release decision: {report.decision.value}  "
+        f"({failed} blocked, {unknown} indeterminate, {waived} waived checks, "
+        f"{warnings} warnings)  exit {report.exit_code}"
+    )
