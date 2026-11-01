@@ -229,7 +229,10 @@ class AttestationRequirement(_Strict):
 
 
 class AppliesTo(_Strict):
-    refs: list[str] = Field(description="Glob patterns for pipeline refs, e.g. main, release/*")
+    refs: list[str] = Field(
+        min_length=1,
+        description="Nonempty glob patterns for pipeline refs, e.g. main, release/*",
+    )
 
 
 class Requirement(_Strict):
