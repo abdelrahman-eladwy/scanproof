@@ -100,6 +100,54 @@ def test_nuclei_jsonl_and_export(path) -> None:
     assert ev.target.urls == ["http://target"]
 
 
+def test_nuclei_jsonl_with_a_single_finding_is_parseable() -> None:
+    """A one-line -jsonl file is a single JSON object, so it used to be rejected as unparseable
+    and BLOCK the gate, while the same report with two findings parsed (#6)."""
+    one = (FIXTURES / "nuclei/nuclei.jsonl").read_bytes().splitlines()[0]
+    ev = get_adapter("nuclei").parse(one)
+    assert ev.parseable and ev.findings.total == 1
+
+
+def test_trivy_config_findings_are_counted() -> None:
+    """Only Vulnerabilities were read, so a `trivy config` report claimed zero findings (#11)."""
+    schema = json.loads((FIXTURES / "trivy/trivy-fs.json").read_text())["SchemaVersion"]
+    report = {
+        "SchemaVersion": schema,
+        "ArtifactName": ".",
+        "ArtifactType": "filesystem",
+        "Results": [
+            {
+                "Target": "main.tf",
+                "Class": "config",
+                "Misconfigurations": [{"Severity": "HIGH"}, {"Severity": "LOW"}],
+                "Secrets": [{"Severity": "MEDIUM"}],
+            }
+        ],
+    }
+    ev = get_adapter("trivy").parse(json.dumps(report).encode())
+    assert ev.parseable and ev.findings.total == 3
+
+
+def test_sarif_empty_invocations_is_unknown_not_clean() -> None:
+    """`invocations: []` used to mean "no errors" instead of "the run said nothing" (#9)."""
+    log = {"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "X"}}, "invocations": []}]}
+    ev = get_adapter("sarif").parse(json.dumps(log).encode())
+    assert ev.parseable and ev.scanner_errors is None
+
+
+def test_sarif_invocation_without_execution_successful_is_an_error() -> None:
+    log = {"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "X"}}, "invocations": [{}]}]}
+    ev = get_adapter("sarif").parse(json.dumps(log).encode())
+    assert ev.parseable and ev.scanner_errors
+    assert ev.scanner_errors[0].level == "error"
+
+
+def test_snyk_without_a_reported_path_claims_no_scanned_files() -> None:
+    """str(None) used to append the string "None" and satisfy minimum_scanned_files: 1 (#10)."""
+    ev = get_adapter("snyk").parse(b'[{"ok": true, "vulnerabilities": []}]')
+    assert ev.parseable and ev.scope.files_scanned is None and ev.scope.scanned_paths == []
+
+
 def test_nuclei_empty_export_is_valid_but_targetless() -> None:
     ev = parse("nuclei", "nuclei/nuclei-empty-export.json")
     assert ev.findings.total == 0 and ev.target.urls is None

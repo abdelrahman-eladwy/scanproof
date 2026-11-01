@@ -100,27 +100,34 @@ def _result_level(result: dict[str, Any], rules: list, by_id: dict) -> str:
 
 
 def _errors(runs: list[dict[str, Any]]) -> list[ScannerError] | None:
-    if not any(isinstance(r.get("invocations"), list) for r in runs):
+    if not any(isinstance(r.get("invocations"), list) and r["invocations"] for r in runs):
+        # No run states anything about its invocations: the producer does not report errors.
+        # An empty list is not that statement, it is a run that said nothing (#9).
         return None
     errors: list[ScannerError] = []
     for run in runs:
         for inv in run.get("invocations") or []:
-            if inv.get("executionSuccessful") is False:
-                errors.append(
-                    ScannerError(
-                        level="error",
-                        type="invocation",
-                        message=str(
-                            inv.get("exitCodeDescription")
-                            or f"executionSuccessful=false (exit code {inv.get('exitCode')})"
-                        ),
+            if inv.get("executionSuccessful") is not True:
+                # Missing or mis-typed is not success either: a tool that did not say it
+                # finished cleanly must not look clean.
+                if inv.get("executionSuccessful") is False:
+                    message = str(
+                        inv.get("exitCodeDescription")
+                        or f"executionSuccessful=false (exit code {inv.get('exitCode')})"
                     )
-                )
+                else:
+                    message = (
+                        "invocation does not state executionSuccessful=true "
+                        f"(got {inv.get('executionSuccessful')!r})"
+                    )
+                errors.append(ScannerError(level="error", type="invocation", message=message))
             for key in ("toolExecutionNotifications", "toolConfigurationNotifications"):
                 for note in inv.get(key) or []:
-                    level = str(note.get("level", "warning"))
-                    if level not in _LEVEL_MAP:
+                    if not isinstance(note, dict):
                         continue
+                    level = str(note.get("level") or "warning").lower()
+                    if level in ("note", "none"):
+                        continue  # not an error, by SARIF's own vocabulary
                     msg = (note.get("message") or {}).get("text") or "(no message)"
                     locs = note.get("locations") or []
                     uri = (
@@ -131,7 +138,9 @@ def _errors(runs: list[dict[str, Any]]) -> list[ScannerError] | None:
                         else None
                     )
                     errors.append(
-                        ScannerError(level=_LEVEL_MAP[level], type=key, message=str(msg), path=uri)
+                        ScannerError(
+                            level=_LEVEL_MAP.get(level, "warn"), type=key, message=str(msg), path=uri
+                        )
                     )
     return errors
 
