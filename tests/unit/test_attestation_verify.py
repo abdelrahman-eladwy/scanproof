@@ -224,6 +224,23 @@ def test_garbage_never_raises(trust, raw) -> None:
     assert all(a.signer is None for a in atts)
 
 
+def test_too_many_jsonl_documents_are_rejected_before_full_parse() -> None:
+    from scanproof.attestation.verify import BundleFormatError, MAX_BUNDLES
+
+    data = b"{}\\n" * MAX_BUNDLES + b"not-json\\n"
+    with pytest.raises(BundleFormatError, match="more than"):
+        split_bundles(data)
+
+
+def test_too_many_github_bundles_are_rejected() -> None:
+    from scanproof.attestation.verify import BundleFormatError, MAX_BUNDLES
+
+    bundle = {"mediaType": "application/vnd.dev.sigstore.bundle.v0.3+json"}
+    data = json.dumps({"attestations": [{"bundle": bundle}] * (MAX_BUNDLES + 1)}).encode()
+    with pytest.raises(BundleFormatError, match="more than"):
+        split_bundles(data)
+
+
 def test_attestations_reply_with_no_bundles() -> None:
     assert split_bundles(b'{"attestations": []}') == []
 
