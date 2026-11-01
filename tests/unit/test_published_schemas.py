@@ -73,6 +73,14 @@ def test_committed_schemas_match_the_catalog() -> None:
     assert export.check() == []
 
 
+def test_generator_version_mismatch_is_not_silently_accepted(monkeypatch, tmp_path) -> None:
+    for path in SCHEMAS.glob("*.json"):
+        (tmp_path / path.name).write_bytes(path.read_bytes())
+    monkeypatch.setattr(export, "pydantic_minor", lambda: "999.0")
+    problems = export.check(tmp_path)
+    assert any("pydantic minor differs" in problem for problem in problems)
+
+
 def test_no_published_schema_is_git_ignored() -> None:
     # .gitignore's `inspection*.json` once silently dropped the inspection schema from a commit.
     import shutil
