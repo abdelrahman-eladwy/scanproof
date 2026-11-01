@@ -29,7 +29,11 @@ def load(repo: str, n: int, name: str):
 
 
 def serve(
-    router, repo: str, n: int, *, steps: list | None = None,
+    router,
+    repo: str,
+    n: int,
+    *,
+    steps: list | None = None,
     report_status: int | None = None,
 ) -> dict:
     p = load(repo, n, "pipeline.json")
@@ -41,9 +45,11 @@ def serve(
         json={"values": steps if steps is not None else load(repo, n, "steps.json")["values"]}
     )
     sha = p["target"]["commit"]["hash"]
-    router.get(url__regex=rf"^{re.escape(base)}/commit/{sha}/reports\?.*").respond(
-        json=load(repo, n, "reports.json")
-    )
+    report_route = router.get(url__regex=rf"^{re.escape(base)}/commit/{sha}/reports\?.*")
+    if report_status is None:
+        report_route.respond(json=load(repo, n, "reports.json"))
+    else:
+        report_route.respond(report_status)
     d = B / repo.replace("/", "__") / str(n)
     for f in d.glob("report-*-annotations.json"):
         rid = "{" + f.name.removeprefix("report-").removesuffix("-annotations.json") + "}"
