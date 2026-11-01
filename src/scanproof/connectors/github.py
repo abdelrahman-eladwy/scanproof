@@ -48,7 +48,6 @@ from scanproof.models import Job, JobStatus, Pipeline
 
 DEFAULT_GITHUB_API = "https://api.github.com"
 _REPO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
-_EXIT_CODE = re.compile(r"Process completed with exit code [1-9]\d*")
 _RUN_URI = re.compile(
     r"^(?P<host>https://[^/]+)/(?P<repo>[^/]+/[^/]+)/actions/runs/(?P<run>\d+)(?:/attempts/(?P<attempt>\d+))?/?$"
 )
@@ -260,8 +259,13 @@ class GitHubConnector(HttpConnector):
             allow_failure = False
             masking_checked: bool | None = None
 
-            if status is JobStatus.FAILED and run_succeeded:
+            if (
+                status is JobStatus.FAILED
+                and run_succeeded
+                and self._executed_in_current_attempt(project, item)
+            ):
                 # A failed job inside a successful run: tolerated by job-level continue-on-error.
+                # A failure left over from a superseded attempt is not masked by anything.
                 allow_failure = True
                 raw = f"{conclusion} (job continue-on-error; run succeeded)"
             elif status is JobStatus.SUCCESS:
@@ -352,9 +356,15 @@ class GitHubConnector(HttpConnector):
             if not isinstance(annotations, list):
                 return None
             for note in annotations:
-                message = str(note.get("message", "")) if isinstance(note, dict) else ""
-                if note.get("annotation_level") == "failure" and _EXIT_CODE.search(message):
-                    return message.strip()
+                if not isinstance(note, dict):
+                    continue  # unreadable entry: keep scanning, the loop still ends in 0 pages
+                if note.get("annotation_level") != "failure":
+                    continue
+                # Any failure-level annotation on a job GitHub concluded 'success' means a step
+                # failed and something hid it. Matching only the exit-code phrase missed JS
+                # actions ("Error: ..."), timeouts and cancelled steps (#4).
+                message = str(note.get("message") or note.get("title") or "").strip()
+                return message or "a step failed but reported no message"
             next_url = response.links.get("next", {}).get("url")
             if not next_url:
                 return False

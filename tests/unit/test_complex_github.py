@@ -160,3 +160,35 @@ def test_masked_step_message_says_what_github_reported(conn, gh) -> None:
         "(Process completed with exit code 1)"
     )
     assert not any("ended 'failed'" in w for w in report.warnings)
+
+
+def test_any_failure_annotation_is_a_masked_step(conn, gh) -> None:
+    """Only the exit-code wording used to count, so other hidden failures passed.
+
+    GitHub writes 'Process completed with exit code N' for a run step, but a JavaScript
+    action reports 'Error: ...', a timeout or a cancelled step reads differently; every one
+    of those left the job 'success' -> VERIFIED (#4).
+    """
+    hidden = {
+        "annotation_level": "failure",
+        "message": "Error: upload to the artifact store failed",
+    }
+    gh.job(1, "sast", notes=[[hidden]])
+    gh.artifact(10, "scan-report", {"semgrep.json": SEMGREP})
+
+    report = verify(conn, gh, policy("sast"))
+    assert report.decision is Decision.BLOCKED
+    assert failing(report) == {"job_success": "FAILURE_MASKED_BY_ALLOW_FAILURE"}
+
+
+def test_failure_annotation_without_a_message_is_still_masked(conn, gh) -> None:
+    gh.job(1, "sast", notes=[[{"annotation_level": "failure", "message": ""}]])
+    gh.artifact(10, "scan-report", {"semgrep.json": SEMGREP})
+    assert verify(conn, gh, policy("sast")).decision is Decision.BLOCKED
+
+
+def test_non_object_annotation_is_skipped_not_fatal(conn, gh) -> None:
+    """A malformed page entry used to raise AttributeError -> traceback -> exit 1."""
+    gh.job(1, "sast", notes=[["not-an-object", EXIT1]])
+    gh.artifact(10, "scan-report", {"semgrep.json": SEMGREP})
+    assert verify(conn, gh, policy("sast")).decision is Decision.BLOCKED
