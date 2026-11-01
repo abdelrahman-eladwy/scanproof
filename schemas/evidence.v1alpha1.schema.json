@@ -553,10 +553,11 @@
     }
   },
   "required": [
-    "tool",
-    "scan_type",
+    "parseable",
     "present",
-    "parseable"
+    "scan_type",
+    "schema_version",
+    "tool"
   ],
   "title": "scanproof evidence output",
   "type": "object",
