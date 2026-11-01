@@ -122,7 +122,8 @@ def assurance_opt_ins(policy: Policy) -> list[OptIn]:
         if w.check == "applies_to":
             out.append(
                 OptIn(
-                    "WAIVER_REMOVES_APPLICABILITY", where,
+                    "WAIVER_REMOVES_APPLICABILITY",
+                    where,
                     "waiving an unknown ref can skip the entire requirement, including its job, "
                     "report, freshness and attestation checks",
                 )
@@ -130,7 +131,8 @@ def assurance_opt_ins(policy: Policy) -> list[OptIn]:
         if w.check == "report":
             out.append(
                 OptIn(
-                    "WAIVER_ACCEPTS_MISSING_REPORT", where,
+                    "WAIVER_ACCEPTS_MISSING_REPORT",
+                    where,
                     "waiving a missing report accepts absent evidence and skips configured "
                     "scanner evidence checks",
                 )
@@ -138,7 +140,8 @@ def assurance_opt_ins(policy: Policy) -> list[OptIn]:
         if w.check in ("job_success", "same_commit"):
             out.append(
                 OptIn(
-                    "WAIVER_SKIPS_REQUIRED_JOB_CHECK", where,
+                    "WAIVER_SKIPS_REQUIRED_JOB_CHECK",
+                    where,
                     f"waiving {w.check} accepts a scan job that does not satisfy the "
                     "production profile's required job assurance",
                 )
@@ -146,7 +149,8 @@ def assurance_opt_ins(policy: Policy) -> list[OptIn]:
         if w.check == "attestation" and req is not None and req.attestation is not None:
             out.append(
                 OptIn(
-                    "WAIVER_SKIPS_ATTESTATION", where,
+                    "WAIVER_SKIPS_ATTESTATION",
+                    where,
                     "waiving attestation accepts a release without the configured proof",
                 )
             )
