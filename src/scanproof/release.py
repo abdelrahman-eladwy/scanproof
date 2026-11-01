@@ -160,7 +160,13 @@ def verify_release(
     policies = {}
     for c in release.components:
         policy_path = (base_dir / c.policy).resolve()
-        policies[c.name] = (policy_path, load_policy(policy_path))
+        policy = load_policy(policy_path)
+        if policy.assurance.profile != "production":
+            raise PolicyError(
+                f"release component {c.name!r} requires assurance.profile: production "
+                f"in policy {c.policy!r}; verify-release refuses compatible-profile policies"
+            )
+        policies[c.name] = (policy_path, policy)
 
     results = []
     for c in release.components:
