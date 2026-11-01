@@ -16,9 +16,9 @@ def test_release_requires_protected_main_ci_and_tag_ancestry() -> None:
     assert jobs["build"]["needs"] == "preflight"
     assert "git merge-base --is-ancestor" in text
     assert "github.token" in text
-    assert ".head_branch == \"main\"" in text
+    assert '.head_branch == "main"' in text
     assert '.conclusion == "success"' in text
-    assert 'head_sha=$GITHUB_SHA&event=push&branch=main' in text
+    assert "head_sha=$GITHUB_SHA&event=push&branch=main" in text
 
 
 def test_untrusted_tests_cannot_request_oidc_token() -> None:
