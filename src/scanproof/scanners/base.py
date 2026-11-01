@@ -67,7 +67,7 @@ class ScannerAdapter(ABC):
         """Decode report bytes. JSON by default; non-JSON formats (e.g. Fortify FPR) override."""
         try:
             data = json.loads(raw)
-        except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as exc:
+        except (ValueError, RecursionError) as exc:
             raise ReportLoadError(f"{INVALID_JSON}: {exc}") from None
 
         # Python's JSON decoder accepts escaped *lone* UTF-16 surrogates.
