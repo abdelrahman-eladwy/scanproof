@@ -28,7 +28,14 @@ def load(repo: str, n: int, name: str):
     return json.loads((B / repo.replace("/", "__") / str(n) / name).read_text())
 
 
-def serve(router, repo: str, n: int, *, steps: list | None = None) -> dict:
+def serve(
+    router,
+    repo: str,
+    n: int,
+    *,
+    steps: list | None = None,
+    report_status: int | None = None,
+) -> dict:
     p = load(repo, n, "pipeline.json")
     base = f"{API}/repositories/{repo}"
     router.get(f"{base}/pipelines/{n}").respond(json=p)
@@ -38,9 +45,11 @@ def serve(router, repo: str, n: int, *, steps: list | None = None) -> dict:
         json={"values": steps if steps is not None else load(repo, n, "steps.json")["values"]}
     )
     sha = p["target"]["commit"]["hash"]
-    router.get(url__regex=rf"^{re.escape(base)}/commit/{sha}/reports\?.*").respond(
-        json=load(repo, n, "reports.json")
-    )
+    report_route = router.get(url__regex=rf"^{re.escape(base)}/commit/{sha}/reports\?.*")
+    if report_status is None:
+        report_route.respond(json=load(repo, n, "reports.json"))
+    else:
+        report_route.respond(report_status)
     d = B / repo.replace("/", "__") / str(n)
     for f in d.glob("report-*-annotations.json"):
         rid = "{" + f.name.removeprefix("report-").removesuffix("-annotations.json") + "}"
@@ -197,3 +206,11 @@ def test_adapter_incomplete_annotations_are_unknown_not_zero() -> None:
 )
 def test_adapter_rejects_pending_and_foreign_documents(raw) -> None:
     assert get_adapter("bitbucket-code-insights").parse(raw).parseable is False
+
+
+@pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
+def test_insights_provider_error_is_indeterminate(bb, mock_api, status) -> None:
+    serve(mock_api, REPO, 187, report_status=status)
+    report = verify(bb, 187, policy("Security Scan"))
+    assert report.decision is Decision.INDETERMINATE
+    assert report.exit_code == 2
