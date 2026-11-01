@@ -285,8 +285,6 @@ def test_verify_release_cli_forwards_settle_window(tmp_path, platforms, monkeypa
 
 def test_verify_release_rejects_out_of_bounds_settle_seconds(tmp_path) -> None:
     path = write_release(tmp_path, COMPONENTS)
-    result = CliRunner().invoke(
-        app, ["verify-release", "-R", str(path), "--settle-seconds", "301"]
-    )
+    result = CliRunner().invoke(app, ["verify-release", "-R", str(path), "--settle-seconds", "301"])
     assert result.exit_code != 0
     assert "301" in result.output or "300" in result.output
