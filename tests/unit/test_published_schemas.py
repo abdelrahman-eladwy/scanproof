@@ -70,6 +70,9 @@ def errors(name: str, instance) -> list[str]:
 
 
 def test_committed_schemas_match_the_catalog() -> None:
+    recorded = json.loads((SCHEMAS / "manifest.json").read_text())
+    if export.pydantic_minor() != recorded["pydantic"]:
+        pytest.skip("published schemas are generated using a pinned Pydantic minor in required CI")
     assert export.check() == []
 
 
