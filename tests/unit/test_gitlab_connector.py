@@ -7,7 +7,7 @@ import respx
 from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
 from scanproof.connectors.gitlab import GitLabConnector
 from scanproof.connectors.http import MAX_REDIRECTS
-from scanproof.models import JobStatus
+from scanproof.models import Job, JobStatus
 from tests.conftest import API, BASE, TOKEN, load_fixture
 
 PIPELINE_URL = f"{API}/projects/123/pipelines/1042"
@@ -319,3 +319,17 @@ def test_rate_limit_hint_only_in_anonymous_mode(mock_api, anonymous) -> None:
     assert exc.value.kind is ErrorKind.RATE_LIMITED
     assert ("read_api token" in str(exc.value)) is anonymous
     assert TOKEN not in str(exc.value)
+
+
+def test_report_only_job_is_fetched_even_without_archive(connector, mock_api) -> None:
+    job = Job(id=8821, name="custom-sast", status=JobStatus.SUCCESS)
+    assert not job.has_archive
+    mock_api.get(ARTIFACT_URL).respond(content=b'{"results":[],"errors":[]}')
+    assert connector.fetch_report("123", job, "semgrep.json") == b'{"results":[],"errors":[]}'
+
+
+def test_report_only_job_missing_path_uses_actual_404(connector, mock_api) -> None:
+    job = Job(id=8821, name="custom-sast", status=JobStatus.SUCCESS)
+    mock_api.get(ARTIFACT_URL).respond(404)
+    with pytest.raises(NotFoundError, match="not found in job artifacts"):
+        connector.fetch_report("123", job, "semgrep.json")
