@@ -133,6 +133,7 @@ jobs:
           docker run --rm scanproof:ci --version
           uid=$(docker run --rm --entrypoint id scanproof:ci -u)   # fails the step if docker fails
           test -n "$uid" && test "$uid" != "0"
+          docker run --rm --entrypoint sh scanproof:ci -c "touch /work/check && rm /work/check"
           docker run --rm -v "$PWD/tests/fixtures:/fx:ro" scanproof:ci \
             evidence -t semgrep -f /fx/semgrep/semgrep-findings.json -q > /dev/null
           docker run --rm -v "$PWD/tests/fixtures:/fx:ro" scanproof:ci attestation --sigstore-offline \

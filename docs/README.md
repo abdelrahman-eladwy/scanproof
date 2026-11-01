@@ -31,6 +31,11 @@ New here? Start with the [project README](../README.md), then the [demo](demo.md
   with results.
 - Reporting a vulnerability: [SECURITY.md](../SECURITY.md).
 
+## Operations
+
+- [Release-gate incident runbook](operations/verification-runbook.md): diagnose exit codes,
+  provider errors, missing evidence, false blocks, and safe recovery.
+
 ## Development
 
 For contributors and maintainers. See also [CONTRIBUTING.md](../CONTRIBUTING.md).
