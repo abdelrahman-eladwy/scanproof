@@ -2,9 +2,13 @@
 
 from pathlib import Path
 
+import pytest
 import yaml
 
 WORKFLOW = Path(__file__).resolve().parents[2] / ".github/workflows/release.yml"
+pytestmark = pytest.mark.skipif(
+    not WORKFLOW.is_file(), reason="release workflow is not shipped in the installed wheel"
+)
 
 
 def test_release_requires_protected_main_ci_and_tag_ancestry() -> None:
