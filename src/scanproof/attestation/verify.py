@@ -9,6 +9,7 @@ claims are extracted from the verified certificate and the policy engine compare
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import tempfile
 from collections.abc import Callable
@@ -63,8 +64,14 @@ def split_bundles(raw: bytes) -> list[bytes]:
     try:
         docs: list[Any] = [json.loads(text)]
     except (json.JSONDecodeError, RecursionError):
+        docs = []
         try:
-            docs = [json.loads(line) for line in text.splitlines() if line.strip()]
+            for line in io.StringIO(text):
+                if not line.strip():
+                    continue
+                if len(docs) >= MAX_BUNDLES:
+                    raise BundleFormatError(f"at most {MAX_BUNDLES} JSONL documents")
+                docs.append(json.loads(line))
         except (json.JSONDecodeError, RecursionError):
             raise BundleFormatError("not JSON or JSON lines") from None
     out: list[bytes] = []
@@ -73,6 +80,10 @@ def split_bundles(raw: bytes) -> list[bytes]:
             for item in doc["attestations"]:
                 bundle = item.get("bundle") if isinstance(item, dict) else None
                 if isinstance(bundle, dict):
+                    if len(out) >= MAX_BUNDLES:
+                        raise BundleFormatError(
+                            f"more than {MAX_BUNDLES} bundles; at most {MAX_BUNDLES} are checked"
+                        )
                     out.append(json.dumps(bundle).encode())
         elif isinstance(doc, dict) and str(doc.get("mediaType", "")).startswith(
             "application/vnd.dev.sigstore.bundle"
