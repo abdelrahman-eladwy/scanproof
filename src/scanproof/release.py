@@ -92,6 +92,9 @@ class Release(_Strict):
         names = [c.name for c in self.components]
         if len(names) != len(set(names)):
             raise ValueError("component names must be unique")
+        identities = [(c.policy, c.project, c.pipeline) for c in self.components]
+        if len(identities) != len(set(identities)):
+            raise ValueError("duplicate component policy/project/pipeline tuple")
         return self
 
 
@@ -136,6 +139,8 @@ def load_release(path: Path) -> Release:
 
 
 def combine_decisions(decisions: list[Decision]) -> Decision:
+    if not decisions:
+        return Decision.INDETERMINATE
     if Decision.BLOCKED in decisions:
         return Decision.BLOCKED
     if Decision.INDETERMINATE in decisions:
