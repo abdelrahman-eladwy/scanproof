@@ -26,7 +26,10 @@ jobs:
         run: |
           echo "SCANPROOF_CI_START_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
           mkdir -p build
-      - run: pip install -e ".[dev]"
+      # Published schemas have one explicitly pinned generator. This is a required
+      # test job, while wheel / lowest-deps jobs exercise other supported versions.
+      - run: pip install -e ".[dev]" "pydantic==2.13.5"
+      - run: python scripts/export_schemas.py --check
       - run: ruff check .
       - run: ruff format --check .
       - run: >-
