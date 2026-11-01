@@ -288,7 +288,9 @@ def test_artifact_name_is_required_by_the_policy() -> None:
 @pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
 def test_artifact_provider_error_is_indeterminate(azure, mock_api, status) -> None:
     serve(
-        mock_api, "azure-sdk", "7003618",
+        mock_api,
+        "azure-sdk",
+        "7003618",
         {"packages": zipped("packages", {"semgrep.json": REPORT})},
     )
     api = f"{BASE}/azure-sdk/public/_apis/build/builds/7003618"
