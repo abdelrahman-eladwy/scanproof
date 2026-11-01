@@ -225,7 +225,7 @@ def test_garbage_never_raises(trust, raw) -> None:
 
 
 def test_too_many_jsonl_documents_are_rejected_before_full_parse() -> None:
-    from scanproof.attestation.verify import BundleFormatError, MAX_BUNDLES
+    from scanproof.attestation.verify import MAX_BUNDLES, BundleFormatError
 
     data = b"{}\\n" * MAX_BUNDLES + b"not-json\\n"
     with pytest.raises(BundleFormatError, match="more than"):
@@ -233,7 +233,7 @@ def test_too_many_jsonl_documents_are_rejected_before_full_parse() -> None:
 
 
 def test_too_many_github_bundles_are_rejected() -> None:
-    from scanproof.attestation.verify import BundleFormatError, MAX_BUNDLES
+    from scanproof.attestation.verify import MAX_BUNDLES, BundleFormatError
 
     bundle = {"mediaType": "application/vnd.dev.sigstore.bundle.v0.3+json"}
     data = json.dumps({"attestations": [{"bundle": bundle}] * (MAX_BUNDLES + 1)}).encode()
