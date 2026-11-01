@@ -78,9 +78,12 @@
     }
   },
   "required": [
-    "project",
+    "decision",
+    "error",
+    "exit_code",
     "pipeline_id",
-    "error"
+    "project",
+    "schema_version"
   ],
   "title": "scanproof verify -o output when the pipeline could not be read (exit 2)",
   "type": "object",
