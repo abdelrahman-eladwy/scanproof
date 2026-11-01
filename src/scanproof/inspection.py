@@ -52,10 +52,12 @@ def group_attempts(jobs: list[Job], pipeline_sha: str | None) -> list[InspectedJ
     for name, attempts in by_name.items():
         attempts.sort(key=_attempt_order)
         latest = attempts[-1]
+        # An empty SHA is not a commit: two empty strings must not compare equal and pass
+        # same_commit for evidence bound to nothing.
         matches = (
             None
-            if latest.commit_sha is None or not pipeline_sha
-            else latest.commit_sha == pipeline_sha
+            if not latest.commit_sha or not pipeline_sha
+            else latest.commit_sha.lower() == pipeline_sha.lower()
         )
         inspected.append(
             InspectedJob(

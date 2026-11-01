@@ -59,6 +59,17 @@ def test_commit_binding() -> None:
     assert grouped["nosha"].commit_matches_pipeline is None  # unknown, not assumed
 
 
+def test_empty_commit_is_unknown_not_a_match() -> None:
+    """Two empty SHAs used to compare equal, so same_commit passed on no commit at all."""
+    grouped = {g.name: g for g in group_attempts([_job(1, "sast", sha="")], "")}
+    assert grouped["sast"].commit_matches_pipeline is None
+
+
+def test_commit_comparison_ignores_case() -> None:
+    grouped = {g.name: g for g in group_attempts([_job(1, "sast", sha=SHA.upper())], SHA)}
+    assert grouped["sast"].commit_matches_pipeline is True
+
+
 def _mock_pipeline(mock_api, pipeline_overrides=None, jobs=None) -> None:
     pipeline = {**load_fixture("gitlab/pipeline.json"), **(pipeline_overrides or {})}
     mock_api.get(f"{API}/projects/123/pipelines/1042").respond(json=pipeline)
