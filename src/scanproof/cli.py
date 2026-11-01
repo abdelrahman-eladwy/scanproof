@@ -675,6 +675,15 @@ def verify_release_cmd(
     quiet: QuietOpt = False,
     trusted_root: TrustedRootOpt = None,
     sigstore_offline: SigstoreOfflineOpt = False,
+    settle_seconds: Annotated[
+        float,
+        typer.Option(
+            "--settle-seconds",
+            min=0,
+            max=300,
+            help="Wait and re-read unfinished required component jobs for up to this many seconds.",
+        ),
+    ] = 30,
 ) -> None:
     """Verify every component of a release (several pipelines, any platforms) in one decision.
 
@@ -708,6 +717,7 @@ def verify_release_cmd(
             release_file.parent,
             connect,
             trust=TrustConfig(trusted_root, offline=sigstore_offline),
+            settle_seconds=settle_seconds,
         )
     except PolicyError as exc:
         raise _fail(EXIT_USAGE, f"error: {exc}") from None
