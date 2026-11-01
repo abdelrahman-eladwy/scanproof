@@ -5,6 +5,11 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 
 ## [Unreleased]
 
+### Changed
+- `verify-release` now requires each component policy to select `assurance.profile: production`.
+  Compatible-profile policies are rejected with a configuration error rather than permitting
+  a release VERIFIED based on `on_unknown: warn` or other unsafe opt-ins (#162).
+
 ### Fixed
 - `verify-release`: a component whose connector cannot be built (for example a non-HTTPS
   `url:`) stopped the whole release, so later components were never verified and `-o` got no
