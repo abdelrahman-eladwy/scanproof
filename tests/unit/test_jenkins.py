@@ -22,7 +22,11 @@ REPORT = (FIXTURES / "semgrep/semgrep-findings.json").read_bytes()
 
 
 def serve(
-    router, job: str, *, tree: bool = True, steps: int | None = None,
+    router,
+    job: str,
+    *,
+    tree: bool = True,
+    steps: int | None = None,
     artifact_status: int | None = None,
 ) -> None:
     d = J / job
