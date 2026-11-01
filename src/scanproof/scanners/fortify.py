@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import io
 import zipfile
+import zlib
 from typing import Any
 from xml.etree.ElementTree import Element
 
@@ -143,6 +144,13 @@ def _read_fpr(raw: bytes) -> tuple[bytes, bytes | None]:
             return fvdl, audit
     except zipfile.BadZipFile as exc:
         raise ReportLoadError(f"FPR is not a valid zip archive: {exc}") from None
+    except (RuntimeError, NotImplementedError, zlib.error, EOFError, OSError) as exc:
+        # An encrypted member (RuntimeError), an unsupported compression method
+        # (NotImplementedError) or a corrupt stream (zlib.error) is a bad report, not a bug:
+        # letting it escape made the CLI print a traceback and exit 1 ("policy failure").
+        raise ReportLoadError(
+            f"FPR archive could not be read: {type(exc).__name__}: {exc}"
+        ) from None
 
 
 def _read_member(zf: zipfile.ZipFile, name: str) -> bytes:

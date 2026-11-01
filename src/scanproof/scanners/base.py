@@ -44,6 +44,18 @@ class ScannerAdapter(ABC):
             data = self.load(raw)
         except ReportLoadError as exc:
             return self._evidence(present=True, parseable=False, parse_error=str(exc), **base)
+        except Exception as exc:  # the adapter contract: never raise on bad input
+            # Defence in depth for a loader that misses one exception type (a Fortify FPR with
+            # an encrypted member escaped as RuntimeError and killed the process). A report we
+            # cannot read is unparseable evidence, never a crash.
+            return self._evidence(
+                present=True,
+                parseable=False,
+                parse_error=(
+                    f"Could not read the {self.tool} report: {type(exc).__name__}: {str(exc)[:200]}"
+                ),
+                **base,
+            )
 
         # Everything below runs on untrusted content, so any structural surprise (wrong types,
         # absurd values, deep nesting) must become "unparseable", never an unhandled exception.
