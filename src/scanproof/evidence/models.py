@@ -10,6 +10,7 @@ Convention: a field the report does not provide is `None` (unknown), never 0 or 
 from __future__ import annotations
 
 from enum import StrEnum
+import re
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -76,9 +77,9 @@ class ScanTarget(BaseModel):
         """Bare `sha256:...` digests from `repo@sha256:...` entries."""
         out: set[str] = set()
         for ref in self.repo_digests or []:
-            _, _, digest = ref.rpartition("@")
-            if digest:
-                out.add(digest)
+            name, separator, digest = ref.rpartition("@")
+            if name and separator and re.fullmatch(r"sha256:[0-9a-fA-F]{64}", digest):
+                out.add(digest.lower())
         return out
 
 
