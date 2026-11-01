@@ -295,7 +295,7 @@ def test_attestation_or_freshness_keeps_requirement_from_being_empty() -> None:
 
 
 def test_waiver_on_other_check_is_allowed_when_bounded() -> None:
-    assert codes(Policy.model_validate(_bounded_waiver(check="job_success"))) == set()
+    assert codes(Policy.model_validate(_bounded_waiver(check="scanner_errors"))) == set()
 
 
 def test_gitlab_same_run_is_a_note_not_a_rejection() -> None:
@@ -451,3 +451,38 @@ def test_explain_states_a_removed_leg_cannot_be_detected(tmp_path) -> None:
     assert result.exit_code == 0
     assert "note INSTANCES_UNDECLARED" in result.stderr
     assert "a removed leg cannot be detected" in result.stderr
+
+
+@pytest.mark.parametrize(
+    ("check", "expected"),
+    [
+        ("report", "WAIVER_ACCEPTS_MISSING_REPORT"),
+        ("applies_to", "WAIVER_REMOVES_APPLICABILITY"),
+        ("job_success", "WAIVER_SKIPS_REQUIRED_JOB_CHECK"),
+        ("same_commit", "WAIVER_SKIPS_REQUIRED_JOB_CHECK"),
+    ],
+)
+def test_production_rejects_assurance_erasing_waiver(check, expected) -> None:
+    body = _bounded_waiver(check=check)
+    if check == "report":
+        body["requirements"][0]["checks"] = {"minimum_scanned_files": 1}
+    if check == "applies_to":
+        body["requirements"][0]["applies_to"] = {"refs": ["main"]}
+    assert expected in codes(Policy.model_validate(body))
+    with pytest.raises(ValueError, match=expected):
+        Policy.model_validate(with_profile(body, "production"))
+
+
+def test_production_rejects_waiver_on_required_attestation() -> None:
+    body = attested()
+    body["waivers"] = _bounded_waiver(check="attestation")["waivers"]
+    body["enforcement"] = {"max_waiver_days": 30}
+    assert "WAIVER_SKIPS_ATTESTATION" in codes(Policy.model_validate(body))
+    with pytest.raises(ValueError, match="WAIVER_SKIPS_ATTESTATION"):
+        Policy.model_validate(with_profile(body, "production"))
+
+
+def test_compatible_profile_still_allows_report_waiver() -> None:
+    body = _bounded_waiver(check="report")
+    body["requirements"][0]["checks"] = {"minimum_scanned_files": 1}
+    assert Policy.model_validate(with_profile(body, "compatible")).assurance.profile == "compatible"
