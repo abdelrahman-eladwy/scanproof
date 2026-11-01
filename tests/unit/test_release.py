@@ -12,7 +12,7 @@ from scanproof.connectors.github import GitHubConnector
 from scanproof.connectors.gitlab import GitLabConnector
 from scanproof.policy.engine import Decision
 from scanproof.policy.models import PolicyError
-from scanproof.release import load_release, verify_release
+from scanproof.release import combine_decisions, load_release, verify_release
 from tests.conftest import BASE, FIXTURES
 from tests.fake_github import API as GH_API
 from tests.fake_github import EXIT1, FakeGitHub
@@ -216,3 +216,16 @@ def test_cli_end_to_end(tmp_path, platforms, monkeypatch) -> None:
     assert result.exit_code == 0, result.output
     assert json.loads(out.read_text())["decision"] == "VERIFIED"
     assert "Release decision: VERIFIED" in result.output
+
+
+def test_empty_release_decision_aggregation_is_never_verified() -> None:
+    assert combine_decisions([]) is Decision.INDETERMINATE
+
+
+def test_duplicate_pipeline_policy_binding_is_rejected(tmp_path) -> None:
+    components = (
+        "  - {name: a, policy: policies/backend.yaml, pipeline: 1042}\n"
+        "  - {name: b, policy: policies/backend.yaml, pipeline: 1042}\n"
+    )
+    with pytest.raises(PolicyError, match="duplicate component"):
+        load_release(write_release(tmp_path, components))
