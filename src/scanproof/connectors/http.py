@@ -76,9 +76,16 @@ def parse_retry_after(value: str | None, *, now: datetime | None = None) -> floa
 
 
 def origin_of(url: str | httpx.URL) -> tuple[str, str, int | None]:
-    parts = urlsplit(str(url))
+    try:
+        parts = urlsplit(str(url))
+        port = parts.port  # raises ValueError on a malformed authority such as host:abc
+    except ValueError:
+        # Names no usable origin, so it matches no configured origin (credentials are never
+        # sent to it) and it is not a loopback URL. A traceback here would exit 1, which the
+        # contract reserves for a failed control.
+        return ("", "", None)
     default_port = {"https": 443, "http": 80}.get(parts.scheme)
-    return (parts.scheme, (parts.hostname or "").lower(), parts.port or default_port)
+    return (parts.scheme, (parts.hostname or "").lower(), port or default_port)
 
 
 def is_loopback(url: str) -> bool:

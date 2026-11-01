@@ -12,7 +12,7 @@ import httpx
 import pytest
 
 from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
-from scanproof.connectors.github import GitHubConnector
+from scanproof.connectors.github import GitHubConnector, _verify_digest
 from scanproof.inspection import inspect_pipeline
 from scanproof.models import JobStatus
 from scanproof.policy.engine import Decision
@@ -172,6 +172,16 @@ def test_real_recorded_digest_rejects_a_different_zip(gh, mock_api) -> None:
 def test_artifact_without_digest_is_accepted(gh, mock_api) -> None:
     serve(mock_api, digest=None)
     assert gh.fetch_report(REPO, _sast_job(gh), "./semgrep.json", "semgrep-report") == SEMGREP_JSON
+
+
+def test_recorded_digest_with_another_algorithm_is_refused() -> None:
+    """A digest that is present but unusable is not the same as no digest.
+
+    Skipping the check accepted bytes the platform never vouched for.
+    """
+    with pytest.raises(ConnectorError) as exc:
+        _verify_digest(b"payload", "sha512:abc", "semgrep-report")
+    assert exc.value.kind is ErrorKind.INTEGRITY
 
 
 @pytest.mark.parametrize(

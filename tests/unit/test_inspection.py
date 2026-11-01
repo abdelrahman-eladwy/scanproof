@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
+
 import httpx
 
 from scanproof.inspection import group_attempts, inspect_pipeline
@@ -23,6 +25,28 @@ def test_latest_attempt_wins() -> None:
     assert grouped["semgrep-sast"].attempts == 1
 
 
+def test_latest_attempt_is_chosen_by_attempt_number_not_id() -> None:
+    """Azure derives job ids from timeline GUIDs, so id order is not chronological.
+
+    A re-run that went success -> failure used to be judged on the successful stale record
+    whenever its hash happened to be larger, i.e. a failed control could be VERIFIED.
+    """
+    stale = _job(9_000_000, "trivy-image", "success", attempt=1)
+    current = _job(7_000_000, "trivy-image", "failed", attempt=2)
+    grouped = {g.name: g for g in group_attempts([stale, current], SHA)}
+
+    assert grouped["trivy-image"].latest.id == 7_000_000
+    assert grouped["trivy-image"].latest.status is JobStatus.FAILED
+
+
+def test_start_time_breaks_ties_when_attempt_number_is_missing() -> None:
+    older = _job(99, "sast", started_at=datetime(2026, 1, 1, 10, 0, tzinfo=UTC))
+    newer = _job(1, "sast", started_at=datetime(2026, 1, 1, 11, 0, tzinfo=UTC))
+    grouped = {g.name: g for g in group_attempts([older, newer], SHA)}
+
+    assert grouped["sast"].latest.id == 1
+
+
 def test_commit_binding() -> None:
     grouped = {
         g.name: g
@@ -33,6 +57,17 @@ def test_commit_binding() -> None:
     assert grouped["match"].commit_matches_pipeline is True
     assert grouped["other"].commit_matches_pipeline is False
     assert grouped["nosha"].commit_matches_pipeline is None  # unknown, not assumed
+
+
+def test_empty_commit_is_unknown_not_a_match() -> None:
+    """Two empty SHAs used to compare equal, so same_commit passed on no commit at all."""
+    grouped = {g.name: g for g in group_attempts([_job(1, "sast", sha="")], "")}
+    assert grouped["sast"].commit_matches_pipeline is None
+
+
+def test_commit_comparison_ignores_case() -> None:
+    grouped = {g.name: g for g in group_attempts([_job(1, "sast", sha=SHA.upper())], SHA)}
+    assert grouped["sast"].commit_matches_pipeline is True
 
 
 def _mock_pipeline(mock_api, pipeline_overrides=None, jobs=None) -> None:

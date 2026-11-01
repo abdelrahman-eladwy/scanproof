@@ -59,7 +59,7 @@ class _GitLabReportAdapter(ScannerAdapter):
             "findings": FindingsSummary(
                 total=len(data["vulnerabilities"]),
                 by_severity=count_by(
-                    [str(v.get("severity", "Unknown")).upper() for v in data["vulnerabilities"]]
+                    [str(v.get("severity") or "Unknown").upper() for v in data["vulnerabilities"]]
                 ),
             ),
         }

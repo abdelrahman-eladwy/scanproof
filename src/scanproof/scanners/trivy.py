@@ -57,10 +57,15 @@ class TrivyAdapter(ScannerAdapter):
             scope = ScanScope(
                 scanned_paths=targets, files_scanned=None if is_image else len(targets)
             )
+            # Every results section that carries findings, not only vulnerabilities: a
+            # `trivy config` (Misconfigurations) or secret scan (Secrets) report used to parse
+            # as results_reported=True with findings.total == 0 (#11).
             severities = [
-                str(v.get("Severity", "UNKNOWN")).upper()
+                str(v.get("Severity") or "UNKNOWN").upper()
                 for r in results
-                for v in (r.get("Vulnerabilities") or [])
+                for key in ("Vulnerabilities", "Misconfigurations", "Secrets")
+                for v in (r.get(key) or [])
+                if isinstance(v, dict)
             ]
             findings = FindingsSummary(total=len(severities), by_severity=count_by(severities))
 

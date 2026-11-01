@@ -23,7 +23,9 @@ Mapping:
 from __future__ import annotations
 
 import io
+import math
 import zipfile
+import zlib
 from typing import Any
 from xml.etree.ElementTree import Element
 
@@ -143,6 +145,13 @@ def _read_fpr(raw: bytes) -> tuple[bytes, bytes | None]:
             return fvdl, audit
     except zipfile.BadZipFile as exc:
         raise ReportLoadError(f"FPR is not a valid zip archive: {exc}") from None
+    except (RuntimeError, NotImplementedError, zlib.error, EOFError, OSError) as exc:
+        # An encrypted member (RuntimeError), an unsupported compression method
+        # (NotImplementedError) or a corrupt stream (zlib.error) is a bad report, not a bug:
+        # letting it escape made the CLI print a traceback and exit 1 ("policy failure").
+        raise ReportLoadError(
+            f"FPR archive could not be read: {type(exc).__name__}: {exc}"
+        ) from None
 
 
 def _read_member(zf: zipfile.ZipFile, name: str) -> bytes:
@@ -170,11 +179,16 @@ def _parse_xml(data: bytes, name: str) -> Element:
 def _priority(meta: dict[str, str], confidence: str | None) -> str:
     try:
         impact = float(meta["Impact"])
-        likelihood = round(
-            float(meta["Accuracy"]) * float(confidence or "") * float(meta["Probability"]) / 25, 1
-        )
+        accuracy = float(meta["Accuracy"])
+        probability = float(meta["Probability"])
+        reported = float(confidence or "")
     except (KeyError, ValueError):
         return "UNKNOWN"
+    if not all(math.isfinite(value) for value in (impact, accuracy, probability, reported)):
+        # "nan"/"inf" are accepted by float(); a NaN compares False against every band, which
+        # silently files an impossible priority as LOW instead of UNKNOWN.
+        return "UNKNOWN"
+    likelihood = round(accuracy * reported * probability / 25, 1)
     if impact >= 2.5:
         return "CRITICAL" if likelihood >= 2.5 else "HIGH"
     return "MEDIUM" if likelihood >= 2.5 else "LOW"

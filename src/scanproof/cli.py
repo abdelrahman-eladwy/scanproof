@@ -729,6 +729,8 @@ def run() -> None:
     """
     try:
         rc = app(standalone_mode=False)
+    except typer.Exit as exc:  # a command's own exit code, before standalone mode maps it
+        sys.exit(exc.exit_code)
     except _UsageError as exc:
         exc.show()
         sys.exit(EXIT_USAGE)
@@ -738,6 +740,16 @@ def run() -> None:
     except typer.Abort:
         typer.echo("Aborted.", err=True)
         sys.exit(130)
+    except Exception as exc:  # a bug must never look like a failed control
+        # Exit 1 means BLOCKED, i.e. "a required control failed". An unhandled exception is
+        # not a judgement about the pipeline, so it exits 2 (INDETERMINATE) and says so.
+        typer.echo(f"INTERNAL ERROR: {type(exc).__name__}: {exc}", err=True)
+        typer.echo(
+            "This is a ScanProof bug, not a scan result: reporting INDETERMINATE so a release "
+            "gate cannot read it as a passed or failed control.",
+            err=True,
+        )
+        sys.exit(EXIT_INDETERMINATE)
     sys.exit(rc if isinstance(rc, int) else EXIT_OK)
 
 

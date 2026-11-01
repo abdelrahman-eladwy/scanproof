@@ -48,7 +48,6 @@ from scanproof.models import Job, JobStatus, Pipeline
 
 DEFAULT_GITHUB_API = "https://api.github.com"
 _REPO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
-_EXIT_CODE = re.compile(r"Process completed with exit code [1-9]\d*")
 _RUN_URI = re.compile(
     r"^(?P<host>https://[^/]+)/(?P<repo>[^/]+/[^/]+)/actions/runs/(?P<run>\d+)(?:/attempts/(?P<attempt>\d+))?/?$"
 )
@@ -231,16 +230,21 @@ class GitHubConnector(HttpConnector):
         matches = [
             a
             for a in self._paginate(path, "artifacts", {"name": artifact_name})
-            if a.get("name") == artifact_name
+            if isinstance(a, dict) and a.get("name") == artifact_name
         ]
         if not matches:
             raise NotFoundError(f"No artifact named '{artifact_name}' in run {run_id}", None)
-        artifact = max(matches, key=lambda a: a.get("id", 0))
+        artifact = max(matches, key=lambda a: a.get("id") or 0)
         if artifact.get("expired"):
             raise NotFoundError(f"Artifact '{artifact_name}' has expired", None)
+        artifact_id = artifact.get("id")
+        if not isinstance(artifact_id, int):
+            raise ConnectorError(
+                ErrorKind.INVALID_RESPONSE, f"Artifact '{artifact_name}' has no usable id"
+            )
 
         archive = self._download(
-            f"{self.api_url}/repos/{_repo(project)}/actions/artifacts/{artifact['id']}/zip",
+            f"{self.api_url}/repos/{_repo(project)}/actions/artifacts/{artifact_id}/zip",
             what=f"artifact '{artifact_name}'",
         )
         _verify_digest(archive, artifact.get("digest"), artifact_name)
@@ -260,8 +264,13 @@ class GitHubConnector(HttpConnector):
             allow_failure = False
             masking_checked: bool | None = None
 
-            if status is JobStatus.FAILED and run_succeeded:
+            if (
+                status is JobStatus.FAILED
+                and run_succeeded
+                and self._executed_in_current_attempt(project, item)
+            ):
                 # A failed job inside a successful run: tolerated by job-level continue-on-error.
+                # A failure left over from a superseded attempt is not masked by anything.
                 allow_failure = True
                 raw = f"{conclusion} (job continue-on-error; run succeeded)"
             elif status is JobStatus.SUCCESS:
@@ -352,9 +361,15 @@ class GitHubConnector(HttpConnector):
             if not isinstance(annotations, list):
                 return None
             for note in annotations:
-                message = str(note.get("message", "")) if isinstance(note, dict) else ""
-                if note.get("annotation_level") == "failure" and _EXIT_CODE.search(message):
-                    return message.strip()
+                if not isinstance(note, dict):
+                    continue  # unreadable entry: keep scanning, the loop still ends in 0 pages
+                if note.get("annotation_level") != "failure":
+                    continue
+                # Any failure-level annotation on a job GitHub concluded 'success' means a step
+                # failed and something hid it. Matching only the exit-code phrase missed JS
+                # actions ("Error: ..."), timeouts and cancelled steps (#4).
+                message = str(note.get("message") or note.get("title") or "").strip()
+                return message or "a step failed but reported no message"
             next_url = response.links.get("next", {}).get("url")
             if not next_url:
                 return False
@@ -445,7 +460,12 @@ def _verify_digest(archive: bytes, recorded: str | None, name: str) -> None:
         return  # older artifacts have no digest; nothing to compare against
     algo, _, expected = recorded.partition(":")
     if algo != "sha256" or not expected:
-        return
+        # A digest that is present but unusable is not the same as no digest: skipping the
+        # check would accept unverified bytes as if the platform had vouched for them.
+        raise ConnectorError(
+            ErrorKind.INTEGRITY,
+            f"Artifact '{name}' has a digest ScanProof cannot check ({recorded!r})",
+        )
     actual = hashlib.sha256(archive).hexdigest()
     if actual != expected.lower():
         raise ConnectorError(

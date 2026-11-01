@@ -27,9 +27,23 @@ class NucleiAdapter(ScannerAdapter):
 
     def load(self, raw: bytes) -> Any:
         try:
-            return json.loads(raw)
+            parsed = json.loads(raw)
         except (UnicodeDecodeError, json.JSONDecodeError, RecursionError):
-            pass
+            parsed = None
+        if isinstance(parsed, list):
+            return parsed
+        if (
+            isinstance(parsed, dict)
+            and "template-id" in parsed
+            and isinstance(parsed.get("info"), dict)
+        ):
+            # A JSONL file with exactly one finding is a single JSON object. Parsing it as
+            # JSON first used to reject it as "not an array", so a valid -jsonl report from a
+            # scan that found one thing was unparseable and the gate blocked (#6). Requiring
+            # the `info` block keeps a bare {"template-id": ...} object from counting as one.
+            return [parsed]
+        if parsed is not None:
+            return parsed  # a single object: shape_problem explains why it is not a report
         try:
             lines = raw.decode("utf-8").splitlines()
             if len(lines) > MAX_LINES:

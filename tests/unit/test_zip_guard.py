@@ -111,3 +111,39 @@ def test_fortify_adapter_refuses_a_huge_fpr_without_raising() -> None:
     ev = get_adapter("fortify").parse(bomb)  # adapters never raise
     assert not ev.parseable
     assert "entries" in (ev.parse_error or "")
+
+
+def patch_zip_entries(data: bytes, *, flag: int = 0, method: int | None = None) -> bytes:
+    """Set the general-purpose flag bits / compression method of every entry, in both headers."""
+    out = bytearray(data)
+
+    def each(signature: bytes, flag_at: int, method_at: int) -> None:
+        at = out.find(signature)
+        while at != -1:
+            out[at + flag_at] |= flag
+            if method is not None:
+                out[at + method_at : at + method_at + 2] = method.to_bytes(2, "little")
+            at = out.find(signature, at + 4)
+
+    each(b"PK\x03\x04", 6, 8)  # local file header
+    each(b"PK\x01\x02", 8, 10)  # central directory header
+    return bytes(out)
+
+
+def test_fortify_encrypted_member_is_unparseable_not_a_crash() -> None:
+    """zipfile raises RuntimeError for an encrypted member; it used to escape parse().
+
+    The CLI then printed a traceback and exited 1, which the contract reserves for a real
+    policy failure.
+    """
+    real = (FIXTURES / "fortify/hello_world.fpr").read_bytes()
+    ev = get_adapter("fortify").parse(patch_zip_entries(real, flag=0x1))
+    assert not ev.parseable
+    assert "encrypted" in (ev.parse_error or "").lower()
+
+
+def test_fortify_unsupported_compression_is_unparseable_not_a_crash() -> None:
+    real = (FIXTURES / "fortify/hello_world.fpr").read_bytes()
+    ev = get_adapter("fortify").parse(patch_zip_entries(real, method=99))
+    assert not ev.parseable
+    assert "could not be read" in (ev.parse_error or "").lower()

@@ -142,6 +142,14 @@ class JenkinsConnector(HttpConnector):
 
         jobs = []
         for node_id, name, state, finished in nodes:
+            try:
+                job_id = int(node_id)
+            except (TypeError, ValueError):
+                # Another Pipeline Graph View version may use non-numeric ids; a traceback
+                # here would exit 1, which means "a required control failed".
+                raise ConnectorError(
+                    ErrorKind.INVALID_RESPONSE, f"Unexpected stage id {node_id!r}"
+                ) from None
             status = _STATE.get(str(state).lower(), JobStatus.UNKNOWN)
             raw = str(state).lower()
             allow_failure = False
@@ -158,7 +166,7 @@ class JenkinsConnector(HttpConnector):
                     raw = f"succeeded, but step '{masked}' failed and was caught (try/catch)"
             jobs.append(
                 Job(
-                    id=int(node_id),
+                    id=job_id,
                     name=name,
                     status=status,
                     raw_status=raw,

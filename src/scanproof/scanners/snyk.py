@@ -45,7 +45,13 @@ class SnykAdapter(ScannerAdapter):
                 if key not in seen:
                     seen.add(key)
                     severities.append(str(v.get("severity") or "unknown").upper())
-            paths.append(str(p.get("displayTargetFile") or p.get("path") or p.get("projectName")))
+            # Only a real path counts. `str(None)` used to append the string "None" and the
+            # path count then satisfied minimum_scanned_files for a report with no scope (#10).
+            for key in ("displayTargetFile", "path", "projectName"):
+                value = p.get(key)
+                if isinstance(value, str) and value.strip():
+                    paths.append(value.strip())
+                    break
             count = p.get("dependencyCount")
             deps += count if isinstance(count, int) and count >= 0 else 0
             container = container or p.get("docker") is not None
@@ -57,7 +63,11 @@ class SnykAdapter(ScannerAdapter):
             "scan_type": ScanType.CONTAINER if container else ScanType.DEPENDENCY,
             "scanner_errors": None,
             "results_reported": True,
-            "scope": ScanScope(scanned_paths=paths, files_scanned=len(paths), components=deps),
+            "scope": ScanScope(
+                scanned_paths=paths,
+                files_scanned=len(paths) if paths else None,
+                components=deps,
+            ),
             "findings": FindingsSummary(total=len(severities), by_severity=count_by(severities)),
             "target": target,
         }

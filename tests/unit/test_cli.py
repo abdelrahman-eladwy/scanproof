@@ -9,7 +9,7 @@ import httpx
 import pytest
 from typer.testing import CliRunner
 
-from scanproof.cli import EXIT_INDETERMINATE, EXIT_OK, EXIT_USAGE, app
+from scanproof.cli import EXIT_INDETERMINATE, EXIT_OK, EXIT_USAGE, app, run
 from tests.conftest import API, BASE, TOKEN, load_fixture
 
 runner = CliRunner()
@@ -94,6 +94,23 @@ def test_usage_errors_exit_3_not_2(argv) -> None:
         check=False,
     )
     assert proc.returncode == EXIT_USAGE, proc.stderr
+
+
+def test_unexpected_exception_exits_2_not_1(monkeypatch, mock_api, capsys) -> None:
+    """Exit 1 means BLOCKED; a crash must not be read as a failed control (or a passed one)."""
+
+    def kaboom(*args, **kwargs):
+        raise ValueError("unexpected shape")
+
+    monkeypatch.setattr("scanproof.cli.inspect_pipeline", kaboom)
+    monkeypatch.setenv("GITLAB_TOKEN", TOKEN)
+    monkeypatch.setattr(sys, "argv", ["scanproof", *ARGS])
+    with pytest.raises(SystemExit) as exit_info:
+        run()
+    assert exit_info.value.code == EXIT_INDETERMINATE
+    err = capsys.readouterr().err
+    assert "INTERNAL ERROR: ValueError: unexpected shape" in err
+    assert "not a scan result" in err
 
 
 # ---------------------------------------------------------------- evidence command

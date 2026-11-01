@@ -1061,7 +1061,15 @@ def _judge_attestation(
                 "Certificate has no source commit claim",
                 Outcome.UNKNOWN,
             )
-        if s.source_repository_digest.lower() != (pipeline.sha or "").lower():
+        if not pipeline.sha:
+            # Nothing to compare against: comparing to "" would report a control failure for
+            # a pipeline that simply did not report its commit.
+            return bad(
+                "ATTESTATION_COMMIT_UNKNOWN",
+                "The pipeline reports no commit, so the attestation cannot be bound to one",
+                Outcome.UNKNOWN,
+            )
+        if s.source_repository_digest.lower() != pipeline.sha.lower():
             return bad(
                 "ATTESTATION_WRONG_COMMIT",
                 f"Signed at commit {s.source_repository_digest}, pipeline is {pipeline.sha}",
