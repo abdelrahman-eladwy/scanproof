@@ -24,17 +24,39 @@ from scanproof.models import (
 _MASKABLE = frozenset({JobStatus.FAILED, JobStatus.CANCELED})
 
 
-def group_attempts(jobs: list[Job], pipeline_sha: str) -> list[InspectedJob]:
-    """Collapse retries: the attempt with the highest id is the effective one."""
+def _attempt_order(job: Job) -> tuple[int, float, int]:
+    """Chronological order of attempts of one job name.
+
+    Job ids are monotonic on GitLab and GitHub, but not on Azure DevOps, where
+    `azure_devops._number` mints them from timeline-record GUIDs: ordering by id there is a
+    coin flip, and picking the wrong attempt means judging a stale record — a re-run that
+    went success -> failure would be reported VERIFIED. The explicit attempt number decides
+    first (every connector that has one sets it), then the start time, then the id.
+    """
+    started = job.started_at or job.created_at
+    if started is None:
+        return (job.attempt or 0, 0.0, job.id)
+    try:
+        return (job.attempt or 0, started.timestamp(), job.id)
+    except (OSError, OverflowError, ValueError):  # absurd or pre-epoch timestamp
+        return (job.attempt or 0, 0.0, job.id)
+
+
+def group_attempts(jobs: list[Job], pipeline_sha: str | None) -> list[InspectedJob]:
+    """Collapse retries: the chronologically latest attempt is the effective one."""
     by_name: dict[str, list[Job]] = defaultdict(list)
     for job in jobs:
         by_name[job.name].append(job)
 
     inspected: list[InspectedJob] = []
     for name, attempts in by_name.items():
-        attempts.sort(key=lambda j: j.id)
+        attempts.sort(key=_attempt_order)
         latest = attempts[-1]
-        matches = None if latest.commit_sha is None else latest.commit_sha == pipeline_sha
+        matches = (
+            None
+            if latest.commit_sha is None or not pipeline_sha
+            else latest.commit_sha == pipeline_sha
+        )
         inspected.append(
             InspectedJob(
                 name=name,
