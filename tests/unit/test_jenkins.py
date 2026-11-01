@@ -206,3 +206,17 @@ def test_live_contract_codes(jenkins, mock_api, name) -> None:
     (check,) = [c for c in report.requirements[0].checks if c.check == "job_success"]
     code, text = CODES[name]
     assert check.code == code and text in check.message, check.message
+
+
+@pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
+def test_artifact_provider_error_is_indeterminate(jenkins, mock_api, status) -> None:
+    serve(mock_api, "sast-ok")
+    mock_api.get(
+        url__regex=r"^https://jenkins\\.example\\.com/job/sast-ok/1/artifact/.*"
+    ).respond(status)
+    policy = load_policy(POLICIES / "sast-ok.yaml")
+    report = verify_pipeline(
+        jenkins, policy, instance_url=BASE, project="sast-ok", pipeline_id=1,
+    )
+    assert report.decision is Decision.INDETERMINATE
+    assert report.exit_code == 2
