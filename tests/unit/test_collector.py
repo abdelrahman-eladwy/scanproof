@@ -46,12 +46,12 @@ def test_downloads_and_parses(connector, mock_api) -> None:
     assert ev.source.artifact_path == "semgrep.json"
 
 
-def test_no_archive_means_missing_without_calling_api(connector, mock_api) -> None:
-    route = mock_api.get(URL)
+def test_no_archive_uses_endpoint_404_to_decide_missing(connector, mock_api) -> None:
+    route = mock_api.get(URL).respond(404)
     ev = _collect(connector, _job(artifacts=()))
     assert not ev.present
-    assert "no artifacts archive" in ev.parse_error
-    assert not route.called
+    assert "not found in job artifacts" in ev.parse_error
+    assert route.called
 
 
 def test_file_not_in_archive_is_missing(connector, mock_api) -> None:
