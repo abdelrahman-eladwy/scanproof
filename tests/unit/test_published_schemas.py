@@ -371,7 +371,7 @@ def test_published_attestation_schema_rejects_unverified_identity_claims() -> No
     definitions = schema(name)["$defs"]
     attestation = definitions["AttestationEvidence"]
     js = pytest.importorskip("jsonschema")
-    validator = js.Draft202012Validator(attestation)
+    validator = js.Draft202012Validator({"$defs": definitions, **attestation})
     baseline = AttestationEvidence(status=AttestationStatus.INVALID).model_dump(mode="json")
     assert not list(validator.iter_errors(baseline))
     for forged in (
