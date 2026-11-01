@@ -99,9 +99,24 @@ def test_no_end_record_is_left_to_zipfile(gl, data) -> None:
     assert err.value.kind is ErrorKind.INTEGRITY  # BadZipFile, as before
 
 
-def test_broken_zip64_locator_is_left_to_zipfile() -> None:
+def test_broken_zip64_locator_is_rejected() -> None:
     data = patched_end(make_zip(2), entries=0xFFFF)  # claims ZIP64, has no locator
-    assert zip_directory(data) is None
+    with pytest.raises(ZipTooLarge, match="ZIP64 sentinel"):
+        check_zip_directory(data)
+
+
+def test_forged_zip64_count_cannot_bypass_entry_limit(gl) -> None:
+    data = patched_end(MANY, entries=0xFFFF)
+    # Existing ZIP64 archive still has a locator; the guard must enforce its true count.
+    with pytest.raises(ConnectorError) as exc:
+        gl._extract(data, "semgrep.json", "scan-results")
+    assert exc.value.kind is ErrorKind.LIMIT_EXCEEDED
+
+
+def test_forged_zip64_sentinel_on_oversized_classic_zip_is_rejected() -> None:
+    data = patched_end(make_zip(MAX_ZIP_ENTRIES + 1), entries=0xFFFF)
+    with pytest.raises(ZipTooLarge):
+        check_zip_directory(data)
 
 
 def test_fortify_adapter_refuses_a_huge_fpr_without_raising() -> None:
