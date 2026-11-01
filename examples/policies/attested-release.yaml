@@ -3,6 +3,7 @@
 #   contents: read, actions: read, checks: read, attestations: read
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy
+assurance: {profile: production}
 metadata: {name: attested-release}
 project: {provider: github, id: my-org/my-app}
 requirements:

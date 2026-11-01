@@ -24,6 +24,7 @@ BACKEND = """
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy
 project: {provider: gitlab, id: "123"}
+assurance: {profile: production}
 requirements:
   - {id: SAST, tool: semgrep, job_name: semgrep-sast, report_path: semgrep.json}
 """
@@ -31,6 +32,7 @@ FRONTEND = """
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy
 project: {provider: github, id: acme/app}
+assurance: {profile: production}
 requirements:
   - {id: SAST, tool: semgrep, job_name: sast, artifact_name: scan-report, report_path: semgrep.json}
 """
@@ -229,3 +231,18 @@ def test_duplicate_pipeline_policy_binding_is_rejected(tmp_path) -> None:
     )
     with pytest.raises(PolicyError, match="duplicate component"):
         load_release(write_release(tmp_path, components))
+
+
+def test_release_rejects_weak_compatible_policy(tmp_path, sleeps) -> None:
+    path = write_release(
+        tmp_path,
+        "  - {name: backend, policy: policies/backend.yaml, pipeline: 1042}\n",
+    )
+    weak = (
+        (tmp_path / "policies/backend.yaml")
+        .read_text()
+        .replace("assurance: {profile: production}\n", "")
+    )
+    (tmp_path / "policies/backend.yaml").write_text(weak)
+    with pytest.raises(PolicyError, match=r"requires assurance\.profile: production"):
+        verify_release(load_release(path), path.parent, connect(sleeps))
