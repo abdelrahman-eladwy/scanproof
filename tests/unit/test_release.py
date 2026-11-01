@@ -235,10 +235,13 @@ def test_duplicate_pipeline_policy_binding_is_rejected(tmp_path) -> None:
 
 def test_release_rejects_weak_compatible_policy(tmp_path, sleeps) -> None:
     path = write_release(
-        tmp_path, "  - {name: backend, policy: policies/backend.yaml, pipeline: 1042}\n",
+        tmp_path,
+        "  - {name: backend, policy: policies/backend.yaml, pipeline: 1042}\n",
     )
-    weak = (tmp_path / "policies/backend.yaml").read_text().replace(
-        "assurance: {profile: production}\n", ""
+    weak = (
+        (tmp_path / "policies/backend.yaml")
+        .read_text()
+        .replace("assurance: {profile: production}\n", "")
     )
     (tmp_path / "policies/backend.yaml").write_text(weak)
     with pytest.raises(PolicyError, match=r"requires assurance\.profile: production"):
