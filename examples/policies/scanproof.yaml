@@ -7,6 +7,7 @@
 # Unknown keys are rejected, so a typo cannot silently disable a check.
 apiVersion: scanproof.dev/v1alpha1
 kind: PipelineAssurancePolicy
+assurance: {profile: production}
 metadata:
   name: scanproof-demo-release
 project:
