@@ -201,9 +201,9 @@ def test_adapter_rejects_pending_and_foreign_documents(raw) -> None:
 
 @pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
 def test_insights_provider_error_is_indeterminate(bb, mock_api, status) -> None:
-    serve(mock_api, REPO, 187)
     sha = load(REPO, 187, "pipeline.json")["target"]["commit"]["hash"]
     mock_api.get(url__regex=rf".*/commit/{sha}/reports\\?pagelen=100$").respond(status)
+    serve(mock_api, REPO, 187)
     report = verify(bb, 187, policy("Security Scan"))
     assert report.decision is Decision.INDETERMINATE
     assert report.exit_code == 2
