@@ -241,5 +241,5 @@ def test_release_rejects_weak_compatible_policy(tmp_path, sleeps) -> None:
         "assurance: {profile: production}\n", ""
     )
     (tmp_path / "policies/backend.yaml").write_text(weak)
-    with pytest.raises(PolicyError, match="requires assurance.profile: production"):
+    with pytest.raises(PolicyError, match=r"requires assurance\.profile: production"):
         verify_release(load_release(path), path.parent, connect(sleeps))
