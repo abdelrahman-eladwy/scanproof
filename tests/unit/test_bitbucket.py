@@ -10,7 +10,7 @@ from urllib.parse import quote
 
 import pytest
 
-from scanproof.connectors.bitbucket import INSIGHTS_FORMAT, BitbucketConnector
+from scanproof.connectors.bitbucket import INSIGHTS_FORMAT, BitbucketConnector, _report_sort_key
 from scanproof.models import JobStatus
 from scanproof.policy.engine import Decision
 from scanproof.policy.models import Policy
@@ -214,3 +214,17 @@ def test_insights_provider_error_is_indeterminate(bb, mock_api, status) -> None:
     report = verify(bb, 187, policy("Security Scan"))
     assert report.decision is Decision.INDETERMINATE
     assert report.exit_code == 2
+
+
+def test_bitbucket_report_timestamps_use_actual_instants() -> None:
+    older = {"created_on": "2026-11-01T10:00:00Z"}
+    newer = {"created_on": "2026-11-01T11:00:00+00:00"}
+    # Lexicographical sorting gets this wrong when offset spellings differ.
+    assert max([older, newer], key=_report_sort_key) is newer
+
+
+def test_bitbucket_report_timestamp_offsets_and_malformed_fallback() -> None:
+    older = {"created_on": "2026-11-01T14:00:00+05:00"}
+    newer = {"created_on": "2026-11-01T10:30:00Z"}
+    missing = {"created_on": "not-a-timestamp"}
+    assert max([older, newer, missing], key=_report_sort_key) is newer
