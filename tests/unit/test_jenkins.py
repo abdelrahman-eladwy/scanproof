@@ -210,10 +210,10 @@ def test_live_contract_codes(jenkins, mock_api, name) -> None:
 
 @pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
 def test_artifact_provider_error_is_indeterminate(jenkins, mock_api, status) -> None:
-    serve(mock_api, "sast-ok")
     mock_api.get(url__regex=r"^https://jenkins\\.example\\.com/job/sast-ok/1/artifact/.*").respond(
         status
     )
+    serve(mock_api, "sast-ok")
     policy = load_policy(POLICIES / "sast-ok.yaml")
     report = verify_pipeline(
         jenkins,
