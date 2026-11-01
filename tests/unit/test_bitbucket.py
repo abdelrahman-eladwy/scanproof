@@ -28,7 +28,10 @@ def load(repo: str, n: int, name: str):
     return json.loads((B / repo.replace("/", "__") / str(n) / name).read_text())
 
 
-def serve(router, repo: str, n: int, *, steps: list | None = None) -> dict:
+def serve(
+    router, repo: str, n: int, *, steps: list | None = None,
+    report_status: int | None = None,
+) -> dict:
     p = load(repo, n, "pipeline.json")
     base = f"{API}/repositories/{repo}"
     router.get(f"{base}/pipelines/{n}").respond(json=p)
@@ -201,9 +204,7 @@ def test_adapter_rejects_pending_and_foreign_documents(raw) -> None:
 
 @pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
 def test_insights_provider_error_is_indeterminate(bb, mock_api, status) -> None:
-    sha = load(REPO, 187, "pipeline.json")["target"]["commit"]["hash"]
-    mock_api.get(url__regex=rf".*/commit/{sha}/reports\?pagelen=100$").respond(status)
-    serve(mock_api, REPO, 187)
+    serve(mock_api, REPO, 187, report_status=status)
     report = verify(bb, 187, policy("Security Scan"))
     assert report.decision is Decision.INDETERMINATE
     assert report.exit_code == 2
