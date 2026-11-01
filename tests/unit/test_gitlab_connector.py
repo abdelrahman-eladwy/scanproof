@@ -7,7 +7,7 @@ import respx
 from scanproof.connectors.base import AuthError, ConnectorError, ErrorKind, NotFoundError
 from scanproof.connectors.gitlab import GitLabConnector
 from scanproof.connectors.http import MAX_REDIRECTS
-from scanproof.models import JobStatus
+from scanproof.models import ArtifactFile, Job, JobStatus
 from tests.conftest import API, BASE, TOKEN, load_fixture
 
 PIPELINE_URL = f"{API}/projects/123/pipelines/1042"
@@ -319,3 +319,57 @@ def test_rate_limit_hint_only_in_anonymous_mode(mock_api, anonymous) -> None:
     assert exc.value.kind is ErrorKind.RATE_LIMITED
     assert ("read_api token" in str(exc.value)) is anonymous
     assert TOKEN not in str(exc.value)
+
+
+def test_report_only_job_is_fetched_even_without_archive(connector, mock_api) -> None:
+    job = Job(
+        id=8821,
+        name="custom-sast",
+        status=JobStatus.SUCCESS,
+        artifacts=(ArtifactFile(file_type="sast", filename="semgrep.json"),),
+    )
+    assert not job.has_archive
+    url = f"{API}/projects/123/jobs/8821/artifacts?file_type=sast"
+    mock_api.get(url).respond(content=b'{"results":[],"errors":[]}')
+    assert connector.fetch_report("123", job, "semgrep.json") == b'{"results":[],"errors":[]}'
+
+
+def test_report_only_job_missing_path_uses_actual_404(connector, mock_api) -> None:
+    job = Job(
+        id=8821,
+        name="custom-sast",
+        status=JobStatus.SUCCESS,
+        artifacts=(ArtifactFile(file_type="sast", filename="semgrep.json"),),
+    )
+    url = f"{API}/projects/123/jobs/8821/artifacts?file_type=sast"
+    mock_api.get(url).respond(404)
+    with pytest.raises(NotFoundError, match="typed report could not be downloaded"):
+        connector.fetch_report("123", job, "semgrep.json")
+
+
+def test_report_only_job_refuses_wrong_report_name(connector, mock_api) -> None:
+    job = Job(
+        id=8821,
+        name="custom-sast",
+        status=JobStatus.SUCCESS,
+        artifacts=(ArtifactFile(file_type="sast", filename="other-report.json"),),
+    )
+    with pytest.raises(NotFoundError, match="no matching typed report"):
+        connector.fetch_report("123", job, "semgrep.json")
+    assert mock_api.calls.call_count == 0
+
+
+def test_report_only_job_rejects_ambiguous_types(connector, mock_api) -> None:
+    job = Job(
+        id=8821,
+        name="custom-sast",
+        status=JobStatus.SUCCESS,
+        artifacts=(
+            ArtifactFile(file_type="sast", filename="semgrep.json"),
+            ArtifactFile(file_type="sarif", filename="semgrep.json"),
+        ),
+    )
+    with pytest.raises(ConnectorError) as exc:
+        connector.fetch_report("123", job, "semgrep.json")
+    assert exc.value.kind is ErrorKind.INVALID_RESPONSE
+    assert mock_api.calls.call_count == 0

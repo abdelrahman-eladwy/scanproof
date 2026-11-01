@@ -41,6 +41,29 @@ container_scanning:
     CS_IMAGE: "$CI_REGISTRY_IMAGE@$RELEASE_IMAGE_DIGEST"
 ```
 
+### Report-only jobs and GitLab API compatibility
+
+GitLab stores `artifacts:reports` separately from the ordinary `artifacts:paths`
+archive. On **GitLab 19.4+**, ScanProof can request a listed typed report by its
+`file_type` using the job-ID artifacts endpoint. Set `report_path` to the exact
+filename advertised by the job artifact metadata; ScanProof refuses ambiguous or
+mismatched report identities instead of guessing.
+
+On older GitLab servers, use `artifacts:paths` **in addition to** `artifacts:reports`,
+so the report can be fetched from the archive:
+
+```yaml
+artifacts:
+  when: always
+  reports:
+    sast: gl-sast-report.json
+  paths:
+    - gl-sast-report.json
+```
+
+If a report cannot be downloaded, verification must not treat it as valid. Validate
+report-only behavior against your GitLab version before enforcing release gates.
+
 ## 3. Bind the container scan to the image you ship
 
 The build job knows the digest it pushed. Hand it to later jobs with a dotenv report:
