@@ -25,6 +25,7 @@ import re
 import time
 import uuid
 from collections.abc import Callable
+from datetime import UTC, datetime
 from typing import Any
 from urllib.parse import quote
 
@@ -150,7 +151,7 @@ class BitbucketConnector(HttpConnector):
             raise NotFoundError(
                 f"No Code Insights report '{report_path}' on commit {job.commit_sha[:12]}", None
             )
-        report = max(reports, key=lambda r: str(r.get("created_on") or ""))
+        report = max(reports, key=_report_sort_key)
         rid = quote(str(report.get("uuid") or report.get("external_id")))
         notes, complete = [], True
         try:
@@ -252,3 +253,15 @@ def _repo(project: str) -> str:
         )
     workspace, repo = project.split("/")
     return f"{quote(workspace)}/{quote(repo)}"
+
+
+def _report_sort_key(report: dict[str, Any]) -> tuple[int, datetime, str]:
+    """Order ISO-8601 instants, not their textual timezone representations."""
+    raw = str(report.get("created_on") or "")
+    try:
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            return (0, datetime.min.replace(tzinfo=UTC), raw)
+        return (1, parsed.astimezone(UTC), raw)
+    except (ValueError, OverflowError):
+        return (0, datetime.min.replace(tzinfo=UTC), raw)
