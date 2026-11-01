@@ -218,6 +218,8 @@ def test_cli_end_to_end(tmp_path, platforms, monkeypatch) -> None:
     assert result.exit_code == 0, result.output
     assert json.loads(out.read_text())["decision"] == "VERIFIED"
     assert "Release decision: VERIFIED" in result.output
+    assert "0 waived checks" in result.output
+    assert "0 warnings" in result.output
 
 
 def test_empty_release_decision_aggregation_is_never_verified() -> None:
@@ -246,3 +248,29 @@ def test_release_rejects_weak_compatible_policy(tmp_path, sleeps) -> None:
     (tmp_path / "policies/backend.yaml").write_text(weak)
     with pytest.raises(PolicyError, match=r"requires assurance\.profile: production"):
         verify_release(load_release(path), path.parent, connect(sleeps))
+
+
+def test_verify_release_cli_settle_budget_reaches_component_verification(
+    tmp_path, platforms, monkeypatch
+) -> None:
+    gl, gh = platforms
+    gl.install()
+    gh.install()
+    monkeypatch.setenv("GITLAB_TOKEN", "glpat-x")
+    monkeypatch.setenv("GITHUB_TOKEN", "ghp-x")
+    path = write_release(tmp_path, COMPONENTS)
+    result = CliRunner().invoke(
+        app,
+        [
+            "verify-release",
+            "-R",
+            str(path),
+            "--gitlab-url",
+            BASE,
+            "--github-url",
+            GH_API,
+            "--settle-seconds",
+            "0",
+        ],
+    )
+    assert result.exit_code == 0, result.output

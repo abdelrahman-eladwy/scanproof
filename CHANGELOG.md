@@ -5,6 +5,8 @@ versions follow [SemVer](https://semver.org/) (pre-1.0: minor versions may break
 
 ## [Unreleased]
 
+- `verify-release` now exposes `--settle-seconds` (default 30, like `verify`) to re-read unfinished component jobs; the console summary shows waiver/warning counts so a waiver-backed VERIFIED does not look unqualified.
+
 ### Security and correctness
 - Reject production-profile waivers that suppress missing reports, applicability, required job checks, or configured attestations (#145).
 - Reject malformed ZIP64 sentinels before opening attacker-controlled central directories (#153).
