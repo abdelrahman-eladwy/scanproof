@@ -33,6 +33,16 @@ from scanproof.connectors.http import (
 )
 from scanproof.models import ArtifactFile, Downstream, Job, JobStatus, Pipeline
 
+# The job-ID artifacts endpoint accepts these report file_type values on GitLab 19.4+.
+# Never forward an arbitrary provider value as a query parameter.
+_REPORT_FILE_TYPES = frozenset({
+    "accessibility", "api_fuzzing", "browser_performance", "cluster_image_scanning",
+    "cobertura", "codequality", "container_scanning", "cyclonedx", "dast",
+    "dependency_scanning", "dotenv", "jacoco", "junit", "license_scanning",
+    "load_performance", "lsif", "metrics", "performance", "requirements",
+    "requirements_v2", "sarif", "sast", "secret_detection",
+})
+
 _JOB_URI = re.compile(r"^(?P<origin>https://[^/]+)/(?P<path>.+)/-/jobs/(?P<job>\d+)/?$")
 
 
@@ -147,8 +157,38 @@ class GitLabConnector(HttpConnector):
     def fetch_report(
         self, project: str, job: Job, report_path: str, artifact_name: str | None = None
     ) -> bytes:
+        origin_project = job.project or project
+        if not job.has_archive:
+            # GitLab stores artifacts:reports separately from the ZIP archive. The
+            # raw-path endpoint cannot retrieve these; use the job-ID file_type API.
+            # Never substitute a different report for the policy's exact path.
+            matches = [
+                a for a in job.artifacts
+                if a.filename == report_path and a.file_type in _REPORT_FILE_TYPES
+            ]
+            if len(matches) > 1:
+                raise ConnectorError(
+                    ErrorKind.INVALID_RESPONSE,
+                    f"Multiple report artifacts match {report_path!r}; cannot choose safely",
+                )
+            if not matches:
+                raise NotFoundError(
+                    f"'{report_path}' not found in job artifact metadata "
+                    "(no archive and no matching typed report)"
+                )
+            url = (
+                f"{self.api_url}/projects/{_project_ref(origin_project)}"
+                f"/jobs/{job.id}/artifacts?file_type={quote(matches[0].file_type)}"
+            )
+            try:
+                return self._download(url)
+            except NotFoundError:
+                raise NotFoundError(
+                    f"'{report_path}' typed report could not be downloaded "
+                    "(missing, expired or GitLab does not support file_type)"
+                ) from None
         try:
-            return self.download_artifact_file(job.project or project, job.id, report_path)
+            return self.download_artifact_file(origin_project, job.id, report_path)
         except NotFoundError:
             raise NotFoundError(
                 f"'{report_path}' not found in job artifacts (never uploaded, or expired)"
