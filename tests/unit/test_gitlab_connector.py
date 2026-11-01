@@ -356,7 +356,7 @@ def test_report_only_job_refuses_wrong_report_name(connector, mock_api) -> None:
     )
     with pytest.raises(NotFoundError, match="no matching typed report"):
         connector.fetch_report("123", job, "semgrep.json")
-    assert not mock_api.calls.called
+    assert mock_api.calls.call_count == 0
 
 
 def test_report_only_job_rejects_ambiguous_types(connector, mock_api) -> None:
@@ -372,4 +372,4 @@ def test_report_only_job_rejects_ambiguous_types(connector, mock_api) -> None:
     with pytest.raises(ConnectorError) as exc:
         connector.fetch_report("123", job, "semgrep.json")
     assert exc.value.kind is ErrorKind.INVALID_RESPONSE
-    assert not mock_api.calls.called
+    assert mock_api.calls.call_count == 0
