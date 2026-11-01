@@ -60,6 +60,8 @@ def parse_retry_after(value: str | None, *, now: datetime | None = None) -> floa
     if value is None:
         return None
     text = value.strip()
+    if not text.isascii():
+        return None
     if text.isdigit():
         return float(text)
     if not text or text[0].isdigit() or text[0] in "+-":
@@ -459,9 +461,13 @@ class HttpConnector(CIConnector):
     def _read_capped(self, response: httpx.Response, what: str) -> bytes:
         self._raise_for_status(response, what)
         declared = response.headers.get("Content-Length")
-        if declared and declared.isdigit() and int(declared) > self.max_artifact_bytes:
-            raise ConnectorError(
-                ErrorKind.LIMIT_EXCEEDED,
-                f"Artifact is {int(declared)} bytes; limit is {self.max_artifact_bytes}",
-            )
+        if declared and declared.isascii() and declared.isdigit():
+            # Compare decimal strings before converting: Python rejects very long integers.
+            digits = declared.lstrip("0") or "0"
+            limit = str(self.max_artifact_bytes)
+            if len(digits) > len(limit) or (len(digits) == len(limit) and digits > limit):
+                raise ConnectorError(
+                    ErrorKind.LIMIT_EXCEEDED,
+                    f"Artifact Content-Length exceeds limit of {self.max_artifact_bytes} bytes",
+                )
         return b"".join(self._body(response, f"Artifact {what}"))
