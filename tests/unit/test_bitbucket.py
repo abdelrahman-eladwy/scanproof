@@ -10,8 +10,9 @@ from urllib.parse import quote
 
 import pytest
 
+from scanproof.connectors.base import ConnectorError, ErrorKind
 from scanproof.connectors.bitbucket import INSIGHTS_FORMAT, BitbucketConnector
-from scanproof.models import JobStatus
+from scanproof.models import Job, JobStatus
 from scanproof.policy.engine import Decision
 from scanproof.policy.models import Policy
 from scanproof.scanners import get_adapter
@@ -214,3 +215,11 @@ def test_insights_provider_error_is_indeterminate(bb, mock_api, status) -> None:
     report = verify(bb, 187, policy("Security Scan"))
     assert report.decision is Decision.INDETERMINATE
     assert report.exit_code == 2
+
+
+def test_missing_commit_is_unknown_not_missing_report(bb) -> None:
+    job = Job(id=42, name="Security Scan", status=JobStatus.SUCCESS, commit_sha="")
+    with pytest.raises(ConnectorError) as exc:
+        bb.fetch_report(REPO, job, GIT_SECRETS)
+    assert exc.value.kind is ErrorKind.INVALID_RESPONSE
+    assert "cannot determine" in exc.value.message
