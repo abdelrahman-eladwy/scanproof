@@ -675,7 +675,16 @@ def verify_release_cmd(
     quiet: QuietOpt = False,
     trusted_root: TrustedRootOpt = None,
     sigstore_offline: SigstoreOfflineOpt = False,
-    settle_seconds: Annotated[\n        float, typer.Option("--settle-seconds", min=0, max=300, help="Wait for unfinished scan jobs (seconds, max 300).")\n    ] = 30.0,\n) -> None:
+    settle_seconds: Annotated[
+        float,
+        typer.Option(
+            "--settle-seconds",
+            min=0,
+            max=300,
+            help="Wait for unfinished scan jobs (seconds, max 300).",
+        ),
+    ] = 30.0,
+) -> None:
     """Verify every component of a release (several pipelines, any platforms) in one decision.
 
     Exit 0 if all are VERIFIED, 1 if any is BLOCKED, 2 if any could not be verified, 3 usage.
