@@ -34,7 +34,10 @@ def zipped(artifact: str, files: dict[str, bytes]) -> bytes:
     return buf.getvalue()
 
 
-def serve(router, org: str, build: str, zips: dict[str, bytes] | None = None) -> str:
+def serve(
+    router, org: str, build: str, zips: dict[str, bytes] | None = None,
+    *, artifact_status: int | None = None,
+) -> str:
     d = A / org / build
     api = f"{BASE}/{org}/public/_apis/build/builds/{build}"
     router.get(url__regex=rf"^{re.escape(api)}\?api-version=.*").respond(
@@ -51,6 +54,8 @@ def serve(router, org: str, build: str, zips: dict[str, bytes] | None = None) ->
     for name, data in (zips or {}).items():
         router.get(
             url__regex=rf"^{re.escape(api)}/artifacts\?artifactName={re.escape(name)}&%24format=zip.*"
+        ).respond(artifact_status) if artifact_status is not None else router.get(
+            url__regex=rf"^{re.escape(api)}/artifacts\\?artifactName={re.escape(name)}&%24format=zip.*"
         ).respond(content=data, headers={"Content-Type": "application/zip"})
     if (d / "artifacts.json").exists():
         router.get(url__regex=rf"^{re.escape(api)}/artifacts\?api-version=.*").respond(
@@ -287,15 +292,12 @@ def test_artifact_name_is_required_by_the_policy() -> None:
 
 @pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
 def test_artifact_provider_error_is_indeterminate(azure, mock_api, status) -> None:
-    api = f"{BASE}/azure-sdk/public/_apis/build/builds/7003618"
-    mock_api.get(
-        url__regex=rf"^{re.escape(api)}/artifacts\?artifactName=packages&%24format=zip.*"
-    ).respond(status)
     serve(
         mock_api,
         "azure-sdk",
         "7003618",
         {"packages": zipped("packages", {"semgrep.json": REPORT})},
+        artifact_status=status,
     )
     report = verify(azure, "azure-sdk", "7003618", policy("Job", "packages"))
     assert report.decision is Decision.INDETERMINATE
