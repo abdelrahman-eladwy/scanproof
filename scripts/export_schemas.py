@@ -4,8 +4,7 @@
     python scripts/export_schemas.py --check   # exit 1 if schemas/ drifted
 
 schemas/manifest.json records each file's SHA-256 and the pydantic version that
-generated it; --check compares content only when that pydantic minor matches, because
-pydantic may reorder or reword generated schemas between minors.
+generated it; --check fails on version mismatch so schema contracts cannot silently drift.
 """
 
 from __future__ import annotations
@@ -64,7 +63,12 @@ def check(out: Path = OUT) -> list[str]:
             problems.append(f"missing schemas/{name}")
         elif hashlib.sha256(path.read_bytes()).hexdigest() != digest:
             problems.append(f"schemas/{name} does not match its manifest digest")
-    if recorded.get("pydantic") == pydantic_minor():
+    if recorded.get("pydantic") != pydantic_minor():
+        problems.append(
+            "schema generator pydantic minor differs from manifest; "
+            "regenerate and review published schemas before updating the manifest"
+        )
+    else:
         for name, text in want.items():
             path = out / name
             if path.is_file() and path.read_text(encoding="utf-8") != text:

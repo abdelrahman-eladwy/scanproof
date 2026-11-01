@@ -2,11 +2,11 @@
   "files": {
     "evidence.v1alpha1.schema.json": "26dc592286f02907a2da0ef198fdad1af528132a2289a6d92085ecb87b96d90b",
     "inspection-report.v1alpha1.schema.json": "d8acce58e5b653524aa03768d46570872732439e6eaa2ed655ab3f9f376b8e60",
-    "policy.v1alpha1.schema.json": "a27c9321cad942739f06a598f4cc8690c8a44047e6b708aa818e969080fa0c3b",
-    "release-report.v1alpha1.schema.json": "6bb6dcb4d214f77e699cca7cb46aa88bcb043d6d56fe636fe2d87fff057b880c",
+    "policy.v1alpha1.schema.json": "93c75ace7f929134eed6d413f8c319f99949d89efeff892be486d3a648ff88cc",
+    "release-report.v1alpha1.schema.json": "f1c0253cacce1cab500529d50e92ba809cc79e7abafb562b53b94eb2de64eacc",
     "release.v1alpha1.schema.json": "726dc46da768a007d2c119ca4e3a622c7a7c842386e1baddc874562d6399a397",
     "verification-error.v1alpha1.schema.json": "240fbbd5d5b01858ec3eeb05f46b1f905a233f985c203cb363867e13e0dd3b5b",
-    "verification-report.v1alpha1.schema.json": "273ffde6f2d3bf582c3b1af0863f07c493ed254aed91e980d4d74ec7af3fd977"
+    "verification-report.v1alpha1.schema.json": "9a9ade65f03b80511f5c5ac3666727e9df9e91762aa781f2a3d6015e2b21fc86"
   },
   "generator": "scripts/export_schemas.py",
   "pydantic": "2.13"
