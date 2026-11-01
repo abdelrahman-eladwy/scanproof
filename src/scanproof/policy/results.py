@@ -115,7 +115,9 @@ def combine(outcomes: list[Outcome]) -> Outcome:
         return Outcome.UNKNOWN
     if all(o is Outcome.NOT_APPLICABLE for o in outcomes):
         return Outcome.NOT_APPLICABLE
-    return Outcome.PASS
+    if all(o in (Outcome.PASS, Outcome.WAIVED, Outcome.NOT_APPLICABLE) for o in outcomes):
+        return Outcome.PASS
+    return Outcome.UNKNOWN
 
 
 def _r(check: str, outcome: Outcome, code: str, message: str) -> CheckResult:
