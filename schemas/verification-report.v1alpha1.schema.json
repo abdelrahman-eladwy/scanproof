@@ -1,6 +1,36 @@
 {
   "$defs": {
     "AttestationEvidence": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "invalid",
+                  "unverifiable"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "predicate_type": {
+                "type": "null"
+              },
+              "signer": {
+                "type": "null"
+              },
+              "subjects": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ],
       "properties": {
         "bundle_sha256": {
           "anyOf": [
@@ -1163,16 +1193,17 @@
     }
   },
   "required": [
-    "scanproof_version",
-    "generated_at",
-    "policy",
-    "provider",
-    "instance_url",
-    "project",
-    "pipeline",
     "decision",
     "exit_code",
-    "requirements"
+    "generated_at",
+    "instance_url",
+    "pipeline",
+    "policy",
+    "project",
+    "provider",
+    "requirements",
+    "scanproof_version",
+    "schema_version"
   ],
   "title": "scanproof verify output",
   "type": "object",
