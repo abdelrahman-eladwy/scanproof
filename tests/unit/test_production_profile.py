@@ -180,7 +180,10 @@ def example_env(monkeypatch):
 @pytest.mark.parametrize("path", EXAMPLES, ids=[p.name for p in EXAMPLES])
 def test_example_policy_loads_unchanged_and_defaults_to_compatible(path, example_env) -> None:
     policy = load_policy(path)
-    assert policy.assurance.profile == "compatible"
+    if path.name in {"scanproof.yaml", "attested-release.yaml"}:
+        assert policy.assurance.profile == "production"
+    else:
+        assert policy.assurance.profile == "compatible"
 
 
 @pytest.mark.parametrize("path", EXAMPLES, ids=[p.name for p in EXAMPLES])
