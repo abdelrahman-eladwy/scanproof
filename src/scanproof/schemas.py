@@ -100,9 +100,7 @@ def documents() -> dict[str, dict[str, Any]]:
                 attestation["allOf"] = [
                     {
                         "if": {
-                            "properties": {
-                                "status": {"enum": ["invalid", "unverifiable"]}
-                            },
+                            "properties": {"status": {"enum": ["invalid", "unverifiable"]}},
                             "required": ["status"],
                         },
                         "then": {
