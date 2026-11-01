@@ -42,10 +42,14 @@ def zip_directory(data: bytes) -> tuple[int, int] | None:
     if entries == 0xFFFF or size == 0xFFFFFFFF:  # ZIP64: the real values are elsewhere
         locator = tail_start + at - 20
         if locator < 0 or data[locator : locator + 4] != _ZIP64_LOCATOR:
-            return None
+            raise ZipTooLarge("ZIP64 sentinel without a valid locator")
         record = _u(data, locator + 8, 8)
-        if data[record : record + 4] != _ZIP64_EOCD:
-            return None
+        if (
+            locator + 20 > len(data)
+            or record + 56 > locator
+            or data[record : record + 4] != _ZIP64_EOCD
+        ):
+            raise ZipTooLarge("ZIP64 sentinel without a valid end record")
         entries, size = _u(data, record + 32, 8), _u(data, record + 40, 8)
     return entries, size
 
