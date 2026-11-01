@@ -336,14 +336,3 @@ def test_policy_schema_rejects_what_the_loader_rejects(mutate) -> None:
     assert errors("policy.v1alpha1.schema.json", bad) != []
     with pytest.raises(Exception):  # noqa: B017 - pydantic ValidationError
         Policy.model_validate(bad)
-
-
-def test_temporary_capture_generated_schema_bytes() -> None:
-    """Temporary schema-export diagnostic; remove before release."""
-    import base64
-
-    for name, content in export.expected().items():
-        encoded = base64.b64encode(content.encode("utf-8")).decode("ascii")
-        for index in range(0, len(encoded), 1200):
-            print(f"SCHEMA_DUMP:{name}:{index // 1200}:{encoded[index : index + 1200]}")
-    pytest.fail("schema export diagnostic complete")
