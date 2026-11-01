@@ -246,3 +246,45 @@ def test_release_rejects_weak_compatible_policy(tmp_path, sleeps) -> None:
     (tmp_path / "policies/backend.yaml").write_text(weak)
     with pytest.raises(PolicyError, match=r"requires assurance\.profile: production"):
         verify_release(load_release(path), path.parent, connect(sleeps))
+
+
+def test_verify_release_cli_forwards_settle_window(tmp_path, platforms, monkeypatch) -> None:
+    from scanproof import release as release_module
+
+    gl, gh = platforms
+    gl.install()
+    gh.install()
+    monkeypatch.setenv("GITLAB_TOKEN", "glpat-x")
+    monkeypatch.setenv("GITHUB_TOKEN", "ghp-x")
+    path = write_release(tmp_path, COMPONENTS)
+    original = release_module.verify_release
+    observed = []
+
+    def capture(*args, **kwargs):
+        observed.append(kwargs.get("settle_seconds"))
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(release_module, "verify_release", capture)
+    result = CliRunner().invoke(
+        app,
+        [
+            "verify-release",
+            "-R",
+            str(path),
+            "--gitlab-url",
+            BASE,
+            "--github-url",
+            GH_API,
+            "--settle-seconds",
+            "17",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert observed == [17.0]
+
+
+def test_verify_release_rejects_out_of_bounds_settle_seconds(tmp_path) -> None:
+    path = write_release(tmp_path, COMPONENTS)
+    result = CliRunner().invoke(app, ["verify-release", "-R", str(path), "--settle-seconds", "301"])
+    assert result.exit_code != 0
+    assert "301" in result.output or "300" in result.output
