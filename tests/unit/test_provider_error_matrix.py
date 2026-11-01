@@ -27,8 +27,13 @@ def test_report_http_failure_cannot_be_verified(connector, mock_api, status):
         project="123",
         pipeline_id=1042,
     )
-    assert report.decision is not Decision.VERIFIED
-    assert report.exit_code != 0
+    assert report.decision is Decision.INDETERMINATE
+    assert report.exit_code == 2
+    assert any(
+        c.code == "EVIDENCE_UNAVAILABLE" and c.outcome.value == "UNKNOWN"
+        for requirement in report.requirements
+        for c in requirement.checks
+    )
 
 
 @pytest.mark.parametrize(
