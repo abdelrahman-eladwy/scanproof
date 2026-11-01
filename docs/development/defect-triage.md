@@ -52,6 +52,14 @@ a separate issue.
 | [PR #81](https://github.com/abdelrahman-eladwy/scanproof/pull/81) oversized ZIP directories | P0 candidate (resource-exhaustion) | `tests/unit/test_zip_guard.py` | Excessive archive entry counts/central-directory sizes are rejected before full ZIP parsing; full-system memory ceilings remain to be load-tested |
 | [PR #82](https://github.com/abdelrahman-eladwy/scanproof/pull/82) GitLab root trigger-list 404 | P0 (false VERIFIED from incomplete graph) | `tests/unit/test_declared_copies.py` | Root downstream inventory 404 must not hide a failing child copy behind a passing root job; unresolved child access stays UNKNOWN |
 
+| [PR #143](https://github.com/abdelrahman-eladwy/scanproof/pull/143) Azure stale attempt ordering | P0 (false VERIFIED risk) | `tests/unit/test_azure_devops.py` | Use actual attempt/time chronology, not unrelated GUID order, to identify latest failed run |
+| [PR #143](https://github.com/abdelrahman-eladwy/scanproof/pull/143) GitHub masked annotation failure | P0 (false VERIFIED risk) | `tests/unit/test_github_connector.py` | Detect all failure-level check-run annotations despite provider's job success |
+| [PR #145](https://github.com/abdelrahman-eladwy/scanproof/pull/145) production waiver bypass | P0 (false VERIFIED) | `tests/unit/test_production_profile.py` | Reject waivers on report, applicability, critical job checks, and configured attestations in production |
+| [PR #153](https://github.com/abdelrahman-eladwy/scanproof/pull/153) forged ZIP64 sentinel | P1 (archive availability) | `tests/unit/test_zip_guard.py` | Reject invalid ZIP64 locator/end records before zipfile builds huge central directories |
+| [PR #157](https://github.com/abdelrahman-eladwy/scanproof/pull/157) mutable image tags treated as digests | P0 candidate (target assurance) | `tests/unit/test_scan_target_digests.py` | Only immutable repository SHA-256 digest references bind scans to a target |
+| [PR #157](https://github.com/abdelrahman-eladwy/scanproof/pull/157) empty or duplicate release bindings | P1 (aggregate correctness) | `tests/unit/test_release.py`, `tests/unit/test_applies_to_nonempty.py` | Empty decision aggregation is UNKNOWN; duplicate component bindings and empty ref lists rejected |
+| [PR #163](https://github.com/abdelrahman-eladwy/scanproof/pull/163) compatible-profile release policy | P0 candidate (release assurance) | `tests/unit/test_release.py` | Release command rejects component policies permitting weakened UNKNOWN treatment |
+
 **Audit boundary:** This register now covers the explicitly enumerated issue-linked
 and early PR-linked regressions, not every historical commit. The evidence
 required to close Phase 1 #44 includes an exhaustive confirmed-defect sweep,
