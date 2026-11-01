@@ -4,10 +4,11 @@
       "additionalProperties": false,
       "properties": {
         "refs": {
-          "description": "Glob patterns for pipeline refs, e.g. main, release/*",
+          "description": "Nonempty glob patterns for pipeline refs, e.g. main, release/*",
           "items": {
             "type": "string"
           },
+          "minItems": 1,
           "title": "Refs",
           "type": "array"
         }
