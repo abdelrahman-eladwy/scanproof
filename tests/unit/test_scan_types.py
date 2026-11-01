@@ -132,6 +132,42 @@ def test_checkov_parsing_errors_are_scanner_errors() -> None:
     )
 
 
+def test_checkov_without_parsing_errors_is_unknown_not_clean() -> None:
+    """A report that omits summary.parsing_errors does not say "nothing failed to parse".
+
+    Treating the absent field as 0 made scanner_errors_allowed: 0 PASS on a report that
+    never claimed its files were parsed (#3).
+    """
+
+    def no_field(d):
+        del d["summary"]["parsing_errors"]
+
+    ev = get_adapter("checkov").parse(modified("checkov/checkov.json", no_field))
+    assert ev.parseable and ev.scanner_errors is None
+    assert checks_for("checkov", ev, scanner_errors_allowed=0)["scanner_errors"] == (
+        Outcome.UNKNOWN,
+        "SCANNER_ERRORS_UNKNOWN",
+    )
+
+
+def test_checkov_without_a_results_section_does_not_claim_results() -> None:
+    """results_reported used to be hard-coded True, satisfying reported_scope with no results."""
+
+    def no_results(d):
+        del d["results"]
+
+    ev = get_adapter("checkov").parse(modified("checkov/checkov.json", no_results))
+    assert ev.parseable and ev.results_reported is False
+
+
+def test_checkov_without_a_resource_count_reports_unknown_scope() -> None:
+    def no_count(d):
+        del d["summary"]["resource_count"]
+
+    ev = get_adapter("checkov").parse(modified("checkov/checkov.json", no_count))
+    assert ev.parseable and ev.scope is not None and ev.scope.resources is None
+
+
 def test_checkov_multi_framework_list() -> None:
     one = json.loads(raw("checkov/checkov.json"))
     two = json.loads(raw("checkov/checkov.json"))

@@ -19,7 +19,9 @@ from typing import Any
 from scanproof.evidence.models import FindingsSummary, ScannerError, ScanScope, ScanType
 from scanproof.scanners.base import ScannerAdapter, count_by
 
-MAX_PARSING_ERRORS = 100_000
+# A report claiming more unparsed files than this is malformed, not evidence. Keeping the cap
+# low also bounds the memory one small report can make us allocate one ScannerError per file.
+MAX_PARSING_ERRORS = 10_000
 
 
 class CheckovAdapter(ScannerAdapter):
@@ -42,15 +44,30 @@ class CheckovAdapter(ScannerAdapter):
         severities: list[str] = []
         versions: set[str] = set()
         frameworks: list[str] = []
+        # Checkov always writes summary.parsing_errors. A report that omits it says nothing
+        # about parse failures, so scanning it as "no errors" would pass a control that is
+        # actually unknown (#3). Same for the resource count and the results section.
+        errors_reported = True
+        resources_reported = True
+        results_reported = True
         for report in reports:
             summary = report["summary"]
-            results = report.get("results") or {}
+            results = report.get("results")
             frameworks.append(str(report["check_type"]))
             if summary.get("checkov_version"):
                 versions.add(str(summary["checkov_version"]))
-            resources += int(summary.get("resource_count") or 0)
+            if summary.get("resource_count") is None:
+                resources_reported = False
+            else:
+                resources += int(summary["resource_count"])
+            if not isinstance(results, dict):
+                results_reported = False
+                results = {}
+            if "parsing_errors" not in summary:
+                errors_reported = False
+                continue
             listed = [str(p) for p in results.get("parsing_errors") or []]
-            count = max(int(summary.get("parsing_errors") or 0), len(listed))
+            count = max(int(summary["parsing_errors"]), len(listed))
             if not 0 <= count <= MAX_PARSING_ERRORS:
                 # Found by fuzzing: an absurd count made us allocate one entry per error until
                 # memory ran out. A report claiming this many is malformed, not evidence.
@@ -70,8 +87,10 @@ class CheckovAdapter(ScannerAdapter):
         return {
             "tool_version": ", ".join(sorted(versions)) or None,
             "scanner_name": "checkov",
-            "scanner_errors": errors,
-            "scope": ScanScope(resources=resources, scanned_paths=None),
-            "results_reported": True,
+            "scanner_errors": errors if errors_reported else None,
+            "scope": ScanScope(
+                resources=resources if resources_reported else None, scanned_paths=None
+            ),
+            "results_reported": results_reported,
             "findings": FindingsSummary(total=len(severities), by_severity=count_by(severities)),
         }
