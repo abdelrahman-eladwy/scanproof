@@ -1,12 +1,12 @@
 {
   "files": {
-    "evidence.v1alpha1.schema.json": "26dc592286f02907a2da0ef198fdad1af528132a2289a6d92085ecb87b96d90b",
-    "inspection-report.v1alpha1.schema.json": "d8acce58e5b653524aa03768d46570872732439e6eaa2ed655ab3f9f376b8e60",
+    "evidence.v1alpha1.schema.json": "9849d0e48cccd7ad8860b6fc224a168eba72ef11ed240c6b51643d05f2da12e8",
+    "inspection-report.v1alpha1.schema.json": "43e591b175e62d95b60f42d337a24656fadc9833403d67e9c64702e2f6dfc6f5",
     "policy.v1alpha1.schema.json": "93c75ace7f929134eed6d413f8c319f99949d89efeff892be486d3a648ff88cc",
-    "release-report.v1alpha1.schema.json": "f1c0253cacce1cab500529d50e92ba809cc79e7abafb562b53b94eb2de64eacc",
+    "release-report.v1alpha1.schema.json": "4934259dc2153503bd4345c23aca21ef21ff2915a64fe5e9c1a269e88c1a96cb",
     "release.v1alpha1.schema.json": "726dc46da768a007d2c119ca4e3a622c7a7c842386e1baddc874562d6399a397",
-    "verification-error.v1alpha1.schema.json": "240fbbd5d5b01858ec3eeb05f46b1f905a233f985c203cb363867e13e0dd3b5b",
-    "verification-report.v1alpha1.schema.json": "9a9ade65f03b80511f5c5ac3666727e9df9e91762aa781f2a3d6015e2b21fc86"
+    "verification-error.v1alpha1.schema.json": "bf957a6cd5e9d0d57704b586af97a013c3eafb88e3f96e0cb7b1173750d8e7c2",
+    "verification-report.v1alpha1.schema.json": "5e27261c41ae3c043168ee7beea76e74a2a05f32d2c4cdcfbae67f29cf25ef52"
   },
   "generator": "scripts/export_schemas.py",
   "pydantic": "2.13"
